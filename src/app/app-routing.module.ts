@@ -24,8 +24,8 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/dashboard/dashboard.module').then(m => m.DashboardModule)
 			},
 			{
-				path: 'management',
-				loadChildren: () => import('./views/pages/management/management.module').then(m => m.ManagementModule)
+				path: 'master',
+				loadChildren: () => import('./views/pages/master/master.module').then(m => m.MasterModule)
 			},
 			{
 				path: 'builder',

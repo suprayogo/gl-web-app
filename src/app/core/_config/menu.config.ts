@@ -82,18 +82,11 @@ export class MenuConfig {
 				},
 				{section: 'Management'},
 				{
-					title: 'Daftar Aplikasi',
+					title: 'Daftar Perusahaan',
 					root: true,
 					bullet: 'dot',
-					icon: 'flaticon-app',
-					page: '/management/aplikasi'
-				},
-				{
-					title: 'Daftar User',
-					root: true,
-					bullet: 'dot',
-					icon: 'flaticon2-user',
-					page: '/management/user'
+					icon: 'flaticon2-group',
+					page: '/master/perusahaan'
 				},
 				/* {section: 'Components'},
 				{

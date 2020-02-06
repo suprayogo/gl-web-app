@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { PartialsModule } from '../partials/partials.module';
 // Pages
 import { CoreModule } from '../../core/core.module';
-import { ManagementModule } from './management/management.module';
+import { MasterModule } from './master/master.module';
 
 @NgModule({
 	declarations: [],
@@ -18,7 +18,7 @@ import { ManagementModule } from './management/management.module';
 		FormsModule,
 		CoreModule,
 		PartialsModule,
-		ManagementModule,
+		MasterModule,
 	],
 	providers: []
 })

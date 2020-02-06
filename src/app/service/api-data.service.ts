@@ -3,10 +3,9 @@ import { Injectable } from '@angular/core';
 import { LookupRequestService } from './master/lookup/lookup-request.service';
 
 //Management Services
-import { AplikasiRequestService } from './management/aplikasi/aplikasi-request.service';
-import { UserRequestService } from './management/user/user-request.service';
 
 //Master Services
+import { PerusahaanRequestService } from './master/perusahaan/perusahaan-request.service';
 
 //Setting Services
 
@@ -25,10 +24,9 @@ export class ApiDataService {
     private lookupReq: LookupRequestService,
 
     //Management Service
-    private aplikasiReq: AplikasiRequestService,
-    private UserReq: UserRequestService,
 
     //Master Services
+    private perusahaanReq: PerusahaanRequestService,
 
     //Setting Services
 
@@ -38,11 +36,10 @@ export class ApiDataService {
   setUrl(){
     this.lookupReq.url = this.baseURL
 
-    //Managerment Services
-    this.aplikasiReq.url = this.baseURL
-    this.UserReq.url = this.baseURL
+    //Management Services
 
     //Master Services
+    this.perusahaanReq.url = this.baseURL
 
     //Setting Services
   }
@@ -55,13 +52,11 @@ export class ApiDataService {
     }
 
     //Management Services
-    else if (type === 'aplikasi') {
-      return this.aplikasiReq.validate(data, this.httpBody, this.options, formData)
-    }else if(type === 'user') {
-      return this.UserReq.validate(data, this.httpBody, this.options, formData)
-    }
 
     //Master Services
+    else if(type === 'perusahaan') {
+      return this.perusahaanReq.validate(data, this.httpBody, this.options, formData)
+    }
     
     //Setting Services
   }

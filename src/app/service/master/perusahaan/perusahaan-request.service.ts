@@ -4,26 +4,26 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class AplikasiRequestService {
+export class PerusahaanRequestService {
 
   url: string;
 
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object) {
-    if (data === 'g-aplikasi') {
-      httpBody.respondCode = 'GET-DATA-APLIKASI'
+    if (data === 'g-perusahaan') {
+      httpBody.respondCode = 'GET-DATA-PERUSAHAAN'
       return this.get(httpBody, options)
-    } else if (data === 'i-aplikasi') {
-      httpBody.respondCode = 'SET-DATA-APLIKASI'
+    } else if (data === 'i-perusahaan') {
+      httpBody.respondCode = 'SET-DATA-PERUSAHAAN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'u-aplikasi') {
-      httpBody.respondCode = 'UPT-DATA-APLIKASI'
+    } else if (data === 'u-perusahaan') {
+      httpBody.respondCode = 'UPT-DATA-PERUSAHAAN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'd-aplikasi') {
-      httpBody.respondCode = 'DEL-DATA-APLIKASI'
+    } else if (data === 'd-perusahaan') {
+      httpBody.respondCode = 'DEL-DATA-PERUSAHAAN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

@@ -15,15 +15,15 @@ import { DetailinputAgGridComponent } from '../../components/detailinput-ag-grid
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Aplikasi'
+  beforeCodeTitle: 'Daftar Perusahaan'
 }
 
 @Component({
-  selector: 'kt-daftar-aplikasi',
-  templateUrl: './daftar-aplikasi.component.html',
-  styleUrls: ['./daftar-aplikasi.component.scss', '../management.style.scss']
+  selector: 'kt-perusahaan',
+  templateUrl: './perusahaan.component.html',
+  styleUrls: ['./perusahaan.component.scss', '../master.style.scss']
 })
-export class DaftarAplikasiComponent implements OnInit {
+export class PerusahaanComponent implements OnInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -47,35 +47,22 @@ export class DaftarAplikasiComponent implements OnInit {
   search: string;
 
   // Configuration Select box
-  tipe_aktif: Object = [
-    {
-      label: 'Aktif',
-      value: 'Y'
-    },
-    {
-      label: 'Non Aktif',
-      value: 'N'
-    }
-  ]
+  tipe_aktif: Object = []
 
   // Input Name
   formValue = {
-    kode_aplikasi: '',
-    nama_aplikasi: '',
-    aktif: 'Y',
-    setting: '',
-    access_key: '',
-    keterangan: ''
+    kode_perusahaan: '',
+    nama_perusahaan: '',
   }
 
   // Layout Form
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Aplikasi',
-      id: 'kode-aplikasi',
+      label: 'Kode Perusahaan',
+      id: 'kode-perusahaan',
       type: 'input',
-      valueOf: 'kode_aplikasi',
+      valueOf: 'kode_perusahaan',
       required: true,
       readOnly: false,
       update: {
@@ -84,59 +71,11 @@ export class DaftarAplikasiComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Aplikasi',
-      id: 'nama-aplikasi',
+      label: 'Nama Perusahaan',
+      id: 'nama-perusahaan',
       type: 'input',
-      valueOf: 'nama_aplikasi',
+      valueOf: 'nama_perusahaan',
       required: true,
-      readOnly: false,
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'User Status',
-      id: 'user-status',
-      type: 'combobox',
-      options: this.tipe_aktif,
-      change: (e) => this.selection(e, 'aktif'),
-      valueOf: 'aktif',
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Setting',
-      id: 'setting',
-      type: 'input',
-      valueOf: 'setting',
-      required: false,
-      readOnly: false,
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Access Key',
-      id: 'access-key',
-      type: 'input',
-      valueOf: 'access_key',
-      required: false,
-      readOnly: true,
-      update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Keterangan',
-      id: 'keterangan',
-      type: 'input',
-      valueOf: 'keterangan',
-      required: false,
       readOnly: false,
       update: {
         disabled: false
@@ -198,28 +137,12 @@ export class DaftarAplikasiComponent implements OnInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'Kode Aplikasi',
-      value: 'kode_aplikasi'
+      label: 'Kode Perusahaan',
+      value: 'kode_perusahaan'
     },
     {
-      label: 'Nama Aplikasi',
-      value: 'nama_aplikasi'
-    },
-    {
-      label: 'Aktif',
-      value: 'aktif'
-    },
-    {
-      label: 'Setting',
-      value: 'setting'
-    },
-    {
-      label: 'Access Key',
-      value: 'access_key'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
+      label: 'Nama Perusahaan',
+      value: 'nama_perusahaan'
     },
     {
       label: 'Diinput oleh',
@@ -239,12 +162,8 @@ export class DaftarAplikasiComponent implements OnInit {
     }
   ];
   browseInterface = {
-    user_id: 'string',
-    user_name: 'string',
-    aktif: 'string',
-    setting: 'string',
-    access_key: 'string',
-    keterangan: 'string',
+    kode_perusahaan: 'string',
+    nama_perusahaan: 'string',
 
     //STATIC
     input_by: 'string',
@@ -253,15 +172,7 @@ export class DaftarAplikasiComponent implements OnInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = [
-    {
-      target: 'aktif',
-      replacement: {
-        'Y': 'Aktif',
-        'N': 'Non Aktif'
-      }
-    }
-  ]
+  browseDataRules = []
 
   constructor(
     public dialog: MatDialog,
@@ -346,12 +257,8 @@ export class DaftarAplikasiComponent implements OnInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = this.formValue
-    x.kode_aplikasi = data['kode_aplikasi']
-    x.nama_aplikasi = data['nama_aplikasi']
-    x.aktif = data['aktif']
-    x.setting = data['setting']
-    x.access_key = data['access_key']
-    x.keterangan = data['keterangan']
+    x.kode_perusahaan = data['kode_perusahaan']
+    x.nama_perusahaan = data['nama_perusahaan']
     this.formValue = x
     this.onUpdate = true;
     this.getBackToInput();
@@ -371,7 +278,7 @@ export class DaftarAplikasiComponent implements OnInit {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        this.request.apiData('aplikasi', this.onUpdate ? 'u-aplikasi' : 'i-aplikasi', this.formValue).subscribe(
+        this.request.apiData('perusahaan', this.onUpdate ? 'u-perusahaan' : 'i-perusahaan', this.formValue).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               this.resetForm()
@@ -399,12 +306,8 @@ export class DaftarAplikasiComponent implements OnInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      kode_aplikasi: '',
-      nama_aplikasi: '',
-      aktif: 'Y',
-      setting: '',
-      access_key: '',
-      keterangan: ''
+      kode_perusahaan: '',
+      nama_perusahaan: '',
     }
     this.formInputCheckChanges()
   }
@@ -423,7 +326,7 @@ export class DaftarAplikasiComponent implements OnInit {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('aplikasi', 'd-aplikasi', this.formValue).subscribe(
+      this.request.apiData('perusahaan', 'd-perusahaan', this.formValue).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()

@@ -17,8 +17,7 @@ import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsServi
 // Shared
 import { ActionNotificationComponent } from '../../partials/content/crud';
 // Components
-import { DaftarUserComponent } from './daftar-user/daftar-user.component';
-import { DaftarAplikasiComponent } from './daftar-aplikasi/daftar-aplikasi.component';
+import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 
 // Material
 import {
@@ -50,12 +49,10 @@ import {
 	UserEffects
 } from '../../../core/auth';
 
-
-
 const routes: Routes = [
 	{
-		path: 'aplikasi',
-		component: DaftarAplikasiComponent,
+		path: 'perusahaan',
+		component: PerusahaanComponent,
 		/* children: [
 			{
 				path: '',
@@ -64,10 +61,6 @@ const routes: Routes = [
 			}
 		] */
 	},
-	{
-        path: 'user',
-        component: DaftarUserComponent
-    },
 ];
 
 @NgModule({
@@ -128,8 +121,7 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		DaftarUserComponent,
-		DaftarAplikasiComponent
+		PerusahaanComponent
 	]
 })
-export class ManagementModule {}
+export class MasterModule {}
