@@ -1,0 +1,84 @@
+<div class="kt-login__body" *ngIf="hardLoading">
+	<kt-loading
+		[noText]="true"
+	></kt-loading>
+</div>
+
+<div *ngIf="!hardLoading && errorType != null" style="width: 100%; height: 100%;">
+
+	<div *ngIf="errorType === 'network'" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+		<span style="color: red;">NETWORK UNSTABLE!</span>
+		<span style="margin-bottom: 15px;">Please try again later.</span>
+		<button (click)="retryNow()" id="kt_retry_btn" class="btn btn-primary btn-elevate kt-login__btn-primary">RETRY NOW</button>
+	</div>
+
+	<div *ngIf="errorType === 'unregistered'" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+		<span style="color: red;">NOT A REGISTERED APP!</span>
+		<span>Please contact your administrator for more information.</span>
+	</div>
+
+</div>
+
+
+<!--begin::Body-->
+<div class="kt-login__body" *ngIf="!hardLoading && errorType == null">
+	<!--begin::Signin-->
+	<div class="kt-login__form">
+		<div class="kt-login__title">
+			<h5>Welcome to</h5>
+			<h3>{{ appData == null ? 'DARKO CENTER' : appData.appName }}</h3>
+		</div>
+
+		<kt-auth-notice></kt-auth-notice>
+
+		<div class="alert alert-danger" role="alert" *ngIf="failToLogin">
+			<div class="alert-text">User ID atau Password Salah</div>
+		</div>
+
+		<!--begin::Form-->
+		<form class="kt-form" [formGroup]="loginForm" autocomplete="off">
+			<div class="form-group">
+				<mat-form-field>
+					<mat-label>User ID</mat-label>
+					<input matInput type="text" placeholder="User ID" formControlName="user_id" autocomplete="off"/>
+					<mat-error *ngIf="isControlHasError('user_id','required')">
+						<strong>{{ 'AUTH.VALIDATION.REQUIRED_FIELD' | translate }}</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+			<div class="form-group">
+				<mat-form-field>
+					<mat-label>Password</mat-label>
+					<input matInput type="password" placeholder="Password" formControlName="user_password" autocomplete="off"/>
+					<mat-error *ngIf="isControlHasError('user_password','required')">
+						<strong>{{ 'AUTH.VALIDATION.REQUIRED_FIELD' | translate }}</strong>
+					</mat-error>
+					<mat-error *ngIf="isControlHasError('user_password','minlength')">
+						<strong>{{ 'AUTH.VALIDATION.MIN_LENGTH_FIELD' | translate }} 3</strong>
+					</mat-error>
+					<mat-error *ngIf="isControlHasError('user_password','maxlength')">
+						<strong>{{ 'AUTH.VALIDATION.MAX_LENGTH_FIELD' | translate }} 100</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+			<!--begin::Action-->
+			<div class="kt-login__actions">
+				<button (click)="submit()" [disabled]="loading" [ngClass]="{'kt-spinner kt-spinner--center kt-spinner--md kt-spinner--light': loading}" id="kt_login_signin_submit" class="btn btn-primary btn-elevate kt-login__btn-primary" style="width: 100%;">{{ loading ? '' : 'SIGN IN' }}</button>
+			</div>
+			
+			<div class="kt-login__info" style="width: 100%; display: flex; justify-content: space-between;">
+				<div class="kt-login__copyright">
+					© {{ today | date:'yyyy' }} Darkotech Mandiri Indonesia
+				</div>
+				<div class="kt-login__menu">
+					<a href="https://support.darkosuite.com/" class="kt-link">Support</a>
+				</div>
+			</div>
+			
+			<!--end::Action-->
+		</form>
+		<!--end::Form-->
+	</div>
+	<!--end::Signin-->
+</div>
+<!--end::Body-->

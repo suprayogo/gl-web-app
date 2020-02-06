@@ -1,0 +1,22 @@
+<div style="padding: 65px 25px 25px; position: relative;">
+
+    <div class="diag-header">
+      <h5 style="margin-bottom: 0; align-self: center;">{{ title ? title : 'Alert' }}</h5>
+      <button type="button" (click)="closeDialog(true)" class="close-btn">
+        <i class="flaticon flaticon-cancel" style="font-size: 1.5em; line-height: 1;"></i>
+      </button>
+    </div>
+  
+    <div style="min-width: 250px; max-width: 40vw; height: auto;">
+      <div style="display: flex; flex-direction: row; align-items: center;">
+        <i class="fa fa-check" style="font-size: 4em; margin-right: 15px; color: #2ecc71;" *ngIf="type === 'success'"></i>
+        <i class="fa fa-times" style="font-size: 4em; margin-right: 15px; color: #e74c3c;" *ngIf="type === 'fail'"></i>
+        <i class="fa fa-info-circle" style="font-size: 4em; margin-right: 15px; color: #3498db;" *ngIf="type === 'info'"></i>
+        <h6>{{ message }}</h6>
+      </div>
+      <div class="kt-form__actions" style="margin-top: 25px;">
+        <button type="button" class="btn btn-brand" (click)="closeDialog(true)">Tutup</button>
+      </div>
+    </div>
+  
+</div>  

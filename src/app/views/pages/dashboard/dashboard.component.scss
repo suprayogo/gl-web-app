@@ -1,0 +1,15 @@
+:host {
+	::ng-deep {
+		ngb-tabset > .nav-tabs {
+			display: none;
+		}
+	}
+}
+
+.bg {
+	height: 100%;
+	background-image: url('../../../../assets/media/pictures/undraw_operating_system_4lr6.svg');
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}

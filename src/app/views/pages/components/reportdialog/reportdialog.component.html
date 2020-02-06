@@ -1,0 +1,11 @@
+<div style="padding: 0">
+
+    <div style="width: 90vw; height: calc(95vh - 48px);">
+      <div class="header">
+        <h6 style="margin-bottom: 0">{{ report_name }}</h6>
+        <button type="button" class="btn btn-danger" (click)="closeDialog()" style="padding: 0.5rem .85rem !important;">Close</button>
+      </div>
+      <iframe [src]="getReportUrl()" height="93%" width="100%" frameborder="0"></iframe>
+    </div>
+  
+</div>  

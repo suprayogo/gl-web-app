@@ -1,0 +1,14 @@
+.detail-section {
+    margin-bottom: 15px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.button-container div:not(:first-child) {
+    margin-left: 15px;
+}

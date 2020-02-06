@@ -1,0 +1,66 @@
+<div [ngClass]="{'kt-section': inV === ''}">
+    <h3 [hidden]="inV !== ''">{{ title }}</h3>
+    <div [hidden]="inV !== ''">
+      <ul class="row-full-width" style="padding-left: 0">
+        <li *ngFor="let x of headerView; let i = index" style="border: 1px solid black; background-color: darkslateblue; display: flex; align-items: center"
+          [style.flex]="i==0? 2: 1" [style.min-width]="i==0? '22%': '18%'">
+          <h5 style="color: white; font-size: 120%">{{ x['label'] }}</h5>
+        </li>
+        <li style="background-color: transparent; display: flex; flex: 1; min-width: 28px; max-width: 28px;"></li>
+      </ul>
+    </div>
+  
+    <div *ngFor="let x of setMaintree(); let i = index">
+  
+      <ul class="row-full-width" style="padding-left: 0">
+  
+        <li class="is-folder" *ngFor="let z of headerView; let y = index" [ngStyle]="{'flex': y == 0 ? '2' : '1'}" [style.padding-top.px]="inV===''? 5 :null" [style.background-color]="isOpen(i)? '#ecf0f1': null" [style.min-width]="y==0? '22%': '18%'">
+          <div class="row" [style.padding-left.px]="((rowOf+1) * 17)" *ngIf="y == 0">
+            <div [ngClass]="{'arrow-open': isOpen(i), 'arrow-close': !isOpen(i)}" (click)="open(i)" [hidden]="!getSubtree(x[sin])"></div>
+            <h5 style="font-size: 100%" (click)="onRowClicked(x)" [ngClass]="{'padding-left-8': !getSubtree(x[sin])}">{{ x[z['value']] }}</h5>
+          </div>
+          <h5 style="font-size: 100%" *ngIf="y != 0">{{ x[z['value']] }}</h5>
+        </li>
+  
+        <li style="background-color: transparent; display: flex; flex: 1; min-width: 28px; max-width: 28px; position: relative">
+          <div style="
+            width: 100%;
+            height: calc(100% + 5px);
+            background: white;
+            position: absolute;
+            top: -5px;
+          "></div>
+        </li>
+  
+        <!-- <li class="is-folder" style="flex: 2;">
+          <div class="row" [style.padding-left.px]="((rowOf+1) * 17)">
+            <div [ngClass]="{'arrow-open': isOpen(i), 'arrow-close': !isOpen(i)}" (click)="open(i)" [hidden]="!getSubtree(x[sin])"></div>
+            <h5 (click)="onRowClicked(x)" [ngClass]="{'padding-left-8': !getSubtree(x[sin])}">{{
+              x[showIndicator] }}</h5>
+          </div>
+        </li>
+  
+        <li class="is-folder" style="flex: 1" (click)="onRowClicked(x)">
+          <h5>{{ x[sin] }}</h5>
+        </li>
+  
+        <li class="is-folder" style="flex: 1" (click)="onRowClicked(x)">
+          <h5>{{ x[in] }}</h5>
+        </li> -->
+      </ul>
+  
+      <div [hidden]="!isOpen(i)">
+        <kt-treeview 
+          [idata]="data" 
+          [indicator]="in" 
+          [indicatorValue]="x[sin]" 
+          [subIndicator]="sin" 
+          (selectRowEvent)="onRowClicked($event)" 
+          [rowOf]="nRowOf"
+          [sortBy]="sBy"
+          [header]="headerView"
+        ></kt-treeview>
+      </div>
+  
+    </div>
+</div>  

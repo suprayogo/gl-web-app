@@ -1,0 +1,70 @@
+<form #inputForm=ngForm (ngSubmit)="formSubmit(inputForm)">
+  <div class="form-group m-form__group row" *ngFor="let x of inputLayout; let i = index"
+    [hidden]="x.hiddenOn? x.hiddenOn.matchValue === cFormValue[x.hiddenOn.valueOf] ? true :false : false">
+
+    <label class="col-2 col-form-label">{{ x.label }}</label>
+
+    <div class="{{ x.formWidth }}">
+      <!-- FOR COMBOBOX -->
+      <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="cFormValue[x.valueOf]"
+        (change)="x.change($event)" [disabled]="onUpdate && x.update.disabled">
+        <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
+      </select>
+
+      <!-- DYNAMIC COMBOBOX -->
+      <select *ngIf="x.type === 'comboboxcustom'" id="{{ x.id }}" class="form-control m-input"
+        [value]="otoritas_data.length > 0 && otoritas_data[x.index] !== undefined ? otoritas_data[x.index][x.valueOf] : ''"
+        (change)="x.change($event)" [disabled]="onUpdate && x.update.disabled">
+        <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
+      </select>
+
+      <!-- FOR INPUT GROUP -->
+      <div *ngIf="x.type === 'inputgroup'" class="input-group">
+        <input class="form-control m-input" type="text" name="{{ x.id }}" [(ngModel)]="cFormValue[x.valueOf]"
+          (input)="inputPipe(x.valueOf, $event.target.value)" [readOnly]="x.readOnly" [required]="x.required"
+          (blur)="onBlur(x.browseType)" (keyup.enter)="onBlur(x.browseType)" (keyup.tab)="onBlur(x.browseType)"
+          style="text-transform: uppercase" [disabled]="onUpdate && x.update.disabled">
+        <div class="input-group-append">
+          <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
+            [disabled]="onUpdate && x.update.disabled"><i *ngIf="x.btnIcon" class="flaticon"
+              [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+        </div>
+        <input tabindex="-1" class="form-control m-input m--margin-left-5 disabled-input" *ngIf="x.inputInfo"
+          type="text" name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly"
+          [required]="x.inputInfo.required" [(ngModel)]="cFormValue[x.inputInfo.valueOf]">
+      </div>
+
+      <!-- FOR NORMAL INPUT -->
+      <div *ngIf="x.type === 'input'">
+        <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
+          [(ngModel)]="cFormValue[x.valueOf]"
+          [readonly]="(x.id === 'user-id' || x.id === 'user-name') && cFormValue.user_type === 'I' ? true : x.readOnly"
+          [required]="x.required"
+          [disabled]="(onUpdate && x.update.disabled) || (x.id === 'user-name' && cFormValue.user_type === 'I')">
+        <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
+          [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
+          [disabled]="onUpdate && x.update.disabled">
+        <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="kt-section" *ngIf="detailLoad && enableDetail">
+    <kt-loading></kt-loading>
+  </div>
+
+  <div *ngIf="!detailLoad && enableDetail">
+    <kt-detailinput-ag-grid [buttonLayout]="buttonLayout" [tableColumn]="tableColumn" [tableData]="tableData"
+      [tableRules]="tableRules" [editable]="editable" (editAction)="editDetailData($event)"
+      (deleteAction)="deleteDetailData($event)"></kt-detailinput-ag-grid>
+  </div>
+
+  <div class="kt-form__actions">
+    <button type="submit" class="btn btn-brand">Simpan</button>
+    <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;"
+      (click)="onReset()">Batal</button>
+    <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="delData()"
+      *ngIf="onUpdate && enableDelete">Hapus</button>
+  </div>
+</form>

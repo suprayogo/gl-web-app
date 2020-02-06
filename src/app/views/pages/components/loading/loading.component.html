@@ -1,0 +1,9 @@
+<div style="display:flex; align-items: center; flex-direction: column; padding: 10px 0">
+    <h6 style="flex: 1" *ngIf="noText == false || noText == null">
+        {{ loadingText == null ? 'Sedang diproses.' : loadingText }}
+    </h6>
+    <div style="flex: 1">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+</div>
