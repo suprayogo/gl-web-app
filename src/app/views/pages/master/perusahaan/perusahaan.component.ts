@@ -11,7 +11,6 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
-import { DetailinputAgGridComponent } from '../../components/detailinput-ag-grid/detailinput-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
@@ -28,7 +27,6 @@ export class PerusahaanComponent implements OnInit {
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
-  // @ViewChild(DetailinputAgGridComponent, {static: false}) detailinput;
 
   // Variables
   loading: boolean = true;
@@ -67,7 +65,8 @@ export class PerusahaanComponent implements OnInit {
       readOnly: false,
       update: {
         disabled: true
-      }
+      },
+      inputPipe: true
     },
     {
       formWidth: 'col-5',
@@ -184,11 +183,6 @@ export class PerusahaanComponent implements OnInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.madeRequest()
-  }
-
-  //Selection event (Select Box)
-  selection(data, type) {
-    this.formValue[type] = data.target.value
   }
 
   // Request Data API (to : L.O.V or Table)
@@ -309,6 +303,7 @@ export class PerusahaanComponent implements OnInit {
       kode_perusahaan: '',
       nama_perusahaan: '',
     }
+    // this.detailData = []
     this.formInputCheckChanges()
   }
 
@@ -348,10 +343,6 @@ export class PerusahaanComponent implements OnInit {
     }
   }
 
-  inputPipe(valueOf, data) {
-    this.formValue[valueOf] = data.toUpperCase()
-  }
-
   sendUserRequest() {
     
   }
@@ -378,6 +369,7 @@ export class PerusahaanComponent implements OnInit {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
+      // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
 }

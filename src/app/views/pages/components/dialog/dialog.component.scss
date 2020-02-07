@@ -1,0 +1,21 @@
+.diag-header {
+    width: calc(100%);
+    position: absolute;
+    height: 40px;
+    background: #ecf0f1;
+    top: 0;
+    left: 0;
+    padding: 5px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.close-btn {
+    border-color: transparent;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: -8px;
+}

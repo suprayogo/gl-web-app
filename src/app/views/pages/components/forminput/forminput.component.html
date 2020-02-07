@@ -7,7 +7,7 @@
     <div class="{{ x.formWidth }}">
       <!-- FOR COMBOBOX -->
       <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="cFormValue[x.valueOf]"
-        (change)="x.change($event)" [disabled]="onUpdate && x.update.disabled">
+        (change)="selection($event, x.valueOf)" [disabled]="onUpdate && x.update.disabled">
         <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
       </select>
 
@@ -37,10 +37,9 @@
       <!-- FOR NORMAL INPUT -->
       <div *ngIf="x.type === 'input'">
         <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
-          [(ngModel)]="cFormValue[x.valueOf]"
-          [readonly]="(x.id === 'user-id' || x.id === 'user-name') && cFormValue.user_type === 'I' ? true : x.readOnly"
-          [required]="x.required"
-          [disabled]="(onUpdate && x.update.disabled) || (x.id === 'user-name' && cFormValue.user_type === 'I')">
+          [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
+          [disabled]="(onUpdate && x.update.disabled) || x.disabled"
+          (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null">
         <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
           [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
           [disabled]="onUpdate && x.update.disabled">
@@ -57,7 +56,7 @@
   <div *ngIf="!detailLoad && enableDetail">
     <kt-detailinput-ag-grid [buttonLayout]="buttonLayout" [tableColumn]="tableColumn" [tableData]="tableData"
       [tableRules]="tableRules" [editable]="editable" (editAction)="editDetailData($event)"
-      (deleteAction)="deleteDetailData($event)"></kt-detailinput-ag-grid>
+      (deleteAction)="delDetailData($event)"></kt-detailinput-ag-grid>
   </div>
 
   <div class="kt-form__actions">

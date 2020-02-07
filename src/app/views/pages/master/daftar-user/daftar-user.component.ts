@@ -11,25 +11,23 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
-import { DetailinputAgGridComponent } from '../../components/detailinput-ag-grid/detailinput-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
-   beforeCodeTitle: 'Daftar User'
+  beforeCodeTitle: 'Daftar User'
 }
 
 @Component({
   selector: 'kt-daftar-user',
   templateUrl: './daftar-user.component.html',
-  styleUrls: ['./daftar-user.component.scss', '../master.style.scss']
+  styleUrls: ['./daftar-user.component.scss', '../management.style.scss']
 })
 export class DaftarUserComponent implements OnInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
-  @ViewChild(DetailinputAgGridComponent, { static: false }) detailinput;
- 
+
   // Variables
   loading: boolean = true;
   content: any;
@@ -74,11 +72,12 @@ export class DaftarUserComponent implements OnInit {
       id: 'user-id',
       type: 'input',
       valueOf: 'user_id',
-      required: false,
+      required: true,
       readOnly: false,
       update: {
         disabled: true
-      }
+      },
+      inputPipe: true
     },
     {
       formWidth: 'col-5',
@@ -95,7 +94,7 @@ export class DaftarUserComponent implements OnInit {
     {
       formWidth: 'col-5',
       label: 'Kata Sandi',
-      id: 'password',
+      id: 'user-password',
       type: 'input',
       valueOf: 'user_password',
       required: true,
@@ -111,7 +110,6 @@ export class DaftarUserComponent implements OnInit {
       id: 'user-status',
       type: 'combobox',
       options: this.tipe_aktif,
-      change: (e) => this.selection(e, 'aktif'),
       valueOf: 'aktif',
       update: {
         disabled: false
@@ -233,11 +231,6 @@ export class DaftarUserComponent implements OnInit {
     this.madeRequest()
   }
 
-  //Selection event (Select Box)
-  selection(data, type) {
-    this.formValue[type] = data.target.value
-  }
-
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     this.request.apiData('aplikasi', 'g-aplikasi').subscribe(
@@ -312,9 +305,8 @@ export class DaftarUserComponent implements OnInit {
             this.detailData.push(x[i])
           }
           this.ref.markForCheck()
-          this.detailinput.checkChanges()
+          this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
         }
-        //this.ref.markForCheck();
         this.dialogRef = undefined
         this.dialogType = null
       }
@@ -352,7 +344,7 @@ export class DaftarUserComponent implements OnInit {
         this.detailData.splice(i, 1)
         this.dialog.closeAll()
         this.ref.markForCheck()
-        this.detailinput.checkChanges()
+        this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
         break;
       }
     }
@@ -434,20 +426,21 @@ export class DaftarUserComponent implements OnInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
-  if(this.forminput !== undefined){
-    if (inputForm.valid && this.formValue.user_password.length > 3 == true) {
-      this.sendUserRequest()
-    } else if (this.onUpdate) {
-      if (this.formValue.user_password.length < 1)
+    if (this.forminput !== undefined) {
+      this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+      if (inputForm.valid && this.formValue.user_password.length > 3 == true) {
         this.sendUserRequest()
-      else if (this.formValue.user_password.length > 3)
-        this.sendUserRequest()
-      else
+      } else if (this.onUpdate) {
+        if (this.formValue.user_password.length < 1)
+          this.sendUserRequest()
+        else if (this.formValue.user_password.length > 3)
+          this.sendUserRequest()
+        else
+          this.openSnackBar('DATA TIDAK LENGKAP.')
+      } else {
         this.openSnackBar('DATA TIDAK LENGKAP.')
-    } else {
-      this.openSnackBar('DATA TIDAK LENGKAP.')
+      }
     }
-  }
   }
 
   //Reset Value
@@ -458,6 +451,7 @@ export class DaftarUserComponent implements OnInit {
       user_password: '',
       aktif: 'Y'
     }
+    this.detailData = []
     this.formInputCheckChanges()
   }
 
@@ -504,8 +498,7 @@ export class DaftarUserComponent implements OnInit {
   sendUserRequest() {
     this.loading = true;
     this.ref.markForCheck()
-    this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-    let endRes = Object.assign({ detail_aplikasi: this.detailData }, this.formValue)
+    let endRes = Object.assign({ detail_user: this.detailData }, this.formValue)
     this.request.apiData('user', this.onUpdate ? 'u-user' : 'i-user', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -549,6 +542,7 @@ export class DaftarUserComponent implements OnInit {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
+      this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
 }

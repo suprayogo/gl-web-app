@@ -74,7 +74,7 @@ export class MenuConfig {
 		aside: {
 			self: {},
 			items: [
-				{
+				/*  {
 					title: 'Home',
 					root: true,
 					icon: 'flaticon2-architecture-and-city',
@@ -85,10 +85,10 @@ export class MenuConfig {
 					title: 'Daftar Perusahaan',
 					root: true,
 					bullet: 'dot',
-					icon: 'flaticon2-group',
+					icon: 'flaticon2-box',
 					page: '/master/perusahaan'
 				},
-				/* {section: 'Components'},
+				{section: 'Components'},
 				{
 					title: 'Google Material',
 					root: true,

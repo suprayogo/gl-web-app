@@ -1,20 +1,19 @@
-<div style="padding: 0">
-  
-    <div style="width: 1000px; height: auto;" *ngIf="loading == true">
-      <kt-loading></kt-loading>
-    </div>
-  
-    <div style="width: 1000px; height: auto;" *ngIf="loading != true">
-      <kt-datatable-ag-grid
-        [tableColumn]="displayedColumnsTable"
-        [tableData]="tableData"
-        [tableRules]="tableRules"
-        [selectable]="selectable"
-        [selected]="selected"
-        [selectIndicator]="selectIndicator"
-        (selectRowEvent)="dialogRowSelect($event)"
-        (onDialogClose)="closeDialog()"
-      ></kt-datatable-ag-grid>
-    </div>
+<div style="padding: 65px 25px 25px; position: relative;">
+
+  <div class="diag-header">
+    <h5 style="margin-bottom: 0; align-self: center;">{{ title ? title : 'Dialog' }}</h5>
+    <button type="button" (click)="closeDialog(true)" class="close-btn">
+      <i class="flaticon flaticon-cancel" style="font-size: 1.5em; line-height: 1;"></i>
+    </button>
   </div>
-  
+
+  <div style="width: 1000px; height: auto;" *ngIf="loading == true">
+    <kt-loading></kt-loading>
+  </div>
+
+  <div style="width: 1000px; height: auto;" *ngIf="loading != true">
+    <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="tableData" [tableRules]="tableRules"
+      [selectable]="selectable" [selected]="selected" [selectIndicator]="selectIndicator"
+      (selectRowEvent)="dialogRowSelect($event)" (onDialogClose)="closeDialog()"></kt-datatable-ag-grid>
+  </div>
+</div>

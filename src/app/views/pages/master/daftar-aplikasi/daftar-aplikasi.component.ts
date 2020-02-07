@@ -11,7 +11,6 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
-import { DetailinputAgGridComponent } from '../../components/detailinput-ag-grid/detailinput-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
@@ -21,14 +20,13 @@ const content = {
 @Component({
   selector: 'kt-daftar-aplikasi',
   templateUrl: './daftar-aplikasi.component.html',
-  styleUrls: ['./daftar-aplikasi.component.scss', '../master.style.scss']
+  styleUrls: ['./daftar-aplikasi.component.scss', '../management.style.scss']
 })
 export class DaftarAplikasiComponent implements OnInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
-  // @ViewChild(DetailinputAgGridComponent, {static: false}) detailinput;
 
   // Variables
   loading: boolean = true;
@@ -63,7 +61,7 @@ export class DaftarAplikasiComponent implements OnInit {
     kode_aplikasi: '',
     nama_aplikasi: '',
     aktif: 'Y',
-    setting: '',
+    setting: '{"appName":"DARKO GL","onLoginSuccess":{"url":"/","origin":true},"settingNewUser":{"url":"","method":"","body":""}}',
     access_key: '',
     keterangan: ''
   }
@@ -80,7 +78,8 @@ export class DaftarAplikasiComponent implements OnInit {
       readOnly: false,
       update: {
         disabled: true
-      }
+      },
+      inputPipe: true
     },
     {
       formWidth: 'col-5',
@@ -96,11 +95,10 @@ export class DaftarAplikasiComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'User Status',
-      id: 'user-status',
+      label: 'Status Aplikasi',
+      id: 'aplikasi-status',
       type: 'combobox',
       options: this.tipe_aktif,
-      change: (e) => this.selection(e, 'aktif'),
       valueOf: 'aktif',
       update: {
         disabled: false
@@ -125,7 +123,8 @@ export class DaftarAplikasiComponent implements OnInit {
       type: 'input',
       valueOf: 'access_key',
       required: false,
-      readOnly: true,
+      readOnly: false,
+      disabled: true,
       update: {
         disabled: true
       }
@@ -275,38 +274,9 @@ export class DaftarAplikasiComponent implements OnInit {
     this.madeRequest()
   }
 
-  //Selection event (Select Box)
-  selection(data, type) {
-    this.formValue[type] = data.target.value
-  }
-
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     this.loading = false
-  }
-
-  // Dialog
-  openDialog(type) {
-
-  }
-
-  onBlur(type) {
-
-  }
-
-  getDetail() {
-
-  }
-
-  editDetailData(data) {
-  }
-
-  deleteDetailData(data) {
-
-  }
-
-  restructureDetailData(data) {
-
   }
 
   //Tab change event
@@ -365,12 +335,17 @@ export class DaftarAplikasiComponent implements OnInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
-
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+        this.formValue.access_key = this.formValue.access_key === "" ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
+          length: 8,
+          numeric: true,
+          letters: false,
+          special: false
+        }))}` : this.formValue.access_key
         this.request.apiData('aplikasi', this.onUpdate ? 'u-aplikasi' : 'i-aplikasi', this.formValue).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -402,10 +377,11 @@ export class DaftarAplikasiComponent implements OnInit {
       kode_aplikasi: '',
       nama_aplikasi: '',
       aktif: 'Y',
-      setting: '',
+      setting: '{"appName":"DARKO GL","onLoginSuccess":{"url":"/","origin":true},"settingNewUser":{"url":"","method":"","body":""}}',
       access_key: '',
       keterangan: ''
     }
+    //this.detailData = []
     this.formInputCheckChanges()
   }
 
@@ -445,12 +421,8 @@ export class DaftarAplikasiComponent implements OnInit {
     }
   }
 
-  inputPipe(valueOf, data) {
-    this.formValue[valueOf] = data.toUpperCase()
-  }
-
   sendUserRequest() {
-    
+
   }
 
   openSnackBar(message, type?: any) {
@@ -475,6 +447,7 @@ export class DaftarAplikasiComponent implements OnInit {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
+      this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
 }

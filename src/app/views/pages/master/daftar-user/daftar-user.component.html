@@ -22,24 +22,12 @@
 
           <kt-portlet-body>
             <div class="kt-section">
-              <kt-forminput
-                [inputLayout]="inputLayout"
-                [formValue]="formValue"
-                [buttonLayout]="buttonLayout"
-                [tableColumn]="detailDisplayColumns"
-                [tableData]="detailData"
-                [tableRules]="detailRules"
-                [editable]="editable"
-                [detailLoad]="detailLoad"
-                [enableDetail]="enableDetail"
-                (onSubmit)="onSubmit($event)"
-                [onUpdate]="onUpdate"
-                [enableDelete]="enableDelete"
-                (onCancel)="onCancel()"
-                (deleteData)="deleteData()"
-                (editAction)="editDetailData($event)"
-                (deleteAction)="deleteDetailData($event)"
-              ></kt-forminput>
+              <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [buttonLayout]="buttonLayout"
+                [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                (onSubmit)="onSubmit($event)" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
+                (onCancel)="onCancel()" (deleteData)="deleteData()" (editAction)="editDetailData($event)"
+                (deleteAction)="deleteDetailData($event)"></kt-forminput>
             </div>
           </kt-portlet-body>
 
@@ -52,16 +40,17 @@
           <ng-template mat-tab-label>
             <p style="margin-bottom: 0"><b>Browse</b></p><br>
           </ng-template>
+          
+          <kt-portlet-body>
+            <div class="kt-section" *ngIf="tableLoad">
+              <kt-loading></kt-loading>
+            </div>
 
-          <div class="kt-section" *ngIf="tableLoad">
-            <kt-loading></kt-loading>
-          </div>
-
-          <div *ngIf="!tableLoad">
-            <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
-              [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)"></kt-datatable-ag-grid>
-          </div>
-
+            <div *ngIf="!tableLoad">
+              <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
+                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)"></kt-datatable-ag-grid>
+            </div>
+          </kt-portlet-body>
 
         </mat-tab>
         <!-- End of tab browse-->

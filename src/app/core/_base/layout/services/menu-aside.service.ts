@@ -24,6 +24,11 @@ export class MenuAsideService {
 	/**
 	 * Load menu list
 	 */
+	setMenu(menuModel: any[]) {
+		const menuItems: any[] = objectPath.get(menuModel, 'aside.items');
+		this.menuList$.next(menuItems);
+	}
+
 	loadMenu() {
 		// get menu list
 		const menuItems: any[] = objectPath.get(this.menuConfigService.getMenus(), 'aside.items');

@@ -1,4 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+
+import { DetailinputAgGridComponent } from '../detailinput-ag-grid/detailinput-ag-grid.component';
 
 @Component({
   selector: 'kt-forminput',
@@ -6,6 +8,7 @@ import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } fro
   styleUrls: ['./forminput.component.scss']
 })
 export class ForminputComponent implements OnInit {
+  @ViewChild(DetailinputAgGridComponent, { static: false }) detailinput;
 
   @Input() inputLayout: any;
   @Input() formValue: any;
@@ -45,6 +48,15 @@ export class ForminputComponent implements OnInit {
     this.onSubmit.emit(form)
   }
 
+  inputPipe(valueOf, data) {
+    this.cFormValue[valueOf] = data.toUpperCase()
+  }
+
+  //Selection event (Select Box)
+  selection(data, type) {
+    this.cFormValue[type] = data.target.value
+  }
+
   onReset(){
     this.onCancel.emit()
   }
@@ -63,6 +75,10 @@ export class ForminputComponent implements OnInit {
 
   checkChanges() {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
+  }
+
+  checkChangesDetailInput() {
+    this.detailinput === undefined ? null : this.detailinput.checkChanges()
   }
 
 }
