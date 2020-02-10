@@ -117,6 +117,13 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 				icon: 'flaticon2-box',
 				page: '/master/perusahaan',
 				meta_data: 'perusahaan'
+			},
+			{
+				title: 'Daftar Divisi',
+				root: true,
+				icon: 'flaticon2-group',
+				page: '/master/divisi',
+				meta_data: 'divisi'
 			}
 		]
 		let menu  = new MenuConfig()

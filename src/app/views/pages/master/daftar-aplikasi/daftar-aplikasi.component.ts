@@ -156,40 +156,29 @@ export class DaftarAplikasiComponent implements OnInit {
     }
   ] */
 
-  // Aplikasi List
+  // List Dialog
   /* inputAplikasiDisplayColumns = [
     {
-      label: 'Kode Aplikasi',
-      value: 'kode_aplikasi',
+      label: '',
+      value: '',
       selectable: true
     },
-    {
-      label: 'Nama Aplikasi',
-      value: 'nama_aplikasi'
-    }
   ]
   inputAplikasiInterface = {
-    kode_aplikasi: 'string',
-    nama_aplikasi: 'string'
+    contoh: 'string'
   }
   inputAplikasiData = []
   inputAplikasiDataRules = [] */
 
-  // User-Aplikasi List Detail
+  // List Detail
   /* detailDisplayColumns = [
     {
-      label: 'Kode Aplikasi',
-      value: 'kode_aplikasi',
-      selectable: true
+      label: '',
+      value: ''
     },
-    {
-      label: 'Nama Aplikasi',
-      value: 'nama_aplikasi'
-    }
   ]
   detailInterface = {
-    kode_aplikasi: 'string',
-    nama_aplikasi: 'string'
+    contoh: 'string'
   }
   detailData = []
   detailRules = [] */
@@ -421,10 +410,6 @@ export class DaftarAplikasiComponent implements OnInit {
     }
   }
 
-  sendUserRequest() {
-
-  }
-
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
       width: 'auto',
@@ -447,7 +432,7 @@ export class DaftarAplikasiComponent implements OnInit {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
-      this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
+      // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
 }

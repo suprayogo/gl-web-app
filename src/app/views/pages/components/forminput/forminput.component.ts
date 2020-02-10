@@ -57,6 +57,11 @@ export class ForminputComponent implements OnInit {
     this.cFormValue[type] = data.target.value
   }
 
+  onBlur(type) {
+    let sres = null
+    sres = this.cFormValue[type] === "" ? null : this.formValue[type].toUpperCase()
+  }
+
   onReset(){
     this.onCancel.emit()
   }

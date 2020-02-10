@@ -18,6 +18,7 @@ import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsServi
 import { ActionNotificationComponent } from '../../partials/content/crud';
 // Components
 import { PerusahaanComponent } from './perusahaan/perusahaan.component';
+import { DivisiComponent } from './divisi/divisi.component';
 
 // Material
 import {
@@ -60,6 +61,10 @@ const routes: Routes = [
 				pathMatch: 'full'
 			}
 		] */
+	},
+	{
+		path: 'divisi',
+		component: DivisiComponent,
 	},
 ];
 
@@ -121,7 +126,8 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		PerusahaanComponent
+		PerusahaanComponent,
+		DivisiComponent
 	]
 })
 export class MasterModule {}

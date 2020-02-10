@@ -313,10 +313,6 @@ export class DaftarUserComponent implements OnInit {
     });
   }
 
-  onBlur(type) {
-
-  }
-
   getDetail() {
     this.detailLoad = true
     this.request.apiData('user', 'g-user-aplikasi', this.formValue).subscribe(
