@@ -52,16 +52,21 @@
             <ng-template mat-tab-label>
               <p style="margin-bottom: 0"><b>Browse</b></p><br>
             </ng-template>
-  
-            <div class="kt-section" *ngIf="tableLoad">
-              <kt-loading></kt-loading>
-            </div>
-  
-            <div *ngIf="!tableLoad">
-              <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
-                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)"></kt-datatable-ag-grid>
-            </div>
-  
+            
+            <kt-portlet-body>
+              <div class="kt-section" *ngIf="tableLoad">
+                <kt-loading></kt-loading>
+              </div>
+    
+              <div *ngIf="!tableLoad">
+                <kt-datatable-ag-grid 
+                  [tableColumn]="displayedColumnsTable" 
+                  [tableData]="browseData"
+                  [tableRules]="browseDataRules" 
+                  (selectRowEvent)="browseSelectRow($event)"
+                ></kt-datatable-ag-grid>
+              </div>
+            </kt-portlet-body>
   
           </mat-tab>
           <!-- End of tab browse-->

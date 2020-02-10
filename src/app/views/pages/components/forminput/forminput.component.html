@@ -26,10 +26,10 @@
           style="text-transform: uppercase" [disabled]="onUpdate && x.update.disabled">
         <div class="input-group-append">
           <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
-            [disabled]="onUpdate && x.update.disabled"><i *ngIf="x.btnIcon" class="flaticon"
+            [disabled]="onUpdate && x.update.disabled"><i *ngIf="x.btnIcon" style="color: white" class="flaticon"
               [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>
-        <input tabindex="-1" class="form-control m-input m--margin-left-5 disabled-input" *ngIf="x.inputInfo"
+        <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo"
           type="text" name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly"
           [required]="x.inputInfo.required" [(ngModel)]="cFormValue[x.inputInfo.valueOf]">
       </div>

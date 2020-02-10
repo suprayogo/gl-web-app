@@ -1,27 +1,49 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTabChangeEvent, MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
-import * as MD5 from 'crypto-js/md5';
-import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
 
 // Components
+import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
+import { DetailinputAgGridComponent } from '../../components/detailinput-ag-grid/detailinput-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Perusahaan'
+  beforeCodeTitle: 'Daftar Menu'
 }
 
 @Component({
-  selector: 'kt-perusahaan',
-  templateUrl: './perusahaan.component.html',
-  styleUrls: ['./perusahaan.component.scss', '../master.style.scss']
+  selector: 'kt-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.scss', '../master.style.scss']
 })
-export class PerusahaanComponent implements OnInit {
+export class MenuComponent implements OnInit {
+
+  //Configuration
+  tipe_menu: Object = [
+    {
+      label: 'Form',
+      value: 'F'
+    },
+    {
+      label: 'Report',
+      value: 'R'
+    }
+  ]
+  tipe_detail: Object = [
+    {
+      label: 'Ya',
+      value: 'Y'
+    },
+    {
+      label: 'Tidak',
+      value: 'N'
+    }
+  ]
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -91,22 +113,23 @@ export class PerusahaanComponent implements OnInit {
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Perusahaan',
-      id: 'kode-perusahaan',
+      label: 'Kode Menu',
+      id: 'kode-menu',
       type: 'input',
-      valueOf: 'kode_perusahaan',
+      valueOf: 'kode_menu',
       required: true,
       readOnly: false,
       update: {
         disabled: true
-      }
+      },
+      inputPipe: (type, v) => this.inputPipe(type, v)
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Perusahaan',
-      id: 'nama-perusahaan',
+      label: 'Nama Menu',
+      id: 'nama-menu',
       type: 'input',
-      valueOf: 'nama_perusahaan',
+      valueOf: 'nama_menu',
       required: true,
       readOnly: false,
       update: {
@@ -115,11 +138,99 @@ export class PerusahaanComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Kode Schema',
-      id: 'kode-schema',
+      label: 'Tipe Menu',
+      id: 'tipe-menu',
+      type: 'combobox',
+      options: this.tipe_menu,
+      change: (e) => this.selection(e, 'type_menu'),
+      valueOf: 'type_menu',
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Detail',
+      id: 'detail',
+      type: 'combobox',
+      options: this.tipe_detail,
+      change: (e) => this.selection(e, 'detail'),
+      valueOf: 'detail',
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Induk Menu',
+      id: 'kode-induk-menu',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'induk_menu',
+      valueOf: 'induk_menu',
+      required: false,
+      readOnly: false,
+      hiddenOn: {
+        valueOf: 'detail',
+        matchValue: 'N'
+      },
+      inputInfo: {
+        id: 'nama-induk-menu',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_induk_menu'
+      },
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Urutan',
+      id: 'urutan',
       type: 'input',
-      valueOf: 'kode_schema',
+      valueOf: 'urutan',
       required: true,
+      readOnly: false,
+      numberOnly: true,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Link Menu',
+      id: 'link-menu',
+      type: 'input',
+      valueOf: 'link_menu',
+      required: true,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Image / Icon Menu',
+      id: 'image-menu',
+      type: 'input',
+      valueOf: 'img_menu',
+      required: false,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Keterangan',
+      id: 'keterangan',
+      type: 'input',
+      valueOf: 'keterangan',
+      required: false,
       readOnly: false,
       update: {
         disabled: false
@@ -318,4 +429,5 @@ export class PerusahaanComponent implements OnInit {
       this.forminput === undefined ? null : this.forminput.checkChanges()
     }, 1)
   }
+
 }

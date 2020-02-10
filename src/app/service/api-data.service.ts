@@ -6,6 +6,8 @@ import { LookupRequestService } from './master/lookup/lookup-request.service';
 
 //Master Services
 import { PerusahaanRequestService } from './master/perusahaan/perusahaan-request.service';
+import { MenuRequestService } from './master/menu/menu-request.service';
+import { UserRequestService } from './master/user/user-request.service';
 
 //Setting Services
 
@@ -27,6 +29,8 @@ export class ApiDataService {
 
     //Master Services
     private perusahaanReq: PerusahaanRequestService,
+    private menuReq: MenuRequestService,
+    private userReq: UserRequestService
 
     //Setting Services
 
@@ -40,6 +44,8 @@ export class ApiDataService {
 
     //Master Services
     this.perusahaanReq.url = this.baseURL
+    this.menuReq.url = this.baseURL
+    this.userReq.url = this.baseURL
 
     //Setting Services
   }
@@ -56,6 +62,10 @@ export class ApiDataService {
     //Master Services
     else if(type === 'perusahaan') {
       return this.perusahaanReq.validate(data, this.httpBody, this.options, formData)
+    }else if(type === 'menu') {
+      return this.menuReq.validate(data, this.httpBody, this.options, formData)
+    }else if(type === 'user') {
+      return this.userReq.validate(data, this.httpBody, this.options, formData)
     }
     
     //Setting Services

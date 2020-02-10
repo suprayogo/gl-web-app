@@ -83,11 +83,19 @@ export class MenuConfig {
 				{section: 'Management'},
 				{
 					title: 'Daftar Perusahaan',
-					root: true,
-					bullet: 'dot',
 					icon: 'flaticon2-group',
 					page: '/master/perusahaan'
 				},
+				{
+					title: 'Daftar Menu',
+					icon: 'flaticon-grid-menu-v2',
+					page: '/master/menu'
+				},
+				{
+					title: 'User Otoritas',
+					icon: 'flaticon2-user-1',
+					page: '/master/user-otoritas'
+				}
 				/* {section: 'Components'},
 				{
 					title: 'Google Material',

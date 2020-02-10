@@ -16,8 +16,6 @@ import { SharedModule } from '../shared.module';
 import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsService} from '../../../core/_base/crud';
 // Shared
 import { ActionNotificationComponent } from '../../partials/content/crud';
-// Components
-import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 
 // Material
 import {
@@ -49,18 +47,24 @@ import {
 	UserEffects
 } from '../../../core/auth';
 
+// Components
+import { PerusahaanComponent } from './perusahaan/perusahaan.component';
+import { MenuComponent } from './menu/menu.component';
+import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
+
 const routes: Routes = [
 	{
 		path: 'perusahaan',
-		component: PerusahaanComponent,
-		/* children: [
-			{
-				path: '',
-				redirectTo: '',
-				pathMatch: 'full'
-			}
-		] */
+		component: PerusahaanComponent
 	},
+	{
+		path: 'menu',
+		component: MenuComponent
+	},
+	{
+		path: 'user-otoritas',
+		component: UserOtoritasComponent
+	}
 ];
 
 @NgModule({
@@ -121,7 +125,9 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		PerusahaanComponent
+		PerusahaanComponent,
+		MenuComponent,
+		UserOtoritasComponent
 	]
 })
 export class MasterModule {}
