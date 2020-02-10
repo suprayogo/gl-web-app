@@ -10,7 +10,7 @@
                     <kt-loading></kt-loading>
                 </div>
 
-                <div class="kt-section">
+                <div class="kt-section" *ngIf="!loading">
                     <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                         [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
                         [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
@@ -20,7 +20,26 @@
                         (deleteAction)="deleteDetailData($event)"></kt-forminput>
                 </div>
 
-                <hr>
+                <hr style="width: 100%;">
+
+                <div class="kt-section" *ngIf="loadingMenu && !loading">
+                    <kt-loading [loadingText]="loadingMenuText && !loading"></kt-loading>
+                </div>
+
+                <div class="kt-section" *ngIf="!loadingMenu" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
+                    <kt-treeview
+                        [title]="titleComponent" 
+                        [idata]="browseData" 
+                        [indicator]="indicator" 
+                        [indicatorValue]="indicatorValue"
+                        [subIndicator]="subIndicator"
+                        [rowOf]="rowOf"
+                        [header]="headerView"
+                        [sortBy]="sortBy"
+                        (selectRowEvent)="browseSelectRow($event)"
+                    ></kt-treeview>
+                </div>
+
             </kt-portlet-body>
 
         </kt-portlet>

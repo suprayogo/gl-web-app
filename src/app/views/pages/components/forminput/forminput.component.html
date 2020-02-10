@@ -7,7 +7,7 @@
     <div class="{{ x.formWidth }}">
       <!-- FOR COMBOBOX -->
       <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="cFormValue[x.valueOf]"
-        (change)="x.change($event)" [disabled]="onUpdate && x.update.disabled">
+        (change)="selection($event, x.valueOf)" [disabled]="onUpdate && x.update.disabled">
         <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
       </select>
 
@@ -29,8 +29,8 @@
             [disabled]="onUpdate && x.update.disabled"><i *ngIf="x.btnIcon" style="color: white" class="flaticon"
               [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>
-        <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo"
-          type="text" name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly"
+        <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo" type="text"
+          name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly"
           [required]="x.inputInfo.required" [(ngModel)]="cFormValue[x.inputInfo.valueOf]">
       </div>
 
@@ -40,7 +40,8 @@
           [(ngModel)]="cFormValue[x.valueOf]"
           [readonly]="(x.id === 'user-id' || x.id === 'user-name') && cFormValue.user_type === 'I' ? true : x.readOnly"
           [required]="x.required"
-          [disabled]="(onUpdate && x.update.disabled) || (x.id === 'user-name' && cFormValue.user_type === 'I')">
+          [disabled]="(onUpdate && x.update.disabled) || x.disabled"
+          (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null">
         <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
           [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
           [disabled]="onUpdate && x.update.disabled">

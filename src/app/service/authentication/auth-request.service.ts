@@ -8,7 +8,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AuthRequestService {
 
-  baseURL: string = 'https://1eniubnlpk.execute-api.us-east-1.amazonaws.com/dev/gl'
+  // baseURL: string = 'https://1eniubnlpk.execute-api.us-east-1.amazonaws.com/dev/gl' //aris
+  baseURL: string = 'https://2nmd2qbgn4.execute-api.us-east-1.amazonaws.com/dev/dc' //billy
 
   httpBody = {
     respondCode: '',
@@ -34,31 +35,17 @@ export class AuthRequestService {
 
   validate(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      // this.httpBody.respondCode = "VALIDATE1"
-      // this.httpBody.authParam = JSON.stringify(this.authParam.getAuth())
-      // this.http.post(this.baseURL, this.httpBody, { headers: this.httpHeader.getHeader() }).subscribe( //   <-- +'1'
-      //   data => {
-      //     if (data['STATUS'] === 'N') { //   <-- Y'
-
-      //       /* this.httpBody.respondCode = "VALIDATE"
-      //       this.httpBody.authParam = JSON.stringify(this.authParam.getAuth())
-      //       this.httpBody.requestParam = JSON.stringify({ kode_aplikasi: '001' })
-      //       this.http.post(this.baseURL, this.httpBody, { headers: this.httpHeader.getHeader() }).subscribe(
-      //         vdata => {
-      //           if (vdata['STATUS'] === 'Y') {
-      //             resolve(true)
-      //           } else {
-      //             resolve(false)
-      //           }
-      //         }
-      //       ) */
-      //       resolve(true)
-      //     } else {
-      //       resolve(false)
-      //     }
-      //   }
-      // )
-      resolve(true)
+      this.httpBody.respondCode = "VALIDATE"
+      this.httpBody.authParam = JSON.stringify(this.authParam.getAuth())
+      this.http.post(this.baseURL, this.httpBody, { headers: this.httpHeader.getHeader() }).subscribe( //   <-- +'1'
+        data => {
+          if (data['STATUS'] === 'Y') { //   <-- Y'
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        }
+      )
     })
 
   }

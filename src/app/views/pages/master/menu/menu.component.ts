@@ -6,11 +6,10 @@ import { NgForm } from '@angular/forms';
 import { RequestDataService } from '../../../../service/request-data.service';
 
 // Components
-import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
-import { DetailinputAgGridComponent } from '../../components/detailinput-ag-grid/detailinput-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 
 const content = {
   beforeCodeTitle: 'Daftar Menu'
@@ -51,62 +50,101 @@ export class MenuComponent implements OnInit {
 
   // Variables
   loading: boolean = true;
+  loadingMenu: boolean = true;
+  loadingMenuText: string = "Loading menu.."
   content: any;
   detailLoad: boolean = false;
   enableDetail: boolean = false;
   editable: boolean = false;
   selectedTab: number = 0;
-  tableLoad: boolean = false;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
-  browseNeedUpdate: boolean = true;
   search: string;
 
-  // TAB MENU BROWSE 
-  displayedColumnsTable = [
+  //Tree view Variables
+  titleComponent = "Daftar Menu"
+  indicator = "induk_menu"
+  indicatorValue = ""
+  subIndicator = "kode_menu"
+  rowOf = 0
+  headerView = [
     {
-      label: 'Kode Perusahaan',
-      value: 'kode_perusahaan'
+      label: 'Nama Menu',
+      value: 'nama_menu'
+    }, 
+    {
+      label: 'Kode Menu',
+      value: 'kode_menu'
     },
     {
-      label: 'Nama Perusahaan',
-      value: 'nama_perusahaan'
+      label: 'Tipe Menu',
+      value: 'type_menu'
     },
     {
-      label: 'Diinput oleh',
-      value: 'input_by',
+      label: 'Detail',
+      value: 'detail'
     },
     {
-      label: 'Diinput tanggal',
-      value: 'input_dt'
+      label: 'Urutan',
+      value: 'urutan'
     },
     {
-      label: 'Diupdate oleh',
-      value: 'update_by'
+      label: 'Link Menu',
+      value: 'link_menu'
     },
     {
-      label: 'Diupdate tanggal',
-      value: 'update_dt'
+      label: 'Image / Icon Menu',
+      value: 'img_menu'
+    },
+    {
+      label: 'Induk Menu',
+      value: 'induk_menu'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
     }
-  ];
-  browseInterface = {
-    kode_perusahaan: 'string',
-    nama_perusahaan: 'string',
+  ]
+  sortBy = "urutan"
 
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    update_dt: 'string'
-  }
+  // TAB MENU BROWSE 
   browseData = []
   browseDataRules = []
+  inputMenuDisplayColumns = [
+    {
+      label: 'Kode Menu',
+      value: 'kode_menu'
+    },
+    {
+      label: 'Nama Menu',
+      value: 'nama_menu'
+    },
+    {
+      label: 'Induk Menu',
+      value: 'induk_menu'
+    }
+  ]
+  inputMenuInterface = {
+    kode_menu: 'string',
+    nama_menu: 'string',
+    induk_menu: 'string'
+  }
+  inputMenuData = []
+  inputMenuDataRules = []
+  inputAplikasiData = []
 
   // Input Name
   formValue = {
-    kode_perusahaan: '',
-    nama_perusahaan: '',
-    kode_schema: ''
+    kode_menu: '',
+    nama_menu: '',
+    detail: 'Y',
+    induk_menu: '',
+    nama_induk_menu: '',
+    type_menu: 'F',
+    urutan: '',
+    link_menu: '',
+    img_menu: '',
+    keterangan: ''
   }
 
   // Layout Form
@@ -122,7 +160,7 @@ export class MenuComponent implements OnInit {
       update: {
         disabled: true
       },
-      inputPipe: (type, v) => this.inputPipe(type, v)
+      inputPipe: true
     },
     {
       formWidth: 'col-5',
@@ -154,7 +192,6 @@ export class MenuComponent implements OnInit {
       id: 'detail',
       type: 'combobox',
       options: this.tipe_detail,
-      change: (e) => this.selection(e, 'detail'),
       valueOf: 'detail',
       update: {
         disabled: false
@@ -258,24 +295,18 @@ export class MenuComponent implements OnInit {
 
   }
 
-  //Tab change event
-  onTabSelect(event: MatTabChangeEvent) {
-    this.selectedTab = event.index
-    if (this.selectedTab == 1 && this.browseNeedUpdate) {
-      this.refreshBrowse('')
-    }
-
-    if (this.selectedTab == 1) this.datatable == undefined ? null : this.datatable.checkColumnFit()
-  }
-
   //Browse binding event
   browseSelectRow(data) {
-    let x = this.formValue
-    x.kode_perusahaan = data['kode_perusahaan']
-    x.nama_perusahaan = data['nama_perusahaan']
-    this.formValue = x
+    this.formValue = data
+    for(var i = 0; i< this.inputMenuData.length; i++){
+      if(this.inputMenuData[i]['kode_menu'] === this.formValue['induk_menu']){
+        this.formValue['nama_induk_menu'] = this.inputMenuData[i]['nama_menu']
+        break
+      }
+    }
     this.onUpdate = true;
-    this.getBackToInput();
+    window.scrollTo(0, 0)
+    this.formInputCheckChanges()
   }
 
   getBackToInput() {
@@ -286,17 +317,18 @@ export class MenuComponent implements OnInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
-
+    this.loading = true
+    this.ref.markForCheck()
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        this.request.apiData('perusahaan', this.onUpdate ? 'u-perusahaan' : 'i-perusahaan', this.formValue).subscribe(
+        this.request.apiData('menu', this.onUpdate ? 'u-menu' : 'i-menu', this.formValue).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
+              this.loading = false
               this.resetForm()
-              this.browseNeedUpdate = true
               this.ref.markForCheck()
               this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
             } else {
@@ -320,9 +352,16 @@ export class MenuComponent implements OnInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      kode_perusahaan: '',
-      nama_perusahaan: '',
-      kode_schema: ''
+      kode_menu: '',
+      nama_menu: '',
+      detail: 'Y',
+      induk_menu: '',
+      nama_induk_menu: '',
+      type_menu: 'F',
+      urutan: '',
+      link_menu: '',
+      img_menu: '',
+      keterangan: ''
     }
     this.formInputCheckChanges()
   }
@@ -346,7 +385,6 @@ export class MenuComponent implements OnInit {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
             this.ref.markForCheck()
-            this.browseNeedUpdate = true
             this.refreshBrowse('BERHASIL DIHAPUS')
           } else {
             this.loading = false;
@@ -365,7 +403,40 @@ export class MenuComponent implements OnInit {
 
   // Dialog
   openDialog(type) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        type: type,
+        tableInterface:
+          type === "induk_menu" ? this.inputMenuInterface :
+            {},
+        displayedColumns:
+          type === "induk_menu" ? this.inputMenuDisplayColumns :
+            [],
+        tableData:
+          type === "induk_menu" ? this.inputMenuData.filter(x => x['detail'] === 'N') :
+            [],
+        tableRules:
+          type === "induk_menu" ? this.inputMenuDataRules :
+            [],
+        formValue: this.formValue
+      }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "induk_menu") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('induk_menu', result.kode_menu)
+            this.forminput.updateFormValue('nama_induk_menu', result.nama_menu)
+          } 
+        }
+        this.ref.markForCheck();
+      }
+    });
   }
 
   inputPipe(valueOf, data) {
@@ -379,30 +450,34 @@ export class MenuComponent implements OnInit {
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     this.loading = false
+    this.sendRequestMenu()
   }
 
   refreshBrowse(message) {
-    // this.tableLoad = true
-    // this.request.apiData('aplikasi', 'g-aplikasi').subscribe(
-    //   data => {
-    //     if (data['STATUS'] === 'Y') {
-    //       if (message !== '') {
-    //         this.browseData = data['RESULT']
-    //         this.loading = false
-    //         this.tableLoad = false
-    //         this.ref.markForCheck()
-    //         this.openSnackBar(message, 'success')
-    //         this.onUpdate = false
-    //       } else {
-    //         this.browseData = data['RESULT']
-    //         this.loading = false
-    //         this.tableLoad = false
-    //         this.browseNeedUpdate = false
-    //         this.ref.markForCheck()
-    //       }
-    //     }
-    //   }
-    // )
+    this.loading = false
+    this.ref.markForCheck()
+    this.onUpdate = false
+    this.sendRequestMenu()
+    this.openSnackBar(message)
+  }
+
+  sendRequestMenu() {
+    this.loadingMenu = true
+    this.ref.markForCheck()
+    this.request.apiData('menu', 'g-menu').subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.browseData = data['RESULT']
+          this.inputMenuData = data['RESULT']
+          this.loadingMenu = false
+          this.ref.markForCheck()
+        }else{
+          this.loadingMenu = false
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal mendapatkan menu.')
+        }
+      }
+    )
   }
 
   openSnackBar(message, type?: any) {

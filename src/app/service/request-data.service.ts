@@ -23,7 +23,8 @@ export class RequestDataService {
     headers: this.httpHeader.httpHeader
   }
 
-  baseURL = "https://1eniubnlpk.execute-api.us-east-1.amazonaws.com/dev/gl"
+  // baseURL = "https://1eniubnlpk.execute-api.us-east-1.amazonaws.com/dev/gl" //dev aris
+  baseURL = "https://5kon67neqa.execute-api.us-east-1.amazonaws.com/dev/gl" //dev billy
 
   constructor(
     //Variables
@@ -34,7 +35,7 @@ export class RequestDataService {
     private authService: AuthRequestService
   ) {
     this.apiDataService.baseURL = this.baseURL
-    this.authService.baseURL = this.baseURL
+    // this.authService.baseURL = this.baseURL
   }
 
   apiData(type, data, formData?: Object) {

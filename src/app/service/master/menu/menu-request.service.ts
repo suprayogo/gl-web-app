@@ -11,18 +11,18 @@ export class MenuRequestService {
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object) {
-    if (data === 'g-perusahaan') {
-      httpBody.respondCode = 'GET-DATA-PERUSAHAAN'
+    if (data === 'g-menu') {
+      httpBody.respondCode = 'GET-DATA-MENU'
       return this.get(httpBody, options)
-    } else if (data === 'i-perusahaan') {
-      httpBody.respondCode = 'SET-DATA-PERUSAHAAN'
+    } else if (data === 'i-menu') {
+      httpBody.respondCode = 'SET-DATA-MENU'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'u-perusahaan') {
+    } else if (data === 'u-menu') {
       httpBody.respondCode = 'UPT-DATA-PERUSAHAAN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'd-perusahaan') {
+    } else if (data === 'd-menu') {
       httpBody.respondCode = 'DEL-DATA-PERUSAHAAN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
