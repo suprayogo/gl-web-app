@@ -58,7 +58,7 @@
   <div *ngIf="!detailLoad && enableDetail">
     <kt-detailinput-ag-grid [buttonLayout]="buttonLayout" [tableColumn]="tableColumn" [tableData]="tableData"
       [tableRules]="tableRules" [editable]="editable" (editAction)="editDetailData($event)"
-      (deleteAction)="deleteDetailData($event)"></kt-detailinput-ag-grid>
+      (deleteAction)="delDetailData($event)"></kt-detailinput-ag-grid>
   </div>
 
   <div class="kt-form__actions">

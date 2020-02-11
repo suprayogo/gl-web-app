@@ -12,6 +12,7 @@ import { filter } from 'rxjs/operators';
 import { NavigationEnd, Router } from '@angular/router';
 import * as objectPath from 'object-path';
 // Layout
+import { MenuConfig } from '../../../core/_config/menu.config';
 import { LayoutConfigService, MenuAsideService, MenuOptions, OffcanvasOptions } from '../../../core/_base/layout';
 import { HtmlClassService } from '../html-class.service';
 
@@ -28,6 +29,7 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 	currentRouteUrl: string = '';
 	insideTm: any;
 	outsideTm: any;
+	loadingMenu: boolean = true;
 
 	menuCanvasOptions: OffcanvasOptions = {
 		baseClass: 'kt-aside',
@@ -99,6 +101,37 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 			// tslint:disable-next-line:max-line-length
 			this.render.setAttribute(this.asideMenu.nativeElement, 'data-ktmenu-dropdown-timeout', objectPath.get(config, 'aside.menu.submenu.dropdown.hover-timeout'));
 		}
+
+		let x: any = [
+			{
+				title: 'Home',
+				root: true,
+				icon: 'flaticon2-architecture-and-city',
+				page: '/home',
+				meta_data: 'home'
+			},
+			{section: 'Management'},
+			{
+				title: 'Daftar Perusahaan',
+				root: true,
+				icon: 'flaticon2-box',
+				page: '/master/perusahaan',
+				meta_data: 'perusahaan'
+			},
+			{
+				title: 'Daftar Divisi',
+				root: true,
+				icon: 'flaticon2-group',
+				page: '/master/divisi',
+				meta_data: 'divisi'
+			}
+		]
+		let menu  = new MenuConfig()
+		let side = menu.defaults
+		side.aside.items = x
+		this.menuAsideService.setMenu(side)
+		this.loadingMenu = false
+		this.cdr.markForCheck()
 	}
 
 	/**

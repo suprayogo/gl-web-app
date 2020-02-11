@@ -51,6 +51,8 @@ import {
 import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 import { MenuComponent } from './menu/menu.component';
 import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
+import { DivisiComponent } from './divisi/divisi.component';
+import { DepartemenComponent } from './departemen/departemen.component';
 
 const routes: Routes = [
 	{
@@ -64,7 +66,11 @@ const routes: Routes = [
 	{
 		path: 'user-otoritas',
 		component: UserOtoritasComponent
-	}
+	},
+	{
+		path: 'divisi',
+		component: DivisiComponent,
+	},
 ];
 
 @NgModule({
@@ -127,7 +133,9 @@ const routes: Routes = [
 	declarations: [
 		PerusahaanComponent,
 		MenuComponent,
-		UserOtoritasComponent
+		UserOtoritasComponent,
+		DivisiComponent,
+		DepartemenComponent
 	]
 })
 export class MasterModule {}

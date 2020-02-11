@@ -74,7 +74,7 @@ export class MenuConfig {
 		aside: {
 			self: {},
 			items: [
-				{
+				/*  {
 					title: 'Home',
 					root: true,
 					icon: 'flaticon2-architecture-and-city',

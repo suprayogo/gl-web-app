@@ -363,6 +363,7 @@ export class MenuComponent implements OnInit {
       img_menu: '',
       keterangan: ''
     }
+    //this.detailData = []
     this.formInputCheckChanges()
   }
 
@@ -502,6 +503,7 @@ export class MenuComponent implements OnInit {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
+      // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
 
