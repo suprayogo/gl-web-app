@@ -82,20 +82,11 @@ export class ForminputComponent implements OnInit {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
   }
 
-  //Selection event (Select Box)
-  selection(data, type) {
-    this.cFormValue[type] = data.target.value
-  }
-
-  inputPipe(valueOf, data) {
-    this.cFormValue[valueOf] = data.toUpperCase()
-  }
-
   updateFormValue(valueOf, data) {
     this.cFormValue[valueOf] = data
     this.ref.markForCheck()
   }
-  
+
   checkChangesDetailInput() {
     this.detailinput === undefined ? null : this.detailinput.checkChanges()
   }
