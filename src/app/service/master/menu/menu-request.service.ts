@@ -19,11 +19,11 @@ export class MenuRequestService {
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'u-menu') {
-      httpBody.respondCode = 'UPT-DATA-PERUSAHAAN'
+      httpBody.respondCode = 'UPT-DATA-MENU'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'd-menu') {
-      httpBody.respondCode = 'DEL-DATA-PERUSAHAAN'
+      httpBody.respondCode = 'DEL-DATA-MENU'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

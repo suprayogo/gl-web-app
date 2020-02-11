@@ -24,7 +24,7 @@ export class RequestDataService {
   }
 
   // baseURL = "https://1eniubnlpk.execute-api.us-east-1.amazonaws.com/dev/gl" //dev aris
-  baseURL = "https://5kon67neqa.execute-api.us-east-1.amazonaws.com/dev/gl" //dev billy
+  baseURL = "https://jv2hyhuxb7.execute-api.ap-southeast-1.amazonaws.com/dev/gl" //dev billy
 
   constructor(
     //Variables

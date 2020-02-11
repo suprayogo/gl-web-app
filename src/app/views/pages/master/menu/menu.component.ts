@@ -71,7 +71,7 @@ export class MenuComponent implements OnInit {
     {
       label: 'Nama Menu',
       value: 'nama_menu'
-    }, 
+    },
     {
       label: 'Kode Menu',
       value: 'kode_menu'
@@ -298,8 +298,8 @@ export class MenuComponent implements OnInit {
   //Browse binding event
   browseSelectRow(data) {
     this.formValue = data
-    for(var i = 0; i< this.inputMenuData.length; i++){
-      if(this.inputMenuData[i]['kode_menu'] === this.formValue['induk_menu']){
+    for (var i = 0; i < this.inputMenuData.length; i++) {
+      if (this.inputMenuData[i]['kode_menu'] === this.formValue['induk_menu']) {
         this.formValue['nama_induk_menu'] = this.inputMenuData[i]['nama_menu']
         break
       }
@@ -380,7 +380,7 @@ export class MenuComponent implements OnInit {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('perusahaan', 'd-perusahaan', this.formValue).subscribe(
+      this.request.apiData('menu', 'd-menu', { kode_menu: this.formValue.kode_menu }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
@@ -432,7 +432,7 @@ export class MenuComponent implements OnInit {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('induk_menu', result.kode_menu)
             this.forminput.updateFormValue('nama_induk_menu', result.nama_menu)
-          } 
+          }
         }
         this.ref.markForCheck();
       }
@@ -444,7 +444,7 @@ export class MenuComponent implements OnInit {
   }
 
   sendUserRequest() {
-    
+
   }
 
   // Request Data API (to : L.O.V or Table)
@@ -471,7 +471,7 @@ export class MenuComponent implements OnInit {
           this.inputMenuData = data['RESULT']
           this.loadingMenu = false
           this.ref.markForCheck()
-        }else{
+        } else {
           this.loadingMenu = false
           this.ref.markForCheck()
           this.openSnackBar('Gagal mendapatkan menu.')

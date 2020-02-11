@@ -23,10 +23,10 @@
                 <hr style="width: 100%;">
 
                 <div class="kt-section" *ngIf="loadingMenu && !loading">
-                    <kt-loading [loadingText]="loadingMenuText && !loading"></kt-loading>
+                    <kt-loading [loadingText]="loadingMenuText"></kt-loading>
                 </div>
 
-                <div class="kt-section" *ngIf="!loadingMenu" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
+                <div class="kt-section" *ngIf="!loadingMenu && !loading" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
                     <kt-treeview
                         [title]="titleComponent" 
                         [idata]="browseData" 
