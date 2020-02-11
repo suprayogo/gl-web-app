@@ -19,6 +19,7 @@ import { ActionNotificationComponent } from '../../partials/content/crud';
 // Components
 import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 import { DivisiComponent } from './divisi/divisi.component';
+import { DepartemenComponent } from './departemen/departemen.component';
 
 // Material
 import {
@@ -127,7 +128,8 @@ const routes: Routes = [
 	],
 	declarations: [
 		PerusahaanComponent,
-		DivisiComponent
+		DivisiComponent,
+		DepartemenComponent
 	]
 })
 export class MasterModule {}

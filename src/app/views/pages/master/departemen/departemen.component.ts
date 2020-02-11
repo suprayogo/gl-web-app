@@ -14,15 +14,15 @@ import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/dat
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Divisi'
+  beforeCodeTitle: 'Daftar Departemen'
 }
 
 @Component({
-  selector: 'kt-divisi',
-  templateUrl: './divisi.component.html',
-  styleUrls: ['./divisi.component.scss', '../master.style.scss']
+  selector: 'kt-departemen',
+  templateUrl: './departemen.component.html',
+  styleUrls: ['./departemen.component.scss', '../master.style.scss']
 })
-export class DivisiComponent implements OnInit {
+export class DepartemenComponent implements OnInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -49,20 +49,20 @@ export class DivisiComponent implements OnInit {
 
   // Input Name
   formValue = {
-    kode_divisi: '',
-    nama_divisi: '',
-    kode_perusahaan: '',
-    nama_perusahaan:'',
+    kode_departemen: '',
+    nama_departemen: '',
+    induk_departemen: '',
+    nama_induk_departemen:'',
   }
 
   // Layout Form
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Divisi',
-      id: 'kode-divisi',
+      label: 'Kode Departemen',
+      id: 'kode-departemen',
       type: 'input',
-      valueOf: 'kode_divisi',
+      valueOf: 'kode_departemen',
       required: true,
       readOnly: false,
       update: {
@@ -72,10 +72,10 @@ export class DivisiComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Divisi',
-      id: 'nama-divisi',
+      label: 'Nama Departemen',
+      id: 'nama-departemen',
       type: 'input',
-      valueOf: 'nama_divisi',
+      valueOf: 'nama_departemen',
       required: true,
       readOnly: false,
       update: {
@@ -84,23 +84,23 @@ export class DivisiComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Perusahaan',
-      id: 'kode-perusahaan',
+      label: 'Induk Departemen',
+      id: 'kode-induk-departemen',
       type: 'inputgroup',
       click: (type) => this.openDialog(type),
       btnLabel: '',
       btnIcon: 'flaticon-search',
-      browseType: 'kode_perusahaan',
-      valueOf: 'kode_perusahaan',
+      browseType: 'induk_departemen',
+      valueOf: 'induk_departemen',
       required: true,
       readOnly: false,
       hiddenOn: false,
       inputInfo: {
-        id: 'nama_perusahaan',
+        id: 'nama_induk_departemen',
         disabled: false,
         readOnly: true,
         required: true,
-        valueOf: 'nama_perusahaan'
+        valueOf: 'nama_induk_departemen'
       },
       update: {
         disabled: false
@@ -108,22 +108,54 @@ export class DivisiComponent implements OnInit {
     },
   ]
 
-  inputPerusahaanDisplayColumns = [
+  inputDepartemenDisplayColumns = [
     {
-      label: 'Kode Perusahaan',
-      value: 'kode_perusahaan'
+      label: 'Kode Departemen',
+      value: 'kode_departemen'
     },
     {
-      label: 'Nama Perusahaan',
-      value: 'nama_perusahaan'
-    }
+      label: 'Nama Departemen',
+      value: 'nama_departemen'
+    },
+    {
+      label: 'Induk Departemen',
+      value: 'induk_departemen'
+    },
+    {
+      label: 'Nama Induk Departemen',
+      value: 'nama_induk_departemen'
+    },
   ];
-  inputPerusahaanInterface = {
-    kode_perusahaan: 'string',
-    nama_perusahaan: 'string'
+  inputDepartemenInterface = {
+    kode_departemen: 'string',
+    nama_departemen: 'string',
+    induk_departemen: 'string',
+    nama_induk_departemen: 'string',
   }
-  inputPerusahaanData = []
-  inputPerusahaanDataRules = []
+  inputDepartemenData = []
+  inputDepartemenDataRules = []
+
+  //Tree view Variables
+  titleComponent = "Daftar Departemen"
+  indicator = "induk_departemen"
+  indicatorValue = ""
+  subIndicator = "kode_departemen"
+  rowOf = 0
+  headerView = [
+    {
+      label: 'Nama Departemen',
+      value: 'nama_departemen'
+    }, 
+    {
+      label: 'Kode Departemen',
+      value: 'kode_departemen'
+    },
+    {
+      label: 'Induk Departemen',
+      value: 'kode_departemen'
+    }
+  ]
+  sortBy = "nama_departemen"
 
   /* buttonLayout = [
     {
@@ -166,48 +198,17 @@ export class DivisiComponent implements OnInit {
   detailRules = [] */
 
   // TAB MENU BROWSE 
-  displayedColumnsTable = [
+  /* displayedColumnsTable = [
     {
-      label: 'Kode Divisi',
-      value: 'kode_divisi'
+      label: '',
+      value: ''
     },
-    {
-      label: 'Nama Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Kode Perusahaan',
-      value: 'kode_perusahaan'
-    },
-    {
-      label: 'Diinput oleh',
-      value: 'input_by',
-    },
-    {
-      label: 'Diinput tanggal',
-      value: 'input_dt'
-    },
-    {
-      label: 'Diupdate oleh',
-      value: 'update_by'
-    },
-    {
-      label: 'Diupdate tanggal',
-      value: 'update_dt'
-    }
   ];
   browseInterface = {
-    kode_divisi: 'string',
-    nama_divisi: 'string',
-    kode_perusahaan: 'string',
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    update_dt: 'string'
-  }
+    Contoh: 'string',
+  } */
   browseData = []
-  browseDataRules = []
+  browseDataRules = [] 
 
   constructor(
     public dialog: MatDialog,
@@ -226,7 +227,8 @@ export class DivisiComponent implements OnInit {
     this.request.apiData('perusahaan', 'g-perusahaan').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          this.inputPerusahaanData = data['RESULT']
+          this.browseData = data['RESULT']
+          this.inputDepartemenData = data['RESULT']
           this.loading = false
           this.ref.markForCheck()
         }
@@ -244,16 +246,16 @@ export class DivisiComponent implements OnInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_perusahaan" ? this.inputPerusahaanInterface :
+          type === "induk_departemen" ? this.inputDepartemenInterface :
             {},
         displayedColumns:
-          type === "kode_perusahaan" ? this.inputPerusahaanDisplayColumns :
+          type === "induk_departemen" ? this.inputDepartemenDisplayColumns :
             [],
         tableData:
-          type === "kode_perusahaan" ? this.inputPerusahaanData :
+          type === "induk_departemen" ? this.inputDepartemenData :
             [],
         tableRules:
-          type === "kode_perusahaan" ? this.inputPerusahaanDataRules :
+          type === "induk_departemen" ? this.inputDepartemenDataRules :
             [],
         formValue: this.formValue,
         // selectable: type === 'kode_aplikasi' ? true : false,
@@ -265,9 +267,9 @@ export class DivisiComponent implements OnInit {
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_perusahaan") {
-          this.formValue.kode_perusahaan = result.kode_perusahaan
-          this.formValue.nama_perusahaan = result.nama_perusahaan
+        if (type === "induk_departemen") {
+          this.formValue.induk_departemen = result.kode_departemen
+          this.formValue.nama_induk_departemen = result.nama_departemen
           this.ref.markForCheck();
         }
         this.dialogRef = undefined
@@ -277,35 +279,16 @@ export class DivisiComponent implements OnInit {
     });
   }
 
-  //Tab change event
-  onTabSelect(event: MatTabChangeEvent) {
-    this.selectedTab = event.index
-    if (this.selectedTab == 1 && this.browseNeedUpdate) {
-      this.refreshBrowse('')
-    }
-
-    if (this.selectedTab == 1) this.datatable == undefined ? null : this.datatable.checkColumnFit()
-  }
-
   refreshBrowse(message) {
-    this.tableLoad = true
-    this.request.apiData('divisi', 'g-divisi').subscribe(
+    this.request.apiData('departemen', 'g-departemen').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          if (message !== '') {
-            this.browseData = data['RESULT']
-            this.loading = false
-            this.tableLoad = false
-            this.ref.markForCheck()
-            this.openSnackBar(message, 'success')
-            this.onUpdate = false
-          } else {
-            this.browseData = data['RESULT']
-            this.loading = false
-            this.tableLoad = false
-            this.browseNeedUpdate = false
-            this.ref.markForCheck()
-          }
+          this.browseData = data['RESULT']
+          this.inputDepartemenData = data['RESULT']
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar(message, 'success')
+          this.onUpdate = false
         }
       }
     )
@@ -314,18 +297,12 @@ export class DivisiComponent implements OnInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = this.formValue
-    x.kode_divisi = data['kode_divisi']
-    x.nama_divisi = data['nama_divisi']
-    x.kode_perusahaan = data['kode_perusahaan']
+    x.kode_departemen = data['kode_departemen']
+    x.nama_departemen = data['nama_departemen']
+    x.induk_departemen = data['induk_departemen']
+    x.nama_induk_departemen = data['nama_induk_departemen']
     this.formValue = x
     this.onUpdate = true;
-    this.getBackToInput();
-  }
-
-  getBackToInput() {
-    this.selectedTab = 0;
-    // this.getDetail()
-    this.formInputCheckChanges()
   }
 
   //Form submit
@@ -336,7 +313,7 @@ export class DivisiComponent implements OnInit {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        this.request.apiData('divisi', this.onUpdate ? 'u-divisi' : 'i-divisi', this.formValue).subscribe(
+        this.request.apiData('departemen', this.onUpdate ? 'u-departemen' : 'i-departemen', this.formValue).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               this.resetForm()
@@ -364,10 +341,10 @@ export class DivisiComponent implements OnInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      kode_divisi: '',
-      nama_divisi: '',
-      kode_perusahaan: '',
-      nama_perusahaan:'',
+      kode_departemen: '',
+      nama_departemen: '',
+      induk_departemen: '',
+      nama_induk_departemen:'',
     }
     // this.detailData = []
     this.formInputCheckChanges()
@@ -387,7 +364,7 @@ export class DivisiComponent implements OnInit {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('divisi', 'd-divisi', this.formValue).subscribe(
+      this.request.apiData('departemen', 'd-departemen', this.formValue).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
