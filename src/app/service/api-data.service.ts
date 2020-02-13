@@ -9,6 +9,7 @@ import { PerusahaanRequestService } from './master/perusahaan/perusahaan-request
 import { MenuRequestService } from './master/menu/menu-request.service';
 import { UserRequestService } from './master/user/user-request.service';
 import { DivisiRequestService } from './master/divisi/divisi-request.service';
+import { OtoritasRequestService } from './master/otoritas/otoritas-request.service';
 
 //Setting Services
 
@@ -33,6 +34,7 @@ export class ApiDataService {
     private menuReq: MenuRequestService,
     private userReq: UserRequestService,
     private divisiReq: DivisiRequestService,
+    private otoritasReq: OtoritasRequestService,
 
     //Setting Services
 
@@ -49,6 +51,7 @@ export class ApiDataService {
     this.menuReq.url = this.baseURL
     this.userReq.url = this.baseURL
     this.divisiReq.url = this.baseURL
+    this.otoritasReq.url = this.baseURL
 
     //Setting Services
   }
@@ -71,6 +74,8 @@ export class ApiDataService {
       return this.userReq.validate(data, this.httpBody, this.options, formData)
     }else if(type === 'divisi') {
       return this.divisiReq.validate(data, this.httpBody, this.options, formData)
+    }else if(type === 'otoritas') {
+      return this.otoritasReq.validate(data, this.httpBody, this.options, formData)
     }
     
     //Setting Services

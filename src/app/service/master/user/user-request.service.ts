@@ -11,19 +11,24 @@ export class UserRequestService {
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object) {
-    if (data === 'g-perusahaan') {
-      httpBody.respondCode = 'GET-DATA-PERUSAHAAN'
+    if (data === 'g-user') {
+      httpBody.respondCode = 'GET-DATA-USER'
       return this.get(httpBody, options)
-    } else if (data === 'i-perusahaan') {
-      httpBody.respondCode = 'SET-DATA-PERUSAHAAN'
+    } else if (data === 'g-user-otoritas') {
+      httpBody.respondCode = 'GET-DATA-USER-OTORITAS'
+      return this.get(httpBody, options)
+    } else if (data === 'g-user-belum-ada-otoritas') {
+      httpBody.respondCode = 'GET-DATA-USER-OTORITAS-NOT-SET'
+      return this.get(httpBody, options)
+    } else if (data === 'g-user-perusahaan') {
+      httpBody.respondCode = 'GET-DATA-USER-PERUSAHAAN'
+      return this.get(httpBody, options)
+    } else if (data === 'i-user-otoritas') {
+      httpBody.respondCode = 'SET-DATA-USER-OTORITAS'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'u-perusahaan') {
-      httpBody.respondCode = 'UPT-DATA-PERUSAHAAN'
-      httpBody.requestParam = JSON.stringify(formData)
-      return this.get(httpBody, options)
-    } else if (data === 'd-perusahaan') {
-      httpBody.respondCode = 'DEL-DATA-PERUSAHAAN'
+    } else if (data === 'u-user-otoritas') {
+      httpBody.respondCode = 'UPT-DATA-USER-OTORITAS'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

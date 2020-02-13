@@ -51,7 +51,7 @@ export class HtmlClassService {
 
 		// init header and subheader menu
 		this.initHeader();
-		// this.initSubheader();
+		this.initSubheader();
 
 		// init aside and aside menu
 		this.initAside();
