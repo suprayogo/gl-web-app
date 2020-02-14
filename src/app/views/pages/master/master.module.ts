@@ -54,7 +54,7 @@ import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
 import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 import { DivisiComponent } from './divisi/divisi.component';
 import { DepartemenComponent } from './departemen/departemen.component';
-
+import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
 
 const routes: Routes = [
 	{
@@ -81,7 +81,10 @@ const routes: Routes = [
 		path: 'departemen',
 		component: DepartemenComponent,
 	},
-	
+	{
+		path: 'chart-of-account',
+		component: ChartOfAccountComponent,
+	},
 ];
 
 @NgModule({

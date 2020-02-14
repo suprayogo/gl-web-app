@@ -17,6 +17,7 @@ export class DialogComponent implements OnInit {
   selected: Object[];
   selectIndicator: any;
   loading: any = false;
+  title: any;
 
   constructor(
     public dialogRef: MatDialogRef<DialogComponent>,
@@ -32,6 +33,7 @@ export class DialogComponent implements OnInit {
     this.selected = this.parameter.selected
     this.selectIndicator = this.parameter.selectIndicator
     this.loading = this.parameter.loadingData
+    this.title = this.parameter.title
   }
 
   dialogRowSelect(data){

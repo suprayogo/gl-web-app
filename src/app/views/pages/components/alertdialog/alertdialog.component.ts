@@ -28,6 +28,9 @@ export class AlertdialogComponent implements OnInit {
 
   closeDialog(force?: boolean){
     this.dialogRef.close()
+    if(this.parameter.onCloseFunc !== undefined && this.parameter.onCloseFunc != null){
+      this.parameter.onCloseFunc()
+    }
     if(force != true){
       if(this.parameter.closeDialogFunc !== undefined && this.parameter.closeDialogFunc != null){
         this.parameter.closeDialogFunc()

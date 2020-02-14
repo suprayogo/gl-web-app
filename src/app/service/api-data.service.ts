@@ -52,6 +52,7 @@ export class ApiDataService {
     this.perusahaanReq.url = this.baseURL
     this.divisiReq.url = this.baseURL
     this.departemenReq.url = this.baseURL
+    this.otoritasReq.url = this.baseURL
 
     //Setting Services
   }

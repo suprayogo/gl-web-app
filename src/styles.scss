@@ -11,6 +11,7 @@
 .kt-header-base-light {
 	@import "sass/global/layout/header/skins/base/light.scss";
 }
+
 .kt-header-base-dark {
 	@import "sass/global/layout/header/skins/base/dark.scss";
 }
@@ -19,6 +20,7 @@
 .kt-header-menu-light {
 	@import "sass/global/layout/header/skins/menu/light.scss";
 }
+
 .kt-header-menu-dark {
 	@import "sass/global/layout/header/skins/menu/dark.scss";
 }
@@ -27,6 +29,7 @@
 .kt-brand-dark {
 	@import "sass/global/layout/brand/skins/dark.scss";
 }
+
 .kt-brand-light {
 	@import "sass/global/layout/brand/skins/light.scss";
 }
@@ -35,6 +38,7 @@
 .kt-aside-dark {
 	@import "sass/global/layout/aside/skins/dark.scss";
 }
+
 .kt-aside-light {
 	@import "sass/global/layout/aside/skins/light.scss";
 }
@@ -59,6 +63,11 @@
 }
 
 .disabled-input {
-	background-color: #f4f5f8 !important; 
+	background-color: #f4f5f8 !important;
+	border: 0 !important
+}
+
+input:disabled {
+	background-color: #f4f5f8 !important;
 	border: 0 !important
 }
