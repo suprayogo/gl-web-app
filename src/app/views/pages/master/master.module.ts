@@ -53,6 +53,7 @@ import { MenuComponent } from './menu/menu.component';
 import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
 import { DivisiComponent } from './divisi/divisi.component';
 import { DepartemenComponent } from './departemen/departemen.component';
+import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
 
 const routes: Routes = [
 	{
@@ -70,6 +71,10 @@ const routes: Routes = [
 	{
 		path: 'divisi',
 		component: DivisiComponent,
+	},
+	{
+		path: 'chart-of-account',
+		component: ChartOfAccountComponent,
 	},
 ];
 
