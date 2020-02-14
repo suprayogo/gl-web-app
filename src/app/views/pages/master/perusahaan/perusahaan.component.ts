@@ -41,7 +41,7 @@ export class PerusahaanComponent implements OnInit {
   search: string;
 
   // Configuration Select box
-  tipe_aktif: Object = []
+  // tipe_aktif: Object = []
 
   /* buttonLayout = [
     {
@@ -146,7 +146,8 @@ export class PerusahaanComponent implements OnInit {
       readOnly: false,
       update: {
         disabled: true
-      }
+      },
+      inputPipe: true
     },
     {
       formWidth: 'col-5',

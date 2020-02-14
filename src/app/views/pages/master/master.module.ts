@@ -48,29 +48,40 @@ import {
 } from '../../../core/auth';
 
 // Components
-import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 import { MenuComponent } from './menu/menu.component';
+import { OtoritasComponent } from './otoritas/otoritas.component';
 import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
+import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 import { DivisiComponent } from './divisi/divisi.component';
 import { DepartemenComponent } from './departemen/departemen.component';
 
+
 const routes: Routes = [
-	{
-		path: 'perusahaan',
-		component: PerusahaanComponent
-	},
 	{
 		path: 'menu',
 		component: MenuComponent
+	},
+	{
+		path: 'otoritas',
+		component: OtoritasComponent,
 	},
 	{
 		path: 'user-otoritas',
 		component: UserOtoritasComponent
 	},
 	{
+		path: 'perusahaan',
+		component: PerusahaanComponent
+	},
+	{
 		path: 'divisi',
 		component: DivisiComponent,
 	},
+	{
+		path: 'departemen',
+		component: DepartemenComponent,
+	},
+	
 ];
 
 @NgModule({
@@ -131,11 +142,13 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		PerusahaanComponent,
 		MenuComponent,
+		OtoritasComponent,
 		UserOtoritasComponent,
+		PerusahaanComponent,
 		DivisiComponent,
-		DepartemenComponent
+		DepartemenComponent,
+		
 	]
 })
 export class MasterModule {}

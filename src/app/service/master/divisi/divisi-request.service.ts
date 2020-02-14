@@ -13,6 +13,7 @@ export class DivisiRequestService {
   validate(data, httpBody, options, formData?: Object) {
     if (data === 'g-divisi') {
       httpBody.respondCode = 'GET-DATA-DIVISI'
+      httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'i-divisi') {
       httpBody.respondCode = 'SET-DATA-DIVISI'

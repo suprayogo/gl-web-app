@@ -15,6 +15,7 @@ import * as objectPath from 'object-path';
 import { MenuConfig } from '../../../core/_config/menu.config';
 import { LayoutConfigService, MenuAsideService, MenuOptions, OffcanvasOptions } from '../../../core/_base/layout';
 import { HtmlClassService } from '../html-class.service';
+import { RequestDataService } from '../../../service/request-data.service';
 
 @Component({
 	selector: 'kt-aside-left',
@@ -24,12 +25,13 @@ import { HtmlClassService } from '../html-class.service';
 })
 export class AsideLeftComponent implements OnInit, AfterViewInit {
 
-	@ViewChild('asideMenu', {static: true}) asideMenu: ElementRef;
+	@ViewChild('asideMenu', { static: true }) asideMenu: ElementRef;
 
 	currentRouteUrl: string = '';
 	insideTm: any;
 	outsideTm: any;
 	loadingMenu: boolean = true;
+	oto: string = "";
 
 	menuCanvasOptions: OffcanvasOptions = {
 		baseClass: 'kt-aside',
@@ -75,6 +77,7 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		public htmlClassService: HtmlClassService,
 		public menuAsideService: MenuAsideService,
 		public layoutConfigService: LayoutConfigService,
+		private request: RequestDataService,
 		private router: Router,
 		private render: Renderer2,
 		private cdr: ChangeDetectorRef
@@ -101,51 +104,7 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 			// tslint:disable-next-line:max-line-length
 			this.render.setAttribute(this.asideMenu.nativeElement, 'data-ktmenu-dropdown-timeout', objectPath.get(config, 'aside.menu.submenu.dropdown.hover-timeout'));
 		}
-
-		let x: any = [
-			{
-				title: 'Home',
-				root: true,
-				icon: 'flaticon2-architecture-and-city',
-				page: '/home',
-				meta_data: 'home'
-			},
-			{section: 'Management'},
-			{
-				title: 'Daftar Perusahaan',
-				root: true,
-				icon: 'flaticon2-box',
-				page: '/master/perusahaan',
-				meta_data: 'perusahaan'
-			},
-			{
-				title: 'Daftar Divisi',
-				root: true,
-				icon: 'flaticon2-group',
-				page: '/master/divisi',
-				meta_data: 'divisi'
-			},
-			{
-				title: 'Daftar Menu',
-				root: true,
-				icon: 'flaticon-grid-menu-v2',
-				page: '/master/menu',
-				meta_data: 'menu'
-			},
-			{
-				title: 'Daftar User Otoritas',
-				root: true,
-				icon: 'flaticon-user-settings',
-				page: '/master/user-otoritas',
-				meta_data: 'user otoritas'
-			}
-		]
-		let menu  = new MenuConfig()
-		let side = menu.defaults
-		side.aside.items = x
-		this.menuAsideService.setMenu(side)
-		this.loadingMenu = false
-		this.cdr.markForCheck()
+		this.getOtoritas();
 	}
 
 	/**
@@ -225,6 +184,116 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 			}, 100);
 		}
 	}
+
+	getOtoritas() {
+		this.request.apiData('otoritas', 'g-otoritas-user', { user_id: localStorage.getItem('user_id') }).subscribe(
+			data => {
+				if (data['STATUS'] === 'Y') {
+					this.oto = data['RESULT'] == null ? "Otoritas tidak ditemukan" : data['RESULT']
+					this.getMenuList(this.oto);
+				}
+			}
+		)
+	}
+
+	getMenuList(ko) {
+		this.request.apiData('otoritas', 'g-otoritas-menu', { kode_otoritas: ko }).subscribe(
+			data => {
+				if (data['STATUS'] === 'Y') {
+					let menuData: Array<Object> = data['RESULT'],
+						menuTitle = menuData.filter(x => x['detail'] === 'N').sort(this.compare),
+						menuContent = menuData.filter(x => x['detail'] !== 'N' && x['detail'] != null).sort(this.compare);
+					let x: any = [
+						{
+							title: 'Home',
+							root: true,
+							icon: 'flaticon2-architecture-and-city',
+							page: '/home',
+							meta_data: 'home'
+						}
+					]
+					for (var i = 0; i < menuTitle.length; i++) {
+						let tt = {
+							section: menuTitle[i]['nama_menu'],
+							meta_data: menuTitle[i]['nama_menu']
+						}
+						let indexSection = x.length
+						x.push(tt)
+						for (var j = 0; j < menuContent.length; j++) {
+							if (menuContent[j]['induk_menu'] === menuTitle[i]['kode_menu']) {
+								let tc = {
+									title: menuContent[j]['nama_menu'],
+									page: menuContent[j]['link_menu'],
+									icon: menuContent[j]['img_menu'],
+									meta_data: menuTitle[i]['nama_menu'] + " " + menuContent[j]['nama_menu']
+								}
+								x.push(tc)
+								x[indexSection]['meta_data'] = x[indexSection]['meta_data'] + " " + menuContent[j]['nama_menu']
+							}
+						}
+
+					}
+					let menu = new MenuConfig()
+					let side = menu.defaults
+					side.aside.items = x
+					this.menuAsideService.setMenu(side)
+					this.loadingMenu = false
+					this.cdr.markForCheck()
+					this.checkMenuAllowed(x)
+					/* this.pagesService.toggle(false)
+					this.initMenu = JSON.parse(JSON.stringify(x))
+					this.currentMenu = JSON.parse(JSON.stringify(x))
+					setTimeout(() => {
+						const classElement = document.getElementsByClassName('m-menu__item--active');
+						if(classElement.length > 0){
+							const el = classElement[0].getBoundingClientRect()
+							const t = el.top
+							const m = el.height / 2
+
+							const sc = t + m
+							const sy = sc - (window.innerHeight / 2)
+							this.menuParent.scrollTo(0, sy)
+						}
+					}, 100); */
+				} else {
+					this.loadingMenu = false
+					this.cdr.markForCheck()
+					alert('Something is wrong, please try again later.')
+				}
+			}
+		)
+	}
+
+	checkMenuAllowed(data: Array<Object>) {
+		let allowed = false
+		for (var i = 0; i < data.length; i++) {
+			if (data[i]['page'] !== undefined || data[i]['page'] != null) {
+				if (data[i]['page'] === this.currentRouteUrl) {
+					allowed = true
+					break;
+				}
+			}
+		}
+
+		if (!allowed) {
+			this.router.navigateByUrl('/')
+		}
+	}
+
+	compare(a, b) {
+		// Use toUpperCase() to ignore character casing
+		const genreA = a.urutan_menu;
+		const genreB = b.urutan_menu;
+
+		let comparison = 0;
+		if (genreA > genreB) {
+			comparison = 1;
+		} else if (genreA < genreB) {
+			comparison = -1;
+		}
+		return comparison;
+	}
+
 
 	/**
 	 * Returns Submenu CSS Class Name

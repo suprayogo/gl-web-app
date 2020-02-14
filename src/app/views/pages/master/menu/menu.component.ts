@@ -22,6 +22,23 @@ const content = {
 })
 export class MenuComponent implements OnInit {
 
+  // View child to call function
+  @ViewChild(ForminputComponent, { static: false }) forminput;
+  @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
+
+  // Variables
+  loading: boolean = true;
+  content: any;
+  detailLoad: boolean = false;
+  enableDetail: boolean = false;
+  editable: boolean = false;
+  selectedTab: number = 0;
+  onUpdate: boolean = false;
+  enableDelete: boolean = true;
+  loadingMenu: boolean = true;
+  loadingDataText: string = "Loading Menu.."
+  search: string;
+
   //Configuration
   tipe_menu: Object = [
     {
@@ -43,95 +60,6 @@ export class MenuComponent implements OnInit {
       value: 'N'
     }
   ]
-
-  // View child to call function
-  @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
-
-  // Variables
-  loading: boolean = true;
-  loadingMenu: boolean = true;
-  loadingMenuText: string = "Loading menu.."
-  content: any;
-  detailLoad: boolean = false;
-  enableDetail: boolean = false;
-  editable: boolean = false;
-  selectedTab: number = 0;
-  onUpdate: boolean = false;
-  enableDelete: boolean = true;
-  search: string;
-
-  //Tree view Variables
-  titleComponent = "Daftar Menu"
-  indicator = "induk_menu"
-  indicatorValue = ""
-  subIndicator = "kode_menu"
-  rowOf = 0
-  headerView = [
-    {
-      label: 'Nama Menu',
-      value: 'nama_menu'
-    },
-    {
-      label: 'Kode Menu',
-      value: 'kode_menu'
-    },
-    {
-      label: 'Tipe Menu',
-      value: 'type_menu'
-    },
-    {
-      label: 'Detail',
-      value: 'detail'
-    },
-    {
-      label: 'Urutan',
-      value: 'urutan'
-    },
-    {
-      label: 'Link Menu',
-      value: 'link_menu'
-    },
-    {
-      label: 'Image / Icon Menu',
-      value: 'img_menu'
-    },
-    {
-      label: 'Induk Menu',
-      value: 'induk_menu'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
-    }
-  ]
-  sortBy = "urutan"
-
-  // TAB MENU BROWSE 
-  browseData = []
-  browseDataRules = []
-  inputMenuDisplayColumns = [
-    {
-      label: 'Kode Menu',
-      value: 'kode_menu'
-    },
-    {
-      label: 'Nama Menu',
-      value: 'nama_menu'
-    },
-    {
-      label: 'Induk Menu',
-      value: 'induk_menu'
-    }
-  ]
-  inputMenuInterface = {
-    kode_menu: 'string',
-    nama_menu: 'string',
-    induk_menu: 'string'
-  }
-  inputMenuData = []
-  inputMenuDataRules = []
-  inputAplikasiData = []
 
   // Input Name
   formValue = {
@@ -180,7 +108,6 @@ export class MenuComponent implements OnInit {
       id: 'tipe-menu',
       type: 'combobox',
       options: this.tipe_menu,
-      change: (e) => this.selection(e, 'type_menu'),
       valueOf: 'type_menu',
       update: {
         disabled: false
@@ -275,6 +202,79 @@ export class MenuComponent implements OnInit {
     }
   ]
 
+  //Tree view Variables
+  titleComponent = "Daftar Menu"
+  indicator = "induk_menu"
+  indicatorValue = ""
+  subIndicator = "kode_menu"
+  rowOf = 0
+  headerView = [
+    {
+      label: 'Nama Menu',
+      value: 'nama_menu'
+    },
+    {
+      label: 'Kode Menu',
+      value: 'kode_menu'
+    },
+    {
+      label: 'Tipe Menu',
+      value: 'type_menu'
+    },
+    {
+      label: 'Detail',
+      value: 'detail'
+    },
+    {
+      label: 'Urutan',
+      value: 'urutan'
+    },
+    {
+      label: 'Link Menu',
+      value: 'link_menu'
+    },
+    {
+      label: 'Image / Icon Menu',
+      value: 'img_menu'
+    },
+    {
+      label: 'Induk Menu',
+      value: 'induk_menu'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
+    }
+  ]
+  sortBy = "urutan"
+
+  inputMenuDisplayColumns = [
+    {
+      label: 'Kode Menu',
+      value: 'kode_menu'
+    },
+    {
+      label: 'Nama Menu',
+      value: 'nama_menu'
+    },
+    {
+      label: 'Induk Menu',
+      value: 'induk_menu'
+    }
+  ]
+
+  inputMenuInterface = {
+    kode_menu: 'string',
+    nama_menu: 'string',
+    induk_menu: 'string'
+  }
+  inputMenuData = []
+  inputMenuDataRules = []
+
+  // TAB MENU BROWSE 
+  browseData = []
+  browseDataRules = []
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -286,13 +286,75 @@ export class MenuComponent implements OnInit {
     this.madeRequest()
   }
 
-  //Selection event (Select Box)
-  selection(data, type) {
-    this.formValue[type] = data.target.value
+  // Request Data API (to : L.O.V or Table)
+  madeRequest() {
+    this.loading = false
+    this.sendRequestMenu()
   }
 
-  onBlur(type) {
+  sendRequestMenu() {
+    this.loadingMenu = true
+    this.ref.markForCheck()
+    this.request.apiData('menu', 'g-menu').subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.browseData = data['RESULT']
+          this.inputMenuData = data['RESULT']
+          this.loadingMenu = false
+          this.ref.markForCheck()
+        } else {
+          this.loadingMenu = false
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal mendapatkan data.')
+        }
+      }
+    )
+  }
 
+  // Dialog
+  openDialog(type) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        type: type,
+        tableInterface:
+          type === "induk_menu" ? this.inputMenuInterface :
+            {},
+        displayedColumns:
+          type === "induk_menu" ? this.inputMenuDisplayColumns :
+            [],
+        tableData:
+          type === "induk_menu" ? this.inputMenuData.filter(x => x['detail'] === 'N') :
+            [],
+        tableRules:
+          type === "induk_menu" ? this.inputMenuDataRules :
+            [],
+        formValue: this.formValue
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "induk_menu") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('induk_menu', result.kode_menu)
+            this.forminput.updateFormValue('nama_induk_menu', result.nama_menu)
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
+  }
+
+  refreshBrowse(message) {
+    this.loading = false
+    this.ref.markForCheck()
+    this.onUpdate = false
+    this.sendRequestMenu()
+    this.openSnackBar(message)
   }
 
   //Browse binding event
@@ -400,85 +462,6 @@ export class MenuComponent implements OnInit {
         }
       )
     }
-  }
-
-  // Dialog
-  openDialog(type) {
-    const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      data: {
-        type: type,
-        tableInterface:
-          type === "induk_menu" ? this.inputMenuInterface :
-            {},
-        displayedColumns:
-          type === "induk_menu" ? this.inputMenuDisplayColumns :
-            [],
-        tableData:
-          type === "induk_menu" ? this.inputMenuData.filter(x => x['detail'] === 'N') :
-            [],
-        tableRules:
-          type === "induk_menu" ? this.inputMenuDataRules :
-            [],
-        formValue: this.formValue
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (type === "induk_menu") {
-          if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('induk_menu', result.kode_menu)
-            this.forminput.updateFormValue('nama_induk_menu', result.nama_menu)
-          }
-        }
-        this.ref.markForCheck();
-      }
-    });
-  }
-
-  inputPipe(valueOf, data) {
-    this.formValue[valueOf] = data.toUpperCase()
-  }
-
-  sendUserRequest() {
-
-  }
-
-  // Request Data API (to : L.O.V or Table)
-  madeRequest() {
-    this.loading = false
-    this.sendRequestMenu()
-  }
-
-  refreshBrowse(message) {
-    this.loading = false
-    this.ref.markForCheck()
-    this.onUpdate = false
-    this.sendRequestMenu()
-    this.openSnackBar(message)
-  }
-
-  sendRequestMenu() {
-    this.loadingMenu = true
-    this.ref.markForCheck()
-    this.request.apiData('menu', 'g-menu').subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.browseData = data['RESULT']
-          this.inputMenuData = data['RESULT']
-          this.loadingMenu = false
-          this.ref.markForCheck()
-        } else {
-          this.loadingMenu = false
-          this.ref.markForCheck()
-          this.openSnackBar('Gagal mendapatkan menu.')
-        }
-      }
-    )
   }
 
   openSnackBar(message, type?: any) {

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { MatTabChangeEvent, MatDialog, MatSnackBar } from '@angular/material';
+import { MatTabChangeEvent, MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
@@ -14,15 +14,15 @@ import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/dat
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar User'
+  beforeCodeTitle: 'Daftar Otoritas'
 }
 
 @Component({
-  selector: 'kt-daftar-user',
-  templateUrl: './daftar-user.component.html',
-  styleUrls: ['./daftar-user.component.scss', '../management.style.scss']
+  selector: 'kt-otoritas',
+  templateUrl: './otoritas.component.html',
+  styleUrls: ['./otoritas.component.scss', '../master.style.scss']
 })
-export class DaftarUserComponent implements OnInit {
+export class OtoritasComponent implements OnInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -38,53 +38,42 @@ export class DaftarUserComponent implements OnInit {
   tableLoad: boolean = true;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
-  loadingAplikasi: boolean = true;
+  loadingMenu: boolean = true;
   browseNeedUpdate: boolean = true;
   dialogRef: any;
   dialogType: string = null;
   search: string;
 
   // Configuration Select box
-  tipe_aktif: Object = [
-    {
-      label: 'Aktif',
-      value: 'Y'
-    },
-    {
-      label: 'Non Aktif',
-      value: 'N'
-    }
-  ]
+  // tipe_aktif: Object = []
 
   // Input Name
   formValue = {
-    user_id: '',
-    user_name: '',
-    user_password: '',
-    aktif: 'Y'
+    kode_otoritas: '',
+    nama_otoritas: '',
+    keterangan: '',
   }
 
   // Layout Form
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'User ID',
-      id: 'user-id',
+      label: 'Kode Otoritas',
+      id: 'kode-otoritas',
       type: 'input',
-      valueOf: 'user_id',
-      required: true,
-      readOnly: false,
+      valueOf: 'kode_otoritas',
+      required: false,
+      readOnly: true,
       update: {
         disabled: true
-      },
-      inputPipe: true
+      }
     },
     {
       formWidth: 'col-5',
-      label: 'Username',
-      id: 'user-name',
+      label: 'Nama Otoritas',
+      id: 'nama-otoritas',
       type: 'input',
-      valueOf: 'user_name',
+      valueOf: 'nama_otoritas',
       required: true,
       readOnly: false,
       update: {
@@ -93,24 +82,12 @@ export class DaftarUserComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Kata Sandi',
-      id: 'user-password',
+      label: 'Keterangan',
+      id: 'keterangan',
       type: 'input',
-      valueOf: 'user_password',
-      required: true,
+      valueOf: 'keterangan',
+      required: false,
       readOnly: false,
-      update: {
-        disabled: false
-      },
-      toolTip: "Kata sandi harus diatas atau sama dengan 4 karakter"
-    },
-    {
-      formWidth: 'col-5',
-      label: 'User Status',
-      id: 'user-status',
-      type: 'combobox',
-      options: this.tipe_aktif,
-      valueOf: 'aktif',
       update: {
         disabled: false
       }
@@ -119,10 +96,10 @@ export class DaftarUserComponent implements OnInit {
 
   buttonLayout = [
     {
-      btnLabel: 'Tambah Akses',
+      btnLabel: 'Tambah Detail',
       btnClass: 'btn btn-primary',
       btnClick: () => {
-        this.openDialog('kode_aplikasi')
+        this.openDialog('kode_menu')
       },
       btnCondition: () => {
         return true
@@ -130,39 +107,39 @@ export class DaftarUserComponent implements OnInit {
     }
   ]
 
-  // Aplikasi List
-  inputAplikasiDisplayColumns = [
+  // Otoritas List
+  inputMenuDisplayColumns = [
     {
-      label: 'Kode Aplikasi',
-      value: 'kode_aplikasi',
+      label: 'Kode Menu',
+      value: 'kode_menu',
       selectable: true
     },
     {
-      label: 'Nama Aplikasi',
-      value: 'nama_aplikasi'
+      label: 'Nama Menu',
+      value: 'nama_menu'
     }
   ]
-  inputAplikasiInterface = {
-    kode_aplikasi: 'string',
-    nama_aplikasi: 'string'
+  inputMenuInterface = {
+    kode_menu: 'string',
+    nama_menu: 'string'
   }
-  inputAplikasiData = []
-  inputAplikasiDataRules = []
+  inputMenuData = []
+  inputMenuDataRules = []
 
-  // User-Aplikasi List Detail
+  // Otoritas-Menu List Detail
   detailDisplayColumns = [
     {
-      label: 'Kode Aplikasi',
-      value: 'kode_aplikasi'
+      label: 'Kode Menu',
+      value: 'kode_menu'
     },
     {
-      label: 'Nama Aplikasi',
-      value: 'nama_aplikasi'
+      label: 'Nama Menu',
+      value: 'nama_menu'
     }
   ]
   detailInterface = {
-    kode_aplikasi: 'string',
-    nama_aplikasi: 'string'
+    kode_menu: 'string',
+    nama_menu: 'string'
   }
   detailData = []
   detailRules = []
@@ -170,16 +147,16 @@ export class DaftarUserComponent implements OnInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'User ID',
-      value: 'user_id'
+      label: 'Kode Otoritas',
+      value: 'kode_otoritas'
     },
     {
-      label: 'Username',
-      value: 'user_name'
+      label: 'Nama Otoritas',
+      value: 'nama_otoritas'
     },
     {
-      label: 'Aktif',
-      value: 'aktif'
+      label: 'Keterangan',
+      value: 'keterangan'
     },
     {
       label: 'Diinput oleh',
@@ -199,9 +176,9 @@ export class DaftarUserComponent implements OnInit {
     }
   ];
   browseInterface = {
-    user_id: 'string',
-    user_name: 'string',
-    aktif: 'string',
+    kode_otoritas: 'string',
+    nama_otoritas: 'string',
+    keterangan: 'string',
     //STATIC
     input_by: 'string',
     input_dt: 'string',
@@ -209,19 +186,10 @@ export class DaftarUserComponent implements OnInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = [
-    {
-      target: 'aktif',
-      replacement: {
-        'Y': 'Aktif',
-        'N': 'Non Aktif'
-      }
-    }
-  ]
+  browseDataRules = []
 
   constructor(
     public dialog: MatDialog,
-    private snackBar: MatSnackBar,
     private ref: ChangeDetectorRef,
     private request: RequestDataService
   ) { }
@@ -233,24 +201,28 @@ export class DaftarUserComponent implements OnInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.request.apiData('aplikasi', 'g-aplikasi').subscribe(
+    this.sendRequestMenu()
+  }
+
+  sendRequestMenu(){
+    this.request.apiData('menu', 'g-menu').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          this.inputAplikasiData = data['RESULT']
+          this.inputMenuData = data['RESULT']
           this.loading = false
-          this.loadingAplikasi = false
+          this.loadingMenu = false
           this.ref.markForCheck()
           if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
-            if (this.dialogType === "kode_aplikasi") {
+            if (this.dialogType === "kode_menu") {
               this.dialog.closeAll()
-              this.openDialog('kode_aplikasi')
+              this.openDialog('kode_menu')
             }
           }
         }
       }
     )
   }
-
+  
   // Dialog
   openDialog(type) {
     this.dialogType = JSON.parse(JSON.stringify(type))
@@ -262,32 +234,32 @@ export class DaftarUserComponent implements OnInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_aplikasi" ? this.inputAplikasiInterface :
+          type === "kode_menu" ? this.inputMenuInterface :
             {},
         displayedColumns:
-          type === "kode_aplikasi" ? this.inputAplikasiDisplayColumns :
+          type === "kode_menu" ? this.inputMenuDisplayColumns :
             [],
         tableData:
-          type === "kode_aplikasi" ? this.inputAplikasiData :
+          type === "kode_menu" ? this.inputMenuData :
             [],
         tableRules:
-          type === "kode_aplikasi" ? this.inputAplikasiDataRules :
+          type === "kode_menu" ? this.inputMenuDataRules :
             [],
         formValue: this.formValue,
-        selectable: type === 'kode_aplikasi' ? true : false,
+        selectable: type === 'kode_menu' ? true : false,
         selected: this.detailData,
-        selectIndicator: "kode_aplikasi",
-        loadingData: type === "kode_aplikasi" ? this.loadingAplikasi : null
+        selectIndicator: "kode_menu",
+        loadingData: type === "kode_menu" ? this.loadingMenu : null
       }
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_aplikasi") {
+        if (type === "kode_menu") {
           let x = result
           for (var i = 0; i < x.length; i++) {
             for (var j = 0; j < this.detailData.length; j++) {
-              if (this.detailData[j]['kode_aplikasi'] === x[i]['kode_aplikasi']) {
+              if (this.detailData[j]['kode_menu'] === x[i]['kode_menu']) {
                 x[i] = this.detailData[j]
               }
             }
@@ -315,7 +287,7 @@ export class DaftarUserComponent implements OnInit {
 
   getDetail() {
     this.detailLoad = true
-    this.request.apiData('user', 'g-user-aplikasi', this.formValue).subscribe(
+    this.request.apiData('otoritas', 'g-detail-otoritas', this.formValue).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.restructureDetailData(data['RESULT'])
@@ -335,7 +307,7 @@ export class DaftarUserComponent implements OnInit {
 
   deleteDetailData(data) {
     for (var i = 0; i < this.detailData.length; i++) {
-      if (this.detailData[i]['kode_aplikasi'] === data['kode_aplikasi']) {
+      if (this.detailData[i]['kode_menu'] === data['kode_menu']) {
         let x = this.detailData[i]
         this.detailData.splice(i, 1)
         this.dialog.closeAll()
@@ -349,8 +321,8 @@ export class DaftarUserComponent implements OnInit {
   restructureDetailData(data) {
     let endRes = []
     for (var i = 0; i < data.length; i++) {
-      for (var j = 0; j < this.inputAplikasiData.length; j++) {
-        if (data[i]['kode_aplikasi'] === this.inputAplikasiData[j]['kode_aplikasi']) {
+      for (var j = 0; j < this.inputMenuData.length; j++) {
+        if (data[i]['kode_menu'] === this.inputMenuData[j]['kode_menu']) {
           let x = {
             id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
               length: 8,
@@ -358,8 +330,8 @@ export class DaftarUserComponent implements OnInit {
               letters: false,
               special: false
             }))}`,
-            kode_aplikasi: data[i]['kode_aplikasi'],
-            nama_aplikasi: this.inputAplikasiData[j]['nama_aplikasi']
+            kode_menu: data[i]['kode_menu'],
+            nama_menu: this.inputMenuData[j]['nama_menu']
           }
           endRes.push(x)
           break;
@@ -381,7 +353,7 @@ export class DaftarUserComponent implements OnInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('user', 'g-user').subscribe(
+    this.request.apiData('otoritas', 'g-otoritas').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -406,9 +378,9 @@ export class DaftarUserComponent implements OnInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = this.formValue
-    x.user_id = data['user_id']
-    x.user_name = data['user_name']
-    x.aktif = data['aktif']
+    x.kode_otoritas = data['kode_otoritas']
+    x.nama_otoritas = data['nama_otoritas']
+    x.keterangan = data['keterangan']
     this.formValue = x
     this.onUpdate = true;
     this.getBackToInput();
@@ -422,17 +394,32 @@ export class DaftarUserComponent implements OnInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
+
     if (this.forminput !== undefined) {
-      this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-      if (inputForm.valid && this.formValue.user_password.length > 3 == true) {
-        this.sendUserRequest()
-      } else if (this.onUpdate) {
-        if (this.formValue.user_password.length < 1)
-          this.sendUserRequest()
-        else if (this.formValue.user_password.length > 3)
-          this.sendUserRequest()
-        else
-          this.openSnackBar('DATA TIDAK LENGKAP.')
+      if (inputForm.valid) {
+        this.loading = true;
+        this.ref.markForCheck()
+        this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+        let endRes = Object.assign({ detail_otoritas: this.detailData }, this.formValue)
+        this.request.apiData('otoritas', this.onUpdate ? 'u-otoritas' : 'i-otoritas', endRes).subscribe(
+          data => {
+            if (data['STATUS'] === 'Y') {
+              this.resetForm()
+              this.browseNeedUpdate = true
+              this.ref.markForCheck()
+              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+            } else {
+              this.loading = false;
+              this.ref.markForCheck()
+              this.openSnackBar(data['RESULT'])
+            }
+          },
+          error => {
+            this.loading = false;
+            this.ref.markForCheck()
+            this.openSnackBar('GAGAL MELAKUKAN PROSES.')
+          }
+        )
       } else {
         this.openSnackBar('DATA TIDAK LENGKAP.')
       }
@@ -442,10 +429,9 @@ export class DaftarUserComponent implements OnInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      user_id: '',
-      user_name: '',
-      user_password: '',
-      aktif: 'Y'
+      kode_otoritas: '',
+      nama_otoritas: '',
+      keterangan: '',
     }
     this.detailData = []
     this.formInputCheckChanges()
@@ -465,7 +451,7 @@ export class DaftarUserComponent implements OnInit {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('user', 'd-user', this.formValue).subscribe(
+      this.request.apiData('otoritas', 'd-otoritas', this.formValue).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
@@ -485,35 +471,6 @@ export class DaftarUserComponent implements OnInit {
         }
       )
     }
-  }
-
-  inputPipe(valueOf, data) {
-    this.formValue[valueOf] = data.toUpperCase()
-  }
-
-  sendUserRequest() {
-    this.loading = true;
-    this.ref.markForCheck()
-    let endRes = Object.assign({ detail_user: this.detailData }, this.formValue)
-    this.request.apiData('user', this.onUpdate ? 'u-user' : 'i-user', endRes).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.resetForm()
-          this.browseNeedUpdate = true
-          this.ref.markForCheck()
-          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
-        } else {
-          this.loading = false;
-          this.ref.markForCheck()
-          this.openSnackBar(data['RESULT'])
-        }
-      },
-      error => {
-        this.loading = false;
-        this.ref.markForCheck()
-        this.openSnackBar('GAGAL MELAKUKAN PROSES.')
-      }
-    )
   }
 
   openSnackBar(message, type?: any) {

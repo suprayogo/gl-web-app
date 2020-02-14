@@ -1,65 +1,50 @@
 <div class="row">
-    <div class="col-xl-12">
-  
+  <div class="col-xl-12">
+
       <!-- Start of a Content -->
-  
+
       <kt-portlet>
-        <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
-        <div class="kt-section" *ngIf="loading">
-          <kt-loading></kt-loading>
-        </div>
-  
-        <!-- Start of Tabs -->
-        <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
-  
-          <!-- Start of tab input-->
-          <mat-tab label="">
-  
-            <!-- Tab Label -->
-            <ng-template mat-tab-label>
-              <p style="margin-bottom: 0"><b>Input</b></p><br>
-            </ng-template>
-  
-            <kt-portlet-body>
-              <div class="kt-section">
-                <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [buttonLayout]="buttonLayout"
-                  [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                  [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
-                  (onSubmit)="onSubmit($event)" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
-                  (onCancel)="onCancel()" (deleteData)="deleteData()" (editAction)="editDetailData($event)"
-                  (deleteAction)="deleteDetailData($event)"></kt-forminput>
+          <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+          <kt-portlet-body>
+              <div class="kt-section" *ngIf="loading">
+                  <kt-loading></kt-loading>
               </div>
-            </kt-portlet-body>
-  
-          </mat-tab>
-          <!-- End of tab input-->
-          <!-- Start of tab browse-->
-          <mat-tab label="">
-  
-            <!-- Tab Label -->
-            <ng-template mat-tab-label>
-              <p style="margin-bottom: 0"><b>Browse</b></p><br>
-            </ng-template>
-  
-            <kt-portlet-body>
-              <div class="kt-section" *ngIf="tableLoad">
-                <kt-loading></kt-loading>
+
+              <div class="kt-section" *ngIf="!loading">
+                  <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
+                      [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
+                      [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
+                      [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
+                      [onUpdate]="onUpdate" [enableDelete]="enableDelete" (onCancel)="onCancel()"
+                      (deleteData)="deleteData()" (editAction)="editDetailData($event)"
+                      (deleteAction)="deleteDetailData($event)"></kt-forminput>
               </div>
-  
-              <div *ngIf="!tableLoad">
-                <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
-                  [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)"></kt-datatable-ag-grid>
+
+              <hr style="width: 100%;">
+
+              <div class="kt-section" *ngIf="loadingDivisi && !loading">
+                  <kt-loading [loadingText]="loadingDataText"></kt-loading>
               </div>
-            </kt-portlet-body>
-  
-          </mat-tab>
-          <!-- End of tab browse-->
-  
-        </mat-tab-group>
-        <!-- End of Tabs -->
+
+              <div class="kt-section" *ngIf="!loadingDivisi && !loading" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
+                  <kt-treeview
+                      [title]="titleComponent" 
+                      [idata]="browseData" 
+                      [indicator]="indicator" 
+                      [indicatorValue]="indicatorValue"
+                      [subIndicator]="subIndicator"
+                      [rowOf]="rowOf"
+                      [header]="headerView"
+                      [sortBy]="sortBy"
+                      (selectRowEvent)="browseSelectRow($event)"
+                  ></kt-treeview>
+              </div>
+
+          </kt-portlet-body>
+
       </kt-portlet>
-  
+
       <!-- End of a Content -->
-  
-    </div>
+
   </div>
+</div>

@@ -4,26 +4,27 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class UserRequestService {
+export class DepartemenRequestService {
 
   url: string;
 
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object) {
-    if (data === 'g-perusahaan') {
-      httpBody.respondCode = 'GET-DATA-PERUSAHAAN'
-      return this.get(httpBody, options)
-    } else if (data === 'i-perusahaan') {
-      httpBody.respondCode = 'SET-DATA-PERUSAHAAN'
+    if (data === 'g-departemen') {
+      httpBody.respondCode = 'GET-DATA-DEPARTEMEN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'u-perusahaan') {
-      httpBody.respondCode = 'UPT-DATA-PERUSAHAAN'
+    } else if (data === 'i-departemen') {
+      httpBody.respondCode = 'SET-DATA-DEPARTEMEN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'd-perusahaan') {
-      httpBody.respondCode = 'DEL-DATA-PERUSAHAAN'
+    } else if (data === 'u-departemen') {
+      httpBody.respondCode = 'UPT-DATA-DEPARTEMEN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'd-departemen') {
+      httpBody.respondCode = 'DEL-DATA-DEPARTEMEN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

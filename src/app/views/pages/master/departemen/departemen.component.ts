@@ -1,17 +1,15 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { MatTabChangeEvent, MatDialog, MatSnackBar } from '@angular/material';
+import { MatTabChangeEvent, MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
-import * as MD5 from 'crypto-js/md5';
-import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
 
 // Components
-import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 
 const content = {
   beforeCodeTitle: 'Daftar Departemen'
@@ -35,28 +33,51 @@ export class DepartemenComponent implements OnInit {
   enableDetail: boolean = false;
   editable: boolean = false;
   selectedTab: number = 0;
-  tableLoad: boolean = true;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
-  // loadingAplikasi: boolean = true;
-  browseNeedUpdate: boolean = true;
-  dialogRef: any;
-  dialogType: string = null;
+  loadingDepartemen: boolean = false;
+  loadingDataText: string = "Loading Departemen.."
   search: string;
 
-  // Configuration Select box
-  tipe_aktif: Object = []
+  //Configuration
+  // tipe_menu: Object = []
 
   // Input Name
   formValue = {
     kode_departemen: '',
     nama_departemen: '',
     induk_departemen: '',
-    nama_induk_departemen:'',
+    nama_induk_departemen: '',
+    kode_perusahaan: '',
+    nama_perusahaan: '',
   }
 
   // Layout Form
   inputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Perusahaan',
+      id: 'kode-perusahaan',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_perusahaan',
+      valueOf: 'kode_perusahaan',
+      required: true,
+      readOnly: false,
+      hiddenOn: false,
+      inputInfo: {
+        id: 'nama_perusahaan',
+        disabled: false,
+        readOnly: true,
+        required: true,
+        valueOf: 'nama_perusahaan'
+      },
+      update: {
+        disabled: false
+      }
+    },
     {
       formWidth: 'col-5',
       label: 'Kode Departemen',
@@ -92,14 +113,14 @@ export class DepartemenComponent implements OnInit {
       btnIcon: 'flaticon-search',
       browseType: 'induk_departemen',
       valueOf: 'induk_departemen',
-      required: true,
+      required: false,
       readOnly: false,
       hiddenOn: false,
       inputInfo: {
         id: 'nama_induk_departemen',
         disabled: false,
         readOnly: true,
-        required: true,
+        required: false,
         valueOf: 'nama_induk_departemen'
       },
       update: {
@@ -107,6 +128,45 @@ export class DepartemenComponent implements OnInit {
       }
     },
   ]
+
+  inputPerusahaanDisplayColumns = [
+    {
+      label: 'Kode Perusahaan',
+      value: 'kode_perusahaan'
+    },
+    {
+      label: 'Nama Perusahaan',
+      value: 'nama_perusahaan'
+    }
+  ];
+  inputPerusahaanInterface = {
+    kode_perusahaan: 'string',
+    nama_perusahaan: 'string'
+  }
+  inputPerusahaanData = []
+  inputPerusahaanDataRules = []
+
+  //Tree view Variables
+  titleComponent = "Daftar Departemen"
+  indicator = "induk_departemen"
+  indicatorValue = ""
+  subIndicator = "kode_departemen"
+  rowOf = 0
+  headerView = [
+    {
+      label: 'Nama Departemen',
+      value: 'nama_departemen'
+    },
+    {
+      label: 'Kode Departemen',
+      value: 'kode_departemen'
+    },
+    {
+      label: 'Induk Departemen',
+      value: 'kode_departemen'
+    }
+  ]
+  sortBy = "nama_departemen"
 
   inputDepartemenDisplayColumns = [
     {
@@ -124,95 +184,23 @@ export class DepartemenComponent implements OnInit {
     {
       label: 'Nama Induk Departemen',
       value: 'nama_induk_departemen'
-    },
-  ];
+    }
+  ]
   inputDepartemenInterface = {
     kode_departemen: 'string',
     nama_departemen: 'string',
     induk_departemen: 'string',
-    nama_induk_departemen: 'string',
+    nama_induk_departemen: 'string'
   }
   inputDepartemenData = []
   inputDepartemenDataRules = []
 
-  //Tree view Variables
-  titleComponent = "Daftar Departemen"
-  indicator = "induk_departemen"
-  indicatorValue = ""
-  subIndicator = "kode_departemen"
-  rowOf = 0
-  headerView = [
-    {
-      label: 'Nama Departemen',
-      value: 'nama_departemen'
-    }, 
-    {
-      label: 'Kode Departemen',
-      value: 'kode_departemen'
-    },
-    {
-      label: 'Induk Departemen',
-      value: 'kode_departemen'
-    }
-  ]
-  sortBy = "nama_departemen"
-
-  /* buttonLayout = [
-    {
-      btnLabel: 'Tambah Akses',
-      btnClass: 'btn btn-primary',
-      btnClick: () => {
-        this.openDialog('kode_aplikasi')
-      },
-      btnCondition: () => {
-        return true
-      }
-    }
-  ] */
-
-  // List Dialog
-  /* inputAplikasiDisplayColumns = [
-    {
-      label: '',
-      value: '',
-      selectable: true
-    },
-  ]
-  inputAplikasiInterface = {
-    contoh: 'string'
-  }
-  inputAplikasiData = []
-  inputAplikasiDataRules = [] */
-
-  // List Detail
-  /* detailDisplayColumns = [
-    {
-      label: '',
-      value: ''
-    },
-  ]
-  detailInterface = {
-    contoh: 'string'
-  }
-  detailData = []
-  detailRules = [] */
-
   // TAB MENU BROWSE 
-  /* displayedColumnsTable = [
-    {
-      label: '',
-      value: ''
-    },
-  ];
-  browseInterface = {
-    Contoh: 'string',
-  } */
   browseData = []
-  browseDataRules = [] 
+  browseDataRules = []
 
   constructor(
     public dialog: MatDialog,
-    private snackBar: MatSnackBar,
     private ref: ChangeDetectorRef,
     private request: RequestDataService
   ) { }
@@ -224,11 +212,34 @@ export class DepartemenComponent implements OnInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.request.apiData('perusahaan', 'g-perusahaan').subscribe(
+    this.loading = false
+    this.sendRequestPerusahaan()
+  }
+
+  sendRequestDepartemen(kp: any) {
+    this.loadingDepartemen = true
+    this.ref.markForCheck()
+    this.request.apiData('departemen', 'g-departemen', { kode_perusahaan: kp }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.browseData = data['RESULT']
           this.inputDepartemenData = data['RESULT']
+          this.loadingDepartemen = false
+          this.ref.markForCheck()
+        } else {
+          this.loadingDepartemen = false
+          this.ref.markForCheck()
+          // this.openSnackBar('Gagal mendapatkan data.')
+        }
+      }
+    )
+  }
+
+  sendRequestPerusahaan() {
+    this.request.apiData('perusahaan', 'g-perusahaan').subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputPerusahaanData = data['RESULT']
           this.loading = false
           this.ref.markForCheck()
         }
@@ -236,9 +247,9 @@ export class DepartemenComponent implements OnInit {
     )
   }
 
+  // Dialog
   openDialog(type) {
-    this.dialogType = JSON.parse(JSON.stringify(type))
-    this.dialogRef = this.dialog.open(DialogComponent, {
+    const dialogRef = this.dialog.open(DialogComponent, {
       width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
@@ -246,68 +257,82 @@ export class DepartemenComponent implements OnInit {
       data: {
         type: type,
         tableInterface:
-          type === "induk_departemen" ? this.inputDepartemenInterface :
-            {},
+          type === "kode_perusahaan" ? this.inputPerusahaanInterface :
+            type === "induk_departemen" ? this.inputDepartemenInterface :
+              {},
         displayedColumns:
-          type === "induk_departemen" ? this.inputDepartemenDisplayColumns :
-            [],
+          type === "kode_perusahaan" ? this.inputPerusahaanDisplayColumns :
+            type === "induk_departemen" ? this.inputDepartemenDisplayColumns :
+              [],
         tableData:
-          type === "induk_departemen" ? this.inputDepartemenData :
-            [],
+          type === "kode_perusahaan" ? this.inputPerusahaanData :
+            type === "induk_departemen" ? this.inputDepartemenData :
+              [],
         tableRules:
-          type === "induk_departemen" ? this.inputDepartemenDataRules :
-            [],
-        formValue: this.formValue,
-        // selectable: type === 'kode_aplikasi' ? true : false,
-        // selected: this.detailData,
-        // selectIndicator: "kode_aplikasi",
-        // loadingData: type === "kode_aplikasi" ? this.loadingAplikasi : null
+          type === "kode_perusahaan" ? this.inputPerusahaanDataRules :
+            type === "induk_departemen" ? this.inputDepartemenDataRules :
+              [],
+        formValue: this.formValue
       }
     });
 
-    this.dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (type === "induk_departemen") {
-          this.formValue.induk_departemen = result.kode_departemen
-          this.formValue.nama_induk_departemen = result.nama_departemen
-          this.ref.markForCheck();
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('induk_departemen', result.kode_departemen)
+            this.forminput.updateFormValue('nama_induk_departemen', result.nama_departemen)
+          }
+        } else if (type === "kode_perusahaan") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_perusahaan', result.kode_perusahaan)
+            this.forminput.updateFormValue('nama_perusahaan', result.nama_perusahaan)
+            this.sendRequestDepartemen(result.kode_perusahaan)
+          }
         }
-        this.dialogRef = undefined
-        this.dialogType = null
-        this.formInputCheckChanges()
+        this.ref.markForCheck();
       }
     });
   }
 
   refreshBrowse(message) {
-    this.request.apiData('departemen', 'g-departemen').subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.browseData = data['RESULT']
-          this.inputDepartemenData = data['RESULT']
-          this.loading = false
-          this.ref.markForCheck()
-          this.openSnackBar(message, 'success')
-          this.onUpdate = false
-        }
-      }
-    )
+    this.loading = false
+    this.ref.markForCheck()
+    this.onUpdate = false
+    this.openSnackBar(message, 'success')
   }
 
   //Browse binding event
   browseSelectRow(data) {
-    let x = this.formValue
-    x.kode_departemen = data['kode_departemen']
-    x.nama_departemen = data['nama_departemen']
-    x.induk_departemen = data['induk_departemen']
-    x.nama_induk_departemen = data['nama_induk_departemen']
-    this.formValue = x
+    this.formValue = data
+
+    for (var i = 0; i < this.inputDepartemenData.length; i++) {
+      if (this.inputDepartemenData[i]['kode_departemen'] === this.formValue['induk_departemen']) {
+        this.formValue['kode_perusahaan'] = this.inputPerusahaanData[i]['kode_perusahaan']
+        this.formValue['nama_perusahaan'] = this.inputPerusahaanData[i]['nama_perusahaan']
+        this.formValue['nama_induk_departemen'] = this.inputDepartemenData[i]['nama_departemen']
+
+      } else {
+        this.formValue['kode_perusahaan'] = this.inputPerusahaanData[i]['kode_perusahaan']
+        this.formValue['nama_perusahaan'] = this.inputPerusahaanData[i]['nama_perusahaan']
+      }
+      break
+    }
     this.onUpdate = true;
+    window.scrollTo(0, 0)
+    this.formInputCheckChanges()
+  }
+
+  getBackToInput() {
+    this.selectedTab = 0;
+    //this.getDetail()
+    this.formInputCheckChanges()
   }
 
   //Form submit
   onSubmit(inputForm: NgForm) {
-
+    this.loading = true
+    this.ref.markForCheck()
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
         this.loading = true;
@@ -316,10 +341,10 @@ export class DepartemenComponent implements OnInit {
         this.request.apiData('departemen', this.onUpdate ? 'u-departemen' : 'i-departemen', this.formValue).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
-              this.resetForm()
-              this.browseNeedUpdate = true
-              this.ref.markForCheck()
+              this.loading = false
               this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+              this.onCancel()
+              this.ref.markForCheck()
             } else {
               this.loading = false;
               this.ref.markForCheck()
@@ -344,9 +369,11 @@ export class DepartemenComponent implements OnInit {
       kode_departemen: '',
       nama_departemen: '',
       induk_departemen: '',
-      nama_induk_departemen:'',
+      nama_induk_departemen: '',
+      kode_perusahaan: '',
+      nama_perusahaan: '',
     }
-    // this.detailData = []
+    this.browseData = []
     this.formInputCheckChanges()
   }
 
@@ -364,12 +391,11 @@ export class DepartemenComponent implements OnInit {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('departemen', 'd-departemen', this.formValue).subscribe(
+      this.request.apiData('departemen', 'd-departemen', { kode_perusahaan: this.formValue.kode_perusahaan, kode_departemen: this.formValue.kode_departemen }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
             this.ref.markForCheck()
-            this.browseNeedUpdate = true
             this.refreshBrowse('BERHASIL DIHAPUS')
           } else {
             this.loading = false;
@@ -411,4 +437,5 @@ export class DepartemenComponent implements OnInit {
       // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
+
 }
