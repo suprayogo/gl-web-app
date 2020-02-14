@@ -151,7 +151,7 @@ const routes: Routes = [
 		PerusahaanComponent,
 		DivisiComponent,
 		DepartemenComponent,
-		
+		ChartOfAccountComponent
 	]
 })
 export class MasterModule {}

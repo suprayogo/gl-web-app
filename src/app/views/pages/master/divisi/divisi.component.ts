@@ -75,7 +75,7 @@ export class DivisiComponent implements OnInit {
         valueOf: 'nama_perusahaan'
       },
       update: {
-        disabled: false
+        disabled: true
       }
     },
     {
@@ -302,6 +302,7 @@ export class DivisiComponent implements OnInit {
               this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
               this.onCancel()
               this.ref.markForCheck()
+              this.sendRequestDivisi(this.formValue.kode_perusahaan)
             } else {
               this.loading = false;
               this.ref.markForCheck()
@@ -325,11 +326,10 @@ export class DivisiComponent implements OnInit {
     this.formValue = {
       kode_divisi: '',
       nama_divisi: '',
-      kode_perusahaan: '',
-      nama_perusahaan: '',
+      kode_perusahaan: this.formValue.kode_perusahaan,
+      nama_perusahaan: this.formValue.nama_perusahaan,
       keterangan: ''
     }
-    this.browseData = []
     this.formInputCheckChanges()
   }
 
@@ -353,6 +353,7 @@ export class DivisiComponent implements OnInit {
             this.onCancel()
             this.ref.markForCheck()
             this.refreshBrowse('BERHASIL DIHAPUS')
+            this.sendRequestDivisi(this.formValue.kode_perusahaan)
           } else {
             this.loading = false;
             this.ref.markForCheck()

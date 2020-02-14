@@ -240,7 +240,7 @@ export class OtoritasComponent implements OnInit {
           type === "kode_menu" ? this.inputMenuDisplayColumns :
             [],
         tableData:
-          type === "kode_menu" ? this.inputMenuData :
+          type === "kode_menu" ? this.inputMenuData.filter(x => x['detail'] !== 'N') :
             [],
         tableRules:
           type === "kode_menu" ? this.inputMenuDataRules :

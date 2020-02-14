@@ -6,7 +6,7 @@ import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
-import { GlobalVariableService } from '../../../../service/global-variable.service';
+// import { GlobalVariableService } from 'src/app/service/global-variable.service';
 
 // Components
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
@@ -224,7 +224,7 @@ export class UserOtoritasComponent implements OnInit {
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
     private request: RequestDataService,
-    private gbl: GlobalVariableService
+    // private gbl: GlobalVariableService
   ) { }
 
   ngOnInit() {
