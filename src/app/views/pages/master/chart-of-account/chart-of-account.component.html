@@ -1,1 +1,42 @@
-<p>chart-of-account works!</p>
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <kt-portlet-body>
+                <div class="kt-section" *ngIf="loading">
+                    <kt-loading></kt-loading>
+                </div>
+
+                <div *ngIf="!loading">
+                    <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [buttonLayout]="buttonLayout"
+                        [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                        [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                        (onSubmit)="onSubmit($event)" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
+                        (onCancel)="onCancel()" (deleteData)="deleteData()" (editAction)="editDetailData($event)"
+                        (deleteAction)="deleteDetailData($event)"></kt-forminput>
+                </div>
+
+                <hr style="width: 100%;">
+
+                <div class="kt-section" *ngIf="loadingCOA && !loading">
+                    <kt-loading [loadingText]="loadingDataText"></kt-loading>
+                </div>
+
+                <div *ngIf="!loadingCOA && !loading" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
+                    <kt-treeview [title]="titleComponent" [idata]="browseData" [indicator]="indicator"
+                        [indicatorValue]="indicatorValue" [subIndicator]="subIndicator" [rowOf]="rowOf"
+                        [header]="headerView" [sortBy]="sortBy" (selectRowEvent)="browseSelectRow($event)">
+                    </kt-treeview>
+                </div>
+
+            </kt-portlet-body>
+
+        </kt-portlet>
+
+        <!-- End of a Content -->
+
+    </div>
+</div>

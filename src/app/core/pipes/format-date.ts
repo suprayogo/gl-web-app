@@ -9,12 +9,12 @@ var dayOfWeekNames = [
 
 export function formatDate(idate, patternStr?: string){
 
-    if(idate == null || idate === undefined) return ""
+    if(idate == null || idate === undefined || idate === '') return ""
 
     let st = idate.split("-"), 
-        d = st[0], 
+        y = st[0], 
         m = st[1], 
-        y = st[2].split(" ").length < 2 ? st[2] : st[2].split(" ")[0],
+        d = st[2].split(" ").length < 2 ? st[2] : st[2].split(" ")[0],
         sh = st[2].split(" ").length < 2 ? "" : st[2].split(" ")[1]
 
     var date = new Date(y + "-" + m + "-" + d + " " + sh)

@@ -11,6 +11,8 @@ import { PerusahaanRequestService } from './master/perusahaan/perusahaan-request
 import { DivisiRequestService } from './master/divisi/divisi-request.service';
 import { DepartemenRequestService } from './master/departemen/departemen-request.service';
 import { UserRequestService } from './master/user/user-request.service';
+import { KategoriAkunRequestService } from './master/kategori-akun/kategori-akun-request.service';
+import { AkunRequestService } from './master/akun/akun-request.service';
 
 //Setting Services
 
@@ -37,6 +39,8 @@ export class ApiDataService {
     private perusahaanReq: PerusahaanRequestService,
     private divisiReq: DivisiRequestService,
     private departemenReq: DepartemenRequestService,
+    private akunReq: AkunRequestService,
+    private kategoriAkunReq: KategoriAkunRequestService
 
     //Setting Services
 
@@ -56,7 +60,8 @@ export class ApiDataService {
     this.divisiReq.url = this.baseURL
     this.departemenReq.url = this.baseURL
     this.otoritasReq.url = this.baseURL
-
+    this.akunReq.url = this.baseURL
+    this.kategoriAkunReq.url = this.baseURL
     //Setting Services
   }
 
@@ -82,6 +87,10 @@ export class ApiDataService {
       return this.departemenReq.validate(data, this.httpBody, this.options, formData)
     } else if(type === 'user') {
       return this.userReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'akun') {
+      return this.akunReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'kategori-akun') {
+      return this.kategoriAkunReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services

@@ -10,7 +10,7 @@
                   <kt-loading></kt-loading>
               </div>
 
-              <div class="kt-section" *ngIf="!loading">
+              <div *ngIf="!loading">
                   <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                       [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
                       [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
@@ -26,7 +26,7 @@
                   <kt-loading [loadingText]="loadingDataText"></kt-loading>
               </div>
 
-              <div class="kt-section" *ngIf="!loadingDepartemen && !loading" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
+              <div *ngIf="!loadingDepartemen && !loading" style="overflow-x: auto; overflow-y: hidden; margin-bottom: 0">
                   <kt-treeview
                       [title]="titleComponent" 
                       [idata]="browseData" 

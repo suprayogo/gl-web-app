@@ -26,8 +26,8 @@
           style="text-transform: uppercase" [disabled]="(onUpdate && x.update.disabled) || x.disabled">
         <div class="input-group-append">
           <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
-            [disabled]="(onUpdate && x.update.disabled) || x.disabled"><i *ngIf="x.btnIcon" style="color: white" class="flaticon"
-              [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+            [disabled]="(onUpdate && x.update.disabled) || x.disabled"><i *ngIf="x.btnIcon" style="color: white"
+              class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>
         <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo" type="text"
           name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly"
@@ -35,16 +35,20 @@
       </div>
 
       <!-- FOR NORMAL INPUT -->
-      <div *ngIf="x.type === 'input'">
-        <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
-          [(ngModel)]="cFormValue[x.valueOf]"
-          [readonly]="(x.id === 'user-id' || x.id === 'user-name') && cFormValue.user_type === 'I' ? true : x.readOnly"
-          [required]="x.required"
+      <div *ngIf="x.type === 'input'" [ngClass]="{'input-group': x.rightAddon || x.leftAddon}">
+        <div class="input-group-prepend" *ngIf="x.leftAddon"><span class="input-group-text" id="basic-addon-left">{{ x.leftAddon }}</span></div>
+        <input *ngIf="!x.numberOnly && !x.currency" class="form-control m-input" type="text" name="{{ x.id }}"
+          [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
           [disabled]="(onUpdate && x.update.disabled) || x.disabled"
           (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null">
         <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
           [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
           [disabled]="onUpdate && x.update.disabled">
+        <input *ngIf="x.currency" class="form-control m-input number-align-right" type="text" name="{{ x.id }}"
+          [(ngModel)]="cFormValue[x.valueOf]" (keyup)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null"
+          [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled || onUpdate && x.update.disabled"
+          currencyMask [options]="x.currencyOptions">
+        <div class="input-group-append" *ngIf="x.rightAddon"><span class="input-group-text" id="basic-addon-right">{{ x.rightAddon }}</span></div>
         <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
       </div>
 

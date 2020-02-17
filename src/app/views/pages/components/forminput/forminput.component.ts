@@ -21,7 +21,7 @@ export class ForminputComponent implements OnInit {
   @Input() enableDetail: boolean;
   @Input() onUpdate: any;
   @Input() enableDelete: boolean;
-  
+
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
   @Output() deleteData = new EventEmitter();
@@ -43,7 +43,7 @@ export class ForminputComponent implements OnInit {
   getData() {
     return this.cFormValue
   }
-  
+
   formSubmit(form) {
     this.onSubmit.emit(form)
   }
@@ -59,22 +59,22 @@ export class ForminputComponent implements OnInit {
 
   onBlur(type) {
     let sres = null
-    sres = this.cFormValue[type] === "" ? null : this.formValue[type].toUpperCase()
+    sres = this.cFormValue[type] === "" ? null : this.cFormValue[type].toUpperCase()
   }
 
-  onReset(){
+  onReset() {
     this.onCancel.emit()
   }
 
-  delData(){
+  delData() {
     this.deleteData.emit()
   }
 
-  editDetailData(data){
+  editDetailData(data) {
     this.editAction.emit(data)
   }
 
-  delDetailData(data){
+  delDetailData(data) {
     this.deleteAction.emit(data)
   }
 
