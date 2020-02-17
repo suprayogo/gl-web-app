@@ -19,7 +19,7 @@ const content = {
 @Component({
   selector: 'kt-perusahaan',
   templateUrl: './perusahaan.component.html',
-  styleUrls: ['./perusahaan.component.scss', '../master.style.scss']
+  styleUrls: ['./perusahaan.component.scss', '../management.style.scss']
 })
 export class PerusahaanComponent implements OnInit {
 

@@ -18,7 +18,7 @@ const content = {
 @Component({
   selector: 'kt-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss', '../master.style.scss']
+  styleUrls: ['./menu.component.scss', '../management.style.scss']
 })
 export class MenuComponent implements OnInit {
 

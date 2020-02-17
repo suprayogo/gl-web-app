@@ -48,22 +48,27 @@ import {
 } from '../../../core/auth';
 
 // Components
-import { DivisiComponent } from './divisi/divisi.component';
-import { DepartemenComponent } from './departemen/departemen.component';
-import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
+import { MenuComponent } from './menu/menu.component';
+import { OtoritasComponent } from './otoritas/otoritas.component';
+import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
+import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 
 const routes: Routes = [
 	{
-		path: 'divisi',
-		component: DivisiComponent,
+		path: 'menu',
+		component: MenuComponent
 	},
 	{
-		path: 'departemen',
-		component: DepartemenComponent,
+		path: 'otoritas',
+		component: OtoritasComponent,
 	},
 	{
-		path: 'chart-of-account',
-		component: ChartOfAccountComponent,
+		path: 'user-otoritas',
+		component: UserOtoritasComponent
+	},
+	{
+		path: 'perusahaan',
+		component: PerusahaanComponent
 	},
 ];
 
@@ -125,9 +130,10 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		DivisiComponent,
-		DepartemenComponent,
-		ChartOfAccountComponent
+		MenuComponent,
+		OtoritasComponent,
+		UserOtoritasComponent,
+		PerusahaanComponent,
 	]
 })
-export class MasterModule {}
+export class ManagementModule {}

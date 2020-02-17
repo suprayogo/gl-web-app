@@ -21,7 +21,7 @@ const content = {
 @Component({
   selector: 'kt-user-otoritas',
   templateUrl: './user-otoritas.component.html',
-  styleUrls: ['./user-otoritas.component.scss', '../master.style.scss']
+  styleUrls: ['./user-otoritas.component.scss', '../management.style.scss']
 })
 export class UserOtoritasComponent implements OnInit {
 

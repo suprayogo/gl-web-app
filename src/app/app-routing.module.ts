@@ -28,6 +28,10 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/master/master.module').then(m => m.MasterModule)
 			},
 			{
+				path: 'management',
+				loadChildren: () => import('./views/pages/management/management.module').then(m => m.ManagementModule)
+			},
+			{
 				path: 'builder',
 				loadChildren: () => import('./views/theme/content/builder/builder.module').then(m => m.BuilderModule)
 			},

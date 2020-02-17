@@ -8,6 +8,7 @@ import { PartialsModule } from '../partials/partials.module';
 // Pages
 import { CoreModule } from '../../core/core.module';
 import { MasterModule } from './master/master.module';
+import { ManagementModule } from './management/management.module';
 
 @NgModule({
 	declarations: [],
@@ -19,6 +20,7 @@ import { MasterModule } from './master/master.module';
 		CoreModule,
 		PartialsModule,
 		MasterModule,
+		ManagementModule,
 	],
 	providers: []
 })
