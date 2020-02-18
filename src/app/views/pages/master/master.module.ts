@@ -51,6 +51,10 @@ import {
 import { DivisiComponent } from './divisi/divisi.component';
 import { DepartemenComponent } from './departemen/departemen.component';
 import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
+import { BankComponent } from './bank/bank.component';
+import { KategoriAkunComponent } from './kategori-akun/kategori-akun.component';
+import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
+import { KontakComponent } from './kontak/kontak.component';
 
 const routes: Routes = [
 	{
@@ -64,6 +68,22 @@ const routes: Routes = [
 	{
 		path: 'chart-of-account',
 		component: ChartOfAccountComponent,
+	},
+	{
+		path: 'bank',
+		component: BankComponent,
+	},
+	{
+		path: 'kategori-akun',
+		component: KategoriAkunComponent,
+	},
+	{
+		path: 'jenis-transaksi',
+		component: JenisTransaksiComponent,
+	},
+	{
+		path: 'kontak',
+		component: KontakComponent,
 	},
 ];
 
@@ -127,7 +147,11 @@ const routes: Routes = [
 	declarations: [
 		DivisiComponent,
 		DepartemenComponent,
-		ChartOfAccountComponent
+		ChartOfAccountComponent,
+		BankComponent,
+		KategoriAkunComponent,
+		JenisTransaksiComponent,
+		KontakComponent
 	]
 })
 export class MasterModule {}

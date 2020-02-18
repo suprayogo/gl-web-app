@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MatTabChangeEvent, MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
+import * as MD5 from 'crypto-js/md5';
+import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
@@ -10,24 +12,22 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
-import { DialogComponent } from '../../components/dialog/dialog.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Divisi'
+  beforeCodeTitle: 'Daftar Jenis Transaksi'
 }
 
 @Component({
-  selector: 'kt-divisi',
-  templateUrl: './divisi.component.html',
-  styleUrls: ['./divisi.component.scss', '../master.style.scss']
+  selector: 'kt-jenis-transaksi',
+  templateUrl: './jenis-transaksi.component.html',
+  styleUrls: ['./jenis-transaksi.component.scss', '../master.style.scss']
 })
-export class DivisiComponent implements OnInit, AfterViewInit {
+export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
-  // Variables
   // Variables
   loading: boolean = true;
   content: any;
@@ -35,32 +35,116 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   enableDetail: boolean = false;
   editable: boolean = false;
   selectedTab: number = 0;
+  tableLoad: boolean = false;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
-  loadingDivisi: boolean = false;
-  loadingDataText: string = "Loading Divisi.."
+  browseNeedUpdate: boolean = true;
   search: string;
   subscription: any;
-  kode_perusahaan: any;
+  kp: any;
 
-  //Configuration
-  // tipe_menu: Object = []
+  // Configuration Select box
+  // tipe_aktif: Object = []
+
+  /* buttonLayout = [
+    {
+      btnLabel: 'Tambah Akses',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.openDialog('kode_aplikasi')
+      },
+      btnCondition: () => {
+        return true
+      }
+    }
+  ] */
+
+  // List Dialog
+  /* inputAplikasiDisplayColumns = [
+    {
+      label: '',
+      value: '',
+      selectable: true
+    },
+  ]
+  inputAplikasiInterface = {
+    contoh: 'string'
+  }
+  inputAplikasiData = []
+  inputAplikasiDataRules = [] */
+
+  // List Detail
+  /* detailDisplayColumns = [
+    {
+      label: '',
+      value: ''
+    },
+  ]
+  detailInterface = {
+    contoh: 'string'
+  }
+  detailData = []
+  detailRules = [] */
+
+  // TAB MENU BROWSE 
+  displayedColumnsTable = [
+    {
+      label: 'Kode Jenis Transaksi',
+      value: 'kode_jenis_transaksi'
+    },
+    {
+      label: 'Nama Jenis Transaksi',
+      value: 'nama_jenis_transaksi'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
+    },
+    {
+      label: 'Diinput oleh',
+      value: 'input_by',
+    },
+    {
+      label: 'Diinput tanggal',
+      value: 'input_dt'
+    },
+    {
+      label: 'Diupdate oleh',
+      value: 'update_by'
+    },
+    {
+      label: 'Diupdate tanggal',
+      value: 'update_dt'
+    }
+  ];
+  browseInterface = {
+    kode_jenis_transaksi: 'string',
+    nama_jenis_transaksi: 'string',
+    keterangan: 'string',
+    //STATIC
+    input_by: 'string',
+    input_dt: 'string',
+    update_by: 'string',
+    update_dt: 'string'
+  }
+  browseData = []
+  browseDataRules = []
 
   // Input Name
   formValue = {
-    kode_divisi: '',
-    nama_divisi: '',
-    keterangan: ''
+    kode_jenis_transaksi: '',
+    nama_jenis_transaksi: '',
+    keterangan: '',
   }
 
   // Layout Form
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Divisi',
-      id: 'kode-divisi',
+      label: 'Kode Jenis Transaksi',
+      id: 'kode-jenis-transaksi',
       type: 'input',
-      valueOf: 'kode_divisi',
+      valueOf: 'kode_jenis_transaksi',
       required: true,
       readOnly: false,
       update: {
@@ -70,10 +154,10 @@ export class DivisiComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Divisi',
-      id: 'nama-divisi',
+      label: 'Nama Jenis Transaksi',
+      id: 'nama-jenis-transaksi',
       type: 'input',
-      valueOf: 'nama_divisi',
+      valueOf: 'nama_jenis_transaksi',
       required: true,
       readOnly: false,
       update: {
@@ -94,28 +178,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  //Tree view Variables
-  titleComponent = "Daftar Divisi"
-  indicator = "induk_divisi"
-  indicatorValue = ""
-  subIndicator = "kode_divisi"
-  rowOf = 0
-  headerView = [
-    {
-      label: 'Nama Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Kode Divisi',
-      value: 'kode_divisi'
-    }
-  ]
-  sortBy = "nama_divisi"
-
-  // TAB MENU BROWSE 
-  browseData = []
-  browseDataRules = []
-
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -125,61 +187,82 @@ export class DivisiComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.subscription = this.gbl.change.subscribe(
-      value => {
-        this.kode_perusahaan = value
-        this.resetForm()
-        this.madeRequest()
-      }
-    )
+    this.madeRequest()
+    this.reqKodePerusahaan()
   }
 
   ngAfterViewInit(): void {
-    if (this.kode_perusahaan === undefined) {
-      this.kode_perusahaan = this.gbl.getKodePerusahaan()
-      if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') {
-        this.madeRequest()
-      }
-    }
+    this.kp = this.gbl.getKodePerusahaan()
   }
 
-  // Request Data API (to : L.O.V or Table)
-  madeRequest() {
-    this.loading = false
-    this.sendRequestDivisi()
+  ngOnDestroy(): void {
+    this.subscription === undefined ? null : this.subscription.unsubscribe()
   }
 
-  sendRequestDivisi() {
-    this.loadingDivisi = true
-    this.ref.markForCheck()
-    this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.browseData = data['RESULT']
-          this.loadingDivisi = false
-          this.ref.markForCheck()
-        } else {
-          this.loadingDivisi = false
-          this.ref.markForCheck()
-          // this.openSnackBar('Data Divisi tidak ditemukan.')
+  reqKodePerusahaan() {
+    this.subscription = this.gbl.change.subscribe(
+      value => {
+        this.kp = value
+        this.resetForm()
+        this.browseData = []
+        this.browseNeedUpdate = true
+        this.ref.markForCheck()
+
+        if (this.selectedTab == 1 && this.browseNeedUpdate) {
+          this.refreshBrowse('', value)
         }
       }
     )
   }
 
-  refreshBrowse(message) {
+  // Request Data API (to : L.O.V or Table)
+  madeRequest() {
     this.loading = false
-    this.ref.markForCheck()
-    this.onUpdate = false
-    this.openSnackBar(message, 'success')
+  }
+
+  //Tab change event
+  onTabSelect(event: MatTabChangeEvent) {
+    this.selectedTab = event.index
+    if (this.selectedTab == 1 && this.browseNeedUpdate) {
+      this.refreshBrowse('')
+    }
+
+    if (this.selectedTab == 1) this.datatable == undefined ? null : this.datatable.checkColumnFit()
+  }
+
+  refreshBrowse(message, val = null) {
+    this.tableLoad = true
+    this.request.apiData('jenis-transaksi', 'g-jenis-transaksi', { kode_perusahaan: val ? val : this.kp }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          if (message !== '') {
+            this.browseData = data['RESULT']
+            this.loading = false
+            this.tableLoad = false
+            this.ref.markForCheck()
+            this.openSnackBar(message, 'success')
+            this.onUpdate = false
+          } else {
+            this.browseData = data['RESULT']
+            this.loading = false
+            this.tableLoad = false
+            this.browseNeedUpdate = false
+            this.ref.markForCheck()
+          }
+        }
+      }
+    )
   }
 
   //Browse binding event
   browseSelectRow(data) {
-    this.formValue = data
+    let x = this.formValue
+    x.kode_jenis_transaksi = data['kode_jenis_transaksi']
+    x.nama_jenis_transaksi = data['nama_jenis_transaksi']
+    x.keterangan = data['keterangan']
+    this.formValue = x
     this.onUpdate = true;
-    window.scrollTo(0, 0)
-    this.formInputCheckChanges()
+    this.getBackToInput();
   }
 
   getBackToInput() {
@@ -189,23 +272,21 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   }
 
   //Form submit
-  onSubmit(inputForm: NgForm) {
-    this.loading = true
-    this.ref.markForCheck()
+  onSubmit(inputForm: NgForm, val = null) {
+
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
-        this.request.apiData('divisi', this.onUpdate ? 'u-divisi' : 'i-divisi', endRes).subscribe(
+        let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp }, this.formValue)
+        this.request.apiData('jenis-transaksi', this.onUpdate ? 'u-jenis-transaksi' : 'i-jenis-transaksi', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
-              this.loading = false
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
-              this.onCancel()
+              this.resetForm()
+              this.browseNeedUpdate = true
               this.ref.markForCheck()
-              this.sendRequestDivisi()
+              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
             } else {
               this.loading = false;
               this.ref.markForCheck()
@@ -227,11 +308,11 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      kode_divisi: '',
-      nama_divisi: '',
-      keterangan: ''
+      kode_jenis_transaksi: '',
+      nama_jenis_transaksi: '',
+      keterangan: '',
     }
-    this.browseData = []
+    // this.detailData = []
     this.formInputCheckChanges()
   }
 
@@ -245,17 +326,18 @@ export class DivisiComponent implements OnInit, AfterViewInit {
     }
   }
 
-  deleteData() {
+  deleteData(val = null) {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('divisi', 'd-divisi', { kode_perusahaan: this.kode_perusahaan, kode_divisi: this.formValue.kode_divisi }).subscribe(
+      let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp }, this.formValue)
+      this.request.apiData('jenis-transaksi', 'd-jenis-transaksi', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
             this.ref.markForCheck()
+            this.browseNeedUpdate = true
             this.refreshBrowse('BERHASIL DIHAPUS')
-            this.sendRequestDivisi()
           } else {
             this.loading = false;
             this.ref.markForCheck()
@@ -296,5 +378,4 @@ export class DivisiComponent implements OnInit, AfterViewInit {
       // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 1)
   }
-
 }

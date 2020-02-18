@@ -354,7 +354,7 @@ export class MenuComponent implements OnInit {
     this.ref.markForCheck()
     this.onUpdate = false
     this.sendRequestMenu()
-    this.openSnackBar(message)
+    this.openSnackBar(message, 'success')
   }
 
   //Browse binding event
