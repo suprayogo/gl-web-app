@@ -4,27 +4,27 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class KategoriAkunRequestService {
+export class JenisTransaksiRequestService {
 
   url: string;
 
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object) {
-    if (data === 'g-kategori-akun') {
-      httpBody.respondCode = 'GET-DATA-KATEGORI-AKUN'
+    if (data === 'g-jenis-transaksi') {
+      httpBody.respondCode = 'GET-DATA-JENIS-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'i-kategori-akun') {
-      httpBody.respondCode = 'SET-DATA-KATEGORI-AKUN'
+    } else if (data === 'i-jenis-transaksi') {
+      httpBody.respondCode = 'SET-DATA-JENIS-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'u-kategori-akun') {
-      httpBody.respondCode = 'UPT-DATA-KATEGORI-AKUN'
+    } else if (data === 'u-jenis-transaksi') {
+      httpBody.respondCode = 'UPT-DATA-JENIS-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'd-kategori-akun') {
-      httpBody.respondCode = 'DEL-DATA-KATEGORI-AKUN'
+    } else if (data === 'd-jenis-transaksi') {
+      httpBody.respondCode = 'DEL-DATA-JENIS-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }
