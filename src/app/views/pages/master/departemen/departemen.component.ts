@@ -51,6 +51,8 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
     nama_departemen: '',
     induk_departemen: '',
     nama_induk_departemen: '',
+    kode_divisi: '',
+    nama_divisi: '',
   }
 
   // Layout Form
@@ -104,6 +106,30 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
         disabled: false
       }
     },
+    {
+      formWidth: 'col-5',
+      label: 'Divisi',
+      id: 'kode-divisi',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_divisi',
+      valueOf: 'kode_divisi',
+      required: true,
+      readOnly: false,
+      hiddenOn: false,
+      inputInfo: {
+        id: 'nama-divisi',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_divisi'
+      },
+      update: {
+        disabled: false
+      }
+    }
   ]
 
   //Tree view Variables
@@ -154,6 +180,27 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
   }
   inputDepartemenData = []
   inputDepartemenDataRules = []
+  inputDivisiDisplayColumns = [
+    {
+      label: 'Kode Divisi',
+      value: 'kode_divisi'
+    },
+    {
+      label: 'Nama Divisi',
+      value: 'nama_divisi'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
+    }
+  ]
+  inputDivisiInterface = {
+    kode_divisi: 'string',
+    nama_divisi: 'string',
+    keterangan: 'string'
+  }
+  inputDivisiData = []
+  inputDivisiDataRules = []
 
   // TAB MENU BROWSE 
   browseData = []
@@ -188,8 +235,20 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.loading = false
-    this.sendRequestDepartemen()
+    this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputDivisiData = data['RESULT']
+          this.loading = false
+          this.sendRequestDepartemen()
+        } else {
+          this.openSnackBar('Gagal mendapatkan daftar divisi. Mohon coba lagi nanti.', 'fail')
+          this.loading = false
+          this.loadingDepartemen = false
+          this.ref.markForCheck()
+        }
+      }
+    )
   }
 
   sendRequestDepartemen() {
@@ -222,15 +281,19 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
         type: type,
         tableInterface:
           type === "induk_departemen" ? this.inputDepartemenInterface :
+          type === "kode_divisi" ? this.inputDivisiInterface :
             {},
         displayedColumns:
           type === "induk_departemen" ? this.inputDepartemenDisplayColumns :
+          type === "kode_divisi" ? this.inputDivisiDisplayColumns :
             [],
         tableData:
           type === "induk_departemen" ? this.inputDepartemenData :
+          type === "kode_divisi" ? this.inputDivisiData :
             [],
         tableRules:
           type === "induk_departemen" ? this.inputDepartemenDataRules :
+          type === "kode_divisi" ? this.inputDivisiData :
             [],
         formValue: this.formValue
       }
@@ -242,6 +305,11 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('induk_departemen', result.kode_departemen)
             this.forminput.updateFormValue('nama_induk_departemen', result.nama_departemen)
+          }
+        } else if (type === "kode_divisi") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
+            this.forminput.updateFormValue('nama_divisi', result.kode_divisi)
           }
         }
         this.ref.markForCheck();
@@ -321,6 +389,8 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
       nama_departemen: '',
       induk_departemen: '',
       nama_induk_departemen: '',
+      kode_divisi: '',
+      nama_divisi: '',
     }
     this.browseData = []
     this.formInputCheckChanges()

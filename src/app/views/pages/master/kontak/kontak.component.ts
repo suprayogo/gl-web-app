@@ -178,7 +178,7 @@ export class KontakComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'alamat',
+      label: 'Alamat',
       id: 'alamat',
       type: 'input',
       valueOf: 'alamat',

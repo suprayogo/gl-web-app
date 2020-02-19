@@ -50,8 +50,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   formValue = {
     kode_divisi: '',
     nama_divisi: '',
-    kode_departemen: '',
-    nama_departemen: '',
     keterangan: ''
   }
 
@@ -78,30 +76,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
       valueOf: 'nama_divisi',
       required: true,
       readOnly: false,
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Kode Departemen',
-      id: 'kode-departemen',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_departemen',
-      valueOf: 'kode_departemen',
-      required: true,
-      readOnly: false,
-      hiddenOn: false,
-      inputInfo: {
-        id: 'nama_departemen',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_departemen'
-      },
       update: {
         disabled: false
       }
@@ -138,33 +112,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   ]
   sortBy = "nama_divisi"
 
-  inputDepartemenDisplayColumns = [
-    {
-      label: 'Kode Departemen',
-      value: 'kode_departemen'
-    },
-    {
-      label: 'Nama Departemen',
-      value: 'nama_departemen'
-    },
-    {
-      label: 'Induk Departemen',
-      value: 'induk_departemen'
-    },
-    {
-      label: 'Nama Induk Departemen',
-      value: 'nama_induk_departemen'
-    }
-  ]
-  inputDepartemenInterface = {
-    kode_departemen: 'string',
-    nama_departemen: 'string',
-    induk_departemen: 'string',
-    nama_induk_departemen: 'string'
-  }
-  inputDepartemenData = []
-  inputDepartemenDataRules = []
-
   // TAB MENU BROWSE 
   browseData = []
   browseDataRules = []
@@ -200,7 +147,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   madeRequest() {
     this.loading = false
     this.sendRequestDivisi()
-    this.sendRequestDepartemen()
   }
 
   sendRequestDivisi() {
@@ -219,62 +165,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
         }
       }
     )
-  }
-
-  sendRequestDepartemen() {
-    this.loadingDepartemen = true
-    this.ref.markForCheck()
-    this.request.apiData('departemen', 'g-departemen', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputDepartemenData = data['RESULT']
-          this.loadingDepartemen = false
-          this.ref.markForCheck()
-        } else {
-          this.loadingDepartemen = false
-          this.ref.markForCheck()
-          // this.openSnackBar('Data Departemen tidak ditemukan.')
-        }
-      }
-    )
-  }
-
-  // Dialog
-  openDialog(type) {
-    const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      data: {
-        type: type,
-        tableInterface:
-          type === "kode_departemen" ? this.inputDepartemenInterface :
-            {},
-        displayedColumns:
-          type === "kode_departemen" ? this.inputDepartemenDisplayColumns :
-            [],
-        tableData:
-          type === "kode_departemen" ? this.inputDepartemenData :
-            [],
-        tableRules:
-          type === "kode_departemen" ? this.inputDepartemenDataRules :
-            [],
-        formValue: this.formValue
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (type === "kode_departemen") {
-          if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('kode_departemen', result.kode_departemen)
-            this.forminput.updateFormValue('nama_departemen', result.nama_departemen)
-          }
-        }
-        this.ref.markForCheck();
-      }
-    });
   }
 
   refreshBrowse(message) {
@@ -346,8 +236,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
     this.formValue = {
       kode_divisi: '',
       nama_divisi: '',
-      kode_departemen: '',
-      nama_departemen: '',
       keterangan: ''
     }
     this.browseData = []

@@ -9,7 +9,7 @@
 		<div #asideMenu ktMenu [options]="menuOptions" [perfectScrollbar]="{wheelPropagation: false}" [disabled]="disableScroll()" [ngStyle]="{'max-height': '100vh', 'position': 'relative'}" id="kt_aside_menu" class="kt-aside-menu"
 			(mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)"
 			[ngClass]="htmlClassService.getClasses('aside_menu', true)">
-			<ul class="kt-menu__nav" [ngClass]="htmlClassService.getClasses('aside_menu_nav', true)">
+			<ul class="kt-menu__nav" [ngClass]="htmlClassService.getClasses('aside_menu_nav', true)" style="padding-bottom: 85px;">
 				<ng-container [ngTemplateOutlet]="menuListTemplate"></ng-container>
 			</ul>
 		</div>
