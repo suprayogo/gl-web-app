@@ -16,6 +16,7 @@ import { AkunRequestService } from './master/akun/akun-request.service';
 import { BankRequestService } from './master/bank/bank-request.service';
 import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-transaksi-request.service';
 import { KontakRequestService } from './master/kontak/kontak-request.service';
+import { RekeningPerusahaanRequestService } from './master/rekening-perusahaan/rekening-perusahaan-request.service';
 
 //Setting Services
 
@@ -47,6 +48,7 @@ export class ApiDataService {
     private kategoriAkunReq: KategoriAkunRequestService,
     private jenisTransaksiReq: JenisTransaksiRequestService,
     private kontakReq: KontakRequestService,
+    private rekeningPerusahaanReq: RekeningPerusahaanRequestService
 
     //Setting Services
 
@@ -72,6 +74,7 @@ export class ApiDataService {
     this.kategoriAkunReq.url = this.baseURL
     this.jenisTransaksiReq.url = this.baseURL
     this.kontakReq.url = this.baseURL
+    this.rekeningPerusahaanReq.url = this.baseURL
 
     //Setting Services
   }
@@ -113,6 +116,8 @@ export class ApiDataService {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
     } else if(type === 'kontak') {
       return this.kontakReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'rekening-perusahaan') {
+      return this.rekeningPerusahaanReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services

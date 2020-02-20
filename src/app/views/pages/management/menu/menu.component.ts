@@ -10,6 +10,7 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Daftar Menu'
@@ -58,6 +59,38 @@ export class MenuComponent implements OnInit {
     {
       label: 'Tidak',
       value: 'N'
+    }
+  ]
+
+  //Confirmation Variable
+  c_buttonLayout = [
+    {
+      btnLabel: 'Hapus Data',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.deleteData()
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin akan menghapus data ?',
+      style: {
+        'color': 'red',
+        'font-size': '20px',
+        'font-weight': 'bold'
+      }
     }
   ]
 
@@ -349,6 +382,59 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: [
+          {
+            label: 'Kode Menu',
+            id: 'kode-menu',
+            type: 'input',
+            valueOf: this.formValue.kode_menu,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Menu',
+            id: 'nama-menu',
+            type: 'input',
+            valueOf: this.formValue.nama_menu,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Induk Menu',
+            id: 'induk-menu',
+            type: 'input',
+            valueOf: this.formValue.induk_menu,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+        ]
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        // this.batal_alasan = ""
+      },
+      // error => null
+    )
+  }
+
   refreshBrowse(message) {
     this.loading = false
     this.ref.markForCheck()
@@ -440,6 +526,7 @@ export class MenuComponent implements OnInit {
   }
 
   deleteData() {
+    this.dialog.closeAll()
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()

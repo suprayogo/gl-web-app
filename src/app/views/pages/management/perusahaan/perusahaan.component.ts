@@ -11,6 +11,7 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Daftar Perusahaan'
@@ -40,48 +41,37 @@ export class PerusahaanComponent implements OnInit {
   browseNeedUpdate: boolean = true;
   search: string;
 
-  // Configuration Select box
-  // tipe_aktif: Object = []
-
-  /* buttonLayout = [
+  //Confirmation Variable
+  c_buttonLayout = [
     {
-      btnLabel: 'Tambah Akses',
+      btnLabel: 'Hapus Data',
       btnClass: 'btn btn-primary',
       btnClick: () => {
-        this.openDialog('kode_aplikasi')
+        this.deleteData()
       },
       btnCondition: () => {
         return true
       }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
     }
-  ] */
-
-  // List Dialog
-  /* inputAplikasiDisplayColumns = [
-    {
-      label: '',
-      value: '',
-      selectable: true
-    },
   ]
-  inputAplikasiInterface = {
-    contoh: 'string'
-  }
-  inputAplikasiData = []
-  inputAplikasiDataRules = [] */
-
-  // List Detail
-  /* detailDisplayColumns = [
+  c_labelLayout = [
     {
-      label: '',
-      value: ''
-    },
+      content: 'Yakin akan menghapus data ?',
+      style: {
+        'color': 'red',
+        'font-size': '20px',
+        'font-weight': 'bold'
+      }
+    }
   ]
-  detailInterface = {
-    contoh: 'string'
-  }
-  detailData = []
-  detailRules = [] */
 
   // TAB MENU BROWSE 
   displayedColumnsTable = [
@@ -191,6 +181,49 @@ export class PerusahaanComponent implements OnInit {
     this.loading = false
   }
 
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: [
+          {
+            label: 'Kode Perusahaan',
+            id: 'kode-perusahaan',
+            type: 'input',
+            valueOf: this.formValue.kode_perusahaan,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Perusahaan',
+            id: 'nama-perusahaan',
+            type: 'input',
+            valueOf: this.formValue.nama_perusahaan,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+        ]
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        // this.batal_alasan = ""
+      },
+      // error => null
+    )
+  }
+
   //Tab change event
   onTabSelect(event: MatTabChangeEvent) {
     this.selectedTab = event.index
@@ -297,6 +330,7 @@ export class PerusahaanComponent implements OnInit {
   }
 
   deleteData() {
+    this.dialog.closeAll()
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()

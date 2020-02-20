@@ -24,6 +24,10 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	today: number = Date.now();
 	kode_perusahaan: string = ""
 	nama_perusahaan: string = ""
+
+	id_periode: string = ""
+	tahun_periode: string = ""
+	bulan_periode: string = ""
 	// title: string = '';
 	// desc: string = '';
 	// breadcrumbs: Breadcrumb[] = [];

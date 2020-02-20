@@ -11,6 +11,7 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Daftar Divisi'
@@ -43,8 +44,37 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   subscription: any;
   kode_perusahaan: any;
 
-  //Configuration
-  // tipe_menu: Object = []
+  //Confirmation Variable
+  c_buttonLayout = [
+    {
+      btnLabel: 'Hapus Data',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.deleteData()
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin akan menghapus data ?',
+      style: {
+        'color': 'red',
+        'font-size': '20px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
 
   // Input Name
   formValue = {
@@ -143,6 +173,10 @@ export class DivisiComponent implements OnInit, AfterViewInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.subscription === undefined ? null : this.subscription.unsubscribe()
+  }
+
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     this.loading = false
@@ -161,9 +195,52 @@ export class DivisiComponent implements OnInit, AfterViewInit {
         } else {
           this.loadingDivisi = false
           this.ref.markForCheck()
-          // this.openSnackBar('Data Divisi tidak ditemukan.')
+          this.openSnackBar('Data Divisi tidak ditemukan.')
         }
       }
+    )
+  }
+
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: [
+          {
+            label: 'Kode Divisi',
+            id: 'kode-divisi',
+            type: 'input',
+            valueOf: this.formValue.kode_divisi,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Divisi',
+            id: 'nama-divisi',
+            type: 'input',
+            valueOf: this.formValue.nama_divisi,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+        ]
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        // this.batal_alasan = ""
+      },
+      // error => null
     )
   }
 
@@ -177,13 +254,6 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   //Browse binding event
   browseSelectRow(data) {
     this.formValue = data
-    /* for (var i = 0; i < this.inputDepartemenData.length; i++) {
-      if (this.inputDepartemenData[i]['kode_departemen'] === this.formValue['induk_departemen']) {
-        this.formValue['nama_induk_departemen'] = this.inputDepartemenData[i]['nama_departemen']
-
-      }
-      break
-    } */
     this.onUpdate = true;
     window.scrollTo(0, 0)
     this.formInputCheckChanges()
@@ -253,6 +323,7 @@ export class DivisiComponent implements OnInit, AfterViewInit {
   }
 
   deleteData() {
+    this.dialog.closeAll()
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()

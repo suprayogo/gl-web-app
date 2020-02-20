@@ -30,6 +30,7 @@ import { AgGridModule } from 'ag-grid-angular';
 
 // Component Call
 import { DialogComponent } from './components/dialog/dialog.component';
+import { ConfirmationdialogComponent } from './components/confirmationdialog/confirmationdialog.component';
 import { TreeviewComponent } from './components/treeview/treeview.component';
 import { ReportdialogComponent } from './components/reportdialog/reportdialog.component';
 import { DatatableAgGridComponent } from './components/datatable-ag-grid/datatable-ag-grid.component';
@@ -44,7 +45,6 @@ import { ForminputComponent } from './components/forminput/forminput.component';
 // import { LoadingComponent } from './components/loading/loading.component';
 // import { DatatableComponent } from './components/datatable/datatable.component';
 // import { DetailinputComponent } from './components/detailinput/detailinput.component';
-// import { ConfirmationdialogComponent } from './components/confirmationdialog/confirmationdialog.component';
 // import { ViewdialogComponent } from './components/viewdialog/viewdialog.component';
 
 const currencyOptions = {
@@ -95,8 +95,8 @@ const currencyOptions = {
 
     //Dialog
     DialogComponent,
+    ConfirmationdialogComponent,
     // InputdialogComponent, DELETE
-    // ConfirmationdialogComponent, DELETE
     ReportdialogComponent,
     AlertdialogComponent,
 
@@ -136,8 +136,8 @@ const currencyOptions = {
 
     //Dialog
     DialogComponent,
+    ConfirmationdialogComponent,
     // InputdialogComponent, DELETE
-    // ConfirmationdialogComponent, DELETE
     // ViewdialogComponent, DELETE
     ReportdialogComponent,
     AlertdialogComponent,
@@ -158,9 +158,9 @@ const currencyOptions = {
   entryComponents: [
     //List of mini component
     DialogComponent,
+    ConfirmationdialogComponent,
     AlertdialogComponent,
     // InputdialogComponent, DELETE
-    // ConfirmationdialogComponent, DELETE
     ReportdialogComponent,
     // ViewdialogComponent DELETE
   ],
