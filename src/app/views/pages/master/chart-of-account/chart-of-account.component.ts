@@ -141,24 +141,11 @@ export class ChartOfAccountComponent implements OnInit {
       valueOf: 'saldo_awal',
       required: false,
       readOnly: false,
+      disabled: true,
       currency: true,
       leftAddon: 'Rp.',
       update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Saldo Saat Ini',
-      id: 'saldo-saat-ini',
-      type: 'input',
-      valueOf: 'saldo_saat_ini',
-      required: false,
-      readOnly: false,
-      currency: true,
-      leftAddon: 'Rp.',
-      update: {
-        disabled: true
+        disabled: false
       }
     },
     {
@@ -203,6 +190,10 @@ export class ChartOfAccountComponent implements OnInit {
       value: 'keterangan'
     },
     {
+      label: 'Saldo Awal',
+      value: 'saldo_awal'
+    },
+    {
       label: 'Saldo',
       value: 'saldo_saat_ini'
     }
@@ -232,11 +223,13 @@ export class ChartOfAccountComponent implements OnInit {
     },
     {
       label: 'Saldo Awal',
-      value: 'saldo_awal'
+      value: 'saldo_awal',
+      number: true
     },
     {
       label: 'Saldo Saat Ini',
-      value: 'saldo_saat_ini'
+      value: 'saldo_saat_ini',
+      number: true
     },
     {
       label: 'Diinput Oleh',
@@ -347,6 +340,35 @@ export class ChartOfAccountComponent implements OnInit {
     this.subscription === undefined ? null : this.subscription.unsubscribe()
   }
 
+  //Browse binding event
+  browseSelectRow(data) {
+    let x = JSON.parse(JSON.stringify(data))
+    this.formValue = {
+      id_akun: x['id_akun'],
+      kode_akun: x['kode_akun'],
+      nama_akun: x['nama_akun'],
+      id_kategori_akun: x['id_kategori_akun'],
+      kode_kategori_akun: x['kode_kategori_akun'],
+      nama_kategori_akun: x['nama_kategori_akun'],
+      id_induk_akun: x['id_induk_akun'],
+      kode_induk_akun: x['kode_induk_akun'],
+      nama_induk_akun: x['nama_induk_akun'],
+      saldo_awal: parseFloat(x['saldo_awal']),
+      saldo_saat_ini: parseFloat(x['saldo_saat_ini']),
+      keterangan: x['keterangan'],
+    }
+    this.enableDelete = x['boleh_hapus'] === 'Y' ? true : false
+    this.onUpdate = true;
+    window.scrollTo(0, 0)
+    this.formInputCheckChanges()
+  }
+
+  getBackToInput() {
+    this.selectedTab = 0;
+    //this.getDetail()
+    this.formInputCheckChanges()
+  }
+
   // Dialog
   openDialog(type) {
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -397,25 +419,10 @@ export class ChartOfAccountComponent implements OnInit {
   }
 
   refreshBrowse(message) {
-    this.loading = false
-    this.ref.markForCheck()
     this.onUpdate = false
+    this.sendRequestAkunBisaJadiInduk()
     this.sendRequestAkun()
     this.openSnackBar(message, 'success')
-  }
-
-  //Browse binding event
-  browseSelectRow(data) {
-    this.formValue = data
-    this.onUpdate = true;
-    window.scrollTo(0, 0)
-    this.formInputCheckChanges()
-  }
-
-  getBackToInput() {
-    this.selectedTab = 0;
-    //this.getDetail()
-    this.formInputCheckChanges()
   }
 
   //Form submit
@@ -529,7 +536,8 @@ export class ChartOfAccountComponent implements OnInit {
         }
       }
     )
-
+    
+    this.sendRequestAkunBisaJadiInduk()
     this.sendRequestAkun()
 
   }
@@ -541,17 +549,31 @@ export class ChartOfAccountComponent implements OnInit {
       data => {
         if (data['STATUS'] === 'Y') {
           this.browseData = data['RESULT']
-          this.inputAkunData = data['RESULT']
-          this.loading = false
           this.loadingCOA = false
           this.ref.markForCheck()
         } else {
           this.browseData = []
-          this.inputAkunData = []
           this.loading = false
           this.loadingCOA = false
           this.ref.markForCheck()
-          this.openSnackBar('Gagal mendapatkan daftar akun', 'fail')
+          this.openSnackBar('Gagal mendapatkan daftar akun.', 'fail')
+        }
+      }
+    )
+  }
+
+  sendRequestAkunBisaJadiInduk() {
+    this.request.apiData('akun', 'g-akun-bisa-jadi-induk', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputAkunData = data['RESULT']
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          this.inputAkunData = []
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal mendapatkan daftar induk akun.', 'fail')
         }
       }
     )

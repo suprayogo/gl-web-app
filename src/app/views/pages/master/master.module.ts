@@ -55,6 +55,7 @@ import { BankComponent } from './bank/bank.component';
 import { KategoriAkunComponent } from './kategori-akun/kategori-akun.component';
 import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
 import { KontakComponent } from './kontak/kontak.component';
+import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
 
 const routes: Routes = [
 	{
@@ -84,6 +85,10 @@ const routes: Routes = [
 	{
 		path: 'kontak',
 		component: KontakComponent,
+	},
+	{
+		path: 'pengaturan-saldo-awal',
+		component: PengaturanSaldoAwalComponent,
 	},
 ];
 
@@ -151,7 +156,8 @@ const routes: Routes = [
 		BankComponent,
 		KategoriAkunComponent,
 		JenisTransaksiComponent,
-		KontakComponent
+		KontakComponent,
+		PengaturanSaldoAwalComponent
 	]
 })
 export class MasterModule {}

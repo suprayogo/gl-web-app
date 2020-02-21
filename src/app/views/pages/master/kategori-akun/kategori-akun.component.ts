@@ -43,48 +43,17 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
   subscription: any;
   kp: any;
 
-  // Configuration Select box
-  // tipe_aktif: Object = []
-
-  /* buttonLayout = [
+  //Configuration
+  tipe_akun: Object = [
     {
-      btnLabel: 'Tambah Akses',
-      btnClass: 'btn btn-primary',
-      btnClick: () => {
-        this.openDialog('kode_aplikasi')
-      },
-      btnCondition: () => {
-        return true
-      }
+      label: 'Debit',
+      value: 0
+    },
+    {
+      label: 'Kredit',
+      value: 1
     }
-  ] */
-
-  // List Dialog
-  /* inputAplikasiDisplayColumns = [
-    {
-      label: '',
-      value: '',
-      selectable: true
-    },
   ]
-  inputAplikasiInterface = {
-    contoh: 'string'
-  }
-  inputAplikasiData = []
-  inputAplikasiDataRules = [] */
-
-  // List Detail
-  /* detailDisplayColumns = [
-    {
-      label: '',
-      value: ''
-    },
-  ]
-  detailInterface = {
-    contoh: 'string'
-  }
-  detailData = []
-  detailRules = [] */
 
   // TAB MENU BROWSE 
   displayedColumnsTable = [
@@ -130,6 +99,7 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
     id_kategori_akun: '',
     kode_kategori_akun: '',
     nama_kategori_akun: '',
+    tipe_akun: 0,
   }
 
   // Layout Form
@@ -155,6 +125,17 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
       valueOf: 'nama_kategori_akun',
       required: true,
       readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe Akun',
+      id: 'tipe-akun',
+      type: 'combobox',
+      options: this.tipe_akun,
+      valueOf: 'tipe_akun',
       update: {
         disabled: false
       }
@@ -243,7 +224,9 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
     x.id_kategori_akun = data['id_kategori_akun']
     x.kode_kategori_akun = data['kode_kategori_akun']
     x.nama_kategori_akun = data['nama_kategori_akun']
+    x.tipe_akun = data['tipe_akun']
     this.formValue = x
+    this.enableDelete = data['boleh_hapus'] === 'Y' ? true : false
     this.onUpdate = true;
     this.getBackToInput();
   }
@@ -300,6 +283,7 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
       id_kategori_akun: '',
       kode_kategori_akun: '',
       nama_kategori_akun: '',
+      tipe_akun: 0
     }
     // this.detailData = []
     this.formInputCheckChanges()

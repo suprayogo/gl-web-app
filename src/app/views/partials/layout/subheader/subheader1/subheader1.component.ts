@@ -73,7 +73,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 							this.ref.markForCheck()
 						}
 					} else {
-						this.openSnackBar('Gagal mendapatkan daftar akses perusahaan.', 'fail')
+						this.openSnackBar('Gagal mendapatkan daftar akses perusahaan.', 'fail', null)
 					}
 				}
 			)
@@ -150,7 +150,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 			data: {
 				type: type === undefined || type == null ? '' : type,
 				message: message === undefined || message == null ? '' : message,
-				onCloseFunc: () => onCloseFunc()
+				onCloseFunc: onCloseFunc === undefined || onCloseFunc == null ? null : () => onCloseFunc()
 			},
 			disableClose: true
 		})

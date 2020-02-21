@@ -16,6 +16,7 @@ export class TreeviewComponent implements OnInit, AfterContentInit {
   @Input() rowOf: number;
   @Input() header: any[];
   @Input() sortBy: string;
+  @Input() enableMinHeight: boolean;
   @Output() selectRowEvent = new EventEmitter();
 
   //Variables

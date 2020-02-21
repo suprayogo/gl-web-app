@@ -1,4 +1,4 @@
-<div [ngClass]="{'kt-section': inV === ''}" style="margin-bottom: 5px;">
+<div [ngClass]="{'kt-section': inV === '', 'full': enableMinHeight}" style="margin-bottom: 5px;">
     <h3 [hidden]="inV !== ''">{{ title }}</h3>
     <div [hidden]="inV !== ''">
       <ul class="row-full-width" style="padding-left: 0">
