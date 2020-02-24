@@ -1,0 +1,158 @@
+<div style="padding: 65px 25px 25px; position: relative;">
+
+  <div class="diag-header">
+    <h5 style="margin-bottom: 0; align-self: center;">{{ title ? title : 'Dialog' }}</h5>
+    <button type="button" (click)="closeDialog(true)" class="close-btn">
+      <i class="flaticon flaticon-cancel" style="font-size: 1.5em; line-height: 1;"></i>
+    </button>
+  </div>
+
+  <div style="height: auto;" [ngStyle]="{'width': cWidth != null ? cWidth : comparison == true? '65vw': selectableDatatable == true? '65vw' : '40vw'}">
+
+    <div 
+      class="m-section no-margin"
+      [ngStyle]="{'flex-direction': uniqueId === 'uang-jalan' ? 'row' : null, 'display': uniqueId === 'uang-jalan' ? 'flex' : null}"    
+    >
+      <form #inputForm=ngForm (ngSubmit)="selectableDatatable == true? onSubmit(inputForm, getSelected()) : onSubmit(inputForm)">
+        <div 
+          class="form-group m-form__group" 
+          *ngFor="let x of inputLayout; let i = index" 
+          [ngClass]="{'row': x.type !== 'listinput'}" 
+          [hidden]="x.hiddenOn? x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true :false : false" 
+        >
+          <label class="col-sm-4 col-form-label" [ngClass]="{'font-weight-bold': x.type === 'listinput', 'col-sm-8': x.type === 'listinput'}" *ngIf="x.label !== ''" [ngStyle]="{'padding-left.px': x.type === 'listinput' ? 0 : 15}">{{ x.label }}</label>
+          <div style="flex: 0 0 calc(100% - 35%); max-width: calc(100% - 35%);">
+            <!-- FOR COMBOBOX -->
+            <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="formValue[x.valueOf]"
+              (change)="x.change($event)" [disabled]="onUpdate && x.update.disabled">
+              <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
+            </select>
+            <!-- FOR INPUT GROUP -->
+            <div *ngIf="x.type === 'inputgroup'" class="input-group">
+              <input class="form-control m-input" type="text" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]"
+                (input)="inputPipe(x.valueOf, $event.target.value)" [readonly]="x.readOnly" [required]="x.required"
+                (blur)="onBlur(x.browseType, $event.target.value)" (keyup.enter)="onBlur(x.browseType, $event.target.value)"
+                (keyup.tab)="onBlur(x.browseType, $event.target.value)" style="text-transform: uppercase" [disabled]="onUpdate && x.update.disabled">
+              <div class="input-group-append">
+                <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)" [disabled]="onUpdate && x.update.disabled"><i
+                    *ngIf="x.btnIcon" class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+              </div>
+              <input tabindex="-1" class="form-control m-input m--margin-left-5 disabled-input" *ngIf="x.inputInfo" type="text" name="{{ x.inputInfo.id }}"
+                [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly" [required]="x.inputInfo.required"
+                [(ngModel)]="formValue[x.inputInfo.valueOf]">
+            </div>
+            <!-- FOR NORMAL INPUT -->
+            <div *ngIf="x.type === 'input'">
+              <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]" (value)="formValue[x.valueOf]"
+                [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled || onUpdate && x.update.disabled" (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null">
+              <input *ngIf="x.numberOnly" class="form-control m-input number-align-right" type="text" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]" (keyup)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : x.resetOption ? resetValue(x.resetOption['type'], x.resetOption['value']) : null"
+                [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions">
+              <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
+            </div>
+            <!-- FOR RIGHT ADDON -->
+            <div *ngIf="x.type === 'rightaddon' && x.label !== ''" class="input-group">
+              <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required" [disabled]="onUpdate && x.update.disabled">
+              <input *ngIf="x.numberOnly" class="form-control m-input number-align-right" type="number" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required" [disabled]="onUpdate && x.update.disabled">
+              <div class="input-group-append"><span class="input-group-text" id="basic-addon2">{{ x.exlabel }}</span></div>
+            </div>
+            <!-- FOR LEFT AND RIGHT ADDON -->
+            <div *ngIf="x.type === 'leftrightaddon' && x.label !== ''" class="input-group">
+              <div class="input-group-append"><span class="input-group-text" id="basic-addon2">{{ x.lflabel }}</span></div>
+              <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required" [disabled]="onUpdate && x.update.disabled">
+              <input *ngIf="x.numberOnly" class="form-control m-input number-align-right" type="text" name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required" [disabled]="onUpdate && x.update.disabled" currencyMask>
+              <div class="input-group-append"><span class="input-group-text" id="basic-addon2">{{ x.rglabel }}</span></div>
+            </div>
+            <!-- DATEPICKER && TIME PICKER -->
+            <div *ngIf="x.type === 'datepicker'" class="input-group">
+              <input 
+                class="form-control m-input"  
+                name="{{ x.id }}" 
+                ngbDatepicker
+                #dd="ngbDatepicker"
+                readonly 
+                (dateSelect)="x.dateSelect($event, x.valueOf)"
+                [ngModel]="getDateFormat(formValue[x.valueOf])"
+                (focus)="dd.toggle()" 
+                [disabled]="onUpdate && x.update.disabled"
+                [minDate]="x.enableMin && !onUpdate ? getMinToday() : x.enableMin && onUpdate ? getMinToday(x.valueOf) : null"
+              >
+              <div class="input-group-append">
+                <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button" [disabled]="onUpdate && x.update.disabled">
+                  <i class="la la-calendar"></i>
+                </button>
+              </div>
+
+              <div class="m--margin-left-10" *ngIf="x.timepick == true">
+                <ngb-timepicker [(ngModel)]="formValue[x.time_valueOf]" [spinners]="x.time_spinners" [meridian]="x.time_meridian" name="{{ x.id + '-time' }}"></ngb-timepicker>
+              </div>
+              
+            </div>
+          </div>
+          <!-- FOR LIST OF INPUT -->
+          <div *ngIf="x.type === 'listinput' && x.label !== ''">
+            <div class="form-group m-form__group" *ngFor="let y of x.input; let i = index" style="margin-left: -15px;margin-right: -15px">
+              <div class="input-group" *ngIf="y.type === 'input'">
+                <label class="col-sm-4 col-form-label">{{ y.label }}</label>
+                <input *ngIf="!y.numberOnly" class="form-control m-input" type="text" name="{{ y.id }}-old" [ngModel]="y.labelValue? y.labelValue: null"
+                  [readonly]="true" [required]="false" [disabled]="true">
+                <input *ngIf="y.numberOnly" class="form-control m-input number-align-right" type="text" name="{{ y.id }}-old" [ngModel]="y.labelValue? y.labelValue: null"
+                  [readonly]="true" [required]="false" [disabled]="true" currencyMask>
+                <input *ngIf="!y.numberOnly" class="form-control m-input m--margin-left-5" type="text" name="{{ y.id }}" [(ngModel)]="listForm[y.valueOf]['value']"
+                  [readonly]="y.readOnly" [required]="y.required" [disabled]="y.disabled || onUpdate && x.update.disabled">
+                <input *ngIf="y.numberOnly" class="form-control m-input m--margin-left-5 number-align-right" type="text" name="{{ y.id }}" [(ngModel)]="listForm[y.valueOf]['value']"
+                  [readonly]="y.readOnly" [required]="y.required" [disabled]="y.disabled || onUpdate && x.update.disabled" currencyMask>
+              </div>
+
+              <div class="input-group m--padding-top-15" *ngIf="y.type === 'sum'" style="border-top: 1px solid #ebedf2;">
+                <label class="col-sm-4 col-form-label font-weight-bold">{{ y.label }}</label>
+                <input *ngIf="y.numberOnly" class="form-control m-input number-align-right" type="text" name="{{ y.id }}-old" [ngModel]="y.labelValue? y.labelValue: null"
+                  [readonly]="true" [required]="false" [disabled]="true" currencyMask>
+                <input *ngIf="y.numberOnly" class="form-control m-input m--margin-left-5 number-align-right" type="text" name="{{ y.id }}" [ngModel]="getSumOfData(y.valueOf)"
+                  [readonly]="y.readOnly" [required]="y.required" [disabled]="y.disabled || onUpdate && x.update.disabled" currencyMask>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="lowLoading">
+          <kt-loading></kt-loading>
+        </div>
+
+        <div *ngIf="!lowLoading && selectableDatatable">
+          <hr>
+          <kt-datatable-ag-grid
+            [tableColumn]="selectableDisplayColumns"
+            [tableData]="selectableData"
+            [tableRules]="selectableDataRules"
+            [selectable]="selectableDatatable"
+            [selected]="selected"
+            [selectIndicator]="selectIndicator"
+            [forceWithoutButton]="noButton"
+            (selectRowEvent)="browseSelectRow($event)"
+            *ngIf="!isDetail"
+          ></kt-datatable-ag-grid>
+          <kt-detailinput-ag-grid
+            [buttonLayout]="detailButtonLayout"
+            [tableColumn]="selectableDisplayColumns"
+            [tableData]="selected"
+            [tableRules]="selectableDataRules"
+            [editable]="editable"
+            (editAction)="editDetailData($event)"
+            (deleteAction)="deleteDetailData($event)"
+            (selectRowEvent)="editDetailData($event)"
+            *ngIf="isDetail"
+          ></kt-detailinput-ag-grid>
+          <hr>
+        </div>
+
+        <!-- Button -->
+        <div class="m-form__actions">
+          <button type="submit" class="btn btn-brand">Simpan</button>
+          <button type="button" class="btn btn-secondary margin-left-10" (click)="closeDialog()">Batal</button>
+          <button type="button" *ngFor="let x of buttonLayout" [className]="x.btnClass" (click)="x.getSelectedOnpress ? x.btnClick(getSelected()) : x.btnClick()">{{ x.btnLabel }}</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

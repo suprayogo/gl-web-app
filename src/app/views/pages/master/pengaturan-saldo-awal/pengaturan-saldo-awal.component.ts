@@ -13,6 +13,7 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
   beforeCodeTitle: 'Pengaturan Saldo Awal'
@@ -32,6 +33,94 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   kode_perusahaan: string;
 
   data_akun = []
+  res_data = []
+  total_debit = 0
+  total_kredit = 0
+
+  formDetail = {
+    id_akun:  '', 
+    kode_akun: '',
+    nama_akun : '',
+    nama_tipe_akun: '',
+    saldo_debit: 0,
+    saldo_kredit: 0
+  }
+
+  detailInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Kode Akun',
+      id: 'kode-akun',
+      type: 'input',
+      valueOf: 'kode_akun',
+      required: false,
+      readOnly: false,
+      disabled: true,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Nama Akun',
+      id: 'nama-akun',
+      type: 'input',
+      valueOf: 'nama_akun',
+      required: false,
+      readOnly: false,
+      disabled: true,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe Akun',
+      id: 'tipe-akun',
+      type: 'input',
+      valueOf: 'nama_tipe_akun',
+      required: false,
+      readOnly: false,
+      disabled: true,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Saldo Awal Debit ',
+      id: 'saldo-awal-debit',
+      type: 'input',
+      valueOf: 'saldo_debit',
+      required: false,
+      readOnly: false,
+      numberOnly: true,
+      resetOption: {
+        type: 'saldo_kredit',
+        value: 0
+      },
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Saldo Awal Kredit ',
+      id: 'saldo-awal-kredit',
+      type: 'input',
+      valueOf: 'saldo_kredit',
+      required: false,
+      readOnly: false,
+      numberOnly: true,
+      resetOption: {
+        type: 'saldo_debit',
+        value: 0
+      },
+      update: {
+        disabled: false
+      }
+    }
+  ]
 
   constructor(
     public dialog: MatDialog,
@@ -77,13 +166,66 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   //Form submit
-  onSubmit(inputForm: NgForm) {
-    this.loading = true
-    this.ref.markForCheck()
+  onSubmit() {
+    if (this.validateSaldo()) {
+      this.loading = true
+      this.ref.markForCheck()
+      let res = []
+      for (var i = 0; i < this.data_akun.length; i++) {
+        if (parseInt(this.data_akun[i]['saldo_debit']) != 0 || parseInt(this.data_akun[i]['saldo_kredit']) != 0) {
+          let t = {
+            id_akun: this.data_akun[i]['id_akun'],
+            saldo: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? parseFloat(this.data_akun[i]['saldo_debit']) : parseFloat(this.data_akun[i]['saldo_kredit']),
+            tipe: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? 0 : 1
+          }
+          res.push(t)
+        }
+      }
+  
+      this.request.apiData('akun', 'i-saldo-awal-akun', { kode_perusahaan: this.kode_perusahaan, detail: res }).subscribe(
+        data =>  {
+          if (data['STATUS'] === 'Y') {
+            this.data_akun = []
+            this.res_data = []
+            this.total_debit = 0
+            this.total_kredit = 0
+            this.openSnackBar('Berhasil memperbaharui saldo awal akun', 'success')
+            this.madeRequest()
+          } else {
+            this.loading = false;
+            this.ref.markForCheck()
+            this.openSnackBar('Gagal memperbaharui saldo awal akun.', 'fail')
+          }
+        }
+      )
+    } else {
+      this.openSnackBar('Saldo debit dan kredit tidak seimbang.', 'info')
+    }
+  }
+
+  validateSaldo() {
+    let valid = false;
+
+    if (this.total_debit == this.total_kredit) {
+      valid = true;
+    }
+
+    return valid
   }
 
   //Reset Value
   resetForm() {
+  }
+
+  resetDetailForm() {
+    this.formDetail = {
+      id_akun:  '', 
+      kode_akun: '',
+      nama_akun : '',
+      nama_tipe_akun: '',
+      saldo_debit: 0,
+      saldo_kredit: 0
+    }
   }
 
   onCancel() {
@@ -93,18 +235,64 @@ export class PengaturanSaldoAwalComponent implements OnInit {
 
   }
 
+  openDialog(v) {
+    let x = JSON.parse(JSON.stringify(v))
+    this.formDetail = {
+      id_akun: x['id_akun'],
+      kode_akun: x['kode_akun'],
+      nama_akun: x['nama_akun'],
+      nama_tipe_akun: x['nama_tipe_akun'],
+      saldo_debit: x['saldo_debit'],
+      saldo_kredit: x['saldo_kredit']
+    }
+    const dialogRef = this.dialog.open(InputdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        formValue: this.formDetail,
+        inputLayout: this.detailInputLayout,
+        buttonLayout: [],
+        inputPipe: (t, d) => null,
+        onBlur: (t, v) => null,
+        openDialog: (t) => null,
+        resetForm: () => this.resetDetailForm(),
+        onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
+        deleteData: () => null,
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+      },
+      error => null,
+    );
+  }
+
+  submitDetailData(v) {
+    for (var i = 0; i < this.data_akun.length; i++) {
+      if (this.data_akun[i]['id_akun'] === v['id_akun']) {
+        let t = JSON.parse(JSON.stringify(this.data_akun[i]))
+        t['saldo_debit'] = v['saldo_debit']
+        t['saldo_kredit'] = v['saldo_kredit']
+        this.data_akun[i] = t
+        break
+      }
+    }
+    this.dialog.closeAll()
+    this.restructureData(this.data_akun)
+  } 
+
   madeRequest() {
     this.loading = true
     this.ref.markForCheck()
     this.request.apiData('akun', 'g-saldo-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          this.data_akun = this.restructureData(data['RESULT'])
-          this.loading = false
-          this.ref.markForCheck()
-          setTimeout(() => {
-            this.checkHeight()
-          }, 1)
+          this.data_akun = data['RESULT']
+          this.restructureData(data['RESULT'])
         } else {
           this.loading = false
           this.data_akun = []
@@ -160,6 +348,8 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   restructureData(data) {
+    this.loading = true
+    this.ref.markForCheck()
     var flags = [],
       output = [],
       res = [];
@@ -188,8 +378,66 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       }
     }
 
-    console.log(res)
+    this.res_data = res
+    this.countDebit()
+    this.countKredit()
+    this.loading = false
+    this.ref.markForCheck()
+  }
 
-    return res
+  checkParent(id_parent, nu?) {
+    let data = null, mul = nu === undefined ? 1 : nu
+
+    if (id_parent === "" || id_parent === undefined) return mul * 10
+
+    for (var i = 0; i < this.data_akun.length; i++) {
+      if (id_parent === this.data_akun[i]['id_akun']) {
+        data = this.data_akun[i]
+        break
+      }
+    }
+
+    if (data != null) {
+      mul = mul + 1
+      return this.checkParent(data['id_induk_akun'], mul)
+    } else {
+      return mul
+    }
+    
+  }
+
+  checkChild(id) {
+    let hasChild = false
+
+    for (var i = 0; i < this.data_akun.length; i++) {
+      if (this.data_akun[i]['id_induk_akun'] === id) {
+        hasChild = true
+        break;
+      }
+    }
+
+    return hasChild
+  }
+
+  countDebit() {
+    let sum = 0
+    for (var i = 0; i < this.data_akun.length; i++) {
+      if (!this.checkChild(this.data_akun[i]['id_akun'])) {
+        sum = sum + parseFloat(this.data_akun[i]['saldo_debit'])
+      }
+    }
+
+    this.total_debit = sum
+  }
+
+  countKredit() {
+    let sum = 0
+    for (var i = 0; i < this.data_akun.length; i++) {
+      if (!this.checkChild(this.data_akun[i]['id_akun'])) {
+        sum = sum + parseFloat(this.data_akun[i]['saldo_kredit'])
+      }
+    }
+
+    this.total_kredit = sum
   }
 }

@@ -59,7 +59,7 @@ export class ForminputComponent implements OnInit {
 
   onBlur(type) {
     let sres = null
-    sres = this.cFormValue[type] === "" ? null : this.cFormValue[type].toUpperCase()
+    // sres = this.cFormValue[type] === "" ? null : this.cFormValue[type].toUpperCase()
   }
 
   onReset() {

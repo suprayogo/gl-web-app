@@ -27,6 +27,10 @@ export class AkunRequestService {
       httpBody.respondCode = 'SET-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'i-saldo-awal-akun') {
+      httpBody.respondCode = 'SET-DATA-SALDO-AWAL-AKUN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'u-akun') {
       httpBody.respondCode = 'UPT-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)

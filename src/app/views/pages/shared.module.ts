@@ -39,6 +39,7 @@ import { EditRowButtonComponent } from './components/cell-renderer/edit-row-butt
 import { LoadingComponent } from './components/loading/loading.component';
 import { AlertdialogComponent } from './components/alertdialog/alertdialog.component';
 import { ForminputComponent } from './components/forminput/forminput.component';
+import { InputdialogComponent } from './components/inputdialog/inputdialog.component';
 
 // import { InputdialogComponent } from './components/inputdialog/inputdialog.component';
 // import { LoadingComponent } from './components/loading/loading.component';
@@ -95,7 +96,7 @@ const currencyOptions = {
 
     //Dialog
     DialogComponent,
-    // InputdialogComponent, DELETE
+    InputdialogComponent,
     // ConfirmationdialogComponent, DELETE
     ReportdialogComponent,
     AlertdialogComponent,
@@ -136,7 +137,7 @@ const currencyOptions = {
 
     //Dialog
     DialogComponent,
-    // InputdialogComponent, DELETE
+    InputdialogComponent,
     // ConfirmationdialogComponent, DELETE
     // ViewdialogComponent, DELETE
     ReportdialogComponent,
@@ -159,7 +160,7 @@ const currencyOptions = {
     //List of mini component
     DialogComponent,
     AlertdialogComponent,
-    // InputdialogComponent, DELETE
+    InputdialogComponent,
     // ConfirmationdialogComponent, DELETE
     ReportdialogComponent,
     // ViewdialogComponent DELETE
