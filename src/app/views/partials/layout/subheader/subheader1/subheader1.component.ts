@@ -1,5 +1,5 @@
 // Angular
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 // RxJS
 import { Subscription } from 'rxjs';
 // Layout
@@ -10,6 +10,7 @@ import { DialogComponent } from '../../../../../views/pages/components/dialog/di
 import { AlertdialogComponent } from '../../../../../views/pages/components/alertdialog/alertdialog.component';
 import { RequestDataService } from '../../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../../service/global-variable.service';
+import { ConfirmationdialogComponent } from '../../../../pages/components/confirmationdialog/confirmationdialog.component';
 
 @Component({
 	selector: 'kt-subheader1',
@@ -17,17 +18,30 @@ import { GlobalVariableService } from '../../../../../service/global-variable.se
 	styleUrls: ['./subheader1.component.scss']
 })
 export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
+
+	@ViewChild(ConfirmationdialogComponent, { static: false }) confirm;
+
 	// Public properties
 	@Input() fluid: boolean;
 	@Input() clear: boolean;
 
+	subscription: any;
+	kp_V1: any;
+	kp_V2: any;
+
+	// PERUSAHAAN
 	today: number = Date.now();
 	kode_perusahaan: string = ""
 	nama_perusahaan: string = ""
 
+	// PERIODE
 	id_periode: string = ""
+	idPeriodeAktif: string = ""
 	tahun_periode: string = ""
+	tahunPeriodeAktif: string = ""
 	bulan_periode: string = ""
+	bulanPeriodeAktif: string = ""
+	nama_bulan: string = ""
 	// title: string = '';
 	// desc: string = '';
 	// breadcrumbs: Breadcrumb[] = [];
@@ -35,7 +49,28 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	// Private properties
 	// private subscriptions: Subscription[] = [];
 
+	//Configuration
+	tahun = [
+		{
+			label: '-',
+			value: '-'
+		}
+	]
 
+	bulan = [
+		{
+			label: '-',
+			value: '-'
+		}
+	]
+
+	// Input Name
+	formValue = {
+		tahun_periode: '',
+		bulan_periode: ''
+	}
+
+	// PERUSAHAAN
 	inputPerusahaanDisplayColumns = [
 		{
 			label: 'Kode Perusahaan',
@@ -46,6 +81,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 			value: 'nama_perusahaan'
 		}
 	];
+
 	inputPerusahaanInterface = {
 		user_id: 'string',
 		kode_perusahaan: 'string',
@@ -53,6 +89,68 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	}
 	inputPerusahaanData = []
 	inputPerusahaanDataRules = []
+
+	// PERIODE
+	inputPeriodeData = []
+	changePeriodeData = []
+
+	//Confirmation Variable
+	c_buttonLayout = [
+		{
+			btnLabel: 'Ubah Periode',
+			btnClass: 'btn btn-primary',
+			btnClick: (set) => {
+				this.setPeriod(set)
+			},
+			btnCondition: () => {
+				return true
+			}
+		},
+		{
+			btnLabel: 'Tutup',
+			btnClass: 'btn btn-secondary',
+			btnClick: () => {
+				this.dialog.closeAll()
+			},
+			btnCondition: () => {
+				return true
+			}
+		}
+	]
+	c_labelLayout = [
+		{
+			content: '',
+			style: {
+				'color': 'red',
+				'font-size': '20px',
+				'font-weight': 'bold'
+			}
+		}
+	]
+
+	c_inputLayout = [
+		{
+			label: 'Tahun',
+			id: 'tahun-periode',
+			type: 'combobox',
+			options: this.tahun,
+			cekBulan: (filterBulan) => this.getBulan(filterBulan, ''),
+			valueOf: this.formValue.tahun_periode,
+			required: true,
+			readOnly: false,
+			disabled: false,
+		},
+		{
+			label: 'Bulan',
+			id: 'bulan-periode',
+			type: 'combobox',
+			options: this.bulan,
+			valueOf: this.formValue.bulan_periode,
+			required: true,
+			readOnly: false,
+			disabled: false,
+		}
+	]
 
 	constructor(
 		public subheaderService: SubheaderService,
@@ -66,6 +164,8 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	ngOnInit() {
 		let u_id = localStorage.getItem('user_id')
 		if (u_id !== undefined && u_id != null && u_id !== '') {
+
+			//PERUSAHAAN
 			this.request.apiData('user', 'g-user-perusahaan', { user_id: u_id }).subscribe(
 				data => {
 					if (data['STATUS'] === 'Y') {
@@ -82,17 +182,19 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 				}
 			)
 
+			//GET PERUSAHAAN DAN PERIODE
+			this.reqKodePerusahaan()
+
 		} else {
 			this.openSnackBar(
-				'Gagal mendapatkan ID User anda. Mohon melakukan login terlebih dahulu.', 
+				'Gagal mendapatkan ID User anda. Mohon melakukan login terlebih dahulu.',
 				'info',
 				() => {
 					localStorage.clear()
 					window.location.href = "/auth/login"
-				}	
+				}
 			)
 		}
-		
 	}
 
 	ngAfterViewInit(): void {
@@ -112,10 +214,155 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 		// 		this.breadcrumbs = bc;
 		// 	});
 		// }));
+
+		this.kp_V2 = this.gbl.getKodePerusahaan()
+		if (this.kp_V2 !== "") {
+			this.madeRequest()
+		}
+		this.ref.markForCheck()
 	}
 
 	ngOnDestroy(): void {
 		// this.subscriptions.forEach(sb => sb.unsubscribe());
+		this.subscription === undefined ? null : this.subscription.unsubscribe()
+	}
+
+	reqKodePerusahaan() {
+		this.subscription = this.gbl.change.subscribe(
+			value => {
+				this.kp_V1 = value
+
+				// PERIODE
+				if (this.kp_V1 !== "") {
+					this.madeRequest()
+				}
+				this.ref.markForCheck()
+			}
+		)
+	}
+
+	madeRequest() {
+		this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kp_V1 == undefined ? this.kp_V2 : this.kp_V1 }).subscribe(
+			data => {
+				if (data['STATUS'] === 'Y') {
+					this.inputPeriodeData = data['RESULT']
+					this.changePeriodeData = data['RESULT']
+					if (this.inputPeriodeData.length > 0) {
+						const activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
+						this.gbl.setPeriode(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'])
+						this.id_periode = this.gbl.getIdPeriode()
+						this.tahun_periode = this.gbl.getTahunPeriode()
+						this.bulan_periode = this.gbl.getBulanPeriode()
+						this.nama_bulan = this.gbl.getNamaBulan()
+
+						this.gbl.periodeAktif(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'])
+						this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
+						this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
+						this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
+						this.ref.markForCheck()
+					}
+
+					//   this.loading = false
+					this.getActivePeriodDialog()
+					this.ref.markForCheck()
+				} else {
+					//   this.loading = false
+					this.ref.markForCheck()
+					this.openSnackBar('Gagal mendapatkan data periode.', 'fail')
+				}
+			}
+		)
+	}
+
+	getActivePeriodDialog() {
+		let x = []
+
+		var flags = [],
+			outputTahun = [];
+
+		for (var i = 0; i < this.inputPeriodeData.length; i++) {
+			if (flags[this.inputPeriodeData[i]['tahun_periode']]) continue;
+			flags[this.inputPeriodeData[i]['tahun_periode']] = true;
+			x.push(this.inputPeriodeData[i]['tahun_periode'])
+			outputTahun.push({
+				label: this.inputPeriodeData[i]['tahun_periode'],
+				value: this.inputPeriodeData[i]['tahun_periode']
+			});
+		}
+
+		let tmp = {}
+		for (var i = 0; i < x.length; i++) {
+			tmp[x[i]] = []
+			for (var j = 0; j < this.inputPeriodeData.length; j++) {
+
+				if (this.inputPeriodeData[j]['tahun_periode'] === x[i]) {
+					flags[this.inputPeriodeData[j]['bulan_periode']] = true;
+					tmp[x[i]].push({
+						label: this.inputPeriodeData[j]['bulan_periode'],
+						value: this.inputPeriodeData[j]['bulan_periode']
+					})
+				}
+			}
+
+		}
+
+		this.tahun = outputTahun
+		this.formValue = {
+			tahun_periode: this.tahun_periode,
+			bulan_periode: this.bulan_periode
+		}
+		this.bulan = tmp[this.tahun_periode]
+		this.c_inputLayout.splice(0, 2,
+			{
+				label: 'Tahun',
+				id: 'tahun-periode',
+				type: 'combobox',
+				options: this.tahun,
+				cekBulan: (filterBulan) => this.getBulan(filterBulan, tmp),
+				valueOf: 'tahun_periode',
+				required: true,
+				readOnly: false,
+				disabled: false,
+			},
+			{
+				label: 'Bulan',
+				id: 'bulan-periode',
+				type: 'combobox',
+				options: this.bulan,
+				valueOf: 'bulan_periode',
+				required: true,
+				readOnly: false,
+				disabled: false,
+			},
+		)
+	}
+
+	getBulan(filterBulan, loopBulan) {
+
+		this.bulan = loopBulan[filterBulan]
+		this.c_inputLayout.splice(0, 2,
+			{
+				label: 'Tahun',
+				id: 'tahun-periode',
+				type: 'combobox',
+				options: this.tahun,
+				cekBulan: (filterBulan) => this.getBulan(filterBulan, loopBulan),
+				valueOf: 'tahun_periode',
+				required: true,
+				readOnly: false,
+				disabled: false,
+			},
+			{
+				label: 'Bulan',
+				id: 'bulan-periode',
+				type: 'combobox',
+				options: this.bulan,
+				valueOf: 'bulan_periode',
+				required: true,
+				readOnly: false,
+				disabled: false,
+			},
+		)
 	}
 
 	gantiPerusahaan() {
@@ -145,6 +392,52 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
+	openCDialog() { // Confirmation Dialog
+		this.getActivePeriodDialog()
+		const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+			width: 'auto',
+			height: 'auto',
+			maxWidth: '95vw',
+			maxHeight: '95vh',
+			data: {
+				buttonLayout: this.c_buttonLayout,
+				labelLayout: this.c_labelLayout,
+				inputLayout: this.c_inputLayout,
+				formValue: this.formValue,
+			},
+			disableClose: true
+		})
+		dialogRef.afterClosed().subscribe(
+			result => {
+				// this.batal_alasan = ""
+			},
+			// error => null
+		)
+	}
+
+	setPeriod(period) {
+		this.dialog.closeAll()
+		if (this.changePeriodeData.length > 0) {
+			const accessPeriod = this.changePeriodeData.filter(x => x.tahun_periode === period.tahun_periode && x.bulan_periode === period.bulan_periode)[0] || {}
+			if (accessPeriod['bulan_periode'] !== undefined || accessPeriod['bulan_periode'] !== undefined) {
+				this.gbl.setPeriode(accessPeriod['id_periode'], accessPeriod['tahun_periode'], accessPeriod['bulan_periode'])
+				this.id_periode = this.gbl.getIdPeriode()
+				this.tahun_periode = this.gbl.getTahunPeriode()
+				this.bulan_periode = this.gbl.getBulanPeriode()
+				this.nama_bulan = this.gbl.getNamaBulan()
+				this.ref.markForCheck()
+				if (accessPeriod['aktif'] === "1") {
+					this.openSnackBar('Akses periode kembali ke periode aktif saat ini', 'success')
+				} else {
+					this.openSnackBar('Akses periode diubah ke Bulan ' + this.nama_bulan + ', Tahun ' + this.tahun_periode, 'success')
+				}
+			} else {
+				this.ref.markForCheck()
+				this.openSnackBar('Gagal ubah periode, Mohon isi Tahun dan Bulan dengan lengkap', 'fail')
+			}
+		}
+	}
+
 	openSnackBar(message, type?: any, onCloseFunc?: any) {
 		const dialogRef = this.dialog.open(AlertdialogComponent, {
 			width: 'auto',
@@ -163,4 +456,5 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 			this.dialog.closeAll()
 		})
 	}
+
 }

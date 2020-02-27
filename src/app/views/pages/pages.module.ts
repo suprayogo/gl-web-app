@@ -9,6 +9,7 @@ import { PartialsModule } from '../partials/partials.module';
 import { CoreModule } from '../../core/core.module';
 import { MasterModule } from './master/master.module';
 import { ManagementModule } from './management/management.module';
+import { TransaksiModule } from './transaksi/transaksi.module';
 
 @NgModule({
 	declarations: [],
@@ -21,6 +22,7 @@ import { ManagementModule } from './management/management.module';
 		PartialsModule,
 		MasterModule,
 		ManagementModule,
+		TransaksiModule,
 	],
 	providers: []
 })

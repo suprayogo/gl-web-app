@@ -1,0 +1,68 @@
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <!-- Start of Tabs -->
+            <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
+
+                <!-- Start of tab input-->
+                <mat-tab label="">
+
+                    <!-- Tab Label -->
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Posting Jurnal</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section">
+                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombolPJ"
+                                [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
+                                [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
+                                [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
+                                [onUpdate]="onUpdate" [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)">
+                            </kt-forminput>
+                        </div>
+                    </kt-portlet-body>
+
+                </mat-tab>
+                <!-- End of tab input-->
+                <!-- Start of tab browse-->
+                <mat-tab label="">
+
+                    <!-- Tab Label -->
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Tutup Periode</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section">
+                            <kt-forminput [inputLayout]="inputLayoutTP" [formValue]="formValueTP"
+                                [nama_tombol]="nama_tombolTP" [buttonLayout]="buttonLayout"
+                                [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                                [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                                (onSubmit)="onSubmitTP($event)" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
+                                (deleteData)="openCDialog()" (editAction)="editDetailData($event)"
+                                (deleteAction)="deleteDetailData($event)">
+                            </kt-forminput>
+                        </div>
+                    </kt-portlet-body>
+
+                </mat-tab>
+                <!-- End of tab browse-->
+
+            </mat-tab-group>
+            <!-- End of Tabs -->
+        </kt-portlet>
+
+        <!-- End of a Content -->
+
+    </div>
+</div>

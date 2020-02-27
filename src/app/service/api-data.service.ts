@@ -18,9 +18,9 @@ import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-tra
 import { KontakRequestService } from './master/kontak/kontak-request.service';
 import { RekeningPerusahaanRequestService } from './master/rekening-perusahaan/rekening-perusahaan-request.service';
 
-//Setting Services
-
 //Transaksi Services
+import { PostingJurnalRequestService } from './transaksi/posting-jurnal/posting-jurnal-request.service';
+import { PeriodeRequestService } from './transaksi/periode/periode-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -48,9 +48,12 @@ export class ApiDataService {
     private kategoriAkunReq: KategoriAkunRequestService,
     private jenisTransaksiReq: JenisTransaksiRequestService,
     private kontakReq: KontakRequestService,
-    private rekeningPerusahaanReq: RekeningPerusahaanRequestService
+    private rekeningPerusahaanReq: RekeningPerusahaanRequestService,
+    
+    //Transaksi Services
+    private postingJurnalReq: PostingJurnalRequestService,
+    private periodeReq: PeriodeRequestService,
 
-    //Setting Services
 
   ) {
   }
@@ -76,7 +79,9 @@ export class ApiDataService {
     this.kontakReq.url = this.baseURL
     this.rekeningPerusahaanReq.url = this.baseURL
 
-    //Setting Services
+    //Transaksi Services
+    this.postingJurnalReq.url = this.baseURL
+    this.periodeReq.url = this.baseURL
   }
 
   apiData(type, data, formData?: Object) {
@@ -120,6 +125,11 @@ export class ApiDataService {
       return this.rekeningPerusahaanReq.validate(data, this.httpBody, this.options, formData)
     }
 
-    //Setting Services
+    //Transaksi Services
+    else if(type === 'posting-jurnal') {
+      return this.postingJurnalReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'periode') {
+      return this.periodeReq.validate(data, this.httpBody, this.options, formData)
+    }
   }
 }

@@ -13,6 +13,7 @@ export class ConfirmationdialogComponent implements OnInit {
   btnLayout: any;
   lblLayout: any;
   inpLayout: any;
+  formValue: any;
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationdialogComponent>,
@@ -21,9 +22,24 @@ export class ConfirmationdialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.formValue = this.parameter.formValue
     this.btnLayout = this.parameter.buttonLayout
     this.lblLayout = this.parameter.labelLayout
     this.inpLayout = this.parameter.inputLayout
+  }
+
+  getData(){
+    return this.formValue
+  }
+
+  //Selection event
+	selection(data, type, func?) {
+    this.formValue[type] = data.target.value
+    if (func !== undefined) func(this.formValue.tahun_periode, this.formValue.bulan_periode)
+  }
+  
+  checkChanges() {
+    this.formValue = this.parameter.formValue
   }
 
   closeDialog(){

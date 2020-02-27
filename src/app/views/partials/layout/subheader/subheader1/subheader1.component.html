@@ -6,6 +6,11 @@
 			<h3 class="kt-subheader__title">{{ nama_perusahaan }}</h3>
 			<button tabindex="-1" class="btn btn-label-success btn-bold" (click)="gantiPerusahaan()">Ganti</button>
 		</div>
+		<div class="kt-subheader__main">
+			<h4 class="kt-subheader__desc"> Akses Periode: </h4>
+			<!-- <h3 class="kt-subheader__title">Januari, 2020</h3> -->
+			<button tabindex="-1" class="btn btn-label-success btn-bold" (click)="openCDialog()">{{ nama_bulan }}, {{ tahun_periode }} </button>
+		</div>
 	</div>
 </div>
 <!-- end:: Content Head -->

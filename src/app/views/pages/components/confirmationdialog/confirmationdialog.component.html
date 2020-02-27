@@ -12,6 +12,13 @@
 
       <div class="form-group m-form__group row" style="align-items: center" *ngFor="let x of inpLayout; let i = index">
         <label class="col-5">{{ x.label }}</label>
+
+        <!-- FOR COMBOBOX -->
+        <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="formValue[x.valueOf]" [required]="x.required" style="width: 57%;"
+           (change)="selection($event, x.valueOf, x.cekBulan)">
+          <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
+        </select>
+        
         <div *ngIf="x.type === 'input'">
           <div *ngIf="x.changeOn == null">
             <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
@@ -40,7 +47,7 @@
       <div class="button-container">
         <div *ngFor="let x of btnLayout">
           <div *ngIf="x.btnCondition()">
-            <button type="button" [className]="x.btnClass" (click)="x.btnClick()">{{ x.btnLabel }}</button>
+            <button type="button" [className]="x.btnClass" (click)="x.btnClick(formValue)">{{ x.btnLabel }}</button>
           </div>
         </div>
       </div>

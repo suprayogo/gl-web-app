@@ -25,7 +25,7 @@
           (blur)="onBlur(x.browseType)" (keyup.enter)="onBlur(x.browseType)" (keyup.tab)="onBlur(x.browseType)"
           style="text-transform: uppercase" [disabled]="(onUpdate && x.update.disabled) || x.disabled">
         <div class="input-group-append">
-          <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
+          <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
             [disabled]="(onUpdate && x.update.disabled) || x.disabled"><i *ngIf="x.btnIcon" style="color: white"
               class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>
@@ -65,8 +65,8 @@
       (deleteAction)="delDetailData($event)"></kt-detailinput-ag-grid>
   </div>
 
-  <div class="kt-form__actions">
-    <button type="submit" class="btn btn-brand">Simpan</button>
+  <div class="kt-form__actions" >
+    <button type="submit" class="btn btn-brand">{{ button_name }}</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;"
       (click)="onReset()">Batal</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="delData()"

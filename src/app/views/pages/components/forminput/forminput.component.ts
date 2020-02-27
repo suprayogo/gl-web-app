@@ -21,6 +21,7 @@ export class ForminputComponent implements OnInit {
   @Input() enableDetail: boolean;
   @Input() onUpdate: any;
   @Input() enableDelete: boolean;
+  @Input() nama_tombol: any;
 
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
@@ -30,6 +31,7 @@ export class ForminputComponent implements OnInit {
 
   //Variable
   cFormValue: any; //Component Form Value, form value that is independent to the component
+  button_name: any = 'Simpan';
   errorType: any;
 
   constructor(
@@ -38,6 +40,7 @@ export class ForminputComponent implements OnInit {
 
   ngOnInit() {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
+    this.button_name = this.nama_tombol === undefined ? this.button_name : this.nama_tombol
   }
 
   getData() {
