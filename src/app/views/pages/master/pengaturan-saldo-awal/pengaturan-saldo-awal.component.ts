@@ -95,6 +95,9 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       required: false,
       readOnly: false,
       numberOnly: true,
+      currencyOptions: {
+        precision: 2
+      },
       resetOption: {
         type: 'saldo_kredit',
         value: 0
@@ -112,6 +115,9 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       required: false,
       readOnly: false,
       numberOnly: true,
+      currencyOptions: {
+        precision: 2
+      },
       resetOption: {
         type: 'saldo_debit',
         value: 0
@@ -172,7 +178,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       this.ref.markForCheck()
       let res = []
       for (var i = 0; i < this.data_akun.length; i++) {
-        if (parseInt(this.data_akun[i]['saldo_debit']) != 0 || parseInt(this.data_akun[i]['saldo_kredit']) != 0) {
+        if (this.data_akun[i]['edited']) {
           let t = {
             id_akun: this.data_akun[i]['id_akun'],
             saldo: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? parseFloat(this.data_akun[i]['saldo_debit']) : parseFloat(this.data_akun[i]['saldo_kredit']),
@@ -277,6 +283,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         let t = JSON.parse(JSON.stringify(this.data_akun[i]))
         t['saldo_debit'] = v['saldo_debit']
         t['saldo_kredit'] = v['saldo_kredit']
+        t['edited'] = true
         this.data_akun[i] = t
         break
       }
@@ -383,6 +390,9 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     this.countKredit()
     this.loading = false
     this.ref.markForCheck()
+    setTimeout(() => {
+      this.checkHeight()
+    }, 1)
   }
 
   checkParent(id_parent, nu?) {

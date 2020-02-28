@@ -28,8 +28,8 @@
                     <div style="overflow-y: auto; width: 100%; height: calc(100% - 38px);" id="c-container">
                         <div *ngFor="let x of res_data; let i = index"
                             style="width: 100%; height: 42px; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
-                            [ngStyle]="{'background-color': x['type'] === 'cat' ? '#ecf0f1' : '', 'cursor': checkChild(x['id_akun']) ? 'default' : 'pointer'}"
-                            [id]="i == 0 ? 'content' : null" (click)="checkChild(x['id_akun']) ? null : openDialog(x)">
+                            [ngStyle]="{'background-color': x['type'] === 'cat' ? '#ecf0f1' : '', 'cursor': checkChild(x['id_akun']) || x['type'] === 'cat' ? 'default' : 'pointer'}"
+                            [id]="i == 0 ? 'content' : null" (click)="checkChild(x['id_akun']) || x['type'] === 'cat' ? null : openDialog(x)">
                             <div style="width: 60%; padding: 10px; padding-right: 10px;"
                                 [ngStyle]="{'border-right': x['type'] === 'cat' || checkChild(x['id_akun']) ? '' : 'solid 1px lightgrey', 'padding-left': x['type'] === 'cat' ? '10px' : (checkParent(x['id_induk_akun']) + 10) + 'px' }">
                                 <span
@@ -38,11 +38,11 @@
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 10px;"
                                 [ngStyle]="{'border-right': x['type'] === 'cat' || checkChild(x['id_akun']) ? '' : 'solid 1px lightgrey'}">
-                                <span *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp
+                                <span style="color: black" *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp
                                     {{ numberFormatter(x['saldo_debit'], 2)  }}</span>
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 10px;">
-                                <span *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp
+                                <span style="color: black" *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp
                                     {{ numberFormatter(x['saldo_kredit'], 2) }}</span>
                             </div>
                         </div>

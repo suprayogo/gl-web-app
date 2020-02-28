@@ -29,6 +29,28 @@ export class ChartOfAccountComponent implements OnInit {
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
+  //Configuration
+  tipe_induk: Object = [
+    {
+      label: 'Induk',
+      value: "0"
+    },
+    {
+      label: 'Perincian',
+      value: "1"
+    }
+  ]
+  tipe_akun: Object = [
+    {
+      label: 'Debit',
+      value: 0
+    },
+    {
+      label: 'Kredit',
+      value: 1
+    }
+  ]
+
   // Variables
   loading: boolean = true;
   content: any;
@@ -52,9 +74,11 @@ export class ChartOfAccountComponent implements OnInit {
     id_kategori_akun: '',
     kode_kategori_akun: '',
     nama_kategori_akun: '',
+    tipe_induk: "0",
     id_induk_akun: '',
     kode_induk_akun: '',
     nama_induk_akun: '',
+    tipe_akun: 0,
     saldo_awal: 0,
     saldo_saat_ini: 0,
     keterangan: '',
@@ -112,6 +136,17 @@ export class ChartOfAccountComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
+      label: 'Tipe Induk',
+      id: 'tipe-induk',
+      type: 'combobox',
+      options: this.tipe_induk,
+      valueOf: 'tipe_induk',
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
       label: 'Induk Akun',
       id: 'kode-induk-akun',
       type: 'inputgroup',
@@ -129,6 +164,35 @@ export class ChartOfAccountComponent implements OnInit {
         required: false,
         valueOf: 'nama_induk_akun'
       },
+      update: {
+        disabled: false
+      },
+      hiddenOn: {
+        valueOf: 'tipe_induk',
+        matchValue: "0"
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe Akun',
+      id: 'tipe-akun',
+      type: 'combobox',
+      options: this.tipe_akun,
+      valueOf: 'tipe_akun',
+      disabledOn: [
+        {
+          key: 'id_induk_akun',
+          notEmpty: true
+        },
+        {
+          key: 'kode_induk_akun',
+          notEmpty: true
+        },
+        {
+          key: 'nama_induk_akun',
+          notEmpty: true
+        }
+      ],
       update: {
         disabled: false
       }
@@ -198,7 +262,7 @@ export class ChartOfAccountComponent implements OnInit {
       value: 'saldo_saat_ini'
     }
   ]
-  sortBy = "nama_akun"
+  sortBy = "kode_akun"
 
   inputAkunDisplayColumns = [
     {
@@ -342,17 +406,20 @@ export class ChartOfAccountComponent implements OnInit {
 
   //Browse binding event
   browseSelectRow(data) {
+    console.log(data)
     let x = JSON.parse(JSON.stringify(data))
     this.formValue = {
       id_akun: x['id_akun'],
       kode_akun: x['kode_akun'],
       nama_akun: x['nama_akun'],
       id_kategori_akun: x['id_kategori_akun'],
+      tipe_induk: x['tipe_induk'],
       kode_kategori_akun: x['kode_kategori_akun'],
       nama_kategori_akun: x['nama_kategori_akun'],
       id_induk_akun: x['id_induk_akun'],
       kode_induk_akun: x['kode_induk_akun'],
       nama_induk_akun: x['nama_induk_akun'],
+      tipe_akun: x['tipe_akun'],
       saldo_awal: parseFloat(x['saldo_awal']),
       saldo_saat_ini: parseFloat(x['saldo_saat_ini']),
       keterangan: x['keterangan'],
@@ -411,6 +478,7 @@ export class ChartOfAccountComponent implements OnInit {
             this.forminput.updateFormValue('id_induk_akun', result.id_akun)
             this.forminput.updateFormValue('kode_induk_akun', result.kode_akun)
             this.forminput.updateFormValue('nama_induk_akun', result.nama_akun)
+            this.forminput.updateFormValue('tipe_akun', result.tipe_akun)
           }
         }
         this.ref.markForCheck();
@@ -441,6 +509,11 @@ export class ChartOfAccountComponent implements OnInit {
           special: false
         }))}` : this.formValue.id_akun
         this.formValue['kode_perusahaan'] = this.kode_perusahaan
+        if (this.formValue.tipe_induk === "0") {
+          this.formValue.id_induk_akun = ""
+          this.formValue.kode_induk_akun = ""
+          this.formValue.nama_induk_akun = ""
+        }
         this.request.apiData('akun', this.onUpdate ? 'u-akun' : 'i-akun', this.formValue).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -473,11 +546,13 @@ export class ChartOfAccountComponent implements OnInit {
       kode_akun: '',
       nama_akun: '',
       id_kategori_akun: '',
+      tipe_induk: this.formValue.tipe_induk,
       kode_kategori_akun: '',
       nama_kategori_akun: '',
       id_induk_akun: '',
       kode_induk_akun: '',
       nama_induk_akun: '',
+      tipe_akun: 0,
       saldo_awal: 0,
       saldo_saat_ini: 0,
       keterangan: '',
@@ -536,7 +611,7 @@ export class ChartOfAccountComponent implements OnInit {
         }
       }
     )
-    
+
     this.sendRequestAkunBisaJadiInduk()
     this.sendRequestAkun()
 

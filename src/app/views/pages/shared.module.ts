@@ -40,13 +40,8 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { AlertdialogComponent } from './components/alertdialog/alertdialog.component';
 import { ForminputComponent } from './components/forminput/forminput.component';
 import { InputdialogComponent } from './components/inputdialog/inputdialog.component';
-
-// import { InputdialogComponent } from './components/inputdialog/inputdialog.component';
-// import { LoadingComponent } from './components/loading/loading.component';
-// import { DatatableComponent } from './components/datatable/datatable.component';
-// import { DetailinputComponent } from './components/detailinput/detailinput.component';
-// import { ConfirmationdialogComponent } from './components/confirmationdialog/confirmationdialog.component';
-// import { ViewdialogComponent } from './components/viewdialog/viewdialog.component';
+import { DetailJurnalComponent } from './components/detail-jurnal/detail-jurnal.component';
+import { ConfirmationdialogComponent } from './components/confirmationdialog/confirmationdialog.component';
 
 const currencyOptions = {
   align: "left",
@@ -89,6 +84,7 @@ const currencyOptions = {
     //Detail 
     // DetailinputComponent, DELETE
     DetailinputAgGridComponent,
+    DetailJurnalComponent,
 
     //Datatable
     // DatatableComponent, DELETE
@@ -97,7 +93,7 @@ const currencyOptions = {
     //Dialog
     DialogComponent,
     InputdialogComponent,
-    // ConfirmationdialogComponent, DELETE
+    ConfirmationdialogComponent,
     ReportdialogComponent,
     AlertdialogComponent,
 
@@ -130,6 +126,7 @@ const currencyOptions = {
     //Detail 
     // DetailinputComponent, DELETE
     DetailinputAgGridComponent,
+    DetailJurnalComponent,
 
     //Datatable
     // DatatableComponent, DELETE
@@ -138,7 +135,7 @@ const currencyOptions = {
     //Dialog
     DialogComponent,
     InputdialogComponent,
-    // ConfirmationdialogComponent, DELETE
+    ConfirmationdialogComponent,
     // ViewdialogComponent, DELETE
     ReportdialogComponent,
     AlertdialogComponent,
@@ -161,7 +158,7 @@ const currencyOptions = {
     DialogComponent,
     AlertdialogComponent,
     InputdialogComponent,
-    // ConfirmationdialogComponent, DELETE
+    ConfirmationdialogComponent,
     ReportdialogComponent,
     // ViewdialogComponent DELETE
   ],

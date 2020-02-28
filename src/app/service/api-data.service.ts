@@ -20,6 +20,7 @@ import { KontakRequestService } from './master/kontak/kontak-request.service';
 //Setting Services
 
 //Transaksi Services
+import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,8 @@ export class ApiDataService {
 
     //Setting Services
 
+    //Transaksi Services
+    private jurnalReq: JurnalRequestService
   ) {
   }
 
@@ -74,6 +77,9 @@ export class ApiDataService {
     this.kontakReq.url = this.baseURL
 
     //Setting Services
+
+    //Transaksi Services
+    this.jurnalReq.url = this.baseURL
   }
 
   apiData(type, data, formData?: Object) {
@@ -88,7 +94,7 @@ export class ApiDataService {
       return this.menuReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'otoritas') {
       return this.otoritasReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'user') {
+    } else if (type === 'user') {
       return this.userReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'perusahaan') {
       return this.perusahaanReq.validate(data, this.httpBody, this.options, formData)
@@ -99,22 +105,27 @@ export class ApiDataService {
       return this.divisiReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'departemen') {
       return this.departemenReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'user') {
+    } else if (type === 'user') {
       return this.userReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'akun') {
+    } else if (type === 'akun') {
       return this.akunReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'kategori-akun') {
+    } else if (type === 'kategori-akun') {
       return this.kategoriAkunReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'bank') {
+    } else if (type === 'bank') {
       return this.bankReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'kategori-akun') {
+    } else if (type === 'kategori-akun') {
       return this.kategoriAkunReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'jenis-transaksi') {
+    } else if (type === 'jenis-transaksi') {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'kontak') {
+    } else if (type === 'kontak') {
       return this.kontakReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services
+
+    //Transaksi Services
+    else if (type === 'jurnal') {
+      return this.jurnalReq.validate(data, this.httpBody, this.options, formData)
+    }
   }
 }

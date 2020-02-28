@@ -1,0 +1,47 @@
+<div style="padding: 0 10px;">
+    <div style="width: 30vw; height: auto;">
+  
+      <div class="">
+
+        <div 
+          class="form-group m-form__group row" 
+          style="align-items: center"
+          *ngFor="let x of inpLayout; let i = index"
+        >
+          <label class="col-5">{{ x.label }}</label>
+          <div *ngIf="x.type === 'input'">
+            <div *ngIf="x.changeOn == null">
+              <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" [value]="x.valueOf">
+              <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" [value]="x.valueOf">
+            </div>
+            <div *ngIf="x.changeOn != null">
+                <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" (change)="x.changeOn($event)">
+                <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" (change)="x.changeOn($event)">
+            </div>
+            <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
+          </div>
+        </div>
+
+        <div class="label-container">
+          <div *ngFor="let x of lblLayout">
+            <span [ngStyle]="x.style">
+              {{ x.content }}
+            </span>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <div *ngFor="let x of btnLayout">
+            <div *ngIf="x.btnCondition()">
+                <button 
+                type="button" 
+                [className]="x.btnClass"
+                (click)="x.btnClick()"
+              >{{ x.btnLabel }}</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>

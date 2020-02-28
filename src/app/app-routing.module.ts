@@ -28,6 +28,10 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/master/master.module').then(m => m.MasterModule)
 			},
 			{
+				path: 'transaksi',
+				loadChildren: () => import('./views/pages/transaksi/transaksi.module').then(m => m.TransaksiModule)
+			},
+			{
 				path: 'management',
 				loadChildren: () => import('./views/pages/management/management.module').then(m => m.ManagementModule)
 			},
