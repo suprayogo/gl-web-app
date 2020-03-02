@@ -303,6 +303,9 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         } else {
           this.loading = false
           this.data_akun = []
+          this.res_data = []
+          this.total_debit = 0
+          this.total_kredit = 0
           this.ref.markForCheck()
           this.openSnackBar('Gagal mendapatkan daftar saldo akun.', 'fail')
         }

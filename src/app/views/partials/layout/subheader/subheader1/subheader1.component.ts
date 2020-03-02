@@ -10,6 +10,7 @@ import { DialogComponent } from '../../../../../views/pages/components/dialog/di
 import { AlertdialogComponent } from '../../../../../views/pages/components/alertdialog/alertdialog.component';
 import { RequestDataService } from '../../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../../service/global-variable.service';
+import { InputdialogComponent } from '../../../../pages/components/inputdialog/inputdialog.component';
 
 @Component({
 	selector: 'kt-subheader1',
@@ -24,6 +25,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	today: number = Date.now();
 	kode_perusahaan: string = ""
 	nama_perusahaan: string = ""
+	daftar_perusahaan = []
 	// title: string = '';
 	// desc: string = '';
 	// breadcrumbs: Breadcrumb[] = [];
@@ -31,6 +33,9 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	// Private properties
 	// private subscriptions: Subscription[] = [];
 
+	formD = {
+		kode_perusahaan: ''
+	}
 
 	inputPerusahaanDisplayColumns = [
 		{
@@ -71,6 +76,14 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 							this.kode_perusahaan = this.gbl.getKodePerusahaan()
 							this.nama_perusahaan = this.gbl.getNamaPerusahaan()
 							this.ref.markForCheck()
+							for (var i = 0; i < this.inputPerusahaanData.length; i++) {
+								let t = {
+									label: this.inputPerusahaanData[i]['nama_perusahaan'],
+									value: this.inputPerusahaanData[i]['kode_perusahaan']
+								}
+								this.daftar_perusahaan.push(t)
+							}
+							this.formD.kode_perusahaan = this.kode_perusahaan
 						}
 					} else {
 						this.openSnackBar('Gagal mendapatkan daftar akses perusahaan.', 'fail', null)
@@ -80,15 +93,15 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 
 		} else {
 			this.openSnackBar(
-				'Gagal mendapatkan ID User anda. Mohon melakukan login terlebih dahulu.', 
+				'Gagal mendapatkan ID User anda. Mohon melakukan login terlebih dahulu.',
 				'info',
 				() => {
 					localStorage.clear()
 					window.location.href = "/auth/login"
-				}	
+				}
 			)
 		}
-		
+
 	}
 
 	ngAfterViewInit(): void {
@@ -115,30 +128,90 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	gantiPerusahaan() {
-		const dialogRef = this.dialog.open(DialogComponent, {
+		// const dialogRef = this.dialog.open(DialogComponent, {
+		// 	width: 'auto',
+		// 	height: 'auto',
+		// 	maxWidth: '95vw',
+		// 	maxHeight: '95vh',
+		// 	data: {
+		// 		type: '',
+		// 		title: 'Daftar Perusahaan',
+		// 		tableInterface: this.inputPerusahaanInterface,
+		// 		displayedColumns: this.inputPerusahaanDisplayColumns,
+		// 		tableData: this.inputPerusahaanData,
+		// 		tableRules: this.inputPerusahaanDataRules,
+		// 		formValue: {},
+		// 	}
+		// });
+
+		// dialogRef.afterClosed().subscribe(result => {
+		// 	if (result) {
+		// 		this.gbl.setPerusahaan(result.kode_perusahaan, result.nama_perusahaan)
+		// 		this.kode_perusahaan = this.gbl.getKodePerusahaan()
+		// 		this.nama_perusahaan = this.gbl.getNamaPerusahaan()
+		// 		this.ref.markForCheck();
+		// 	}
+		// });
+		let inpD = [
+			{
+				formWidth: 'col-5',
+				label: 'Perusahaan',
+				id: 'kode_perusahaan',
+				type: 'combobox',
+				options: this.daftar_perusahaan,
+				valueOf: 'kode_perusahaan',
+				change: (e) => {
+					let v = e.target.value
+					this.formD.kode_perusahaan = v
+				},
+				update: {
+					disabled: false
+				}
+			}
+		]
+		const dialogRef = this.dialog.open(InputdialogComponent, {
 			width: 'auto',
 			height: 'auto',
 			maxWidth: '95vw',
 			maxHeight: '95vh',
 			data: {
-				type: '',
-				title: 'Daftar Perusahaan',
-				tableInterface: this.inputPerusahaanInterface,
-				displayedColumns: this.inputPerusahaanDisplayColumns,
-				tableData: this.inputPerusahaanData,
-				tableRules: this.inputPerusahaanDataRules,
-				formValue: {},
-			}
+				formValue: this.formD,
+				inputLayout: inpD,
+				buttonLayout: [],
+				inputPipe: (t, d) => null,
+				onBlur: (t, v) => null,
+				openDialog: (t) => null,
+				resetForm: () => this.resetDetailForm(),
+				onSubmit: () => this.submitDetailData(),
+				deleteData: () => null,
+			},
+			disableClose: true
 		});
 
-		dialogRef.afterClosed().subscribe(result => {
-			if (result) {
-				this.gbl.setPerusahaan(result.kode_perusahaan, result.nama_perusahaan)
-				this.kode_perusahaan = this.gbl.getKodePerusahaan()
-				this.nama_perusahaan = this.gbl.getNamaPerusahaan()
-				this.ref.markForCheck();
+		dialogRef.afterClosed().subscribe(
+			result => {
+			},
+			error => null,
+		);
+	}
+
+	submitDetailData() {
+		let k = this.formD['kode_perusahaan'], n = ""
+		for (var i = 0; i < this.inputPerusahaanData.length; i++) {
+			if (this.inputPerusahaanData[i]['kode_perusahaan'] === k) {
+				n = this.inputPerusahaanData[i]['nama_perusahaan']
+				break;
 			}
-		});
+		}
+		this.gbl.setPerusahaan(k, n)
+		this.kode_perusahaan = this.gbl.getKodePerusahaan()
+		this.nama_perusahaan = this.gbl.getNamaPerusahaan()
+		this.dialog.closeAll()
+		this.ref.markForCheck()
+	}
+
+	resetDetailForm() {
+		this.formD.kode_perusahaan = this.kode_perusahaan
 	}
 
 	openSnackBar(message, type?: any, onCloseFunc?: any) {
