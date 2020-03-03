@@ -16,6 +16,7 @@ import { MenuConfig } from '../../../core/_config/menu.config';
 import { LayoutConfigService, MenuAsideService, MenuOptions, OffcanvasOptions } from '../../../core/_base/layout';
 import { HtmlClassService } from '../html-class.service';
 import { RequestDataService } from '../../../service/request-data.service';
+import { PagesService } from '../../pages/pages.service';
 
 @Component({
 	selector: 'kt-aside-left',
@@ -31,7 +32,11 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 	insideTm: any;
 	outsideTm: any;
 	loadingMenu: boolean = true;
+	noloadingtext: boolean = true;
 	oto: string = "";
+	initMenu: any = [];
+	currentMenu: any = [];
+	menuParent: any;
 
 	menuCanvasOptions: OffcanvasOptions = {
 		baseClass: 'kt-aside',
@@ -80,11 +85,13 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		private request: RequestDataService,
 		private router: Router,
 		private render: Renderer2,
-		private cdr: ChangeDetectorRef
+		private cdr: ChangeDetectorRef,
+		private pagesService: PagesService
 	) {
 	}
 
 	ngAfterViewInit(): void {
+		this.menuParent = document.getElementById("kt_aside_menu")
 	}
 
 	ngOnInit() {
@@ -240,11 +247,11 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 					this.loadingMenu = false
 					this.cdr.markForCheck()
 					this.checkMenuAllowed(x)
-					/* this.pagesService.toggle(false)
+					this.pagesService.toggle(false)
 					this.initMenu = JSON.parse(JSON.stringify(x))
 					this.currentMenu = JSON.parse(JSON.stringify(x))
 					setTimeout(() => {
-						const classElement = document.getElementsByClassName('m-menu__item--active');
+						const classElement = document.getElementsByClassName('kt-menu__item--active');
 						if(classElement.length > 0){
 							const el = classElement[0].getBoundingClientRect()
 							const t = el.top
@@ -254,9 +261,9 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 							const sy = sc - (window.innerHeight / 2)
 							this.menuParent.scrollTo(0, sy)
 						}
-					}, 100); */
+					}, 100);
 				} else {
-					this.loadingMenu = false
+					// this.loadingMenu = false
 					this.cdr.markForCheck()
 					alert('Something is wrong, please try again later.')
 				}

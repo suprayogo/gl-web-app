@@ -19,7 +19,7 @@
             <div [ngClass]="{'arrow-open': isOpen(i), 'arrow-close': !isOpen(i)}" (click)="open(i)" [hidden]="!getSubtree(x[sin])"></div>
             <h5 style="font-size: 100%" (click)="onRowClicked(x)" [ngClass]="{'padding-left-8': !getSubtree(x[sin])}">{{ x[z['value']] }}</h5>
           </div>
-          <h5 style="font-size: 100%" *ngIf="y != 0">{{ x[z['value']] }}</h5>
+          <h5 style="font-size: 100%" *ngIf="y != 0">{{ z.currency ? 'Rp. ' + numberFormatter(x[z['value']]) : x[z['value']] }}</h5>
         </li>
   
         <li style="background-color: transparent; display: flex; flex: 1; min-width: 28px; max-width: 28px; position: relative">

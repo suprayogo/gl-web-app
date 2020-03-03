@@ -44,6 +44,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   subscription: any;
   subPeriode: any;
   kode_perusahaan: any;
+  periode_aktif: any = {
+    id_periode: '',
+    tahun_periode: '',
+    bulan_periode: ''
+  };
   requestMade: boolean = false;
   batal_alasan: any = "";
 
@@ -325,16 +330,23 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.reqKodePerusahaan()
+    this.reqIdPeriode()
     this.madeRequest()
   }
 
   ngAfterViewInit(): void {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
-    if (this.kode_perusahaan !== "") this.madeRequest()
+    this.periode_aktif = {
+      id_periode: this.gbl.getIdPeriode(),
+      tahun_periode: this.gbl.getTahunPeriode(),
+      bulan_periode: this.gbl.getBulanPeriode()
+    }
+    if (this.kode_perusahaan !== "" && this.periode_aktif.id_periode !== "") this.madeRequest()
   }
 
   ngOnDestroy(): void {
     this.subscription === undefined ? null : this.subscription.unsubscribe()
+    this.subPeriode === undefined ? null : this.subPeriode.unsubscribe()
   }
 
   reqKodePerusahaan() {
@@ -348,7 +360,24 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         this.madeRequest()
 
         if (this.selectedTab == 1 && this.browseNeedUpdate) {
-          this.refreshBrowse('', value)
+          this.refreshBrowse('')
+        }
+      }
+    )
+  }
+
+  reqIdPeriode() {
+    this.subPeriode = this.gbl.change_periode.subscribe(
+      value => {
+        this.periode_aktif = value
+        this.resetForm()
+        this.browseData = []
+        this.browseNeedUpdate = true
+        this.ref.markForCheck()
+        this.madeRequest()
+
+        if (this.selectedTab == 1 && this.browseNeedUpdate) {
+          this.refreshBrowse('')
         }
       }
     )
@@ -404,7 +433,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }))}` : this.formValue.id_tran
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: 'ba3e6621afd2d92c4d21be795c2d57b4' }, this.formValue)
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }, this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -635,7 +664,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && !this.requestMade) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif !== undefined && this.periode_aktif.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
       this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
@@ -716,9 +745,9 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     )
   }
 
-  refreshBrowse(message, val?) {
+  refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: val ? val : this.kode_perusahaan, id_periode: 'ba3e6621afd2d92c4d21be795c2d57b4' }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -735,6 +764,12 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             this.browseNeedUpdate = false
             this.ref.markForCheck()
           }
+        } else {
+          this.browseData = []
+          this.loading = false
+          this.tableLoad = false
+          this.browseNeedUpdate = true
+          this.ref.markForCheck()
         }
       }
     )

@@ -108,7 +108,12 @@ export class GlobalVariableService {
     this.id_periode = ip
     this.tahun_periode = tp
     this.bulan_periode = bp
-    this.change_periode.next(ip)
+    let d = {
+      id_periode: this.id_periode,
+      tahun_periode: this.tahun_periode,
+      bulan_periode: this.bulan_periode
+    }
+    this.change_periode.next(d)
   }
 
   periodeAktif(pa_id, pa_tahun, pa_bulan){

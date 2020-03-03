@@ -288,11 +288,13 @@ export class ChartOfAccountComponent implements OnInit {
     },
     {
       label: 'Saldo Awal',
-      value: 'saldo_awal'
+      value: 'saldo_awal',
+      currency: true
     },
     {
       label: 'Saldo',
-      value: 'saldo_saat_ini'
+      value: 'saldo_saat_ini',
+      currency: true
     }
   ]
   sortBy = "kode_akun"

@@ -281,6 +281,17 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 					this.ref.markForCheck()
 				} else {
 					//   this.loading = false
+					this.inputPeriodeData = []
+					this.changePeriodeData = []
+					this.gbl.setPeriode('', '', '')
+					this.id_periode = this.gbl.getIdPeriode()
+					this.tahun_periode = this.gbl.getTahunPeriode()
+					this.bulan_periode = this.gbl.getBulanPeriode()
+					this.nama_bulan = ''
+					this.gbl.periodeAktif('', '', '')
+					this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
+					this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
+					this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
 					this.ref.markForCheck()
 					this.openSnackBar('Gagal mendapatkan data periode.', 'fail')
 				}

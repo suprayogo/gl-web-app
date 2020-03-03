@@ -5,6 +5,9 @@
 	<!-- end:: Brand -->
 
 	<!-- BEGIN: Aside Menu -->
+	<div *ngIf="loadingMenu">
+		<kt-loading [noText]="noloadingtext"></kt-loading>
+	</div>
 	<div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
 		<div #asideMenu ktMenu [options]="menuOptions" [perfectScrollbar]="{wheelPropagation: false}" [disabled]="disableScroll()" [ngStyle]="{'max-height': '100vh', 'position': 'relative'}" id="kt_aside_menu" class="kt-aside-menu"
 			(mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)"
@@ -97,9 +100,9 @@
 	</i>
 
 	<!-- menu item title text -->
-	<span class="kt-menu__link-text" [translate]="item.translate">{{item.title}}</span>
+	<span class="kt-menu__link-text" style="white-space: normal;" [translate]="item.translate">{{item.title}}</span>
 	<!-- menu item with badge -->
-	<span *ngIf="item.badge" class="kt-menu__link-badge">
+	<span *ngIf="item.badge" class="kt-menu__link-badge" style="white-space: normal;">
 		<span class="kt-badge" [ngClass]="item.badge.type">{{item.badge.value}}</span>
 	</span>
 
