@@ -29,7 +29,8 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild('TP', { static: false }) forminputTP;
-  @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
+  @ViewChild('jbp', { static: false }) djbp;
+  @ViewChild('rp', { static: false }) drp;
 
   // Variables
   loading: boolean = true;
@@ -45,6 +46,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   onSub: boolean = false;
   detailLoad: boolean = false;
   enableDetail: boolean = false;
+  enableCancel: boolean = false;
   noCancel: boolean = true;
   editable: boolean = false;
   selectedTab: number = 0;
@@ -102,7 +104,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   //CDialog Un-Posting Jurnal
   c_buttonLayoutUP = [
     {
-      btnLabel: 'Un-Posting Jurnal',
+      btnLabel: 'Unposting Jurnal',
       btnClass: 'btn btn-primary',
       btnClick: (up) => {
         this.onSubmitUP(up)
@@ -122,7 +124,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   ]
   c_labelLayoutUP = [
     {
-      content: 'Yakin akan Un-Posting data jurnal ini ?',
+      content: 'Yakin akan Unposting data jurnal ini ?',
       style: {
         'color': 'red',
         'font-size': '20px',
@@ -166,7 +168,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   ]
 
   c_inputLayoutTP = []
-  
+
 
   // RIWAYAT TABLE
   displayedColumnsTable = [
@@ -175,20 +177,22 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       value: 'no_tran'
     },
     {
-      label: 'Diinput oleh',
+      label: 'Diposting Oleh',
       value: 'input_by'
     },
     {
-      label: 'Diinput tanggal',
-      value: 'input_dt'
+      label: 'Tgl. Posting',
+      value: 'input_dt',
+      date: true
     },
     {
-      label: 'Di Un-Posting oleh',
+      label: 'Diunposting oleh',
       value: 'update_by'
     },
     {
-      label: 'Di Un-Posting tanggal',
-      value: 'update_dt'
+      label: 'Tgl. Unposting',
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -304,6 +308,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       valueOf: 'no_tran',
       required: false,
       readOnly: true,
+      disabled: true,
       update: {
         disabled: false
       }
@@ -348,7 +353,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.nama_tombolPJ = 'Posting'
-    this.nama_tombolUP = 'Un-Posting'
+    this.nama_tombolUP = 'Unposting'
     this.nama_tombolTP = 'Tutup Periode'
     this.reqKodePerusahaan()
     this.reqActivePeriod()
@@ -446,18 +451,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           id: 'bulan-periode',
           type: 'input',
           valueOf: this.formValue.bulan_periode,
-          required: false,
-          readOnly: true,
-          update: {
-            disabled: false
-          }
-        },
-        {
-          formWidth: 'col-5',
-          label: 'No. Transaksi',
-          id: 'no-tran',
-          type: 'input',
-          valueOf: '',
           required: false,
           readOnly: true,
           update: {
@@ -582,33 +575,37 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         // error => null
       )
     } else {
-      const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-        width: 'auto',
-        height: 'auto',
-        maxWidth: '95vw',
-        maxHeight: '95vh',
-        data: {
-          type: type,
-          buttonLayout:
-            type === "posting_jurnal" ? this.c_buttonLayoutUP :
-              {},
-          labelLayout:
-            type === "posting_jurnal" ? this.c_labelLayoutUP :
-              {},
-          inputLayout:
-            type === "posting_jurnal" ? this.c_inputLayoutUP :
-              {},
-        },
-        disableClose: true
-      })
+      if (this.enableCancel) {
+        const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+          width: 'auto',
+          height: 'auto',
+          maxWidth: '95vw',
+          maxHeight: '95vh',
+          data: {
+            type: type,
+            buttonLayout:
+              type === "posting_jurnal" ? this.c_buttonLayoutUP :
+                {},
+            labelLayout:
+              type === "posting_jurnal" ? this.c_labelLayoutUP :
+                {},
+            inputLayout:
+              type === "posting_jurnal" ? this.c_inputLayoutUP :
+                {},
+          },
+          disableClose: true
+        })
 
 
-      dialogRef.afterClosed().subscribe(
-        result => {
-          // this.batal_alasan = ""
-        },
-        // error => null
-      )
+        dialogRef.afterClosed().subscribe(
+          result => {
+            // this.batal_alasan = ""
+          },
+          // error => null
+        )
+      } else {
+        this.openSnackBar('Tidak dapat melakukan unposting lagi.', 'info')
+      }
     }
   }
 
@@ -638,6 +635,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     x.no_tran = data['no_tran']
     x.boleh_batal = data['boleh_batal']
     this.formValue = x
+    this.enableCancel = data['boleh_batal'] === 'Y' ? true : false
     this.onSub = true;
     this.onUpdate = true;
     this.getBackToInput();
@@ -682,6 +680,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         valueOf: this.formValue.no_tran,
         required: false,
         readOnly: true,
+        disabled: true,
         update: {
           disabled: false
         }
@@ -720,6 +719,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           this.browseNeedUpdate = true
           this.ref.markForCheck()
           this.sendRequestRiwayat()
+          this.sendRequesBelumPosting()
         } else {
           this.loading = false;
           this.ref.markForCheck()
@@ -792,11 +792,12 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.browseNeedUpdate = true
             this.ref.markForCheck()
             this.sendRequestRiwayat()
+            this.sendRequesBelumPosting()
           }
         } else {
           this.loading = false;
           this.ref.markForCheck()
-          this.openSnackBar('DATA JURNAL GAGAL DI UN-POSTING', 'fail')
+          this.openSnackBar('DATA JURNAL GAGAL DI UNPOSTING', 'fail')
         }
       },
       error => {
@@ -817,6 +818,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       no_tran: '',
       boleh_batal: '',
     }
+    this.enableCancel = false;
     this.onSub = false;
     this.formInputCheckChanges()
   }
@@ -824,11 +826,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   onCancel() {
     if (!this.onUpdate) {
       this.resetForm()
+      this.drp == undefined ? null : this.drp.reset()
     } else {
       this.onUpdate = false;
       this.onSub = false;
       this.resetForm()
-      this.datatable == undefined ? null : this.datatable.reset()
+      this.djbp == undefined ? null : this.djbp.reset()
+      this.drp == undefined ? null : this.drp.reset()
     }
   }
 
