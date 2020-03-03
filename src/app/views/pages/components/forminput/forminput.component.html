@@ -28,7 +28,7 @@
           (keyup.tab)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
           style="text-transform: uppercase" [disabled]="(onUpdate && x.update.disabled) || x.disabled">
         <div class="input-group-append">
-          <button tabindex="-1" type="button" class="btn btn-primary" style="padding-right: 8px;" (click)="x.click(x.browseType)"
+          <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary" style="padding-right: 8px;" (click)="x.click(x.browseType)"
             [disabled]="(onUpdate && x.update.disabled) || x.disabled"><i *ngIf="x.btnIcon" style="color: white"
               class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>

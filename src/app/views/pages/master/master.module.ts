@@ -56,6 +56,7 @@ import { KategoriAkunComponent } from './kategori-akun/kategori-akun.component';
 import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
 import { KontakComponent } from './kontak/kontak.component';
 import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
+import { RekeningPerusahaanComponent } from './rekening-perusahaan/rekening-perusahaan.component';
 
 const routes: Routes = [
 	{
@@ -86,10 +87,14 @@ const routes: Routes = [
 		path: 'kontak',
 		component: KontakComponent,
 	},
+	{	
+		path: 'rekening-perusahaan',
+		component: RekeningPerusahaanComponent,
+	},
 	{
 		path: 'pengaturan-saldo-awal',
 		component: PengaturanSaldoAwalComponent,
-	},
+	}
 ];
 
 @NgModule({
@@ -157,7 +162,8 @@ const routes: Routes = [
 		KategoriAkunComponent,
 		JenisTransaksiComponent,
 		KontakComponent,
-		PengaturanSaldoAwalComponent
+		PengaturanSaldoAwalComponent,
+		RekeningPerusahaanComponent
 	]
 })
 export class MasterModule {}

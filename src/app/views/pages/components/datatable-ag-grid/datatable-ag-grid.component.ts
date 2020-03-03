@@ -18,6 +18,7 @@ export class DatatableAgGridComponent implements OnInit {
   @Input() buttonLayout: Object[];
   @Input() containerHeight: any;
   @Input() forceWithoutButton: boolean;
+  @Input() paginationPageSize: any;
   @Output() selectRowEvent = new EventEmitter();
   @Output() onDialogClose = new EventEmitter();
 
@@ -39,7 +40,7 @@ export class DatatableAgGridComponent implements OnInit {
     {tableName: 'asdasd'}
   ];
 
-  paginationPageSize = 25;
+  pageSize = 25;
   multiSortKey = 'ctrl';
 
   rowSelection = 'single';
@@ -59,6 +60,8 @@ export class DatatableAgGridComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    this.pageSize = this.paginationPageSize === undefined || this.paginationPageSize == null ? this.pageSize : this.paginationPageSize
 
     if(this.containerHeight !== undefined){
       this.containerStyle.height = this.containerHeight

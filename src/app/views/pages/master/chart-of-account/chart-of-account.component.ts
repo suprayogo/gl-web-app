@@ -13,6 +13,7 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Chart of Account (COA)'
@@ -65,6 +66,38 @@ export class ChartOfAccountComponent implements OnInit {
   search: string;
   subscription: any;
   kode_perusahaan: string;
+
+  //Confirmation Variable
+  c_buttonLayout = [
+    {
+      btnLabel: 'Hapus Data',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.deleteData()
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin akan menghapus data ?',
+      style: {
+        'color': 'red',
+        'font-size': '20px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
 
   // Input Name
   formValue = {
@@ -486,6 +519,69 @@ export class ChartOfAccountComponent implements OnInit {
     });
   }
 
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: [
+          {
+            label: 'Kode Akun',
+            id: 'kode-akun',
+            type: 'input',
+            valueOf: this.formValue.kode_akun,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Akun',
+            id: 'nama-akun',
+            type: 'input',
+            valueOf: this.formValue.nama_akun,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Kategori Akun',
+            id: 'nama-kategori-akun',
+            type: 'input',
+            valueOf: this.formValue.nama_kategori_akun,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Induk Akun',
+            id: 'induk-akun',
+            type: 'input',
+            valueOf: this.formValue.kode_induk_akun,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+        ]
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        // this.batal_alasan = ""
+      },
+      // error => null
+    )
+  }
+
   refreshBrowse(message) {
     this.onUpdate = false
     this.sendRequestAkunBisaJadiInduk()
@@ -572,6 +668,7 @@ export class ChartOfAccountComponent implements OnInit {
   }
 
   deleteData() {
+    this.dialog.closeAll()
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()

@@ -1,47 +1,57 @@
-<div style="padding: 0 10px;">
-    <div style="width: 30vw; height: auto;">
-  
-      <div class="">
+<div style="padding: 65px 25px 25px; position: relative;">
 
-        <div 
-          class="form-group m-form__group row" 
-          style="align-items: center"
-          *ngFor="let x of inpLayout; let i = index"
-        >
-          <label class="col-5">{{ x.label }}</label>
-          <div *ngIf="x.type === 'input'">
-            <div *ngIf="x.changeOn == null">
-              <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" [value]="x.valueOf">
-              <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" [value]="x.valueOf">
-            </div>
-            <div *ngIf="x.changeOn != null">
-                <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" (change)="x.changeOn($event)">
-                <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}" [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" (change)="x.changeOn($event)">
-            </div>
-            <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
+  <div class="diag-header">
+    <h5 style="margin-bottom: 0; align-self: center;">{{ title ? title : 'Dialog' }}</h5>
+    <button type="button" (click)="closeDialog(true)" class="close-btn">
+      <i class="flaticon flaticon-cancel" style="font-size: 1.5em; line-height: 1;"></i>
+    </button>
+  </div>
+  <div style="width: 30vw; height: auto;">
+
+    <div class="">
+
+      <div class="form-group m-form__group row" style="align-items: center" *ngFor="let x of inpLayout; let i = index">
+        <label class="col-5">{{ x.label }}</label>
+
+        <!-- FOR COMBOBOX -->
+        <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="formValue[x.valueOf]" [required]="x.required" style="width: 57%;"
+           (change)="selection($event, x.valueOf, x.cekBulan)">
+          <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
+        </select>
+        
+        <div *ngIf="x.type === 'input'">
+          <div *ngIf="x.changeOn == null">
+            <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
+              [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" [value]="x.valueOf">
+            <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
+              [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" [value]="x.valueOf">
           </div>
-        </div>
-
-        <div class="label-container">
-          <div *ngFor="let x of lblLayout">
-            <span [ngStyle]="x.style">
-              {{ x.content }}
-            </span>
+          <div *ngIf="x.changeOn != null">
+            <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
+              [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" (change)="x.changeOn($event)">
+            <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
+              [readonly]="x.readOnly" [required]="x.required" [disabled]="x.disabled" (change)="x.changeOn($event)">
           </div>
+          <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
         </div>
-
-        <div class="button-container">
-          <div *ngFor="let x of btnLayout">
-            <div *ngIf="x.btnCondition()">
-                <button 
-                type="button" 
-                [className]="x.btnClass"
-                (click)="x.btnClick()"
-              >{{ x.btnLabel }}</button>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      <div class="label-container">
+        <div *ngFor="let x of lblLayout">
+          <span [ngStyle]="x.style">
+            {{ x.content }}
+          </span>
+        </div>
+      </div>
+
+      <div class="button-container">
+        <div *ngFor="let x of btnLayout">
+          <div *ngIf="x.btnCondition()">
+            <button type="button" [className]="x.btnClass" (click)="x.btnClick(formValue)">{{ x.btnLabel }}</button>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
 </div>

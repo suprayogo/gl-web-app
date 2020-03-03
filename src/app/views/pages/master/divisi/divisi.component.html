@@ -16,7 +16,7 @@
                       [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
                       [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
                       [onUpdate]="onUpdate" [enableDelete]="enableDelete" (onCancel)="onCancel()"
-                      (deleteData)="deleteData()" (editAction)="editDetailData($event)"
+                      (deleteData)="openCDialog()" (editAction)="editDetailData($event)"
                       (deleteAction)="deleteDetailData($event)"></kt-forminput>
               </div>
 

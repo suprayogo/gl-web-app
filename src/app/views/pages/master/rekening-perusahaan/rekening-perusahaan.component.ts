@@ -12,18 +12,19 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Kategori Akun'
+  beforeCodeTitle: 'Daftar Rekening Perusahaan'
 }
 
 @Component({
-  selector: 'kt-kategori-akun',
-  templateUrl: './kategori-akun.component.html',
-  styleUrls: ['./kategori-akun.component.scss', '../master.style.scss']
+  selector: 'kt-rekening-perusahaan',
+  templateUrl: './rekening-perusahaan.component.html',
+  styleUrls: ['./rekening-perusahaan.component.scss', '../master.style.scss']
 })
-export class KategoriAkunComponent implements OnInit, AfterViewInit {
+export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -31,6 +32,7 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
 
   // Variables
   loading: boolean = true;
+  loadingBank: boolean = false
   content: any;
   detailLoad: boolean = false;
   enableDetail: boolean = false;
@@ -42,7 +44,8 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
   browseNeedUpdate: boolean = true;
   search: string;
   subscription: any;
-  kp: any;
+  kp_V1: any;
+  kp_V2: any;
 
   //Confirmation Variable
   c_buttonLayout = [
@@ -76,15 +79,44 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  inputBankDisplayColumns = [
+    {
+      label: 'Kode Bank',
+      value: 'kode_bank'
+    },
+    {
+      label: 'Nama Bank',
+      value: 'nama_bank'
+    }
+  ]
+  inputBankInterface = {
+    kode_bank: 'string',
+    nama_bank: 'string'
+  }
+  inputBankData = []
+  inputBankDataRules = []
+
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'Kode Kategori Akun',
-      value: 'kode_kategori_akun'
+      label: 'Kode Bank',
+      value: 'kode_bank'
     },
     {
-      label: 'Nama Kategori Akun',
-      value: 'nama_kategori_akun'
+      label: 'No. Rekening',
+      value: 'no_rekening'
+    },
+    {
+      label: 'Atas Nama',
+      value: 'atas_nama'
+    },
+    {
+      label: 'Kantor Cabang',
+      value: 'nama_kantor_cabang'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
     },
     {
       label: 'Diinput oleh',
@@ -104,8 +136,11 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
     }
   ];
   browseInterface = {
-    kode_kategori_akun: 'string',
-    nama_kategori_akun: 'string',
+    kode_bank: 'string',
+    no_rekening: 'string',
+    atas_nama: 'string',
+    nama_kantor_cabang: 'string',
+    keterangan: 'string',
     //STATIC
     input_by: 'string',
     input_dt: 'string',
@@ -117,38 +152,88 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValue = {
-    id_kategori_akun: '',
-    kode_kategori_akun: '',
-    nama_kategori_akun: ''
+    kode_bank: '',
+    no_rekening: '',
+    atas_nama: '',
+    nama_kantor_cabang: '',
+    keterangan: '',
   }
 
   // Layout Form
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Kategori Akun',
-      id: 'kode-kategori-akun',
-      type: 'input',
-      valueOf: 'kode_kategori_akun',
+      label: 'Kode Bank',
+      id: 'kode-bank',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_bank',
+      valueOf: 'kode_bank',
       required: true,
       readOnly: false,
-      update: {
-        disabled: true
+      hiddenOn: false,
+      inputInfo: {
+        id: 'nama-bank',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_bank'
       },
-      inputPipe: true
+      update: {
+        disabled: false
+      }
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Kategori Akun',
-      id: 'nama-kategori-akun',
+      label: 'No. Rekening',
+      id: 'no-rekening',
       type: 'input',
-      valueOf: 'nama_kategori_akun',
+      valueOf: 'no_rekening',
       required: true,
+      readOnly: false,
+      numberOnly: true,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Atas Nama',
+      id: 'atas-nama',
+      type: 'input',
+      valueOf: 'atas_nama',
+      required: false,
       readOnly: false,
       update: {
         disabled: false
       }
     },
+    {
+      formWidth: 'col-5',
+      label: 'Kantor Cabang',
+      id: 'nama-kantor-cabang',
+      type: 'input',
+      valueOf: 'nama-kantor-cabang',
+      required: false,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Keterangan',
+      id: 'keterangan',
+      type: 'input',
+      valueOf: 'keterangan',
+      required: false,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    }
   ]
 
   constructor(
@@ -160,12 +245,14 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.madeRequest()
     this.reqKodePerusahaan()
   }
 
   ngAfterViewInit(): void {
-    this.kp = this.gbl.getKodePerusahaan()
+    this.kp_V2 = this.gbl.getKodePerusahaan()
+    if (this.kp_V2 !== "") {
+      this.madeRequest()
+    }
   }
 
   ngOnDestroy(): void {
@@ -175,11 +262,15 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
   reqKodePerusahaan() {
     this.subscription = this.gbl.change.subscribe(
       value => {
-        this.kp = value
+        this.kp_V1 = value
         this.resetForm()
         this.browseData = []
         this.browseNeedUpdate = true
         this.ref.markForCheck()
+
+        if (this.kp_V1 !== "") {
+          this.madeRequest()
+        }
 
         if (this.selectedTab == 1 && this.browseNeedUpdate) {
           this.refreshBrowse('', value)
@@ -190,7 +281,59 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.loading = false
+    this.inputBankData = []
+    this.request.apiData('bank', 'g-bank', { kode_perusahaan: this.kp_V1 == undefined ? this.kp_V2 : this.kp_V1 }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputBankData = data['RESULT']
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          this.openSnackBar('Gagal mendapatkan daftar bank. mohon coba lagi nanti.')
+          this.loading = false
+          this.loadingBank = false
+          this.ref.markForCheck()
+        }
+      }
+    )
+  }
+
+  // Dialog
+  openDialog(type) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_bank" ? this.inputBankInterface :
+            {},
+        displayedColumns:
+          type === "kode_bank" ? this.inputBankDisplayColumns :
+            [],
+        tableData:
+          type === "kode_bank" ? this.inputBankData :
+            [],
+        tableRules:
+          type === "kode_bank" ? this.inputBankDataRules :
+            [],
+        formValue: this.formValue
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_bank") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_bank', result.kode_bank)
+            this.forminput.updateFormValue('nama_bank', result.nama_bank)
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
   }
 
   openCDialog() { // Confirmation Dialog
@@ -204,20 +347,30 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
         labelLayout: this.c_labelLayout,
         inputLayout: [
           {
-            label: 'Kode Kategori Akun',
-            id: 'kode-kategori-akun',
+            label: 'Kode Bank',
+            id: 'kode-bank',
             type: 'input',
-            valueOf: this.formValue.kode_kategori_akun,
+            valueOf: this.formValue.kode_bank,
             changeOn: null,
             required: false,
             readOnly: true,
             disabled: true,
           },
           {
-            label: 'Nama Kategori Akun',
-            id: 'nama-kategori-akun',
+            label: 'No. Rekening',
+            id: 'no-rekening',
             type: 'input',
-            valueOf: this.formValue.nama_kategori_akun,
+            valueOf: this.formValue.no_rekening,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Atas Nama',
+            id: 'atas-nama',
+            type: 'input',
+            valueOf: this.formValue.atas_nama,
             changeOn: null,
             required: false,
             readOnly: true,
@@ -248,7 +401,7 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message, val = null) {
     this.tableLoad = true
-    this.request.apiData('kategori-akun', 'g-kategori-akun', { kode_perusahaan: val ? val : this.kp }).subscribe(
+    this.request.apiData('rekening-perusahaan', 'g-rekening-perusahaan', { kode_perusahaan: val ? val : this.kp_V1 }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -273,11 +426,12 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = this.formValue
-    x.id_kategori_akun = data['id_kategori_akun']
-    x.kode_kategori_akun = data['kode_kategori_akun']
-    x.nama_kategori_akun = data['nama_kategori_akun']
+    x.kode_bank = data['kode_bank']
+    x.no_rekening = data['no_rekening']
+    x.atas_nama = data['atas_nama']
+    x.nama_kantor_cabang = data['nama_kantor_cabang']
+    x.keterangan = data['keterangan']
     this.formValue = x
-    this.enableDelete = data['boleh_hapus'] === 'Y' ? true : false
     this.onUpdate = true;
     this.getBackToInput();
   }
@@ -296,14 +450,8 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        this.formValue.id_kategori_akun = this.formValue.id_kategori_akun === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-          length: 8,
-          numeric: true,
-          letters: false,
-          special: false
-        }))}` : this.formValue.id_kategori_akun
-        let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp }, this.formValue)
-        this.request.apiData('kategori-akun', this.onUpdate ? 'u-kategori-akun' : 'i-kategori-akun', endRes).subscribe(
+        let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp_V1 }, this.formValue)
+        this.request.apiData('rekening-perusahaan', this.onUpdate ? 'u-rekening-perusahaan' : 'i-rekening-perusahaan', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               this.resetForm()
@@ -331,9 +479,11 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      id_kategori_akun: '',
-      kode_kategori_akun: '',
-      nama_kategori_akun: '',
+      kode_bank: '',
+      no_rekening: '',
+      atas_nama: '',
+      nama_kantor_cabang: '',
+      keterangan: '',
     }
     // this.detailData = []
     this.formInputCheckChanges()
@@ -354,8 +504,8 @@ export class KategoriAkunComponent implements OnInit, AfterViewInit {
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp }, this.formValue)
-      this.request.apiData('kategori-akun', 'd-kategori-akun', endRes).subscribe(
+      let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp_V1 }, this.formValue)
+      this.request.apiData('rekening-perusahaan', 'd-rekening-perusahaan', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()

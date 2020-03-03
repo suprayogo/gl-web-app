@@ -16,11 +16,12 @@ import { AkunRequestService } from './master/akun/akun-request.service';
 import { BankRequestService } from './master/bank/bank-request.service';
 import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-transaksi-request.service';
 import { KontakRequestService } from './master/kontak/kontak-request.service';
-
-//Setting Services
+import { RekeningPerusahaanRequestService } from './master/rekening-perusahaan/rekening-perusahaan-request.service';
 
 //Transaksi Services
 import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service';
+import { PostingJurnalRequestService } from './transaksi/posting-jurnal/posting-jurnal-request.service';
+import { PeriodeRequestService } from './transaksi/periode/periode-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -48,8 +49,12 @@ export class ApiDataService {
     private kategoriAkunReq: KategoriAkunRequestService,
     private jenisTransaksiReq: JenisTransaksiRequestService,
     private kontakReq: KontakRequestService,
+    private rekeningPerusahaanReq: RekeningPerusahaanRequestService,
+    
+    //Transaksi Services
+    private postingJurnalReq: PostingJurnalRequestService,
+    private periodeReq: PeriodeRequestService,
 
-    //Setting Services
 
     //Transaksi Services
     private jurnalReq: JurnalRequestService
@@ -75,11 +80,15 @@ export class ApiDataService {
     this.kategoriAkunReq.url = this.baseURL
     this.jenisTransaksiReq.url = this.baseURL
     this.kontakReq.url = this.baseURL
+    this.rekeningPerusahaanReq.url = this.baseURL
 
     //Setting Services
 
     //Transaksi Services
     this.jurnalReq.url = this.baseURL
+    //Transaksi Services
+    this.postingJurnalReq.url = this.baseURL
+    this.periodeReq.url = this.baseURL
   }
 
   apiData(type, data, formData?: Object) {
@@ -119,6 +128,8 @@ export class ApiDataService {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'kontak') {
       return this.kontakReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'rekening-perusahaan') {
+      return this.rekeningPerusahaanReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services
@@ -126,6 +137,10 @@ export class ApiDataService {
     //Transaksi Services
     else if (type === 'jurnal') {
       return this.jurnalReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'posting-jurnal') {
+      return this.postingJurnalReq.validate(data, this.httpBody, this.options, formData)
+    } else if(type === 'periode') {
+      return this.periodeReq.validate(data, this.httpBody, this.options, formData)
     }
   }
 }

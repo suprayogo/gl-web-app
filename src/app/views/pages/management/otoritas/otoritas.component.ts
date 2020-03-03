@@ -12,6 +12,7 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Daftar Otoritas'
@@ -44,8 +45,37 @@ export class OtoritasComponent implements OnInit {
   dialogType: string = null;
   search: string;
 
-  // Configuration Select box
-  // tipe_aktif: Object = []
+  //Confirmation Variable
+  c_buttonLayout = [
+    {
+      btnLabel: 'Hapus Data',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.deleteData()
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin akan menghapus data ?',
+      style: {
+        'color': 'red',
+        'font-size': '20px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
 
   // Input Name
   formValue = {
@@ -204,7 +234,7 @@ export class OtoritasComponent implements OnInit {
     this.sendRequestMenu()
   }
 
-  sendRequestMenu(){
+  sendRequestMenu() {
     this.request.apiData('menu', 'g-menu').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -222,7 +252,7 @@ export class OtoritasComponent implements OnInit {
       }
     )
   }
-  
+
   // Dialog
   openDialog(type) {
     this.dialogType = JSON.parse(JSON.stringify(type))
@@ -283,6 +313,49 @@ export class OtoritasComponent implements OnInit {
         this.dialogType = null
       }
     });
+  }
+
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      data: {
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: [
+          {
+            label: 'Kode Otoritas',
+            id: 'kode-otoritas',
+            type: 'input',
+            valueOf: this.formValue.kode_otoritas,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Otoritas',
+            id: 'nama-otoritas',
+            type: 'input',
+            valueOf: this.formValue.nama_otoritas,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+        ]
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        // this.batal_alasan = ""
+      },
+      // error => null
+    )
   }
 
   getDetail() {
@@ -448,6 +521,7 @@ export class OtoritasComponent implements OnInit {
   }
 
   deleteData() {
+    this.dialog.closeAll()
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()

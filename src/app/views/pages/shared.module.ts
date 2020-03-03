@@ -30,6 +30,7 @@ import { AgGridModule } from 'ag-grid-angular';
 
 // Component Call
 import { DialogComponent } from './components/dialog/dialog.component';
+import { ConfirmationdialogComponent } from './components/confirmationdialog/confirmationdialog.component';
 import { TreeviewComponent } from './components/treeview/treeview.component';
 import { ReportdialogComponent } from './components/reportdialog/reportdialog.component';
 import { DatatableAgGridComponent } from './components/datatable-ag-grid/datatable-ag-grid.component';
@@ -41,7 +42,6 @@ import { AlertdialogComponent } from './components/alertdialog/alertdialog.compo
 import { ForminputComponent } from './components/forminput/forminput.component';
 import { InputdialogComponent } from './components/inputdialog/inputdialog.component';
 import { DetailJurnalComponent } from './components/detail-jurnal/detail-jurnal.component';
-import { ConfirmationdialogComponent } from './components/confirmationdialog/confirmationdialog.component';
 
 const currencyOptions = {
   align: "left",
@@ -156,6 +156,7 @@ const currencyOptions = {
   entryComponents: [
     //List of mini component
     DialogComponent,
+    ConfirmationdialogComponent,
     AlertdialogComponent,
     InputdialogComponent,
     ConfirmationdialogComponent,
