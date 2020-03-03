@@ -11,16 +11,20 @@ export class PostingJurnalRequestService {
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object) {
-    if (data === 'g-posting-jurnal') {
-      httpBody.respondCode = 'GET-POSTING-JURNAL'
+    if (data === 'g-posting') {
+      httpBody.respondCode = 'GET-DATA-POSTING'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-jurnal-belum-posting') {
+      httpBody.respondCode = 'GET-DATA-JURNAL-BELUM-POSTING'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'i-posting-jurnal') {
       httpBody.respondCode = 'SET-POSTING-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'u-posting-jurnal') {
-      httpBody.respondCode = 'UPT-POSTING-JURNAL'
+    } else if (data === 'i-unposting-jurnal') {
+      httpBody.respondCode = 'SET-UNPOSTING-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

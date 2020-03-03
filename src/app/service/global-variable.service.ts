@@ -46,25 +46,33 @@ export class GlobalVariableService {
     return this.id_periode;
   }
 
-  getIdPeriodeAktif() {
-    return this.id_periodeAktif;
-  }
-
   getTahunPeriode() {
     return this.tahun_periode;
-  }
-
-  getTahunPeriodeAktif() {
-    return this.tahun_periodeAktif;
-    
   }
 
   getBulanPeriode() {
     return this.bulan_periode;
   }
 
+  // PERIODE AKTIF
+  getIdPeriodeAktif() {
+    return this.id_periodeAktif;
+  }
+
+  getTahunPeriodeAktif() {
+    return this.tahun_periodeAktif;
+  }
+
   getBulanPeriodeAktif() {
     return this.bulan_periodeAktif;
+  }
+
+  getActive(){
+    return {
+      id_periode: this.getIdPeriodeAktif(),
+      tahun_periode: this.getTahunPeriodeAktif(),
+      bulan_periode: this.getBulanPeriodeAktif()
+    }
   }
 
   getNamaBulan() {

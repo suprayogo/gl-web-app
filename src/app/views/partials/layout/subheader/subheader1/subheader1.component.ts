@@ -42,6 +42,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	bulan_periode: string = ""
 	bulanPeriodeAktif: string = ""
 	nama_bulan: string = ""
+	noActive: boolean;
 	// title: string = '';
 	// desc: string = '';
 	// breadcrumbs: Breadcrumb[] = [];
@@ -428,12 +429,14 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 				this.ref.markForCheck()
 				if (accessPeriod['aktif'] === "1") {
 					this.openSnackBar('Akses periode kembali ke periode aktif saat ini', 'success')
+					this.noActive = false
 				} else {
 					this.openSnackBar('Akses periode diubah ke Bulan ' + this.nama_bulan + ', Tahun ' + this.tahun_periode, 'success')
+					this.noActive = true
 				}
 			} else {
 				this.ref.markForCheck()
-				this.openSnackBar('Gagal ubah periode, Mohon isi Tahun dan Bulan dengan lengkap', 'fail')
+				this.openSnackBar('Gagal ubah periode, Mohon isi Tahun dan Bulan dengan lengkap', 'fail', this.openCDialog())
 			}
 		}
 	}
@@ -447,13 +450,13 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 			data: {
 				type: type === undefined || type == null ? '' : type,
 				message: message === undefined || message == null ? '' : message,
-				onCloseFunc: () => onCloseFunc()
+				onCloseFunc: onCloseFunc === undefined || onCloseFunc == null ? null : () => onCloseFunc()
 			},
 			disableClose: true
 		})
 
 		dialogRef.afterClosed().subscribe(result => {
-			this.dialog.closeAll()
+			// this.dialog.closeAll()
 		})
 	}
 

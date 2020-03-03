@@ -21,14 +21,40 @@
                     </ng-template>
 
                     <kt-portlet-body>
-                        <div class="kt-section">
-                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombolPJ"
-                                [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
-                                [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
-                                [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
-                                [onUpdate]="onUpdate" [enableDelete]="enableDelete" (deleteData)="openCDialog()"
-                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)">
+                        <div class="kt-section" style="display:flex; flex-direction: row;">
+                            <div style="width: 50%;">
+                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
+                                [nama_tombol]="nama_tombolPJ" [nama_tombol2]="nama_tombolUP" [buttonLayout]="buttonLayout"
+                                [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                                [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                                (onSubmit)="openCDialog('posting_jurnal')" [onUpdate]="onUpdate"
+                                [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                (onCancel)="onCancel()" [onSub]="onSub">
                             </kt-forminput>
+                            </div>
+
+                            <div class="kt-section" *ngIf="tableLoadBP && !loading" style="width: 50%;">
+                                <kt-loading [loadingText]="loadingDataTextBP"></kt-loading>
+                            </div>
+    
+                            <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
+                                <h2>Jurnal Belum Posting</h2>
+                                <kt-datatable-ag-grid [tableColumn]="displayedColumnsTableBP" [tableData]="browseDataBP"
+                                    [tableRules]="browseDataRulesBP">
+                                </kt-datatable-ag-grid>
+                            </div>
+                        </div>
+
+                        <div class="kt-section" *ngIf="tableLoad && !loading">
+                            <kt-loading [loadingText]="loadingDataText"></kt-loading>
+                        </div>
+
+                        <div *ngIf="!tableLoad && !loading">
+                            <h2>Riwayat Posting</h2>
+                            <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
+                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)">
+                            </kt-datatable-ag-grid>
                         </div>
                     </kt-portlet-body>
 
@@ -43,14 +69,18 @@
                     </ng-template>
 
                     <kt-portlet-body>
-                        <div class="kt-section">
-                            <kt-forminput [inputLayout]="inputLayoutTP" [formValue]="formValueTP"
+                        <div class="kt-section" *ngIf="loadTab">
+                            <kt-loading></kt-loading>
+                        </div>
+                        <div class="kt-section" *ngIf="!loadTab">
+                            <kt-forminput #TP [inputLayout]="inputLayoutTP" [formValue]="formValueTP"
                                 [nama_tombol]="nama_tombolTP" [buttonLayout]="buttonLayout"
                                 [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
                                 [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
-                                (onSubmit)="onSubmitTP($event)" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
-                                (deleteData)="openCDialog()" (editAction)="editDetailData($event)"
-                                (deleteAction)="deleteDetailData($event)">
+                                (onSubmit)="openCDialog('tutup_periode')" [onUpdate]="onUpdate"
+                                [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                [noCancel]="noCancel">
                             </kt-forminput>
                         </div>
                     </kt-portlet-body>
