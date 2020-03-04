@@ -40,6 +40,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   onUpdate: boolean = false;
   enableCancel: boolean = true;
   enableDelete: boolean = false;
+  disableSubmit: boolean = false;
   browseNeedUpdate: boolean = true;
   subscription: any;
   subPeriode: any;
@@ -56,7 +57,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   formValue = {
     id_tran: '',
     no_tran: '',
-    tgl_tran: this.getDateNow(),
+    tgl_tran: JSON.stringify(this.getDateNow()),
     kode_divisi: '',
     nama_divisi: '',
     kode_departemen: '',
@@ -124,7 +125,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Tgl. Transaksi',
-      value: 'tgl_tran'
+      value: 'tgl_tran',
+      date: true
     },
     {
       label: 'Divisi',
@@ -139,12 +141,17 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       value: 'keterangan'
     },
     {
+      label: 'Status',
+      value: 'batal_status_sub'
+    },
+    {
       label: 'Diinput oleh',
       value: 'nama_input_by',
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -152,7 +159,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diupdate tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -166,7 +174,16 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = []
+  browseDataRules = [
+    {
+      target: 'batal_status',
+      replacement: {
+        't': 'Batal',
+        'f': ''
+      },
+      redefined: 'batal_status_sub'
+    }
+  ]
   inputDepartemenDisplayColumns = [
     {
       label: 'Kode Departemen',
@@ -175,10 +192,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     {
       label: 'Nama Departemen',
       value: 'nama_departemen'
-    },
-    {
-      label: 'Induk Departemen',
-      value: 'induk_departemen'
     },
     {
       label: 'Nama Induk Departemen',
@@ -244,7 +257,13 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       },
       timepick: false,
       enableMin: true,
-      enableMax: true
+      enableMax: true,
+      minMaxDate: () => {
+        return {
+          y: this.gbl.getTahunPeriode(),
+          m: this.gbl.getBulanPeriode()
+        }
+      }
     },
     {
       formWidth: 'col-5',
@@ -341,7 +360,14 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       tahun_periode: this.gbl.getTahunPeriode(),
       bulan_periode: this.gbl.getBulanPeriode()
     }
-    if (this.kode_perusahaan !== "" && this.periode_aktif.id_periode !== "") this.madeRequest()
+    if (this.kode_perusahaan !== "" && this.periode_aktif.id_periode !== "") {
+      if (this.periode_aktif.id_periode !== this.gbl.getIdPeriodeAktif()) {
+        this.disableSubmit = true
+      } else {
+        this.disableSubmit = false
+      }
+      this.madeRequest()
+    }
   }
 
   ngOnDestroy(): void {
@@ -370,6 +396,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.subPeriode = this.gbl.change_periode.subscribe(
       value => {
         this.periode_aktif = value
+        if (this.periode_aktif.id_periode !== this.gbl.getIdPeriodeAktif()) {
+          this.disableSubmit = true
+        } else {
+          this.disableSubmit = false
+        }
         this.resetForm()
         this.browseData = []
         this.browseNeedUpdate = true
@@ -400,7 +431,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.formValue = {
       id_tran: x['id_tran'],
       no_tran: x['no_tran'],
-      tgl_tran: t_tran.getTime(),
+      tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_divisi: x['kode_divisi'],
       nama_divisi: x['nama_divisi'],
       kode_departemen: x['kode_departemen'],
@@ -454,28 +485,38 @@ export class JurnalComponent implements OnInit, AfterViewInit {
           }
         )
       } else {
-        if (this.formValue.nama_divisi === '') {
+        if (this.forminput.getData().nama_divisi === '') {
           this.openSnackBar('Divisi tidak valid.', 'info')
-        } else if (this.formValue.nama_departemen === '') {
+        } else if (this.forminput.getData().nama_departemen === '') {
           this.openSnackBar('Departemen tidak valid.', 'info')
         } else {
-          this.openSnackBar('Saldo debit dan kredit tidak seimbang.', 'info')
+          this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
         }
       }
     }
   }
 
   validateSubmit() {
-    let valid = false
+    let valid = true
 
     let data = this.forminput === undefined ? null : this.forminput.getData()
 
     if (data != null) {
       if (data['detail'] !== undefined || data['detail'] != null) {
-        if (data['detail']['valid']) {
-          valid = true
+        if (!data['detail']['valid']) {
+          valid = false
         }
       }
+
+      for (var i = 0; i < data['detail']['data'].length; i++) {
+        if (data['detail']['data'][i]['id_akun'] === '') {
+          valid = false
+          break;
+        }
+      }
+
+      if (data['nama_departemen'] === '') valid = false
+      if (data['nama_divisi'] === '') valid = false
     }
 
     return valid
@@ -486,7 +527,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.formValue = {
       id_tran: '',
       no_tran: '',
-      tgl_tran: this.getDateNow(),
+      tgl_tran: JSON.stringify(this.getDateNow()),
       kode_divisi: '',
       nama_divisi: '',
       kode_departemen: '',
@@ -629,16 +670,16 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             readOnly: true,
             disabled: true,
           },
-          {
-            label: 'Tanggal Transaksi',
-            id: 'tanggal-transaksi',
-            type: 'input',
-            valueOf: this.formValue.tgl_tran,
-            changeOn: null,
-            required: false,
-            readOnly: true,
-            disabled: true,
-          },
+          // {
+          //   label: 'Tanggal Transaksi',
+          //   id: 'tanggal-transaksi',
+          //   type: 'input',
+          //   valueOf: this.formValue.tgl_tran,
+          //   changeOn: null,
+          //   required: false,
+          //   readOnly: true,
+          //   disabled: true,
+          // },
           {
             label: 'Alasan Batal',
             id: 'alasan-batal',
@@ -820,7 +861,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   //Date Functions
   getDateNow() {
-    let p = new Date().getTime()
+    let d = this.gbl.getTahunPeriode() + "-" + this.gbl.getBulanPeriode() + "-01"
+    let p = new Date(d).getTime()
     return p
   }
 

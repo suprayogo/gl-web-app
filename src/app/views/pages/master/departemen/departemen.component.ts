@@ -179,7 +179,7 @@ export class DepartemenComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Induk Departemen',
-      value: 'kode_departemen'
+      value: 'induk_departemen'
     }
   ]
   sortBy = "nama_departemen"

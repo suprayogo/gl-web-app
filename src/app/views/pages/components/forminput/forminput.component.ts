@@ -37,6 +37,7 @@ export class ForminputComponent implements OnInit {
   //Show delete button on parent in 'update' state
   @Input() enableDelete: boolean;
   @Input() enableCancel: boolean;
+  @Input() disableSubmit: boolean;
   @Input() noCancel: boolean;
   @Input() onSub: any;
   @Input() nama_tombol: any;
@@ -185,35 +186,61 @@ export class ForminputComponent implements OnInit {
       return date == null ? '' : `${date.getHours() + offset < 10 ? '0' + (date.getHours() + offset) : date.getHours() + offset}:${date.getHours() < 10 ? '0' + date.getMinutes() : date.getMinutes()}:00`
   }
 
-  getMaxToday() {
+  getMaxToday(d?: any) {
     let pdata = Date.now()
     let date = pdata == null ? null : new Date(pdata)
 
-    return {
-      year: date.getFullYear(),
-      month: date.getMonth() + 1,
-      day: (date.getMonth() + 1) == 2 ? 29 : 
-            (
-              (date.getMonth() + 1) == 1 ||
-              (date.getMonth() + 1) == 3 ||
-              (date.getMonth() + 1) == 5 ||
-              (date.getMonth() + 1) == 7 ||
-              (date.getMonth() + 1) == 8 ||
-              (date.getMonth() + 1) == 10 ||
-              (date.getMonth() + 1) == 12
-            ) ? 31 : 30
+    if (d === undefined || d == null) {
+      return {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: (date.getMonth() + 1) == 2 ? 29 : 
+              (
+                (date.getMonth() + 1) == 1 ||
+                (date.getMonth() + 1) == 3 ||
+                (date.getMonth() + 1) == 5 ||
+                (date.getMonth() + 1) == 7 ||
+                (date.getMonth() + 1) == 8 ||
+                (date.getMonth() + 1) == 10 ||
+                (date.getMonth() + 1) == 12
+              ) ? 31 : 30
+      }
+    } else {
+      return {
+        year: parseInt(d['y']),
+        month: parseInt(d['m']),
+        day: parseInt(d['m']) == 2 ? 29 : 
+              (
+                parseInt(d['m']) == 1 ||
+                parseInt(d['m']) == 3 ||
+                parseInt(d['m']) == 5 ||
+                parseInt(d['m']) == 7 ||
+                parseInt(d['m']) == 8 ||
+                parseInt(d['m']) == 10 ||
+                parseInt(d['m']) == 12
+              ) ? 31 : 30
+      }
     }
   }
 
-  getMinToday() {
+  getMinToday(d?: any) {
     let pdata = Date.now()
     let date = pdata == null ? null : new Date(pdata)
 
-    return {
-      year: date.getFullYear(),
-      month: date.getMonth() + 1,
-      day: 1
+    if (d === undefined || d == null) {
+      return {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: 1
+      }
+    } else {
+      return {
+        year: parseInt(d['y']),
+        month: parseInt(d['m']),
+        day: 1
+      }
     }
+    
   }
 
   //End of datepicker function

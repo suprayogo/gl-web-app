@@ -154,13 +154,13 @@ export class ChartOfAccountComponent implements OnInit {
       btnIcon: 'flaticon-search',
       browseType: 'kategori_akun',
       valueOf: 'kode_kategori_akun',
-      required: false,
+      required: true,
       readOnly: false,
       inputInfo: {
         id: 'nama-kategori-akun',
         disabled: false,
         readOnly: true,
-        required: false,
+        required: true,
         valueOf: 'nama_kategori_akun'
       },
       update: {
@@ -593,8 +593,6 @@ export class ChartOfAccountComponent implements OnInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
-    this.loading = true
-    this.ref.markForCheck()
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
         this.loading = true;
