@@ -289,6 +289,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: true,
       noButton: true,
+      disabled: true,
       inputInfo: {
         id: 'tahun-periode',
         disabled: false,
@@ -370,7 +371,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     // AKSES PERIODE
     // this.akses_periode
 
-    if (this.kode_perusahaan !== "" && this.periode_aktif !== "") {
+    if (this.kode_perusahaan !== "" && this.periode_aktif.id_periode !== "") {
       this.madeRequest()
       this.tabTP()
     }
@@ -409,12 +410,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         this.browseData = []
         this.browseNeedUpdate = true
         this.ref.markForCheck()
+        console.log(this.periode_aktif.nama_bulan_periode)
 
-        if (this.periode_aktif !== "") {
+        if (this.periode_aktif.id_periode !== "") {
           this.madeRequest()
         }
 
-        if (this.selectedTab == 1 && this.browseNeedUpdate && this.periode_aktif !== "") {
+        if (this.selectedTab == 1 && this.browseNeedUpdate && this.periode_aktif.id_periode !== "") {
           this.tabTP()
         }
       }
@@ -425,7 +427,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
       this.formValue = {
-        bulan_periode: this.periode_aktif.bulan_periode,
+        bulan_periode: this.periode_aktif.nama_bulan_periode,
         tahun_periode: this.periode_aktif.tahun_periode,
         id_posting: '',
         id_tran: '',
@@ -811,7 +813,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetForm() {
     this.formValue = {
-      bulan_periode: this.periode_aktif.bulan_periode,
+      bulan_periode: this.periode_aktif.nama_bulan_periode,
       tahun_periode: this.periode_aktif.tahun_periode,
       id_posting: '',
       id_tran: '',

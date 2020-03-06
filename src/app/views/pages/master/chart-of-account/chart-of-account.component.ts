@@ -439,7 +439,6 @@ export class ChartOfAccountComponent implements OnInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    console.log(data)
     let x = JSON.parse(JSON.stringify(data))
     this.formValue = {
       id_akun: x['id_akun'],

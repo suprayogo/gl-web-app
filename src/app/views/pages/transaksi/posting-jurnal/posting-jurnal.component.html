@@ -23,28 +23,31 @@
                     <kt-portlet-body>
                         <div class="kt-section" style="display:flex; flex-direction: row;">
                             <div style="width: 50%;">
-                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
-                                [nama_tombol]="nama_tombolPJ" [nama_tombol2]="nama_tombolUP" [buttonLayout]="buttonLayout"
-                                [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                                [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
-                                (onSubmit)="openCDialog('posting_jurnal')" [onUpdate]="onUpdate"
-                                [enableDelete]="enableDelete" (deleteData)="openCDialog()"
-                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                                (onCancel)="onCancel()" [onSub]="onSub">
-                            </kt-forminput>
+                                <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
+                                    [nama_tombol]="nama_tombolPJ" [nama_tombol2]="nama_tombolUP"
+                                    [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
+                                    [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
+                                    [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                                    (onSubmit)="openCDialog('posting_jurnal')" [onUpdate]="onUpdate"
+                                    [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                                    (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                    (onCancel)="onCancel()" [onSub]="onSub">
+                                </kt-forminput>
                             </div>
 
                             <div class="kt-section" *ngIf="tableLoadBP && !loading" style="width: 50%;">
                                 <kt-loading [loadingText]="loadingDataTextBP"></kt-loading>
                             </div>
-    
+
                             <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
                                 <h2>Jurnal Belum Posting</h2>
-                                <kt-datatable-ag-grid #jbp [tableColumn]="displayedColumnsTableBP" [tableData]="browseDataBP"
-                                    [tableRules]="browseDataRulesBP">
+                                <kt-datatable-ag-grid #jbp [tableColumn]="displayedColumnsTableBP"
+                                    [tableData]="browseDataBP" [tableRules]="browseDataRulesBP">
                                 </kt-datatable-ag-grid>
                             </div>
                         </div>
+
+                        <hr style="width: 100%;">
 
                         <div class="kt-section" *ngIf="tableLoad && !loading">
                             <kt-loading [loadingText]="loadingDataText"></kt-loading>
