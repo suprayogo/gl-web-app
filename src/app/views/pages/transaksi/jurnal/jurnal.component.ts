@@ -44,7 +44,13 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   browseNeedUpdate: boolean = true;
   subscription: any;
   subPeriode: any;
+  subPeriodeAktif: any;
   kode_perusahaan: any;
+  periode_akses: any = {
+    id_periode: '',
+    tahun_periode: '',
+    bulan_periode: ''
+  };
   periode_aktif: any = {
     id_periode: '',
     tahun_periode: '',
@@ -350,18 +356,24 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.content = content // <-- Init the content
     this.reqKodePerusahaan()
     this.reqIdPeriode()
+    this.reqIdPeriodeAktif()
     this.madeRequest()
   }
 
   ngAfterViewInit(): void {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
-    this.periode_aktif = {
+    this.periode_akses = {
       id_periode: this.gbl.getIdPeriode(),
       tahun_periode: this.gbl.getTahunPeriode(),
       bulan_periode: this.gbl.getBulanPeriode()
     }
-    if (this.kode_perusahaan !== "" && this.periode_aktif.id_periode !== "") {
-      if (this.periode_aktif.id_periode !== this.gbl.getIdPeriodeAktif()) {
+    this.periode_aktif = {
+      id_periode: this.gbl.getIdPeriodeAktif(),
+      tahun_periode: this.gbl.getTahunPeriodeAktif(),
+      bulan_periode: this.gbl.getBulanPeriodeAktif()
+    }
+    if (this.kode_perusahaan !== "" && this.periode_akses.id_periode !== "") {
+      if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
         this.disableSubmit = true
       } else {
         this.disableSubmit = false
@@ -373,6 +385,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   ngOnDestroy(): void {
     this.subscription === undefined ? null : this.subscription.unsubscribe()
     this.subPeriode === undefined ? null : this.subPeriode.unsubscribe()
+    this.subPeriodeAktif === undefined ? null : this.subPeriodeAktif.unsubscribe()
   }
 
   reqKodePerusahaan() {
@@ -395,8 +408,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   reqIdPeriode() {
     this.subPeriode = this.gbl.change_periode.subscribe(
       value => {
-        this.periode_aktif = value
-        if (this.periode_aktif.id_periode !== this.gbl.getIdPeriodeAktif()) {
+        this.periode_akses = value
+        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
           this.disableSubmit = true
         } else {
           this.disableSubmit = false
@@ -409,6 +422,19 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
         if (this.selectedTab == 1 && this.browseNeedUpdate) {
           this.refreshBrowse('')
+        }
+      }
+    )
+  }
+
+  reqIdPeriodeAktif() {
+    this.subPeriodeAktif = this.gbl.activePeriod.subscribe(
+      value => {
+        this.periode_aktif = value
+        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
+          this.disableSubmit = true
+        } else {
+          this.disableSubmit = false
         }
       }
     )
@@ -464,7 +490,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }))}` : this.formValue.id_tran
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }, this.formValue)
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }, this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -705,7 +731,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif !== undefined && this.periode_aktif.id_periode !== "") && !this.requestMade) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
       this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
@@ -788,7 +814,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {

@@ -9,7 +9,7 @@
 		<div class="kt-subheader__main">
 			<h4 class="kt-subheader__desc"> Akses Periode: </h4>
 			<!-- <h3 class="kt-subheader__title">Januari, 2020</h3> -->
-			<button tabindex="-1" class="btn btn-label-success btn-bold" (click)="openCDialog()">{{ nama_bulan }}, {{ tahun_periode }}</button><i *ngIf="!noActive" class="flaticon2-check-mark"></i>
+			<button tabindex="-1" class="btn btn-bold" [ngClass]="{'btn-label-success': !noActive, 'btn-label-primary': noActive}" (click)="openCDialog()">{{ nama_bulan }}, {{ tahun_periode }}</button><i *ngIf="!noActive" class="flaticon2-check-mark"></i>
 		</div>
 	</div>
 </div>
