@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChild, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { NgbTimeAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { TimeStringAdapter } from '../../time-adapter.module';
 import { DatatableAgGridComponent } from '../datatable-ag-grid/datatable-ag-grid.component';
 import { DetailinputAgGridComponent } from '../detailinput-ag-grid/detailinput-ag-grid.component';
+import { DetailJurnalComponent } from '../detail-jurnal/detail-jurnal.component';
 
 @Component({
   selector: 'kt-inputdialog',
@@ -17,6 +18,7 @@ export class InputdialogComponent implements OnInit {
   // @ViewChild(DatatableComponent) datatable;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
   @ViewChild(DetailinputAgGridComponent, { static: false }) detailinput;
+  @ViewChild(DetailJurnalComponent, { static: false }) detailjurnal;
 
   inputLayout: Object[] = [];
   buttonLayout: Object[] = [];
@@ -53,7 +55,15 @@ export class InputdialogComponent implements OnInit {
   detailButtonLayout: Object[] = [];
   isDetail: boolean = false;
   editable: boolean = false;
+  noButtonSave: boolean;
 
+  //Detail loading variable
+  // @Input() enableDetail: boolean;
+  detailLoad: boolean;
+  detailJurnal: boolean; 
+  jurnalDataAkun: any;
+  jurnalData: any;
+  
   constructor(
     public dialogRef: MatDialogRef<InputdialogComponent>,
     @Inject(MAT_DIALOG_DATA) public parameter: any,
@@ -61,6 +71,11 @@ export class InputdialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.detailLoad = this.parameter.detailLoad
+    this.detailJurnal = this.parameter.detailJurnal
+    this.jurnalDataAkun = this.parameter.jurnalDataAkun
+    this.jurnalData = this.parameter.jurnalData
+    this.noButtonSave = this.parameter.noButtonSave
     this.formValue = this.parameter.formValue
     this.inputLayout = this.parameter.inputLayout
     this.buttonLayout = this.parameter.buttonLayout

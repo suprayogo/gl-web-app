@@ -37,7 +37,7 @@ export class DatatableAgGridComponent implements OnInit {
   ];
 
   rowData = [
-    {tableName: 'asdasd'}
+    {tableName: ''}
   ];
 
   pageSize = 25;

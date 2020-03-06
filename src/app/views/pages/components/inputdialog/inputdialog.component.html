@@ -145,10 +145,21 @@
           <hr>
         </div>
 
+        <div class="kt-section" *ngIf="detailLoad && detailJurnal">
+          <kt-loading></kt-loading>
+        </div>
+      
+        <div *ngIf="!detailLoad && detailJurnal" style="margin-bottom: 15px;">
+          <kt-detail-jurnal
+            [dataAkun]="jurnalDataAkun"
+            [data]="jurnalData"
+          ></kt-detail-jurnal>
+        </div>
+
         <!-- Button -->
         <div class="m-form__actions">
-          <button type="submit" class="btn btn-brand">Simpan</button>
-          <button type="button" class="btn btn-secondary margin-left-10" (click)="closeDialog()">Batal</button>
+          <button type="submit" class="btn btn-brand" *ngIf="!noButtonSave">Simpan</button>
+          <button type="button" class="btn btn-secondary margin-left-10" (click)="closeDialog()" *ngIf="!noButtonSave">Batal</button>
           <button type="button" *ngFor="let x of buttonLayout" [className]="x.btnClass" (click)="x.getSelectedOnpress ? x.btnClick(getSelected()) : x.btnClick()">{{ x.btnLabel }}</button>
         </div>
       </form>

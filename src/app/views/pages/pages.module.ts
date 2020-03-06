@@ -10,6 +10,7 @@ import { CoreModule } from '../../core/core.module';
 import { MasterModule } from './master/master.module';
 import { ManagementModule } from './management/management.module';
 import { TransaksiModule } from './transaksi/transaksi.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
 
 @NgModule({
 	declarations: [],
@@ -23,6 +24,7 @@ import { TransaksiModule } from './transaksi/transaksi.module';
 		MasterModule,
 		ManagementModule,
 		TransaksiModule,
+		MonitoringModule
 	],
 	providers: []
 })

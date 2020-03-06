@@ -26,6 +26,8 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	@Input() fluid: boolean;
 	@Input() clear: boolean;
 
+	tooltip: any = "Periode Aktif"
+
 	subscription: any;
 	kp_V1: any;
 	kp_V2: any;
@@ -44,7 +46,9 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	bulan_periode: string = ""
 	bulanPeriodeAktif: string = ""
 	nama_bulan: string = ""
+	nama_bulan_aktif: string = ""
 	noActive: boolean;
+	
 	// title: string = '';
 	// desc: string = '';
 	// breadcrumbs: Breadcrumb[] = [];
@@ -267,12 +271,13 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 						this.id_periode = this.gbl.getIdPeriode()
 						this.tahun_periode = this.gbl.getTahunPeriode()
 						this.bulan_periode = this.gbl.getBulanPeriode()
-						this.nama_bulan = this.gbl.getNamaBulan()
+						this.nama_bulan = this.gbl.getNamaBulan(this.bulan_periode)
 
-						this.gbl.periodeAktif(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'])
+						this.gbl.periodeAktif(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'], '')
 						this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
 						this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
 						this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
+						this.nama_bulan_aktif = this.gbl.getNamaBulanAktif(this.bulanPeriodeAktif)
 						this.ref.markForCheck()
 					}
 
@@ -504,19 +509,21 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 		this.dialog.closeAll()
 		if (this.changePeriodeData.length > 0) {
 			const accessPeriod = this.changePeriodeData.filter(x => x.tahun_periode === period.tahun_periode && x.bulan_periode === period.bulan_periode)[0] || {}
-			if (accessPeriod['bulan_periode'] !== undefined || accessPeriod['bulan_periode'] !== undefined) {
+			if (accessPeriod['tahun_periode'] !== undefined && accessPeriod['bulan_periode'] !== undefined) {
 				this.gbl.setPeriode(accessPeriod['id_periode'], accessPeriod['tahun_periode'], accessPeriod['bulan_periode'])
 				this.id_periode = this.gbl.getIdPeriode()
 				this.tahun_periode = this.gbl.getTahunPeriode()
 				this.bulan_periode = this.gbl.getBulanPeriode()
-				this.nama_bulan = this.gbl.getNamaBulan()
+				this.nama_bulan = this.gbl.getNamaBulan(this.bulan_periode)
 				this.ref.markForCheck()
 				if (accessPeriod['aktif'] === "1") {
 					this.openSnackBar('Akses periode kembali ke periode aktif saat ini', 'success')
 					this.noActive = false
+					this.tooltip = "Periode Aktif"
 				} else {
 					this.openSnackBar('Akses periode diubah ke Bulan ' + this.nama_bulan + ', Tahun ' + this.tahun_periode, 'success')
 					this.noActive = true
+					this.tooltip = "Bukan Periode Aktif"
 				}
 			} else {
 				this.ref.markForCheck()
