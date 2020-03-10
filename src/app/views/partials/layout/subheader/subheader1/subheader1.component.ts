@@ -293,7 +293,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 					this.tahun_periode = this.gbl.getTahunPeriode()
 					this.bulan_periode = this.gbl.getBulanPeriode()
 					this.nama_bulan = ''
-					this.gbl.periodeAktif('', '', '')
+					this.gbl.periodeAktif('', '', '','')
 					this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
 					this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
 					this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
