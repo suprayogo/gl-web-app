@@ -15,6 +15,7 @@ import { NgxPermissionsService } from 'ngx-permissions';
 import { currentUserPermissions, Permission } from '../../../core/auth';
 import { select, Store } from '@ngrx/store';
 import { AppState } from '../../../core/reducers';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'kt-base',
@@ -31,6 +32,7 @@ export class BaseComponent implements OnInit, OnDestroy {
 	desktopHeaderDisplay: boolean;
 	fitTop: boolean;
 	fluid: boolean;
+	remoteAccess: boolean = false;
 
 	// Private properties
 	private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
@@ -53,7 +55,9 @@ export class BaseComponent implements OnInit, OnDestroy {
 		private pageConfigService: PageConfigService,
 		private htmlClassService: HtmlClassService,
 		private store: Store<AppState>,
-		private permissionsService: NgxPermissionsService) {
+		private permissionsService: NgxPermissionsService,
+		private router: ActivatedRoute
+	) {
 		this.loadRolesWithPermissions();
 
 		// register configs by demos
@@ -95,6 +99,9 @@ export class BaseComponent implements OnInit, OnDestroy {
 			});
 		});
 		this.unsubscribe.push(subscr);
+		this.router.queryParams.subscribe(params => {
+			params['remote'] === '1' ? this.remoteAccess = true : this.remoteAccess = false
+		})
 	}
 
 	/**
