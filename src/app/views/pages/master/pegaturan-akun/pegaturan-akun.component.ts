@@ -12,7 +12,6 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
-import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 
 const content = {
@@ -69,6 +68,10 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       label: 'Kode Akun',
       value: 'kode_akun',
       selectable: true
+    },
+    {
+      label: 'ID Akun',
+      value: 'id_akun'
     },
     {
       label: 'Nama Akun',
@@ -139,9 +142,6 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
           this.madeRequest()
         }
 
-        /* if (this.selectedTab == 1 && this.browseNeedUpdate && this.kode_perusahaan !== "") {
-          this.refreshBrowse('')
-        } */
       }
     )
   }
@@ -278,6 +278,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
               special: false
             }))}`,
             kode_akun: data[i]['kode_akun'],
+            id_akun: this.inputAkunData[j]['id_akun'],
             nama_akun: this.inputAkunData[j]['nama_akun']
           }
           endRes.push(x)
@@ -288,56 +289,10 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
     this.detailData = endRes
   }
 
- /*  //Tab change event
-  onTabSelect(event: MatTabChangeEvent) {
-    this.selectedTab = event.index
-    if (this.selectedTab == 1 && this.browseNeedUpdate) {
-      this.refreshBrowse('')
-    }
-
-    if (this.selectedTab == 1) this.datatable == undefined ? null : this.datatable.checkColumnFit()
-  } */
-
   refreshBrowse(message) {
-    this.tableLoad = true
-    this.request.apiData('perusahaan', 'g-perusahaan').subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          if (message !== '') {
-
-            this.loading = false
-            this.tableLoad = false
-            this.ref.markForCheck()
-            this.openSnackBar(message, 'success')
-            this.onUpdate = false
-          } else {
-
-            this.loading = false
-            this.tableLoad = false
-            this.browseNeedUpdate = false
-            this.ref.markForCheck()
-          }
-        }
-      }
-    )
+    this.openSnackBar(message, 'success')
+    this.loading = false 
   }
-
-  //Browse binding event
- /*  browseSelectRow(data) {
-    // let x = this.formValue
-    // x.kode_perusahaan = data['kode_perusahaan']
-    // x.nama_perusahaan = data['nama_perusahaan']
-    // x.keterangan = data['keterangan']
-    // this.formValue = x
-    this.onUpdate = true;
-    this.getBackToInput();
-  } */
-
-  /* getBackToInput() {
-    this.selectedTab = 0;
-    this.getDetail()
-    this.formInputCheckChanges()
-  } */
 
   //Form submit
   onSubmit(inputForm: NgForm) {
@@ -345,15 +300,19 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       if (inputForm.valid) {
         this.loading = true;
         this.ref.markForCheck()
-        // this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        let endRes = Object.assign({ detail_perusahaan: this.detailData })
-        this.request.apiData('perusahaan', this.onUpdate ? 'u-perusahaan' : 'i-perusahaan', endRes).subscribe(
+        let endRes = Object.assign(
+          { 
+            detail_akun: this.detailData,
+            kode_perusahaan: this.kode_perusahaan
+          })
+        this.request.apiData('akun', 'i-akun', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               this.resetForm()
               this.browseNeedUpdate = true
               this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+              this.openSnackBar("BERHASIL DISIMPAN", 'success')
+              this.loading = false 
             } else {
               this.loading = false;
               this.ref.markForCheck()
@@ -374,11 +333,6 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   //Reset Value
   resetForm() {
-    /* this.formValue = {
-      kode_perusahaan: '',
-      nama_perusahaan: '',
-      keterangan: '',
-    } */
     this.getDetail()
     this.formInputCheckChanges()
   }
@@ -392,33 +346,6 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       this.datatable == undefined ? null : this.datatable.reset()
     }
   }
-
-  /* deleteData() {
-    this.dialog.closeAll()
-    if (this.onUpdate) {
-      this.loading = true;
-      this.ref.markForCheck()
-      this.request.apiData('perusahaan', 'd-perusahaan').subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.onCancel()
-            this.ref.markForCheck()
-            this.browseNeedUpdate = true
-            this.refreshBrowse('BERHASIL DIHAPUS')
-          } else {
-            this.loading = false;
-            this.ref.markForCheck()
-            this.openSnackBar(data['RESULT'])
-          }
-        },
-        error => {
-          this.loading = false;
-          this.ref.markForCheck()
-          this.openSnackBar('GAGAL MELAKUKAN PENGHAPUSAN.')
-        }
-      )
-    }
-  } */
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
