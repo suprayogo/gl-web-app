@@ -176,42 +176,42 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 		if (u_id !== undefined && u_id != null && u_id !== '') {
 
 			//PERUSAHAAN
-			this.request.apiData('user', 'g-user-perusahaan', { user_id: u_id }).subscribe(
-				data => {
-					if (data['STATUS'] === 'Y') {
-						this.inputPerusahaanData = data['RESULT']
-						if (this.inputPerusahaanData.length > 0) {
-							this.gbl.setPerusahaan(this.inputPerusahaanData[0]['kode_perusahaan'], this.inputPerusahaanData[0]['nama_perusahaan'])
-							this.kode_perusahaan = this.gbl.getKodePerusahaan()
-							this.nama_perusahaan = this.gbl.getNamaPerusahaan()
-							this.ref.markForCheck()
-							for (var i = 0; i < this.inputPerusahaanData.length; i++) {
-								let t = {
-									label: this.inputPerusahaanData[i]['nama_perusahaan'],
-									value: this.inputPerusahaanData[i]['kode_perusahaan']
-								}
-								this.daftar_perusahaan.push(t)
-							}
-							this.formD.kode_perusahaan = this.kode_perusahaan
-						}
-					} else {
-						this.openSnackBar('Gagal mendapatkan daftar akses perusahaan.', 'fail', null)
-					}
-				}
-			)
+			// this.request.apiData('user', 'g-user-perusahaan', { user_id: u_id }).subscribe(
+			// 	data => {
+			// 		if (data['STATUS'] === 'Y') {
+			// 			this.inputPerusahaanData = data['RESULT']
+			// 			if (this.inputPerusahaanData.length > 0) {
+			// 				this.gbl.setPerusahaan(this.inputPerusahaanData[0]['kode_perusahaan'], this.inputPerusahaanData[0]['nama_perusahaan'])
+			// 				this.kode_perusahaan = this.gbl.getKodePerusahaan()
+			// 				this.nama_perusahaan = this.gbl.getNamaPerusahaan()
+			// 				this.ref.markForCheck()
+			// 				for (var i = 0; i < this.inputPerusahaanData.length; i++) {
+			// 					let t = {
+			// 						label: this.inputPerusahaanData[i]['nama_perusahaan'],
+			// 						value: this.inputPerusahaanData[i]['kode_perusahaan']
+			// 					}
+			// 					this.daftar_perusahaan.push(t)
+			// 				}
+			// 				this.formD.kode_perusahaan = this.kode_perusahaan
+			// 			}
+			// 		} else {
+			// 			this.openSnackBar('Gagal mendapatkan daftar akses perusahaan.', 'fail', null)
+			// 		}
+			// 	}
+			// )
 
 			//GET PERUSAHAAN DAN PERIODE
-			this.reqKodePerusahaan()
+			// this.reqKodePerusahaan()
 
 		} else {
-			this.openSnackBar(
-				'Gagal mendapatkan ID User anda. Mohon melakukan login terlebih dahulu.',
-				'info',
-				() => {
-					localStorage.clear()
-					window.location.href = "/auth/login"
-				}
-			)
+			// this.openSnackBar(
+			// 	'Gagal mendapatkan ID User anda. Mohon melakukan login terlebih dahulu.',
+			// 	'info',
+			// 	() => {
+			// 		localStorage.clear()
+			// 		window.location.href = "/auth/login"
+			// 	}
+			// )
 		}
 	}
 
@@ -233,11 +233,11 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 		// 	});
 		// }));
 
-		this.kp_V2 = this.gbl.getKodePerusahaan()
-		if (this.kp_V2 !== "") {
-			this.madeRequest()
-		}
-		this.ref.markForCheck()
+		// this.kp_V2 = this.gbl.getKodePerusahaan()
+		// if (this.kp_V2 !== "") {
+		// 	this.madeRequest()
+		// }
+		// this.ref.markForCheck()
 	}
 
 	ngOnDestroy(): void {

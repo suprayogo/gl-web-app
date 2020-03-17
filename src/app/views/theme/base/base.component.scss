@@ -13,3 +13,13 @@ kt-base {
 		transition: opacity 1s ease-in-out;
 	}
 }
+
+.remote {
+	padding: 0 !important;
+	width: calc(100% - 10px) !important;
+}
+
+.remote-content {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}

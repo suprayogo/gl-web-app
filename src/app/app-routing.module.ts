@@ -11,13 +11,13 @@ import { AfterLoginService} from  './service/authentication/after-login.service'
 const routes: Routes = [
 	{
 		path: 'auth',
-		canActivate: [BeforeLoginService],
+		// canActivate: [BeforeLoginService],
 		loadChildren: () => import('./views/pages/auth/auth.module').then(m => m.AuthModule)
 	},
 	{
 		path: '',
 		component: BaseComponent,
-		canActivate: [AfterLoginService],
+		// canActivate: [AfterLoginService],
 		children: [
 			{
 				path: 'home',

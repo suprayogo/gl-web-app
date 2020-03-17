@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		this.frameSource = this.sanitizer.bypassSecurityTrustResourceUrl("http://localhost:4201/auth/login?appid=bcad52ed12a9176fdc653ca776293fc8")
+		// this.frameSource = this.sanitizer.bypassSecurityTrustResourceUrl("http://localhost:4201/auth/login?appid=bcad52ed12a9176fdc653ca776293fc8")
 		window.addEventListener('message', function(e) {
 			if (e.data['e_id'] === 'success_login') {
 				localStorage.setItem('user_id', e.data['user_id'])
@@ -35,5 +35,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
+	}
+
+	call() {
+		console.log('called')
+		window.parent.postMessage({
+			'func': 'funct',
+			'message': 'Msg'
+		}, '*');
 	}
 }

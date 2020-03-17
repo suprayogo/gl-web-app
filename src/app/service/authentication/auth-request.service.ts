@@ -33,6 +33,7 @@ export class AuthRequestService {
     return this.http.post(this.baseURL + '1', this.httpBody, this.options)
   }
 
+  //Temporary unused due to dynamic app
   validate(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.httpBody.respondCode = "VALIDATE"
@@ -42,11 +43,34 @@ export class AuthRequestService {
           if (data['STATUS'] === 'Y') { //   <-- Y'
             resolve(true)
           } else {
+            window.parent.postMessage({
+              'type': 'VALIDATE',
+              'res': false
+            }, '*')
             resolve(false)
           }
         }
       )
     })
+  }
 
+  manualValidation(token): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.httpBody.respondCode = "VALIDATE"
+      this.httpBody.authParam = JSON.stringify(this.authParam.getAuth())
+      this.http.post(this.baseURL, this.httpBody, { headers: this.httpHeader.getHeader(token) }).subscribe( //   <-- +'1'
+      data => {
+        if (data['STATUS'] === 'Y') { //   <-- Y'
+          resolve(true)
+        } else {
+          window.parent.postMessage({
+            'type': 'VALIDATE',
+            'res': false
+          }, '*')
+          resolve(false)
+        }
+      }
+    )
+    })
   }
 }

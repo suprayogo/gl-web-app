@@ -20,13 +20,17 @@
 				<!-- end:: Header -->
 
 				<!-- begin:: Content -->
-				<div class="kt-content kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content" [ngClass]="{'kt-content--fit-top': fitTop}">
+				<div #divToTrackHeightChanges class="kt-content kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content" [ngClass]="{'kt-content--fit-top': fitTop, 'remote-content': remoteAccess}">
 					<!-- begin:: Content Head -->
 					<kt-subheader *ngIf="subheaderDisplay && !remoteAccess"></kt-subheader>
 					<!-- end:: Content Head -->
-					
+
 					<!-- begin:: Content Body -->
-					<div ktContentAnimate class="kt-container kt-grid__item kt-grid__item--fluid" [ngClass]="{'kt-container--fluid': fluid}">
+					<div *ngIf="loading" ktContentAnimate class="kt-container kt-grid__item kt-grid__item--fluid" [ngClass]="{'kt-container--fluid': fluid}">
+						<span>Please wait.</span>
+					</div>
+					
+					<div *ngIf="!loading" ktContentAnimate class="kt-container kt-grid__item kt-grid__item--fluid" [ngClass]="{'kt-container--fluid': fluid, 'remote': remoteAccess}" >
 						<router-outlet></router-outlet>
 					</div>
 					<!-- end:: Content Body -->
