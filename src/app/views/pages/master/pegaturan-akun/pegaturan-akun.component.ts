@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MatTabChangeEvent, MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
@@ -6,24 +6,25 @@ import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
+import { GlobalVariableService } from '../../../../service/global-variable.service';
 
 // Components
-import { DialogComponent } from '../../components/dialog/dialog.component';
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Otoritas'
+  beforeCodeTitle: 'Pengaturan Daftar Akun'
 }
 
 @Component({
-  selector: 'kt-otoritas',
-  templateUrl: './otoritas.component.html',
-  styleUrls: ['./otoritas.component.scss', '../management.style.scss']
+  selector: 'kt-pegaturan-akun',
+  templateUrl: './pegaturan-akun.component.html',
+  styleUrls: ['./pegaturan-akun.component.scss', '../master.style.scss']
 })
-export class OtoritasComponent implements OnInit {
+export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -31,6 +32,7 @@ export class OtoritasComponent implements OnInit {
 
   // Variables
   loading: boolean = true;
+  loadingAkun: boolean = false;
   content: any;
   detailLoad: boolean = false;
   enableDetail: boolean = true;
@@ -39,97 +41,21 @@ export class OtoritasComponent implements OnInit {
   tableLoad: boolean = true;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
-  loadingMenu: boolean = true;
   browseNeedUpdate: boolean = true;
   dialogRef: any;
   dialogType: string = null;
   search: string;
 
-  //Confirmation Variable
-  c_buttonLayout = [
-    {
-      btnLabel: 'Hapus Data',
-      btnClass: 'btn btn-primary',
-      btnClick: () => {
-        this.deleteData()
-      },
-      btnCondition: () => {
-        return true
-      }
-    },
-    {
-      btnLabel: 'Tutup',
-      btnClass: 'btn btn-secondary',
-      btnClick: () => this.dialog.closeAll(),
-      btnCondition: () => {
-        return true
-      }
-    }
-  ]
-  c_labelLayout = [
-    {
-      content: 'Yakin akan menghapus data ?',
-      style: {
-        'color': 'red',
-        'font-size': '20px',
-        'font-weight': 'bold'
-      }
-    }
-  ]
-
-  // Input Name
-  formValue = {
-    kode_otoritas: '',
-    nama_otoritas: '',
-    keterangan: '',
-  }
-
-  // Layout Form
-  inputLayout = [
-    {
-      formWidth: 'col-5',
-      label: 'Kode Otoritas',
-      id: 'kode-otoritas',
-      type: 'input',
-      valueOf: 'kode_otoritas',
-      required: false,
-      readOnly: true,
-      update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Nama Otoritas',
-      id: 'nama-otoritas',
-      type: 'input',
-      valueOf: 'nama_otoritas',
-      required: true,
-      readOnly: false,
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Keterangan',
-      id: 'keterangan',
-      type: 'input',
-      valueOf: 'keterangan',
-      required: false,
-      readOnly: false,
-      update: {
-        disabled: false
-      }
-    }
-  ]
+  // GLOBAL VARIABLE PERUSAHAAN
+  subscription: any;
+  kode_perusahaan: any;
 
   buttonLayout = [
     {
-      btnLabel: 'Tambah Detail',
+      btnLabel: 'Tambah Akun',
       btnClass: 'btn btn-primary',
       btnClick: () => {
-        this.openDialog('kode_menu')
+        this.openDialog('kode_akun')
       },
       btnCondition: () => {
         return true
@@ -137,120 +63,109 @@ export class OtoritasComponent implements OnInit {
     }
   ]
 
-  // Otoritas List
-  inputMenuDisplayColumns = [
+  // Aplikasi List
+  inputAkunDisplayColumns = [
     {
-      label: 'Kode Menu',
-      value: 'kode_menu',
+      label: 'Kode Akun',
+      value: 'kode_akun',
       selectable: true
     },
     {
-      label: 'Nama Menu',
-      value: 'nama_menu'
+      label: 'Nama Akun',
+      value: 'nama_akun'
     }
   ]
-  inputMenuInterface = {
-    kode_menu: 'string',
-    nama_menu: 'string'
+  inputAkunInterface = {
+    id_akun: 'string',
+    kode_akun: 'string',
+    nama_akun: 'string'
   }
-  inputMenuData = []
-  inputMenuDataRules = []
+  inputAkunData = []
+  inputAkunDataRules = []
 
-  // Otoritas-Menu List Detail
+  // User-Aplikasi List Detail
   detailDisplayColumns = [
     {
-      label: 'Kode Menu',
-      value: 'kode_menu'
+      label: 'Kode Akun',
+      value: 'kode_akun'
     },
     {
-      label: 'Nama Menu',
-      value: 'nama_menu'
+      label: 'Nama Akun',
+      value: 'nama_akun'
     }
   ]
   detailInterface = {
-    kode_menu: 'string',
-    nama_menu: 'string'
+    id_akun: 'string',
+    kode_akun: 'string',
+    nama_akun: 'string'
   }
   detailData = []
   detailRules = []
 
-  // TAB MENU BROWSE 
-  displayedColumnsTable = [
-    {
-      label: 'Kode Otoritas',
-      value: 'kode_otoritas'
-    },
-    {
-      label: 'Nama Otoritas',
-      value: 'nama_otoritas'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
-    },
-    {
-      label: 'Diinput oleh',
-      value: 'input_by',
-    },
-    {
-      label: 'Diinput tanggal',
-      value: 'input_dt'
-    },
-    {
-      label: 'Diupdate oleh',
-      value: 'update_by'
-    },
-    {
-      label: 'Diupdate tanggal',
-      value: 'update_dt'
-    }
-  ];
-  browseInterface = {
-    kode_otoritas: 'string',
-    nama_otoritas: 'string',
-    keterangan: 'string',
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    update_dt: 'string'
-  }
-  browseData = []
-  browseDataRules = []
-
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
-    private request: RequestDataService
+    private request: RequestDataService,
+    private gbl: GlobalVariableService
   ) { }
 
   ngOnInit() {
     this.content = content // <-- Init the content
     this.madeRequest()
+    this.reqKodePerusahaan()
+  }
+
+  ngAfterViewInit(): void {
+    this.kode_perusahaan = this.gbl.getKodePerusahaan()
+
+    if (this.kode_perusahaan !== "") {
+      this.madeRequest()
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription === undefined ? null : this.subscription.unsubscribe()
+  }
+
+  reqKodePerusahaan() {
+    this.subscription = this.gbl.change.subscribe(
+      value => {
+        this.kode_perusahaan = value
+        this.resetForm()
+        this.browseNeedUpdate = true
+        this.ref.markForCheck()
+
+        if (this.kode_perusahaan !== "") {
+          this.madeRequest()
+        }
+
+        /* if (this.selectedTab == 1 && this.browseNeedUpdate && this.kode_perusahaan !== "") {
+          this.refreshBrowse('')
+        } */
+      }
+    )
   }
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.sendRequestMenu()
-  }
-
-  sendRequestMenu() {
-    this.request.apiData('menu', 'g-menu').subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputMenuData = data['RESULT']
-          this.loading = false
-          this.loadingMenu = false
-          this.ref.markForCheck()
-          if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
-            if (this.dialogType === "kode_menu") {
-              this.dialog.closeAll()
-              this.openDialog('kode_menu')
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+      this.request.apiData('akun', 'g-akun-dc', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputAkunData = data['RESULT']
+            this.loading = false
+            this.getDetail()
+            this.ref.markForCheck()
+            if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
+              if (this.dialogType === "kode_akun") {
+                this.dialog.closeAll()
+                this.openDialog('kode_akun')
+              }
             }
           }
         }
-      }
-    )
+      )
+    }
   }
 
   // Dialog
@@ -264,32 +179,31 @@ export class OtoritasComponent implements OnInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_menu" ? this.inputMenuInterface :
+          type === "kode_akun" ? this.inputAkunInterface :
             {},
         displayedColumns:
-          type === "kode_menu" ? this.inputMenuDisplayColumns :
+          type === "kode_akun" ? this.inputAkunDisplayColumns :
             [],
         tableData:
-          type === "kode_menu" ? this.inputMenuData.filter(x => x['detail'] !== 'N') :
+          type === "kode_akun" ? this.inputAkunData :
             [],
         tableRules:
-          type === "kode_menu" ? this.inputMenuDataRules :
+          type === "kode_akun" ? this.inputAkunDataRules :
             [],
-        formValue: this.formValue,
-        selectable: type === 'kode_menu' ? true : false,
+        selectable: type === 'kode_akun' ? true : false,
         selected: this.detailData,
-        selectIndicator: "kode_menu",
-        loadingData: type === "kode_menu" ? this.loadingMenu : null
+        selectIndicator: "kode_akun",
+        loadingData: type === "kode_akun" ? this.loadingAkun : null
       }
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_menu") {
+        if (type === "kode_akun") {
           let x = result
           for (var i = 0; i < x.length; i++) {
             for (var j = 0; j < this.detailData.length; j++) {
-              if (this.detailData[j]['kode_menu'] === x[i]['kode_menu']) {
+              if (this.detailData[j]['kode_akun'] === x[i]['kode_akun']) {
                 x[i] = this.detailData[j]
               }
             }
@@ -311,68 +225,28 @@ export class OtoritasComponent implements OnInit {
         }
         this.dialogRef = undefined
         this.dialogType = null
+        this.ref.markForCheck();
       }
     });
   }
 
-  openCDialog() { // Confirmation Dialog
-    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      data: {
-        buttonLayout: this.c_buttonLayout,
-        labelLayout: this.c_labelLayout,
-        inputLayout: [
-          {
-            label: 'Kode Otoritas',
-            id: 'kode-otoritas',
-            type: 'input',
-            valueOf: this.formValue.kode_otoritas,
-            changeOn: null,
-            required: false,
-            readOnly: true,
-            disabled: true,
-          },
-          {
-            label: 'Nama Otoritas',
-            id: 'nama-otoritas',
-            type: 'input',
-            valueOf: this.formValue.nama_otoritas,
-            changeOn: null,
-            required: false,
-            readOnly: true,
-            disabled: true,
-          },
-        ]
-      },
-      disableClose: true
-    })
-
-    dialogRef.afterClosed().subscribe(
-      result => {
-        // this.batal_alasan = ""
-      },
-      // error => null
-    )
-  }
-
   getDetail() {
     this.detailLoad = true
-    this.request.apiData('otoritas', 'g-detail-otoritas', this.formValue).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.restructureDetailData(data['RESULT'])
-          this.detailLoad = false
-          this.ref.markForCheck()
-        } else {
-          this.openSnackBar('Failed to load detail')
-          this.detailLoad = false
-          this.ref.markForCheck()
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+      this.request.apiData('akun', 'g-akun', {kode_perusahaan: this.kode_perusahaan}).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.restructureDetailData(data['RESULT'])
+            this.detailLoad = false
+            this.ref.markForCheck()
+          } else {
+            this.openSnackBar('Failed to load detail')
+            this.detailLoad = false
+            this.ref.markForCheck()
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   editDetailData(data) {
@@ -380,7 +254,7 @@ export class OtoritasComponent implements OnInit {
 
   deleteDetailData(data) {
     for (var i = 0; i < this.detailData.length; i++) {
-      if (this.detailData[i]['kode_menu'] === data['kode_menu']) {
+      if (this.detailData[i]['kode_akun'] === data['kode_akun']) {
         let x = this.detailData[i]
         this.detailData.splice(i, 1)
         this.dialog.closeAll()
@@ -394,8 +268,8 @@ export class OtoritasComponent implements OnInit {
   restructureDetailData(data) {
     let endRes = []
     for (var i = 0; i < data.length; i++) {
-      for (var j = 0; j < this.inputMenuData.length; j++) {
-        if (data[i]['kode_menu'] === this.inputMenuData[j]['kode_menu']) {
+      for (var j = 0; j < this.inputAkunData.length; j++) {
+        if (data[i]['kode_akun'] === this.inputAkunData[j]['kode_akun']) {
           let x = {
             id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
               length: 8,
@@ -403,8 +277,8 @@ export class OtoritasComponent implements OnInit {
               letters: false,
               special: false
             }))}`,
-            kode_menu: data[i]['kode_menu'],
-            nama_menu: this.inputMenuData[j]['nama_menu']
+            kode_akun: data[i]['kode_akun'],
+            nama_akun: this.inputAkunData[j]['nama_akun']
           }
           endRes.push(x)
           break;
@@ -414,7 +288,7 @@ export class OtoritasComponent implements OnInit {
     this.detailData = endRes
   }
 
-  //Tab change event
+ /*  //Tab change event
   onTabSelect(event: MatTabChangeEvent) {
     this.selectedTab = event.index
     if (this.selectedTab == 1 && this.browseNeedUpdate) {
@@ -422,22 +296,22 @@ export class OtoritasComponent implements OnInit {
     }
 
     if (this.selectedTab == 1) this.datatable == undefined ? null : this.datatable.checkColumnFit()
-  }
+  } */
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('otoritas', 'g-otoritas').subscribe(
+    this.request.apiData('perusahaan', 'g-perusahaan').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
-            this.browseData = data['RESULT']
+
             this.loading = false
             this.tableLoad = false
             this.ref.markForCheck()
             this.openSnackBar(message, 'success')
             this.onUpdate = false
           } else {
-            this.browseData = data['RESULT']
+
             this.loading = false
             this.tableLoad = false
             this.browseNeedUpdate = false
@@ -449,32 +323,31 @@ export class OtoritasComponent implements OnInit {
   }
 
   //Browse binding event
-  browseSelectRow(data) {
-    let x = this.formValue
-    x.kode_otoritas = data['kode_otoritas']
-    x.nama_otoritas = data['nama_otoritas']
-    x.keterangan = data['keterangan']
-    this.formValue = x
+ /*  browseSelectRow(data) {
+    // let x = this.formValue
+    // x.kode_perusahaan = data['kode_perusahaan']
+    // x.nama_perusahaan = data['nama_perusahaan']
+    // x.keterangan = data['keterangan']
+    // this.formValue = x
     this.onUpdate = true;
     this.getBackToInput();
-  }
+  } */
 
-  getBackToInput() {
+  /* getBackToInput() {
     this.selectedTab = 0;
     this.getDetail()
     this.formInputCheckChanges()
-  }
+  } */
 
   //Form submit
   onSubmit(inputForm: NgForm) {
-
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
         this.loading = true;
         this.ref.markForCheck()
-        this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        let endRes = Object.assign({ detail_otoritas: this.detailData }, this.formValue)
-        this.request.apiData('otoritas', this.onUpdate ? 'u-otoritas' : 'i-otoritas', endRes).subscribe(
+        // this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+        let endRes = Object.assign({ detail_perusahaan: this.detailData })
+        this.request.apiData('perusahaan', this.onUpdate ? 'u-perusahaan' : 'i-perusahaan', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               this.resetForm()
@@ -494,19 +367,19 @@ export class OtoritasComponent implements OnInit {
           }
         )
       } else {
-        this.openSnackBar('DATA TIDAK LENGKAP.')
+        this.openSnackBar('DATA TIDAK LENGKAP.', 'fail')
       }
     }
   }
 
   //Reset Value
   resetForm() {
-    this.formValue = {
-      kode_otoritas: '',
-      nama_otoritas: '',
+    /* this.formValue = {
+      kode_perusahaan: '',
+      nama_perusahaan: '',
       keterangan: '',
-    }
-    this.detailData = []
+    } */
+    this.getDetail()
     this.formInputCheckChanges()
   }
 
@@ -520,12 +393,12 @@ export class OtoritasComponent implements OnInit {
     }
   }
 
-  deleteData() {
+  /* deleteData() {
     this.dialog.closeAll()
     if (this.onUpdate) {
       this.loading = true;
       this.ref.markForCheck()
-      this.request.apiData('otoritas', 'd-otoritas', this.formValue).subscribe(
+      this.request.apiData('perusahaan', 'd-perusahaan').subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
@@ -545,7 +418,7 @@ export class OtoritasComponent implements OnInit {
         }
       )
     }
-  }
+  } */
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {

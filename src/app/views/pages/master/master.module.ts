@@ -48,48 +48,34 @@ import {
 } from '../../../core/auth';
 
 // Components
-import { DivisiComponent } from './divisi/divisi.component';
-import { DepartemenComponent } from './departemen/departemen.component';
-import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
 import { BankComponent } from './bank/bank.component';
-import { KategoriAkunComponent } from './kategori-akun/kategori-akun.component';
-import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
-import { KontakComponent } from './kontak/kontak.component';
-import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
 import { RekeningPerusahaanComponent } from './rekening-perusahaan/rekening-perusahaan.component';
+import { PegaturanAkunComponent } from './pegaturan-akun/pegaturan-akun.component';
+import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
+import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
+import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
+
 
 const routes: Routes = [
 	{
-		path: 'divisi',
-		component: DivisiComponent,
+		path: 'bank',
+		component: BankComponent,
+	},
+	{	
+		path: 'rekening-perusahaan',
+		component: RekeningPerusahaanComponent,
 	},
 	{
-		path: 'departemen',
-		component: DepartemenComponent,
+		path: 'pengaturan-akun',
+		component: PegaturanAkunComponent
 	},
 	{
 		path: 'chart-of-account',
 		component: ChartOfAccountComponent,
 	},
 	{
-		path: 'bank',
-		component: BankComponent,
-	},
-	{
-		path: 'kategori-akun',
-		component: KategoriAkunComponent,
-	},
-	{
 		path: 'jenis-transaksi',
 		component: JenisTransaksiComponent,
-	},
-	{
-		path: 'kontak',
-		component: KontakComponent,
-	},
-	{	
-		path: 'rekening-perusahaan',
-		component: RekeningPerusahaanComponent,
 	},
 	{
 		path: 'pengaturan-saldo-awal',
@@ -155,15 +141,12 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		DivisiComponent,
-		DepartemenComponent,
-		ChartOfAccountComponent,
 		BankComponent,
-		KategoriAkunComponent,
+		RekeningPerusahaanComponent,
+		PegaturanAkunComponent,
+		ChartOfAccountComponent,
 		JenisTransaksiComponent,
-		KontakComponent,
 		PengaturanSaldoAwalComponent,
-		RekeningPerusahaanComponent
 	]
 })
 export class MasterModule {}

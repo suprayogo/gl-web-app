@@ -8,7 +8,7 @@ import { PartialsModule } from '../partials/partials.module';
 // Pages
 import { CoreModule } from '../../core/core.module';
 import { MasterModule } from './master/master.module';
-import { ManagementModule } from './management/management.module';
+// import { ManagementModule } from './management/management.module';
 import { TransaksiModule } from './transaksi/transaksi.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 
@@ -22,7 +22,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 		CoreModule,
 		PartialsModule,
 		MasterModule,
-		ManagementModule,
+		// ManagementModule,
 		TransaksiModule,
 		MonitoringModule
 	],

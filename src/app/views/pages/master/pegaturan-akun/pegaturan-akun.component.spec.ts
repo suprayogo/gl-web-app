@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DivisiComponent } from './divisi.component';
+import { PegaturanAkunComponent } from './pegaturan-akun.component';
 
-describe('DivisiComponent', () => {
-  let component: DivisiComponent;
-  let fixture: ComponentFixture<DivisiComponent>;
+describe('PegaturanAkunComponent', () => {
+  let component: PegaturanAkunComponent;
+  let fixture: ComponentFixture<PegaturanAkunComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DivisiComponent ]
+      declarations: [ PegaturanAkunComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DivisiComponent);
+    fixture = TestBed.createComponent(PegaturanAkunComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

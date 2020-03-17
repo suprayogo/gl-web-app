@@ -15,6 +15,11 @@ export class AkunRequestService {
       httpBody.respondCode = 'GET-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-akun-dc') {
+      this.url = 'https://kyyjvswyq1.execute-api.ap-southeast-1.amazonaws.com/dev/dc'
+      httpBody.respondCode = 'GET-DATA-AKUN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-akun-bisa-jadi-induk') {
       httpBody.respondCode = 'GET-DATA-AKUN-BISA-JADI-INDUK'
       httpBody.requestParam = JSON.stringify(formData)
