@@ -48,28 +48,12 @@ import {
 } from '../../../core/auth';
 
 // Components
-import { MenuComponent } from './menu/menu.component';
-import { OtoritasComponent } from './otoritas/otoritas.component';
-import { UserOtoritasComponent } from './user-otoritas/user-otoritas.component';
-import { PerusahaanComponent } from './perusahaan/perusahaan.component';
 
 const routes: Routes = [
-	{
+	/* {
 		path: 'menu',
 		component: MenuComponent
-	},
-	{
-		path: 'otoritas',
-		component: OtoritasComponent,
-	},
-	{
-		path: 'user-otoritas',
-		component: UserOtoritasComponent
-	},
-	{
-		path: 'perusahaan',
-		component: PerusahaanComponent
-	},
+	}, */
 ];
 
 @NgModule({
@@ -130,10 +114,7 @@ const routes: Routes = [
 		ActionNotificationComponent
 	],
 	declarations: [
-		MenuComponent,
-		OtoritasComponent,
-		UserOtoritasComponent,
-		PerusahaanComponent,
+		// MenuComponent,
 	]
 })
 export class ManagementModule {}
