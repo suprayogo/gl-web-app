@@ -424,6 +424,10 @@ export class ChartOfAccountComponent implements OnInit {
         this.madeRequest()
       }
     )
+    window.parent.postMessage({
+			'type': 'NEEDED-PERUSAHAAN',
+			'res': true
+		}, "*")
   }
 
   ngAfterViewInit(): void {

@@ -6,6 +6,9 @@ import { Subject } from 'rxjs';
 })
 export class GlobalVariableService {
 
+  //Token
+  token: string = "";
+
   // PERUSAHAAN
   kode_perusahaan: string = "";
   nama_perusahaan: string = "";
@@ -26,6 +29,28 @@ export class GlobalVariableService {
 
 
   constructor() { }
+
+  // TOP PAGE
+  topPage(){
+    window.parent.postMessage({
+      'type': 'TOP-PAGE',
+      'res': true
+    }, "*")
+  }
+
+  // NEED PERUSAHAAN
+  needCompany(need){
+    window.parent.postMessage({
+      'type': 'NEEDED-PERUSAHAAN',
+      'res': need
+    }, "*")
+  }
+
+  // TOKEN
+  getTokenDarkoCenter(tokenDC){
+    this.token = tokenDC
+    localStorage.setItem('token', this.token)
+  }
 
   // PERUSAHAAN
   getNamaPerusahaan() {

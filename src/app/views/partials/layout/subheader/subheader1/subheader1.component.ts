@@ -260,7 +260,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	madeRequest() {
-		this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kp_V1 == undefined ? this.kp_V2 : this.kp_V1 }).subscribe(
+		/* this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kp_V1 == undefined ? this.kp_V2 : this.kp_V1 }).subscribe(
 			data => {
 				if (data['STATUS'] === 'Y') {
 					this.inputPeriodeData = data['RESULT']
@@ -301,7 +301,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 					this.openSnackBar('Gagal mendapatkan data periode.', 'fail')
 				}
 			}
-		)
+		) */
 	}
 
 	getActivePeriodDialog() {

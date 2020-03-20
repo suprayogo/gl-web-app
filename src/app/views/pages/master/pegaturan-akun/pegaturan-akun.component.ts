@@ -70,10 +70,6 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       selectable: true
     },
     {
-      label: 'ID Akun',
-      value: 'id_akun'
-    },
-    {
       label: 'Nama Akun',
       value: 'nama_akun'
     }
@@ -114,6 +110,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.needCompany(true) 
     this.madeRequest()
     this.reqKodePerusahaan()
   }
@@ -176,6 +173,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      position: { top: '20px' },
       data: {
         type: type,
         tableInterface:
@@ -191,6 +189,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
           type === "kode_akun" ? this.inputAkunDataRules :
             [],
         selectable: type === 'kode_akun' ? true : false,
+        containerHeight: '300',
         selected: this.detailData,
         selectIndicator: "kode_akun",
         loadingData: type === "kode_akun" ? this.loadingAkun : null
@@ -298,6 +297,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
   onSubmit(inputForm: NgForm) {
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
+        this.gbl.topPage()
         this.loading = true;
         this.ref.markForCheck()
         let endRes = Object.assign(
@@ -316,7 +316,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
             } else {
               this.loading = false;
               this.ref.markForCheck()
-              this.openSnackBar(data['RESULT'])
+              this.openSnackBar("TIDAK BERHASIL DISIMPAN", 'fail')
             }
           },
           error => {
@@ -353,6 +353,8 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '120px' },
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()

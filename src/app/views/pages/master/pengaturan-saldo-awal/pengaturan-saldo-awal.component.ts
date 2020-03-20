@@ -137,6 +137,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.needCompany(true)
     this.subscription = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
@@ -174,6 +175,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   //Form submit
   onSubmit() {
     if (this.validateSaldo()) {
+      this.gbl.topPage()
       this.loading = true
       this.ref.markForCheck()
       let res = []
@@ -256,6 +258,8 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '20px' },
       data: {
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
@@ -319,6 +323,8 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '120px' },
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()

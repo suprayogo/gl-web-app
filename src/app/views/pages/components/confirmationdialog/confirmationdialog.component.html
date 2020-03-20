@@ -11,7 +11,7 @@
     <div class="">
 
       <div class="form-group m-form__group row" style="align-items: center" *ngFor="let x of inpLayout; let i = index">
-        <label class="col-5">{{ x.label }}</label>
+        <label class="col-5" style="max-width: 30%;">{{ x.label }}</label>
 
         <!-- FOR COMBOBOX -->
         <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="formValue[x.valueOf]" [required]="x.required" style="width: 57%;"

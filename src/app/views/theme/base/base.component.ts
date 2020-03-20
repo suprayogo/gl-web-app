@@ -129,6 +129,7 @@ export class BaseComponent implements OnInit, OnDestroy {
 		this.router.queryParams.subscribe(params => {
 			params['remote'] === '1' ? this.remoteAccess = true : this.remoteAccess = false
 			if (params['token']) {
+				this.gbl.getTokenDarkoCenter(params['token'])
 				this.auth.manualValidation(params['token']).then(
 					res => {
 						if (res) {

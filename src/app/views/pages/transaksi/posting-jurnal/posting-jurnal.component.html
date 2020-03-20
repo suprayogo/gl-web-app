@@ -21,7 +21,7 @@
                     </ng-template>
 
                     <kt-portlet-body>
-                        <div class="kt-section" style="display:flex; flex-direction: row;">
+                        <div class="kt-section" style="display:flex; flex-direction: row; height:320px;">
                             <div style="width: 50%;">
                                 <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                                     [nama_tombol]="nama_tombolPJ" [nama_tombol2]="nama_tombolUP"
@@ -42,7 +42,7 @@
                             <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
                                 <h2>Jurnal Belum Posting</h2>
                                 <kt-datatable-ag-grid #jbp [tableColumn]="displayedColumnsTableBP"
-                                    [tableData]="browseDataBP" [tableRules]="browseDataRulesBP">
+                                    [tableData]="browseDataBP" [tableRules]="browseDataRulesBP" [containerHeight]=300>
                                 </kt-datatable-ag-grid>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                             <hr>
                             <h2>Riwayat Posting</h2>
                             <kt-datatable-ag-grid #rp [tableColumn]="displayedColumnsTable" [tableData]="browseData"
-                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)">
+                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)" [containerHeight]=300>
                             </kt-datatable-ag-grid>
                         </div>
                     </kt-portlet-body>
