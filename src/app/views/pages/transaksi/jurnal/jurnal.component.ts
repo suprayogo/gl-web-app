@@ -358,6 +358,16 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.reqIdPeriode()
     this.reqIdPeriodeAktif()
     this.madeRequest()
+    
+    // Notify parent perusahaan and periode needed
+    window.parent.postMessage({
+      'type': 'UTIL',
+      'res': {
+        perusahaan: true,
+        periode: true,
+        access_key: this.gbl.getAccessKey()
+      }
+    }, '*')
   }
 
   ngAfterViewInit(): void {
@@ -733,19 +743,20 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
-      this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.inputDivisiData = data['RESULT']
-            this.updateInputdata(data['RESULT'], 'kode_divisi')
-            this.sendRequestDepartemen()
-          } else {
-            this.openSnackBar('Gagal mendapatkan daftar divisi. Mohon coba lagi nanti.', 'fail')
-            this.loading = false
-            this.ref.markForCheck()
-          }
-        }
-      )
+      this.sendRequestAkun()
+      // this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      //   data => {
+      //     if (data['STATUS'] === 'Y') {
+      //       this.inputDivisiData = data['RESULT']
+      //       this.updateInputdata(data['RESULT'], 'kode_divisi')
+      //       this.sendRequestDepartemen()
+      //     } else {
+      //       this.openSnackBar('Gagal mendapatkan daftar divisi. Mohon coba lagi nanti.', 'fail')
+      //       this.loading = false
+      //       this.ref.markForCheck()
+      //     }
+      //   }
+      // )
     }
   }
 

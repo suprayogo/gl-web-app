@@ -260,48 +260,48 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	madeRequest() {
-		this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kp_V1 == undefined ? this.kp_V2 : this.kp_V1 }).subscribe(
-			data => {
-				if (data['STATUS'] === 'Y') {
-					this.inputPeriodeData = data['RESULT']
-					this.changePeriodeData = data['RESULT']
-					if (this.inputPeriodeData.length > 0) {
-						const activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
-						this.gbl.setPeriode(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'])
-						this.id_periode = this.gbl.getIdPeriode()
-						this.tahun_periode = this.gbl.getTahunPeriode()
-						this.bulan_periode = this.gbl.getBulanPeriode()
-						this.nama_bulan = this.gbl.getNamaBulan(this.bulan_periode)
+		// this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kp_V1 == undefined ? this.kp_V2 : this.kp_V1 }).subscribe(
+		// 	data => {
+		// 		if (data['STATUS'] === 'Y') {
+		// 			this.inputPeriodeData = data['RESULT']
+		// 			this.changePeriodeData = data['RESULT']
+		// 			if (this.inputPeriodeData.length > 0) {
+		// 				const activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
+		// 				this.gbl.setPeriode(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'])
+		// 				this.id_periode = this.gbl.getIdPeriode()
+		// 				this.tahun_periode = this.gbl.getTahunPeriode()
+		// 				this.bulan_periode = this.gbl.getBulanPeriode()
+		// 				// this.nama_bulan = this.gbl.getNamaBulan(this.bulan_periode)
 
-						this.gbl.periodeAktif(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'], '')
-						this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
-						this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
-						this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
-						this.nama_bulan_aktif = this.gbl.getNamaBulanAktif(this.bulanPeriodeAktif)
-						this.ref.markForCheck()
-					}
+		// 				this.gbl.periodeAktif(activePeriod['id_periode'], activePeriod['tahun_periode'], activePeriod['bulan_periode'], '')
+		// 				this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
+		// 				this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
+		// 				this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
+		// 				// this.nama_bulan_aktif = this.gbl.getNamaBulanAktif(this.bulanPeriodeAktif)
+		// 				this.ref.markForCheck()
+		// 			}
 
-					//   this.loading = false
-					this.getActivePeriodDialog()
-					this.ref.markForCheck()
-				} else {
-					//   this.loading = false
-					this.inputPeriodeData = []
-					this.changePeriodeData = []
-					this.gbl.setPeriode('', '', '')
-					this.id_periode = this.gbl.getIdPeriode()
-					this.tahun_periode = this.gbl.getTahunPeriode()
-					this.bulan_periode = this.gbl.getBulanPeriode()
-					this.nama_bulan = ''
-					this.gbl.periodeAktif('', '', '', '')
-					this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
-					this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
-					this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
-					this.ref.markForCheck()
-					this.openSnackBar('Gagal mendapatkan data periode.', 'fail')
-				}
-			}
-		)
+		// 			//   this.loading = false
+		// 			this.getActivePeriodDialog()
+		// 			this.ref.markForCheck()
+		// 		} else {
+		// 			//   this.loading = false
+		// 			this.inputPeriodeData = []
+		// 			this.changePeriodeData = []
+		// 			this.gbl.setPeriode('', '', '')
+		// 			this.id_periode = this.gbl.getIdPeriode()
+		// 			this.tahun_periode = this.gbl.getTahunPeriode()
+		// 			this.bulan_periode = this.gbl.getBulanPeriode()
+		// 			this.nama_bulan = ''
+		// 			this.gbl.periodeAktif('', '', '', '')
+		// 			this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
+		// 			this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
+		// 			this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
+		// 			this.ref.markForCheck()
+		// 			this.openSnackBar('Gagal mendapatkan data periode.', 'fail')
+		// 		}
+		// 	}
+		// )
 	}
 
 	getActivePeriodDialog() {
@@ -514,7 +514,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 				this.id_periode = this.gbl.getIdPeriode()
 				this.tahun_periode = this.gbl.getTahunPeriode()
 				this.bulan_periode = this.gbl.getBulanPeriode()
-				this.nama_bulan = this.gbl.getNamaBulan(this.bulan_periode)
+				// this.nama_bulan = this.gbl.getNamaBulan(this.bulan_periode)
 				this.ref.markForCheck()
 				if (accessPeriod['aktif'] === "1") {
 					this.openSnackBar('Akses periode kembali ke periode aktif saat ini', 'success')

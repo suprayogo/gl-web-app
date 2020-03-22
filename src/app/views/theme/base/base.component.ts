@@ -141,6 +141,9 @@ export class BaseComponent implements OnInit, OnDestroy {
 			if (params['kp'] && params['np']) {
 				this.gbl.setPerusahaan(params['kp'], params['np'])
 			}
+			if (params['idp'] && params['tp'] && params['bp']) {
+				this.gbl.setPeriode(params['idp'], params['tp'], params['bp'])
+			}
 		})
 	}
 
