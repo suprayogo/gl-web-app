@@ -354,6 +354,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.needCompany(true)
     this.reqKodePerusahaan()
     this.reqIdPeriode()
     this.reqIdPeriodeAktif()

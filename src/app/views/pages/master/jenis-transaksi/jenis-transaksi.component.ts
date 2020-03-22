@@ -222,6 +222,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   }
 
   openCDialog() { // Confirmation Dialog
+    this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -313,12 +314,14 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   getBackToInput() {
     this.selectedTab = 0;
+    this.gbl.topPage()
     //this.getDetail()
     this.formInputCheckChanges()
   }
 
   //Form submit
   onSubmit(inputForm: NgForm) {
+    this.gbl.topPage()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
       if (inputForm.valid && this.formValue.kode_jenis_transaksi !== "") {
@@ -334,7 +337,6 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   }
 
   addNewData() {
-    this.gbl.topPage()
     this.loading = true;
     this.ref.markForCheck()
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
@@ -361,6 +363,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   //Reset Value
   resetForm() {
+    this.gbl.topPage()
     this.formValue = {
       kode_jenis_transaksi: '',
       nama_jenis_transaksi: '',

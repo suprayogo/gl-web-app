@@ -180,7 +180,7 @@ export class BankComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.needCompany(true) 
+    this.gbl.needCompany(true)
     this.madeRequest()
     this.reqKodePerusahaan()
   }
@@ -223,6 +223,7 @@ export class BankComponent implements OnInit, AfterViewInit {
   }
 
   openCDialog() { // Confirmation Dialog
+    this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -320,6 +321,7 @@ export class BankComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
+    this.gbl.topPage()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
       if (inputForm.valid && this.formValue.kode_bank !== "") {
@@ -335,7 +337,6 @@ export class BankComponent implements OnInit, AfterViewInit {
   }
 
   addNewData() {
-    this.gbl.topPage()
     this.loading = true;
     this.ref.markForCheck()
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
@@ -362,6 +363,7 @@ export class BankComponent implements OnInit, AfterViewInit {
 
   //Reset Value
   resetForm() {
+    this.gbl.topPage()
     this.formValue = {
       kode_bank: '',
       nama_bank: '',

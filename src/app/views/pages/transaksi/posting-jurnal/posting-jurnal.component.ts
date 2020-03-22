@@ -546,6 +546,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   }
 
   openCDialog(type) { // Confirmation Dialog
+    this.gbl.topPage()
     if (this.onSub === false) {
       const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
         width: 'auto',
@@ -823,6 +824,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
   //Reset Value
   resetForm() {
+    this.gbl.topPage()
     this.formValue = {
       bulan_periode: this.periode_aktif.nama_bulan_periode,
       tahun_periode: this.periode_aktif.tahun_periode,

@@ -178,6 +178,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.needCompany(true)
     this.reqKodePerusahaan()
     this.reqAccessPeriod()
     this.madeRequest()

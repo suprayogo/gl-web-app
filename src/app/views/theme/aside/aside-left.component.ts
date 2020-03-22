@@ -31,7 +31,7 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 	currentRouteUrl: string = '';
 	insideTm: any;
 	outsideTm: any;
-	loadingMenu: boolean = true;
+	loadingMenu: boolean = false;
 	noloadingtext: boolean = true;
 	oto: string = "";
 	initMenu: any = [];
@@ -111,7 +111,78 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 			// tslint:disable-next-line:max-line-length
 			this.render.setAttribute(this.asideMenu.nativeElement, 'data-ktmenu-dropdown-timeout', objectPath.get(config, 'aside.menu.submenu.dropdown.hover-timeout'));
 		}
-		this.getOtoritas();
+
+		let x: any = [
+			{
+				title: 'Home',
+				root: true,
+				icon: 'flaticon2-architecture-and-city',
+				page: '/home',
+				meta_data: 'home'
+			},
+			{ section: 'Master' },
+			{
+				title: 'Daftar Bank',
+				icon: 'flaticon2-layers',
+				page: '/master/bank'
+			},
+			{
+				title: 'Daftar Rekening Perusahaan',
+				icon: 'flaticon2-layers',
+				page: '/master/rekening-perusahaan'
+			},
+			{
+				title: 'Pengaturan Daftar Akun',
+				icon: 'flaticon2-layers',
+				page: '/master/pengaturan-akun'
+			},
+			{
+				title: 'Chart of Account',
+				icon: 'flaticon2-layers',
+				page: 'master/chart-of-account'
+			},
+			{
+				title: 'Daftar Jenis Transaksi',
+				icon: 'flaticon2-layers',
+				page: 'master/jenis-transaksi'
+			},
+			{
+				title: 'Pengaturan Saldo Awal',
+				icon: 'flaticon2-layers',
+				page: 'master/pengaturan-saldo-awal'
+			},
+			{ section: 'Transaksi' },
+			{
+				title: 'Jurnal Umum',
+				icon: 'flaticon2-layers',
+				page: 'transaksi/jurnal-umum'
+			},
+			{
+				title: 'Posting Jurnal & Tutup Periode',
+				icon: 'flaticon2-layers',
+				page: 'transaksi/posting-jurnal-tutup-periode'
+			},
+			{ section: 'Monitoring' },
+			{
+				title: 'Transaksi Jurnal Per Periode',
+				icon: 'flaticon2-layers',
+				page: 'monitoring/transaksi-jurnal-per-periode'
+			},
+			{
+				title: 'Saldo Akun Periode Aktif',
+				icon: 'flaticon2-layers',
+				page: 'monitoring/saldo-akun-periode-aktif'
+			},
+
+		]
+
+		let menu = new MenuConfig()
+		let side = menu.defaults
+		side.aside.items = x
+		this.menuAsideService.setMenu(side)
+
+
+		// this.getOtoritas();
 	}
 
 	/**
@@ -252,7 +323,7 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 					this.currentMenu = JSON.parse(JSON.stringify(x))
 					setTimeout(() => {
 						const classElement = document.getElementsByClassName('kt-menu__item--active');
-						if(classElement.length > 0){
+						if (classElement.length > 0) {
 							const el = classElement[0].getBoundingClientRect()
 							const t = el.top
 							const m = el.height / 2

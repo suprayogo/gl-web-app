@@ -244,6 +244,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   openDialog(v) {
+    this.gbl.topPage()
     let x = JSON.parse(JSON.stringify(v))
     this.formDetail = {
       id_akun: x['id_akun'],

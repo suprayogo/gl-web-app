@@ -167,6 +167,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   // Dialog
   openDialog(type) {
+    this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     this.dialogRef = this.dialog.open(DialogComponent, {
       width: 'auto',

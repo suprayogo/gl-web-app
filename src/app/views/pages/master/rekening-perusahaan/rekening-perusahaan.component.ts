@@ -306,6 +306,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   // Dialog
   openDialog(type) {
+    this.gbl.topPage()
     const dialogRef = this.dialog.open(DialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -343,6 +344,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   }
 
   openCDialog() { // Confirmation Dialog
+    this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -452,6 +454,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
+    this.gbl.topPage()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
       if (inputForm.valid && this.formValue.kode_bank !== undefined) {
@@ -471,7 +474,6 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   }
 
   addNewData() {
-    this.gbl.topPage()
     this.loading = true;
     this.ref.markForCheck()
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
@@ -498,6 +500,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   //Reset Value
   resetForm() {
+    this.gbl.topPage()
     this.formValue = {
       kode_bank: '',
       no_rekening: '',
