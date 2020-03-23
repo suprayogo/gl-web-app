@@ -8,6 +8,8 @@ export class GlobalVariableService {
 
   //Access Key
   access_key = "bcad52ed12a9176fdc653ca776293fc8";
+  //Token
+  token: string = "";
 
   // PERUSAHAAN
   kode_perusahaan: string = "";
@@ -33,6 +35,28 @@ export class GlobalVariableService {
     return this.access_key
   }
   
+  // TOP PAGE
+  topPage(){
+    window.parent.postMessage({
+      'type': 'TOP-PAGE',
+      'res': true
+    }, "*")
+  }
+
+  // NEED PERUSAHAAN
+  needCompany(need){
+    window.parent.postMessage({
+      'type': 'NEEDED-PERUSAHAAN',
+      'res': need
+    }, "*")
+  }
+
+  // TOKEN
+  getTokenDarkoCenter(tokenDC){
+    this.token = tokenDC
+    localStorage.setItem('token', this.token)
+  }
+
   // PERUSAHAAN
   getNamaPerusahaan() {
     return this.nama_perusahaan;

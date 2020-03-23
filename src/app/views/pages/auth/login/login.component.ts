@@ -38,7 +38,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	call() {
-		console.log('called')
 		window.parent.postMessage({
 			'func': 'funct',
 			'message': 'Msg'

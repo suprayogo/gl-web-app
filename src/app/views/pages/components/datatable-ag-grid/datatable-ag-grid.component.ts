@@ -62,9 +62,8 @@ export class DatatableAgGridComponent implements OnInit {
   ngOnInit() {
 
     this.pageSize = this.paginationPageSize === undefined || this.paginationPageSize == null ? this.pageSize : this.paginationPageSize
-
     if(this.containerHeight !== undefined){
-      this.containerStyle.height = this.containerHeight
+      this.containerStyle.height = this.containerHeight + 'px'
     }else{
       let sHeight = document.documentElement.clientHeight
       this.containerStyle.height = JSON.stringify((sHeight * 0.55)) + 'px'

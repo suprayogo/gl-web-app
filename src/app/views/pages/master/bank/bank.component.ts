@@ -42,8 +42,10 @@ export class BankComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = true;
   browseNeedUpdate: boolean = true;
   search: string;
+
+  // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
-  kp: any;
+  kode_perusahaan: any;
 
   //Confirmation Variable
   c_buttonLayout = [
@@ -71,7 +73,7 @@ export class BankComponent implements OnInit, AfterViewInit {
       content: 'Yakin akan menghapus data ?',
       style: {
         'color': 'red',
-        'font-size': '20px',
+        'font-size': '18px',
         'font-weight': 'bold'
       }
     }
@@ -149,7 +151,7 @@ export class BankComponent implements OnInit, AfterViewInit {
       id: 'nama-bank',
       type: 'input',
       valueOf: 'nama_bank',
-      required: true,
+      required: false,
       readOnly: false,
       update: {
         disabled: false
@@ -178,12 +180,17 @@ export class BankComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.needCompany(true)
     this.madeRequest()
     this.reqKodePerusahaan()
   }
 
   ngAfterViewInit(): void {
-    this.kp = this.gbl.getKodePerusahaan()
+    this.kode_perusahaan = this.gbl.getKodePerusahaan()
+
+    if (this.kode_perusahaan !== "") {
+      this.madeRequest()
+    }
   }
 
   ngOnDestroy(): void {
@@ -193,14 +200,18 @@ export class BankComponent implements OnInit, AfterViewInit {
   reqKodePerusahaan() {
     this.subscription = this.gbl.change.subscribe(
       value => {
-        this.kp = value
+        this.kode_perusahaan = value
         this.resetForm()
         this.browseData = []
         this.browseNeedUpdate = true
         this.ref.markForCheck()
 
-        if (this.selectedTab == 1 && this.browseNeedUpdate) {
-          this.refreshBrowse('', value)
+        if (this.kode_perusahaan !== "") {
+          this.madeRequest()
+        }
+
+        if (this.selectedTab == 1 && this.browseNeedUpdate && this.kode_perusahaan !== "") {
+          this.refreshBrowse('')
         }
       }
     )
@@ -212,11 +223,14 @@ export class BankComponent implements OnInit, AfterViewInit {
   }
 
   openCDialog() { // Confirmation Dialog
+    this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
       width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '90px' },
       data: {
         buttonLayout: this.c_buttonLayout,
         labelLayout: this.c_labelLayout,
@@ -229,7 +243,7 @@ export class BankComponent implements OnInit, AfterViewInit {
             changeOn: null,
             required: false,
             readOnly: true,
-            disabled: true,
+            disabled: true
           },
           {
             label: 'Nama Bank',
@@ -239,7 +253,7 @@ export class BankComponent implements OnInit, AfterViewInit {
             changeOn: null,
             required: false,
             readOnly: true,
-            disabled: true,
+            disabled: true
           },
         ]
       },
@@ -264,9 +278,9 @@ export class BankComponent implements OnInit, AfterViewInit {
     if (this.selectedTab == 1) this.datatable == undefined ? null : this.datatable.checkColumnFit()
   }
 
-  refreshBrowse(message, val = null) {
+  refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('bank', 'g-bank', { kode_perusahaan: val ? val : this.kp }).subscribe(
+    this.request.apiData('bank', 'g-bank', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -306,41 +320,50 @@ export class BankComponent implements OnInit, AfterViewInit {
   }
 
   //Form submit
-  onSubmit(inputForm: NgForm, val = null) {
-
+  onSubmit(inputForm: NgForm) {
+    this.gbl.topPage()
     if (this.forminput !== undefined) {
-      if (inputForm.valid) {
-        this.loading = true;
-        this.ref.markForCheck()
-        this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp }, this.formValue)
-        this.request.apiData('bank', this.onUpdate ? 'u-bank' : 'i-bank', endRes).subscribe(
-          data => {
-            if (data['STATUS'] === 'Y') {
-              this.resetForm()
-              this.browseNeedUpdate = true
-              this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
-            } else {
-              this.loading = false;
-              this.ref.markForCheck()
-              this.openSnackBar(data['RESULT'])
-            }
-          },
-          error => {
-            this.loading = false;
-            this.ref.markForCheck()
-            this.openSnackBar('GAGAL MELAKUKAN PROSES.')
-          }
-        )
+      this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+      if (inputForm.valid && this.formValue.kode_bank !== "") {
+        if (this.formValue.nama_bank === "") {
+          this.openSnackBar('Nama Bank Belum Diisi.', 'info')
+        } else {
+          this.addNewData()
+        }
       } else {
-        this.openSnackBar('DATA TIDAK LENGKAP.')
+        this.openSnackBar('Kode Bank Belum Diisi.', 'info')
       }
     }
   }
 
+  addNewData() {
+    this.loading = true;
+    this.ref.markForCheck()
+    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
+    this.request.apiData('bank', this.onUpdate ? 'u-bank' : 'i-bank', endRes).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.resetForm()
+          this.browseNeedUpdate = true
+          this.ref.markForCheck()
+          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal Tambah Data ! Kode Bank Sudah Ada', 'fail')
+        }
+      },
+      error => {
+        this.loading = false;
+        this.ref.markForCheck()
+        this.openSnackBar('GAGAL MELAKUKAN PROSES.')
+      }
+    )
+  }
+
   //Reset Value
   resetForm() {
+    this.gbl.topPage()
     this.formValue = {
       kode_bank: '',
       nama_bank: '',
@@ -360,12 +383,13 @@ export class BankComponent implements OnInit, AfterViewInit {
     }
   }
 
-  deleteData(val = null) {
+  deleteData() {
     this.dialog.closeAll()
     if (this.onUpdate) {
+      this.gbl.topPage()
       this.loading = true;
       this.ref.markForCheck()
-      let endRes = Object.assign({ kode_perusahaan: val ? val : this.kp }, this.formValue)
+      let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
       this.request.apiData('bank', 'd-bank', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -394,6 +418,8 @@ export class BankComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '120px' },
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()

@@ -144,7 +144,6 @@ export class InputdialogComponent implements OnInit {
   }
 
   parseInteger(compareForm, index, valueOf){
-    // console.log(this.formValue[compareForm][index][valueOf])
     return parseInt(this.formValue[compareForm][index][valueOf])
   }
 
