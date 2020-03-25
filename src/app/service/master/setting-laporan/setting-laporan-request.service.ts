@@ -15,6 +15,10 @@ export class SettingLaporanRequestService {
       httpBody.respondCode = 'GET-DATA-SETTING-LAPORAN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'u-setting-laporan') {
+      httpBody.respondCode = 'UPT-DATA-SETTING-LAPORAN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

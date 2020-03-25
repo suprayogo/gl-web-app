@@ -17,6 +17,7 @@ export class DetailinputAgGridComponent implements OnInit {
   @Input() selected: Object[];
   @Input() selectIndicator: any;
   @Input() buttonLayout: Object[];
+  @Input() buttonFuncParam: any;
   @Input() editable: boolean;
   @Input() pinnedBottomRowData: Object[] = [];
   @Output() selectRowEvent = new EventEmitter();
@@ -151,6 +152,12 @@ export class DetailinputAgGridComponent implements OnInit {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     
+    this.checkColumnFit()
+
+    this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData)
+  }
+
+  checkColumnFit() {
     let containerWidth = this.toMeasure.nativeElement.offsetWidth
     let allCol = this.gridColumnApi.getAllColumns();
 
@@ -162,13 +169,10 @@ export class DetailinputAgGridComponent implements OnInit {
     allCol.forEach(function(column) {
       totalColumnWidth = totalColumnWidth + column.actualWidth
     })
-
     if(totalColumnWidth > containerWidth)
     this.gridColumnApi.autoSizeColumns(allColumnIds);
     else
     this.gridApi.sizeColumnsToFit();
-
-    this.gridApi.setPinnedBottomRowData(this.pinnedBottomRowData)
   }
 
   onSelectionChanged(params) {
@@ -268,6 +272,15 @@ export class DetailinputAgGridComponent implements OnInit {
       return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
     } catch (e) {
       
+    }
+  }
+
+  // BUTTON
+  buttonClicked(x) {
+    if (this.buttonFuncParam) {
+      x.btnClick(this.buttonFuncParam)
+    } else{
+      x.btnClick()
     }
   }
 

@@ -128,8 +128,8 @@ export class BaseComponent implements OnInit, OnDestroy {
 		this.unsubscribe.push(subscr);
 		this.router.queryParams.subscribe(params => {
 			params['remote'] === '1' ? this.remoteAccess = true : this.remoteAccess = false
-			if (params['token']) {
-				this.gbl.getTokenDarkoCenter(params['token'])
+			if (params['token'] && params['uid']) {
+				this.gbl.getTokenDarkoCenter(params['token'], params['uid'])
 				this.auth.manualValidation(params['token']).then(
 					res => {
 						if (res) {
@@ -149,8 +149,6 @@ export class BaseComponent implements OnInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		//Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-		//Add 'implements AfterViewInit' to the class.
 		this.setupHeightMutationObserver();
 		this.doDivHeightChange(this.getHeightAndWidthObject());
 	}

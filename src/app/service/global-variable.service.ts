@@ -10,6 +10,7 @@ export class GlobalVariableService {
   access_key = "bcad52ed12a9176fdc653ca776293fc8";
   //Token
   token: string = "";
+  user_id: string = "";
 
   // PERUSAHAAN
   kode_perusahaan: string = "";
@@ -52,9 +53,11 @@ export class GlobalVariableService {
   }
 
   // TOKEN
-  getTokenDarkoCenter(tokenDC){
+  getTokenDarkoCenter(tokenDC, uid){
     this.token = tokenDC
+    this.user_id = uid
     localStorage.setItem('token', this.token)
+    localStorage.setItem('user_id', this.user_id)
   }
 
   // PERUSAHAAN

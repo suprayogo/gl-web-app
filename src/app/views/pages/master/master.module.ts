@@ -55,6 +55,7 @@ import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.com
 import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
 import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
 import { PengaturanLaporanComponent } from './pengaturan-laporan/pengaturan-laporan.component';
+import { PengaturanJurnalOtomatisComponent } from './pengaturan-jurnal-otomatis/pengaturan-jurnal-otomatis.component';
 
 
 const routes: Routes = [
@@ -85,6 +86,10 @@ const routes: Routes = [
 	{
 		path: 'pengaturan-laporan',
 		component: PengaturanLaporanComponent,
+	},
+	{
+		path: 'pengaturan-jurnal-otomatis',
+		component: PengaturanJurnalOtomatisComponent,
 	}
 ];
 
@@ -152,7 +157,8 @@ const routes: Routes = [
 		ChartOfAccountComponent,
 		JenisTransaksiComponent,
 		PengaturanSaldoAwalComponent,
-		PengaturanLaporanComponent
+		PengaturanLaporanComponent,
+		PengaturanJurnalOtomatisComponent
 	]
 })
 export class MasterModule {}
