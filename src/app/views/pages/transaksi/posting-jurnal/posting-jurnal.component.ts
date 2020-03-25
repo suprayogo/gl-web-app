@@ -413,7 +413,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
             this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
             this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
-            this.nama_bulan_aktif = this.gbl.getNamaBulanAktif(this.bulanPeriodeAktif)
+            // this.nama_bulan_aktif = this.gbl.getNamaBulanAktif(this.bulanPeriodeAktif)
             this.periode_aktif = this.gbl.getActive()
             this.madeRequest()
             this.ref.markForCheck()

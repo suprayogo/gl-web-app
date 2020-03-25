@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col-xl-12">
+  
+      <!-- Start of a Content -->
+  
+      <kt-portlet>
+        <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+        <div class="kt-section" *ngIf="loading">
+          <kt-loading></kt-loading>
+        </div>
+  
+        <!-- Start of Tabs -->
+        <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
+  
+          
+          <mat-tab label="">
+  
+            <!-- Tab Label -->
+            <ng-template mat-tab-label>
+              <p style="margin-bottom: 0"><b>Laba Rugi</b></p><br>
+            </ng-template>
+  
+            <kt-portlet-body>
+              <div class="kt-section">
+                  
+              </div>
+            </kt-portlet-body>
+  
+          </mat-tab>
+          
+          <mat-tab label="">
+  
+            <!-- Tab Label -->
+            <ng-template mat-tab-label>
+              <p style="margin-bottom: 0"><b>Neraca</b></p><br>
+            </ng-template>
+  
+            <kt-portlet-body>
+              <div class="kt-section">
+              </div>
+            </kt-portlet-body>
+  
+          </mat-tab>
+
+          <mat-tab label="">
+  
+            <!-- Tab Label -->
+            <ng-template mat-tab-label>
+              <p style="margin-bottom: 0"><b>Arus Kas</b></p><br>
+            </ng-template>
+  
+            <kt-portlet-body>
+              <div class="kt-section">
+              </div>
+            </kt-portlet-body>
+  
+          </mat-tab>
+  
+        </mat-tab-group>
+        <!-- End of Tabs -->
+      </kt-portlet>
+  
+      <!-- End of a Content -->
+  
+    </div>
+  </div>
+  

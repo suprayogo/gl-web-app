@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MatTabChangeEvent, MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
-import * as MD5 from 'crypto-js/md5';
-import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
