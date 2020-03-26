@@ -549,7 +549,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     if (this.onSub === false) {
       const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-        width: 'auto',
+        width: '90vw',
         height: 'auto',
         maxWidth: '95vw',
         maxHeight: '95vh',
@@ -583,7 +583,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     } else {
       if (this.enableCancel) {
         const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-          width: 'auto',
+          width: '90vw',
           height: 'auto',
           maxWidth: '95vw',
           maxHeight: '95vh',
@@ -853,7 +853,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any, onCloseFunc?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

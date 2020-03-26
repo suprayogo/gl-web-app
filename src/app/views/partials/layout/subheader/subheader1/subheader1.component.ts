@@ -397,7 +397,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 
 	gantiPerusahaan() {
 		// const dialogRef = this.dialog.open(DialogComponent, {
-		// 	width: 'auto',
+		// 	width: '90vw',
 		// 	height: 'auto',
 		// 	maxWidth: '95vw',
 		// 	maxHeight: '95vh',
@@ -438,7 +438,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 			}
 		]
 		const dialogRef = this.dialog.open(InputdialogComponent, {
-			width: 'auto',
+			width: '90vw',
 			height: 'auto',
 			maxWidth: '95vw',
 			maxHeight: '95vh',
@@ -485,7 +485,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 	openCDialog() { // Confirmation Dialog
 		this.getActivePeriodDialog()
 		const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-			width: 'auto',
+			width: '90vw',
 			height: 'auto',
 			maxWidth: '95vw',
 			maxHeight: '95vh',
@@ -534,7 +534,7 @@ export class Subheader1Component implements OnInit, OnDestroy, AfterViewInit {
 
 	openSnackBar(message, type?: any, onCloseFunc?: any) {
 		const dialogRef = this.dialog.open(AlertdialogComponent, {
-			width: 'auto',
+			width: '90vw',
 			height: 'auto',
 			maxWidth: '95vw',
 			maxHeight: '95vh',

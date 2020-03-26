@@ -7,18 +7,21 @@ import { OtoritasRequestService } from './management/otoritas/otoritas-request.s
 
 //Master Services
 import { BankRequestService } from './master/bank/bank-request.service';
+import { CabangRequestService } from './master/cabang/cabang-request.service';
+import { DivisiRequestService } from './master/divisi/divisi-request.service';
+import { DepartemenRequestService } from './master/departemen/departemen-request.service';
 import { RekeningPerusahaanRequestService } from './master/rekening-perusahaan/rekening-perusahaan-request.service';
 import { KategoriAkunRequestService } from './master/kategori-akun/kategori-akun-request.service';
 import { AkunRequestService } from './master/akun/akun-request.service';
 import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-transaksi-request.service';
-
+import { SettingLaporanRequestService } from './master/setting-laporan/setting-laporan-request.service';
+import { JurnalOtomatisRequestService } from './master/jurnal-otomatis/jurnal-otomatis-request.service';
 
 //Transaksi Services
 import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service';
 import { PostingJurnalRequestService } from './transaksi/posting-jurnal/posting-jurnal-request.service';
 import { PeriodeRequestService } from './transaksi/periode/periode-request.service';
 import { UserRequestService } from './management/user/user-request.service';
-import { SettingLaporanRequestService } from './master/setting-laporan/setting-laporan-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -38,18 +41,19 @@ export class ApiDataService {
 
     //Master Services
     private bankReq: BankRequestService,
+    private cabangReq: CabangRequestService,
+    private divisiReq: DivisiRequestService,
+    private departemenReq: DepartemenRequestService,
     private rekeningPerusahaanReq: RekeningPerusahaanRequestService,
     private kategoriAkunReq: KategoriAkunRequestService,
     private akunReq: AkunRequestService,
     private jenisTransaksiReq: JenisTransaksiRequestService,
     private settingLaporanReq: SettingLaporanRequestService,
+    private jurnalOtomatisReq: JurnalOtomatisRequestService,
     
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
     private periodeReq: PeriodeRequestService,
-
-
-    //Transaksi Services
     private jurnalReq: JurnalRequestService
   ) {
   }
@@ -63,13 +67,17 @@ export class ApiDataService {
 
     //Master Services
     this.bankReq.url = this.baseURL
+    this.cabangReq.url = this.baseURL
+    this.divisiReq.url = this.baseURL
+    this.departemenReq.url = this.baseURL
     this.rekeningPerusahaanReq.url = this.baseURL
     this.kategoriAkunReq.url = this.baseURL
     this.akunReq.url = this.baseURL
     this.jenisTransaksiReq.url = this.baseURL
-    this.settingLaporanReq.url = this.baseURL
 
     //Setting Services
+    this.settingLaporanReq.url = this.baseURL
+    this.jurnalOtomatisReq.url = this.baseURL
 
     //Transaksi Services
     this.jurnalReq.url = this.baseURL
@@ -96,6 +104,12 @@ export class ApiDataService {
     //Master Services
     else if (type === 'bank') {
       return this.bankReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'cabang') {
+      return this.cabangReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'divisi') {
+      return this.divisiReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'departemen') {
+      return this.departemenReq.validate(data, this.httpBody, this.options, formData)
     } else if(type === 'rekening-perusahaan') {
       return this.rekeningPerusahaanReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'kategori-akun') {
@@ -104,11 +118,14 @@ export class ApiDataService {
       return this.akunReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'jenis-transaksi') {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
-    } else if (type === 'setting-laporan') {
-      return this.settingLaporanReq.validate(data, this.httpBody, this.options, formData)
     }
 
-    //Setting Services
+    //Setting Services 
+    else if (type === 'setting-laporan') {
+      return this.settingLaporanReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'jurnal-otomatis') {
+      return this.jurnalOtomatisReq.validate(data, this.httpBody, this.options, formData)
+    }
 
     //Transaksi Services
     else if (type === 'jurnal') {

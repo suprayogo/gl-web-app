@@ -308,7 +308,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   openDialog(type) {
     this.gbl.topPage()
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -346,7 +346,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   openCDialog() { // Confirmation Dialog
     this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -553,7 +553,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

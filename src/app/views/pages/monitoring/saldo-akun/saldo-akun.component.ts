@@ -256,7 +256,7 @@ export class SaldoAkunComponent implements OnInit {
       saldo_kredit: x['saldo_kredit']
     }
     const dialogRef = this.dialog.open(InputdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -320,7 +320,7 @@ export class SaldoAkunComponent implements OnInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

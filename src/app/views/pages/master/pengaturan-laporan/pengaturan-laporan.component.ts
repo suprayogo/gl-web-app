@@ -382,7 +382,7 @@ export class PengaturanLaporanComponent implements OnInit {
 
   openDialog(type, st, ft) {
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -545,9 +545,9 @@ export class PengaturanLaporanComponent implements OnInit {
     )
   }
 
-  openSnackBar(message, type?: any) {
+  openSnackBar(message, type?: any, onCloseFunc?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -555,7 +555,8 @@ export class PengaturanLaporanComponent implements OnInit {
       position: { top: '120px' },
       data: {
         type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()
+        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase(),
+        onCloseFunc: onCloseFunc === undefined || onCloseFunc == null ? null : () => onCloseFunc()
       },
       disableClose: true
     })

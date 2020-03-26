@@ -23,7 +23,7 @@
                     (keyup.enter)="onBlur($event, i)" (keyup.tab)="onBlur($event, i)"
                     [(ngModel)]="res_data[i]['keterangan_akun']">
                 <div class="input-group-append">
-                    <button tabindex="-1" type="button" class="btn btn-primary" (click)="openDialog(i)">
+                    <button tabindex="-1" type="button" class="btn btn-primary" (click)="openDialog(i, 'kode_akun')">
                         Cari
                     </button>
                 </div>
@@ -32,7 +32,9 @@
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-' + i }}" placeholder="Keterangan"
                     [(ngModel)]="res_data[i]['keterangan']">
             </div>
-            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey" class="input-group">
+            <!-- Jurnal Umum -->
+            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
+                *ngIf="!jurnalOtomatis">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon-left">Rp.</span>
                 </div>
@@ -40,13 +42,35 @@
                     (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
                     [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions">
             </div>
-            <div style="width: 21.25%; padding: 10px" class="input-group">
+            <div style="width: 21.25%; padding: 10px" class="input-group" *ngIf="!jurnalOtomatis">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon-left">Rp.</span>
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
                     (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
                     [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions">
+            </div>
+            <!-- Jurnal Otomatis -->
+            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
+                *ngIf="jurnalOtomatis">
+                <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
+                    [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
+                <div class="input-group-append">
+                    <button tabindex="-1" type="button" class="btn btn-primary"
+                        (click)="openDialog(i, 'kode_setting', 'd')">
+                        Pilih
+                    </button>
+                </div>
+            </div>
+            <div style="width: 21.25%; padding: 10px" class="input-group" *ngIf="jurnalOtomatis">
+                <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
+                    [(ngModel)]="res_data[i]['setting)kredit']" placeholder="Sumber data" readonly>
+                <div class="input-group-append">
+                    <button tabindex="-1" type="button" class="btn btn-primary"
+                        (click)="openDialog(i, 'kode_setting', 'k')">
+                        Pilih
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -71,7 +95,8 @@
 
 </div>
 
-<div style="width: 100%; height: 38px; display: flex; flex-direction: row; margin-top: 5px;" *ngIf="!loading">
+<div style="width: 100%; height: 38px; display: flex; flex-direction: row; margin-top: 5px;"
+    *ngIf="!loading && !jurnalOtomatis">
     <div style="width: 57.5%;"></div>
     <div style="width: 21.25%; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
         <span>Total Debit :</span>

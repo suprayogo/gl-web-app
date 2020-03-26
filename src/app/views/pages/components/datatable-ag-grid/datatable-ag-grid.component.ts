@@ -19,6 +19,7 @@ export class DatatableAgGridComponent implements OnInit {
   @Input() containerHeight: any;
   @Input() forceWithoutButton: boolean;
   @Input() paginationPageSize: any;
+  @Input() onDialog: boolean;
   @Output() selectRowEvent = new EventEmitter();
   @Output() onDialogClose = new EventEmitter();
 
@@ -66,7 +67,7 @@ export class DatatableAgGridComponent implements OnInit {
       this.containerStyle.height = this.containerHeight + 'px'
     }else{
       let sHeight = document.documentElement.clientHeight
-      this.containerStyle.height = JSON.stringify((sHeight * 0.55)) + 'px'
+      this.containerStyle.height = this.onDialog ? JSON.stringify((sHeight * 0.55)) + 'px' : JSON.stringify((sHeight * 1.5)) + 'px'
     }
 
     let colDef = [], colData =[]

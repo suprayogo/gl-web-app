@@ -477,7 +477,7 @@ export class ChartOfAccountComponent implements OnInit {
   // Dialog
   openDialog(type) {
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -526,7 +526,7 @@ export class ChartOfAccountComponent implements OnInit {
 
   openCDialog() { // Confirmation Dialog
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -756,7 +756,7 @@ export class ChartOfAccountComponent implements OnInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

@@ -7,13 +7,13 @@
     </button>
   </div>
 
-  <div style="width: 1000px; height: auto;" *ngIf="loading == true">
+  <div style="width: 100%; height: auto;" *ngIf="loading == true">
     <kt-loading></kt-loading>
   </div>
 
-  <div style="width: 1000px; height: auto;" *ngIf="loading != true">
+  <div style="width: 100%; height: auto;" *ngIf="loading != true">
     <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="tableData" [tableRules]="tableRules"
-      [selectable]="selectable" [selected]="selected" [selectIndicator]="selectIndicator"
+      [selectable]="selectable" [selected]="selected" [selectIndicator]="selectIndicator" [onDialog]="true"
       (selectRowEvent)="dialogRowSelect($event)" (onDialogClose)="closeDialog()"></kt-datatable-ag-grid>
   </div>
 </div>

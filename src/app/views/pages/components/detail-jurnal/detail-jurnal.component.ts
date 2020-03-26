@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
+
+// Dialog Component
 import { DialogComponent } from '../dialog/dialog.component';
+import { AlertdialogComponent } from '../alertdialog/alertdialog.component';
 
 @Component({
   selector: 'kt-detail-jurnal',
@@ -10,7 +13,9 @@ import { DialogComponent } from '../dialog/dialog.component';
 export class DetailJurnalComponent implements OnInit {
 
   @Input() dataAkun: [];
+  @Input() dataSetting: [];
   @Input() data: any;
+  @Input() jurnalOtomatis: boolean;
 
   currencyOptions = {
     align: "right",
@@ -25,6 +30,7 @@ export class DetailJurnalComponent implements OnInit {
   }
 
   data_akun = [];
+  data_setting = [];
 
   akunDisplayColumns = [
     {
@@ -36,6 +42,24 @@ export class DetailJurnalComponent implements OnInit {
       value: 'nama_akun'
     }
   ];
+  settingDisplayColumns = [
+    {
+      label: 'Kode Setting',
+      value: 'kode_setting'
+    },
+    {
+      label: 'Nama Setting',
+      value: 'nama_setting'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
+    },
+    {
+      label: 'Tipe',
+      value: 'tipe_setting'
+    }
+  ]
 
   res_data = [
     {
@@ -45,7 +69,9 @@ export class DetailJurnalComponent implements OnInit {
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
-      saldo_kredit: 0
+      saldo_kredit: 0,
+      setting_debit: '',
+      setting_kredit: ''
     },
     {
       id_akun: '',
@@ -54,11 +80,14 @@ export class DetailJurnalComponent implements OnInit {
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
-      saldo_kredit: 0
+      saldo_kredit: 0,
+      setting_debit: '',
+      setting_kredit: ''
     }
   ];
   total_debit = 0
   total_kredit = 0
+  tipe_setting = ""
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -88,17 +117,23 @@ export class DetailJurnalComponent implements OnInit {
     }
   }
 
-  openDialog(ind) {
+  openDialog(ind, type, n?: any) {
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
+      width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       data: {
         type: 'induk_akun',
         tableInterface: {},
-        displayedColumns: this.akunDisplayColumns,
-        tableData: this.data_akun,
+        displayedColumns:
+          type === "kode_akun" ? this.akunDisplayColumns :
+            type === "kode_setting" ? this.settingDisplayColumns :
+              [],
+        tableData:
+          type === "kode_akun" ? this.data_akun :
+            type === "kode_setting" ? this.data_setting :
+              [],
         tableRules: [],
         formValue: {}
       }
@@ -106,11 +141,43 @@ export class DetailJurnalComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.res_data[ind]['id_akun'] = result.id_akun
-        this.res_data[ind]['kode_akun'] = result.kode_akun
-        this.res_data[ind]['nama_akun'] = result.nama_akun
-        this.res_data[ind]['keterangan_akun'] = this.res_data[ind]['nama_akun'] + " - " + this.res_data[ind]['kode_akun']
-        this.ref.markForCheck();
+        if (type === "kode_akun") {
+          this.res_data[ind]['id_akun'] = result.id_akun
+          this.res_data[ind]['kode_akun'] = result.kode_akun
+          this.res_data[ind]['nama_akun'] = result.nama_akun
+          this.res_data[ind]['keterangan_akun'] = this.res_data[ind]['nama_akun'] + " - " + this.res_data[ind]['kode_akun']
+          this.ref.markForCheck();
+        } else if (type === "kode_setting") {
+          if (n !== undefined) {
+            if (this.tipe_setting === result.tipe_setting) {
+              if (n === "d") {
+                this.res_data[ind]['setting_debit'] = result.kode_setting
+                this.res_data[ind]['setting_kredit'] = ""
+                this.tipe_setting = result.tipe_setting
+              } else if (type === "k") {
+                this.res_data[ind]['setting_debit'] = ""
+                this.res_data[ind]['setting_kredit'] = result.kode_setting
+                this.tipe_setting = result.tipe_setting
+              }
+            } else {
+              this.openSnackBar('Tipe setting berbeda dengan tipe setting sebelumnya', 'info')
+              for (var i = 0; i < this.res_data.length; i++) {
+                this.res_data[i]['setting_debit'] = ""
+                this.res_data[i]['setting_kredit'] = ""
+              }
+              if (n === "d") {
+                this.res_data[ind]['setting_debit'] = result.kode_setting
+                this.res_data[ind]['setting_kredit'] = ""
+                this.tipe_setting = result.tipe_setting
+              } else if (type === "k") {
+                this.res_data[ind]['setting_debit'] = ""
+                this.res_data[ind]['setting_kredit'] = result.kode_setting
+                this.tipe_setting = result.tipe_setting
+              }
+            }
+            
+          }
+        }
       }
     });
   }
@@ -205,7 +272,9 @@ export class DetailJurnalComponent implements OnInit {
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
-      saldo_kredit: 0
+      saldo_kredit: 0,
+      setting_debit: '',
+      setting_kredit: ''
     }
     this.res_data.push(r)
   }
@@ -224,5 +293,26 @@ export class DetailJurnalComponent implements OnInit {
       data: this.res_data
     }
     return res
+  }
+
+  openSnackBar(message, type?: any, onCloseFunc?: any) {
+    const dialogRef = this.dialog.open(AlertdialogComponent, {
+      width: '90vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '120px' },
+      data: {
+        type: type === undefined || type == null ? '' : type,
+        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase(),
+        onCloseFunc: onCloseFunc === undefined || onCloseFunc == null ? null : () => onCloseFunc()
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.dialog.closeAll()
+    })
   }
 }

@@ -33,6 +33,8 @@ export class ForminputComponent implements OnInit {
   @Input() detailJurnal: boolean; 
   @Input() jurnalDataAkun: any;
   @Input() jurnalData: any;
+  @Input() jurnalOtomatis: boolean;
+  @Input() jurnalDataSetting: any;
   //On parent form 'update' state
   @Input() onUpdate: any;
   //Show delete button on parent in 'update' state
