@@ -243,7 +243,6 @@ export class PengaturanLaporanComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.needCompany(true)
     this.madeRequest()
     this.reqKodePerusahaan()
 

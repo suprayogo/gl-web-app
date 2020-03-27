@@ -18,7 +18,7 @@
         <div *ngFor="let x of res_data; let i = index"
             style="width: 100%; height: auto; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
             [id]="i == 0 ? 'content' : null">
-            <div style="width: 32.5%; padding: 10px; border-right: solid 1px lightgrey;" class="input-group">
+            <div style="width: 32.5%; height: fit-content; padding: 10px; border-right: solid 1px lightgrey;" class="input-group">
                 <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}" (blur)="onBlur($event, i)"
                     (keyup.enter)="onBlur($event, i)" (keyup.tab)="onBlur($event, i)"
                     [(ngModel)]="res_data[i]['keterangan_akun']">
@@ -51,26 +51,31 @@
                     [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions">
             </div>
             <!-- Jurnal Otomatis -->
-            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
-                *ngIf="jurnalOtomatis">
-                <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
-                    [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
-                <div class="input-group-append">
-                    <button tabindex="-1" type="button" class="btn btn-primary"
-                        (click)="openDialog(i, 'kode_setting', 'd')">
-                        Pilih
-                    </button>
+            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;" *ngIf="jurnalOtomatis">
+                <div class="input-group">
+                    <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
+                        [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
+                    <div class="input-group-append">
+                        <button tabindex="-1" type="button" class="btn btn-primary"
+                            (click)="openDialog(i, 'kode_setting', 'd')">
+                            Pilih
+                        </button>
+                    </div>
                 </div>
+                <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
             </div>
-            <div style="width: 21.25%; padding: 10px" class="input-group" *ngIf="jurnalOtomatis">
-                <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
-                    [(ngModel)]="res_data[i]['setting)kredit']" placeholder="Sumber data" readonly>
-                <div class="input-group-append">
-                    <button tabindex="-1" type="button" class="btn btn-primary"
-                        (click)="openDialog(i, 'kode_setting', 'k')">
-                        Pilih
-                    </button>
+            <div style="width: 21.25%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis">
+                <div class="input-group">
+                    <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
+                        [(ngModel)]="res_data[i]['setting_kredit']" placeholder="Sumber data" readonly>
+                    <div class="input-group-append">
+                        <button tabindex="-1" type="button" class="btn btn-primary"
+                            (click)="openDialog(i, 'kode_setting', 'k')">
+                            Pilih
+                        </button>
+                    </div>
                 </div>
+                <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
             </div>
         </div>
     </div>

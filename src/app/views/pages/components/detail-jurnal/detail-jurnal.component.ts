@@ -57,7 +57,18 @@ export class DetailJurnalComponent implements OnInit {
     },
     {
       label: 'Tipe',
-      value: 'tipe_setting'
+      value: 'tipe_setting_sub'
+    }
+  ]
+  settingDataRules = [
+    {
+      target: 'tipe_setting',
+      replacement: {
+        '0': 'Per Periode',
+        '1': 'Per Tanggal',
+        '2': 'Per Transaksi'
+      },
+      redefined: 'tipe_setting_sub'
     }
   ]
 
@@ -107,6 +118,7 @@ export class DetailJurnalComponent implements OnInit {
     }
     this.countDebit()
     this.countKredit()
+    this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
   }
 
   checkChanges() {
@@ -135,7 +147,9 @@ export class DetailJurnalComponent implements OnInit {
           type === "kode_akun" ? this.data_akun :
             type === "kode_setting" ? this.data_setting :
               [],
-        tableRules: [],
+        tableRules:
+          type === "kode_setting" ? this.settingDataRules :
+            [],
         formValue: {}
       }
     });
@@ -155,13 +169,15 @@ export class DetailJurnalComponent implements OnInit {
                 this.res_data[ind]['setting_debit'] = result.kode_setting
                 this.res_data[ind]['setting_kredit'] = ""
                 this.tipe_setting = result.tipe_setting
-              } else if (type === "k") {
+              } else if (n === "k") {
                 this.res_data[ind]['setting_debit'] = ""
                 this.res_data[ind]['setting_kredit'] = result.kode_setting
                 this.tipe_setting = result.tipe_setting
               }
             } else {
-              this.openSnackBar('Tipe setting berbeda dengan tipe setting sebelumnya', 'info')
+              if (this.tipe_setting !== "") {
+                this.openSnackBar('Tipe setting berbeda dengan tipe setting sebelumnya', 'info')
+              }
               for (var i = 0; i < this.res_data.length; i++) {
                 this.res_data[i]['setting_debit'] = ""
                 this.res_data[i]['setting_kredit'] = ""
@@ -170,14 +186,16 @@ export class DetailJurnalComponent implements OnInit {
                 this.res_data[ind]['setting_debit'] = result.kode_setting
                 this.res_data[ind]['setting_kredit'] = ""
                 this.tipe_setting = result.tipe_setting
-              } else if (type === "k") {
+              } else if (n === "k") {
                 this.res_data[ind]['setting_debit'] = ""
                 this.res_data[ind]['setting_kredit'] = result.kode_setting
                 this.tipe_setting = result.tipe_setting
               }
             }
-            
+
           }
+          this.ref.markForCheck();
+          console.log(this.res_data)
         }
       }
     });
@@ -286,6 +304,11 @@ export class DetailJurnalComponent implements OnInit {
       this.countDebit()
       this.countKredit()
     }
+  }
+
+  clearJurnalOtomatisData(i) {
+    this.res_data[i]['setting_debit'] = ""
+    this.res_data[i]['setting_kredit'] = ""
   }
 
   getData() {

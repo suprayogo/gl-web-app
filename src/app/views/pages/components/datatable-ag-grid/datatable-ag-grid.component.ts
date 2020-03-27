@@ -67,7 +67,7 @@ export class DatatableAgGridComponent implements OnInit {
       this.containerStyle.height = this.containerHeight + 'px'
     }else{
       let sHeight = document.documentElement.clientHeight
-      this.containerStyle.height = this.onDialog ? JSON.stringify((sHeight * 0.55)) + 'px' : JSON.stringify((sHeight * 1.5)) + 'px'
+      this.containerStyle.height = this.onDialog ? (JSON.stringify((sHeight * 0.55) < 300 ? 300 : (sHeight * 0.55)) + 'px') : JSON.stringify((sHeight * 1.5)) + 'px'
     }
 
     let colDef = [], colData =[]

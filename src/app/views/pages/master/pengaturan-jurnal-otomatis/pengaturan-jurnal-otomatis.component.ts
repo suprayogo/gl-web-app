@@ -32,6 +32,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   // Variables
   loading: boolean = true;
+  loadingDepartemen: boolean = true;
   content: any;
   detailLoad: boolean = false;
   enableDetail: boolean = true;
@@ -48,6 +49,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   kode_perusahaan: any;
   requestMade: boolean = false;
   batal_alasan: any = "";
+  dialogRef: any;
+  dialogType: any;
 
   // Input Name
   formValue = {
@@ -85,10 +88,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   //Confirmation Variable
   c_buttonLayout = [
     {
-      btnLabel: 'BATALKAN TRANSAKSI',
+      btnLabel: 'Hapus Pengaturan',
       btnClass: 'btn btn-primary',
       btnClick: () => {
-        // this.cancelData()
+        this.deleteData()
       },
       btnCondition: () => {
         return true
@@ -105,7 +108,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   ]
   c_labelLayout = [
     {
-      content: 'Yakin akan membatalkan transaksi?',
+      content: 'Yakin akan menghapus pengaturan?',
       style: {
         'color': 'red',
         'font-size': '20px',
@@ -117,13 +120,16 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'No. Transaksi',
-      value: 'no_tran'
+      label: 'Kode Jurnal',
+      value: 'kode_jurnal'
     },
     {
-      label: 'Tgl. Transaksi',
-      value: 'tgl_tran',
-      date: true
+      label: 'Nama Jurnal',
+      value: 'nama_jurnal'
+    },
+    {
+      label: 'Cabang',
+      value: 'nama_cabang'
     },
     {
       label: 'Divisi',
@@ -136,10 +142,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     {
       label: 'Keterangan',
       value: 'keterangan'
-    },
-    {
-      label: 'Status',
-      value: 'batal_status_sub'
     },
     {
       label: 'Diinput oleh',
@@ -389,7 +391,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.needCompany(true)
     this.reqKodePerusahaan()
     this.madeRequest()
 
@@ -447,18 +448,20 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
-    // this.formValue = {
-    //   id_tran: x['id_tran'],
-    //   no_tran: x['no_tran'],
-    //   tgl_tran: JSON.stringify(t_tran.getTime()),
-    //   kode_divisi: x['kode_divisi'],
-    //   nama_divisi: x['nama_divisi'],
-    //   kode_departemen: x['kode_departemen'],
-    //   nama_departemen: x['nama_departemen'],
-    //   keterangan: x['keterangan']
-    // }
+    this.formValue = {
+      kode_jurnal: x['kode_jurnal'],
+      nama_jurnal: x['nama_jurnal'],
+      kode_cabang: x['kode_cabang'],
+      nama_cabang: x['nama_cabang'],
+      kode_divisi: x['kode_divisi'],
+      nama_divisi: x['nama_divisi'],
+      kode_departemen: x['kode_departemen'],
+      nama_departemen: x['nama_departemen'],
+      keterangan: x['keterangan']
+    }
     this.onUpdate = true;
-    this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
+    this.enableDelete = true
+    this.enableCancel = false
     this.getBackToInput();
   }
 
@@ -503,23 +506,19 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         } else if (this.forminput.getData().nama_departemen === '') {
           this.openSnackBar('Departemen tidak valid.', 'info')
         } else {
-          this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
+          this.openSnackBar('Ada akun yang tidak memiliki sumber data atau sumber data tidak seimbang.', 'info')
         }
+        this.gbl.topPage()
       }
     }
   }
 
   validateSubmit() {
-    let valid = true
+    let valid = true, hasDebit = false, hasKredit = false
 
     let data = this.forminput === undefined ? null : this.forminput.getData()
 
     if (data != null) {
-      if (data['detail'] !== undefined || data['detail'] != null) {
-        if (!data['detail']['valid']) {
-          valid = false
-        }
-      }
 
       for (var i = 0; i < data['detail']['data'].length; i++) {
         if (data['detail']['data'][i]['id_akun'] === '') {
@@ -528,8 +527,28 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         }
       }
 
+      for (var i = 0; i < data['detail']['data'].length; i++) {
+        if (data['detail']['data'][i]['setting_debit'] === '' && data['detail']['data'][i]['setting_kredit'] === '') {
+          valid = false
+          break;
+        }
+      }
+
+      for (var i = 0; i < data['detail']['data'].length; i++) {
+        if (data['detail']['data'][i]['setting_debit'] !== '') {
+          hasDebit = true
+        }
+        if (data['detail']['data'][i]['setting_kredit'] !== '') {
+          hasKredit = true
+        }
+      }
+
       if (data['nama_departemen'] === '') valid = false
       if (data['nama_divisi'] === '') valid = false
+    }
+
+    if (!hasKredit || !hasDebit) {
+      valid = false
     }
 
     return valid
@@ -624,8 +643,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         return
       }
     }
-
-    const dialogRef = this.dialog.open(DialogComponent, {
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    this.dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
@@ -653,11 +672,12 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
             type === "kode_departemen" ? this.inputDepartemenDataRules :
               type === "kode_cabang" ? this.inputCabangDataRules :
                 [],
-        formValue: this.formValue
+        formValue: this.formValue,
+        loadingData: type === "kode_departemen" ? this.loadingDepartemen : null
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (type === "kode_departemen") {
           if (this.forminput !== undefined) {
@@ -668,9 +688,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
           }
         } else if (type === "kode_divisi") {
           if (this.forminput !== undefined) {
+            let kd = this.forminput.getData()['kode_divisi']
             this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
             this.forminput.updateFormValue('nama_divisi', result.nama_divisi)
-            this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
+            if (kd !== result.kode_divisi) this.sendRequestDepartemen(result.kode_divisi)
           }
         } else if (type === "kode_cabang") {
           if (this.forminput !== undefined) {
@@ -680,15 +701,18 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         }
         this.ref.markForCheck();
       }
+      this.dialogRef = undefined;
+      this.dialogType = undefined;
     });
   }
 
   openCDialog() { // Confirmation Dialog
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: '90vw',
+      width: '35vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
       data: {
         buttonLayout: this.c_buttonLayout,
         labelLayout: this.c_labelLayout,
@@ -712,16 +736,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
             required: false,
             readOnly: true,
             disabled: true,
-          },
-          {
-            label: 'Alasan Batal',
-            id: 'alasan-batal',
-            type: 'input',
-            valueOf: null,
-            changeOn: (t) => this.batal_alasan = t.target.value,
-            required: true,
-            readOnly: false,
-            disabled: false,
           }
         ]
       },
@@ -745,7 +759,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
           if (data['STATUS'] === 'Y') {
             this.inputDivisiData = data['RESULT']
             this.updateInputdata(data['RESULT'], 'kode_divisi')
-            this.sendRequestDepartemen()
+            this.sendRequestCabang()
           } else {
             this.openSnackBar('Gagal mendapatkan daftar divisi. Mohon coba lagi nanti.', 'fail')
             this.loading = false
@@ -756,16 +770,25 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     }
   }
 
-  sendRequestDepartemen() {
-    this.request.apiData('departemen', 'g-departemen', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+  sendRequestDepartemen(kode_divisi) {
+    this.loadingDepartemen = true
+    this.request.apiData('departemen', 'g-departemen-divisi', { kode_perusahaan: this.kode_perusahaan, kode_divisi: kode_divisi }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputDepartemenData = data['RESULT']
-          this.sendRequestCabang()
-        } else {
-          this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
-          this.loading = false
+          this.updateInputdata(data['RESULT'], 'kode_departemen')
+          this.loadingDepartemen = false
           this.ref.markForCheck()
+          if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
+            if (this.dialogType === "kode_departemen") {
+              this.dialog.closeAll()
+              this.openDialog('kode_departemen')
+            }
+          }
+        } else {
+          this.loadingDepartemen = false
+          this.dialog.closeAll()
+          this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
         }
       }
     )
@@ -803,7 +826,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   }
 
   sendRequestSetting() {
-    this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('setting-link', 'g-setting-link-tarik-data', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputSettingData = data['RESULT']
@@ -821,7 +844,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   getDetail() {
     this.detailLoad = true
     this.ref.markForCheck()
-    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, kode_jurnal: this.formValue.kode_jurnal }).subscribe(
+    this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis-detail', { kode_perusahaan: this.kode_perusahaan, kode_jurnal: this.formValue.kode_jurnal }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
@@ -832,8 +855,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
               nama_akun: resp[i]['nama_akun'],
               keterangan_akun: resp[i]['keterangan_akun'],
               keterangan: resp[i]['keterangan'],
-              saldo_debit: parseFloat(resp[i]['nilai_debit']),
-              saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
+              setting_debit: resp[i]['kode_debit'],
+              setting_kredit: resp[i]['kode_kredit']
             }
             res.push(t)
           }
@@ -852,7 +875,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -882,7 +905,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   openSnackBar(message, type?: any, onCloseFunc?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
