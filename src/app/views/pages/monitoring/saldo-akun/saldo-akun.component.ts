@@ -140,7 +140,7 @@ export class SaldoAkunComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.needCompany(true)
+    this.gbl.need(true, false)
     this.subscription = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value

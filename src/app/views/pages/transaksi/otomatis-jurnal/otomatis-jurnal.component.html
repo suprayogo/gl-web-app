@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <kt-portlet-body>
+                <div class="kt-section" style="display:flex; flex-direction: row; height:320px;" *ngIf="!loading">
+                    <div style="width: 50%;">
+                        <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombol"
+                            [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [tableRules]="detailRules" [editable]="editable" [detailLoad]="detailLoad"
+                            [enableDetail]="enableDetail" (onSubmit)="sendRequestHasilTarik()" [onUpdate]="onUpdate"
+                            [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                            (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                            (onCancel)="onCancel()" [onSub]="onSub" [noCancel]="noCancel">
+                        </kt-forminput>
+                    </div>
+
+                    <div class="kt-section" *ngIf="tableLoadRT && !loading" style="width: 50%;">
+                        <kt-loading [loadingText]="loadingDataTextRT"></kt-loading>
+                    </div>
+
+                    <div *ngIf="!tableLoadRT && !loading" style="width: 50%;">
+                        <h2>Riwayat Tarik Data Jurnal</h2>
+                        <kt-datatable-ag-grid #rt [tableColumn]="displayedColumnsTableRT" [tableData]="browseDataRT"
+                            [tableRules]="browseDataRulesRT" [containerHeight]=300>
+                        </kt-datatable-ag-grid>
+                    </div>
+                </div>
+
+                <hr style="width: 100%;">
+
+                <div class="kt-section" *ngIf="tableLoadHT && !loading">
+                    <kt-loading [loadingText]="loadingDataTextHT"></kt-loading>
+                </div>
+
+                <div *ngIf="!tableLoadHT && !loading">
+                    <hr>
+                    <h2>Hasil Tarik Data Jurnal</h2>
+                    <kt-datatable-ag-grid #ht [tableColumn]="displayedColumnsTableHT" [tableData]="browseDataHT"
+                        [tableRules]="browseDataRulesHT" (selectRowEvent)="browseSelectRow($event)"
+                        [containerHeight]=300>
+                    </kt-datatable-ag-grid>
+                    <!-- <kt-forminput (onSubmit)="openCDialog()" (onCancel)="onCancel()"></kt-forminput> -->
+                </div>
+            </kt-portlet-body>
+
+        </kt-portlet>
+
+        <!-- End of a Content -->   
+
+    </div>
+</div>

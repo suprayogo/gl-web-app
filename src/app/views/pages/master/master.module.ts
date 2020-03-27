@@ -56,6 +56,7 @@ import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.compo
 import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
 import { PengaturanLaporanComponent } from './pengaturan-laporan/pengaturan-laporan.component';
 import { PengaturanJurnalOtomatisComponent } from './pengaturan-jurnal-otomatis/pengaturan-jurnal-otomatis.component';
+import { PengaturanLinkTarikDataComponent } from './pengaturan-link-tarik-data/pengaturan-link-tarik-data.component';
 
 
 const routes: Routes = [
@@ -90,6 +91,10 @@ const routes: Routes = [
 	{
 		path: 'pengaturan-jurnal-otomatis',
 		component: PengaturanJurnalOtomatisComponent,
+	},
+	{
+		path: 'pengaturan-link-tarik-data',
+		component: PengaturanLinkTarikDataComponent,
 	}
 ];
 
@@ -158,7 +163,8 @@ const routes: Routes = [
 		JenisTransaksiComponent,
 		PengaturanSaldoAwalComponent,
 		PengaturanLaporanComponent,
-		PengaturanJurnalOtomatisComponent
+		PengaturanJurnalOtomatisComponent,
+		PengaturanLinkTarikDataComponent,
 	]
 })
 export class MasterModule {}

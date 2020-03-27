@@ -50,6 +50,7 @@ import {
 // Components
 import { JurnalComponent } from './jurnal/jurnal.component';
 import { PostingJurnalComponent } from './posting-jurnal/posting-jurnal.component';
+import { OtomatisJurnalComponent } from './otomatis-jurnal/otomatis-jurnal.component';
 
 const routes: Routes = [
   {
@@ -64,6 +65,10 @@ const routes: Routes = [
   {
     path: 'posting-jurnal-tutup-periode',
     component: PostingJurnalComponent
+  },
+  {
+    path: 'otomatis-jurnal',
+    component: OtomatisJurnalComponent
   }
 ]
 
@@ -126,7 +131,8 @@ const routes: Routes = [
   ],
   declarations: [
     JurnalComponent,
-    PostingJurnalComponent
+    PostingJurnalComponent,
+    OtomatisJurnalComponent
   ]
 })
 export class TransaksiModule { }

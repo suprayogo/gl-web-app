@@ -178,7 +178,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.needCompany(true)
+    this.gbl.need(true, true)
     this.reqKodePerusahaan()
     this.reqAccessPeriod()
     this.madeRequest()
@@ -267,6 +267,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(v) {
+    this.gbl.topPage()
     let x = JSON.parse(JSON.stringify(v))
     this.formDetail = {
       no_tran: x['no_tran'],
@@ -280,6 +281,8 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '50px' },
       data: {
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,

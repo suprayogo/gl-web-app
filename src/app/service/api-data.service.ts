@@ -16,6 +16,7 @@ import { AkunRequestService } from './master/akun/akun-request.service';
 import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-transaksi-request.service';
 import { SettingLaporanRequestService } from './master/setting-laporan/setting-laporan-request.service';
 import { JurnalOtomatisRequestService } from './master/jurnal-otomatis/jurnal-otomatis-request.service';
+import { SettingLinkRequestService } from './master/setting-link/setting-link-request.service';
 
 //Transaksi Services
 import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service';
@@ -50,6 +51,7 @@ export class ApiDataService {
     private jenisTransaksiReq: JenisTransaksiRequestService,
     private settingLaporanReq: SettingLaporanRequestService,
     private jurnalOtomatisReq: JurnalOtomatisRequestService,
+    private settingLinkReq: SettingLinkRequestService,
     
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -74,6 +76,8 @@ export class ApiDataService {
     this.kategoriAkunReq.url = this.baseURL
     this.akunReq.url = this.baseURL
     this.jenisTransaksiReq.url = this.baseURL
+    this.settingLinkReq.url = this.baseURL
+    
 
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
@@ -118,7 +122,9 @@ export class ApiDataService {
       return this.akunReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'jenis-transaksi') {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
-    }
+    } else if (type === 'setting-link') {
+      return this.settingLinkReq.validate(data, this.httpBody, this.options, formData)
+    } 
 
     //Setting Services 
     else if (type === 'setting-laporan') {

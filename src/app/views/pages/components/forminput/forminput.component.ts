@@ -43,6 +43,7 @@ export class ForminputComponent implements OnInit {
   @Input() disableSubmit: boolean;
   @Input() noCancel: boolean;
   @Input() onSub: any;
+  @Input() onButton: any;
   @Input() nama_tombol: any;
   @Input() nama_tombol2: any;
 

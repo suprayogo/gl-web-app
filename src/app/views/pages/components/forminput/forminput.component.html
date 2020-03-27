@@ -106,7 +106,8 @@
   <div class="kt-form__actions" *ngIf="!noButton">
     <button type="submit" class="btn btn-brand" *ngIf="!onSub" [disabled]="disableSubmit ? true : false">{{ button_name }}</button>
     <button type="submit" class="btn btn-brand" *ngIf="onSub">{{ button_name2 }}</button>
-    <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;"
+    <button type="submit" class="btn btn-brand" *ngIf="onButton">Simpan</button>
+    <button type="button" class="btn btn-secondary kt--margin-left-10" *ngIf="!noCancel" style="margin-left: 10px;"
       (click)="onReset()">Batal</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="delData()"
       *ngIf="onUpdate && enableDelete">Hapus</button>

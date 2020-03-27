@@ -9,33 +9,18 @@
                 <kt-loading></kt-loading>
             </div>
 
-            <!-- Start of Tabs -->
-            <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
+            <kt-portlet-body>
+                <div class="kt-section">
+                    <kt-forminput [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
+                        [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
+                        [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
+                        [onUpdate]="onUpdate" [enableDelete]="enableDelete" (onCancel)="onCancel()"
+                        (deleteData)="openCDialog()" (editAction)="editDetailData($event)"
+                        (deleteAction)="deleteDetailData($event)">
+                    </kt-forminput>
+                </div>
+            </kt-portlet-body>
 
-                <!-- Start of tab input-->
-                <mat-tab label="">
-
-                    <!-- Tab Label -->
-                    <ng-template mat-tab-label>
-                        <p style="margin-bottom: 0"><b>Input</b></p><br>
-                    </ng-template>
-
-                    <kt-portlet-body>
-                        <div class="kt-section">
-                            <kt-forminput [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
-                                [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
-                                [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
-                                [onUpdate]="onUpdate" [enableDelete]="enableDelete" (onCancel)="onCancel()"
-                                (deleteData)="openCDialog()" (editAction)="editDetailData($event)"
-                                (deleteAction)="deleteDetailData($event)">
-                            </kt-forminput>
-                        </div>
-                    </kt-portlet-body>
-
-                </mat-tab>
-                <!-- End of tab input-->
-            </mat-tab-group>
-            <!-- End of Tabs -->
         </kt-portlet>
 
         <!-- End of a Content -->
