@@ -46,16 +46,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   subPeriode: any;
   subPeriodeAktif: any;
   kode_perusahaan: any;
-  periode_akses: any = {
-    id_periode: '',
-    tahun_periode: '',
-    bulan_periode: ''
-  };
-  periode_aktif: any = {
-    id_periode: '',
-    tahun_periode: '',
-    bulan_periode: ''
-  };
   requestMade: boolean = false;
   batal_alasan: any = "";
 
@@ -401,8 +391,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     this.content = content // <-- Init the content
     this.gbl.needCompany(true)
     this.reqKodePerusahaan()
-    this.reqIdPeriode()
-    this.reqIdPeriodeAktif()
     this.madeRequest()
 
     // Notify parent perusahaan and periode needed
@@ -410,7 +398,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       'type': 'UTIL',
       'res': {
         perusahaan: true,
-        periode: true,
+        periode: false,
         access_key: this.gbl.getAccessKey()
       }
     }, '*')
@@ -418,22 +406,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   ngAfterViewInit(): void {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
-    this.periode_akses = {
-      id_periode: this.gbl.getIdPeriode(),
-      tahun_periode: this.gbl.getTahunPeriode(),
-      bulan_periode: this.gbl.getBulanPeriode()
-    }
-    this.periode_aktif = {
-      id_periode: this.gbl.getIdPeriodeAktif(),
-      tahun_periode: this.gbl.getTahunPeriodeAktif(),
-      bulan_periode: this.gbl.getBulanPeriodeAktif()
-    }
-    if (this.kode_perusahaan !== "" && this.periode_akses.id_periode !== "") {
-      if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-        this.disableSubmit = true
-      } else {
-        this.disableSubmit = false
-      }
+    if (this.kode_perusahaan !== "") {
       this.madeRequest()
     }
   }
@@ -456,41 +429,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
         if (this.selectedTab == 1 && this.browseNeedUpdate) {
           this.refreshBrowse('')
-        }
-      }
-    )
-  }
-
-  reqIdPeriode() {
-    this.subPeriode = this.gbl.change_periode.subscribe(
-      value => {
-        this.periode_akses = value
-        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-          this.disableSubmit = true
-        } else {
-          this.disableSubmit = false
-        }
-        this.resetForm()
-        this.browseData = []
-        this.browseNeedUpdate = true
-        this.ref.markForCheck()
-        this.madeRequest()
-
-        if (this.selectedTab == 1 && this.browseNeedUpdate) {
-          this.refreshBrowse('')
-        }
-      }
-    )
-  }
-
-  reqIdPeriodeAktif() {
-    this.subPeriodeAktif = this.gbl.activePeriod.subscribe(
-      value => {
-        this.periode_aktif = value
-        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-          this.disableSubmit = true
-        } else {
-          this.disableSubmit = false
         }
       }
     )
@@ -539,7 +477,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }, this.formValue)
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
         this.request.apiData('jurnal-otomatis', this.onUpdate ? 'u-setting-jurnal-otomatis' : 'i-setting-jurnal-otomatis', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -800,7 +738,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && !this.requestMade) {
       this.requestMade = true
       this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
@@ -865,7 +803,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   }
 
   sendRequestSetting() {
-    this.request.apiData('setting-laporan', 'g-setting-laporan', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputSettingData = data['RESULT']
@@ -914,7 +852,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {

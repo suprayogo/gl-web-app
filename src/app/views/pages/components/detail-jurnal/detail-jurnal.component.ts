@@ -123,6 +123,7 @@ export class DetailJurnalComponent implements OnInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
       data: {
         type: 'induk_akun',
         tableInterface: {},
