@@ -43,15 +43,27 @@ export class GlobalVariableService {
     }, "*")
   }
 
-  // NEED PERUSAHAAN
-  needCompany(need){
+  // TOP PAGE
+  bottomPage(){
     window.parent.postMessage({
-      'type': 'NEEDED-PERUSAHAAN',
-      'res': need
+      'type': 'BOTTOM-PAGE',
+      'res': true
     }, "*")
   }
 
-  // TOKEN
+  // NEED COMPANY AND PERIOD
+  need(Company, Period){
+    window.parent.postMessage({
+      'type': 'UTIL',
+      'res': {
+        perusahaan: Company,
+        periode: Period,
+        access_key: this.access_key
+      }
+    }, '*')
+  }
+
+  // TOKEN DC
   getTokenDarkoCenter(tokenDC){
     this.token = tokenDC
     localStorage.setItem('token', this.token)
@@ -118,15 +130,44 @@ export class GlobalVariableService {
     return this.bulan_periodeAktif;
   }
 
+  getNamaBulan(m) {
+    let n = "" // NAMA BULAN
+    if (m === '1') {
+      n = 'Januari'
+    } else if (m === '2') {
+      n = 'Februari'
+    } else if (m === '3') {
+      n = 'Maret'
+    } else if (m === '4') {
+      n = 'April'
+    } else if (m === '5') {
+      n = 'Mei'
+    } else if (m === '6') {
+      n = 'Juni'
+    } else if (m === '7') {
+      n = 'Juli'
+    } else if (m === '8') {
+      n = 'Agustus'
+    } else if (m === '9') {
+      n = 'September'
+    } else if (m === '10') {
+      n = 'Oktober'
+    } else if (m === '11') {
+      n = 'November'
+    } else if (m === '12') {
+      n = 'Desember'
+    }
+    return n;
+  }
+
   getActive(){
     return {
       id_periode: this.getIdPeriodeAktif(),
       tahun_periode: this.getTahunPeriodeAktif(),
-      bulan_periode: this.getBulanPeriodeAktif()
+      bulan_periode: this.getBulanPeriodeAktif(),
+      nama_bulan_periode: this.getNamaBulan(this.bulan_periodeAktif)
     }
   }
-
-  
 
   periodeAktif(pa_id, pa_tahun, pa_bulan, pa_nama_bulan_aktif){
     this.id_periodeAktif = pa_id

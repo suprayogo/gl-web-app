@@ -11,7 +11,7 @@ import { RekeningPerusahaanRequestService } from './master/rekening-perusahaan/r
 import { KategoriAkunRequestService } from './master/kategori-akun/kategori-akun-request.service';
 import { AkunRequestService } from './master/akun/akun-request.service';
 import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-transaksi-request.service';
-
+import { SettingLinkRequestService } from './master/setting-link/setting-link-request.service';
 
 //Transaksi Services
 import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service';
@@ -41,7 +41,7 @@ export class ApiDataService {
     private kategoriAkunReq: KategoriAkunRequestService,
     private akunReq: AkunRequestService,
     private jenisTransaksiReq: JenisTransaksiRequestService,
-    
+    private settingLinkReq: SettingLinkRequestService,
     
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -66,6 +66,7 @@ export class ApiDataService {
     this.kategoriAkunReq.url = this.baseURL
     this.akunReq.url = this.baseURL
     this.jenisTransaksiReq.url = this.baseURL
+    this.settingLinkReq.url = this.baseURL
     
 
     //Setting Services
@@ -103,6 +104,8 @@ export class ApiDataService {
       return this.akunReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'jenis-transaksi') {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'setting-link') {
+      return this.settingLinkReq.validate(data, this.httpBody, this.options, formData)
     } 
 
     //Setting Services

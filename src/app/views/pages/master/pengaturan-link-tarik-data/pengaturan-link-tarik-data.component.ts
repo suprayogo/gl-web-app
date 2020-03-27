@@ -12,18 +12,20 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Jenis Transaksi'
+  beforeCodeTitle: 'Pengaturan Link Penarikkan Data'
 }
 
 @Component({
-  selector: 'kt-jenis-transaksi',
-  templateUrl: './jenis-transaksi.component.html',
-  styleUrls: ['./jenis-transaksi.component.scss', '../master.style.scss']
+  selector: 'kt-pengaturan-link-tarik-data',
+  templateUrl: './pengaturan-link-tarik-data.component.html',
+  styleUrls: ['./pengaturan-link-tarik-data.component.scss', '../master.style.scss']
 })
-export class JenisTransaksiComponent implements OnInit, AfterViewInit {
+
+export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -45,6 +47,21 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
   kode_perusahaan: any;
+
+  tipe_setting: Object = [
+    {
+      label: 'Per Periode',
+      value: '0'
+    },
+    {
+      label: 'Per Tanggal',
+      value: '1'
+    },
+    {
+      label: 'Per Transaksi',
+      value: '2'
+    }
+  ]
 
   //Confirmation Variable
   c_buttonLayout = [
@@ -81,12 +98,28 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'Kode Jenis Transaksi',
-      value: 'kode_jenis_transaksi'
+      label: 'Kode Setting',
+      value: 'kode_setting'
     },
     {
-      label: 'Nama Jenis Transaksi',
-      value: 'nama_jenis_transaksi'
+      label: 'Nama Setting',
+      value: 'nama_setting'
+    },
+    {
+      label: 'URL',
+      value: 'url'
+    },
+    {
+      label: 'URL Method',
+      value: 'url_method'
+    },
+    {
+      label: 'URL Body',
+      value: 'url_body'
+    },
+    {
+      label: 'Tipe Setting',
+      value: 'tipe_setting_sub'
     },
     {
       label: 'Keterangan',
@@ -110,8 +143,12 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     }
   ];
   browseInterface = {
-    kode_jenis_transaksi: 'string',
-    nama_jenis_transaksi: 'string',
+    kode_setting: 'string',
+    nama_setting: 'string',
+    url: 'string',
+    url_method: 'string',
+    url_body: 'string',
+    tipe_setting: 'string',
     keterangan: 'string',
     //STATIC
     input_by: 'string',
@@ -120,23 +157,37 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = []
+  browseDataRules = [
+    {
+      target: 'tipe_setting',
+      replacement: {
+        '0': 'Per Periode',
+        '1': 'Per Tanggal',
+        '2': 'Per Transaksi',
+      },
+      redefined: 'tipe_setting_sub'
+    }
+  ]
 
   // Input Name
   formValue = {
-    kode_jenis_transaksi: '',
-    nama_jenis_transaksi: '',
-    keterangan: '',
+    kode_setting: '',
+    nama_setting: '',
+    url: '',
+    url_method: '',
+    url_body: '',
+    tipe_setting: '0',
+    keterangan: ''
   }
 
   // Layout Form
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Jenis Transaksi',
-      id: 'kode-jenis-transaksi',
+      label: 'Kode Setting',
+      id: 'kode-setting',
       type: 'input',
-      valueOf: 'kode_jenis_transaksi',
+      valueOf: 'kode_setting',
       required: true,
       readOnly: false,
       update: {
@@ -146,14 +197,61 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Jenis Transaksi',
-      id: 'nama-jenis-transaksi',
+      label: 'Nama Setting',
+      id: 'nama-setting',
       type: 'input',
-      valueOf: 'nama_jenis_transaksi',
+      valueOf: 'nama_setting',
       required: false,
       readOnly: false,
       update: {
         disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'URL',
+      id: 'url',
+      type: 'input',
+      valueOf: 'url',
+      required: false,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'URL Method',
+      id: 'url-method',
+      type: 'input',
+      valueOf: 'url_method',
+      required: false,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'URL Body',
+      id: 'url-body',
+      type: 'input',
+      valueOf: 'url_body',
+      required: false,
+      readOnly: false,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe User',
+      id: 'tipe-setting',
+      type: 'combobox',
+      options: this.tipe_setting,
+      valueOf: 'tipe_setting',
+      update: {
+        disabled: true
       }
     },
     {
@@ -179,7 +277,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false) 
+    this.gbl.need(true, false)
     this.madeRequest()
     this.reqKodePerusahaan()
   }
@@ -235,24 +333,24 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
         labelLayout: this.c_labelLayout,
         inputLayout: [
           {
-            label: 'Kode Jenis Transaksi',
-            id: 'kode-jenis_transaksi',
+            label: 'Kode Setting',
+            id: 'kode-setting',
             type: 'input',
-            valueOf: this.formValue.kode_jenis_transaksi,
+            valueOf: this.formValue.kode_setting,
             changeOn: null,
             required: false,
             readOnly: true,
-            disabled: true,
+            disabled: true
           },
           {
-            label: 'Nama Jenis Transaksi',
-            id: 'nama-jenis-transaksi',
+            label: 'Nama Setting',
+            id: 'nama-setting',
             type: 'input',
-            valueOf: this.formValue.nama_jenis_transaksi,
+            valueOf: this.formValue.nama_setting,
             changeOn: null,
             required: false,
             readOnly: true,
-            disabled: true,
+            disabled: true
           },
         ]
       },
@@ -279,7 +377,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jenis-transaksi', 'g-jenis-transaksi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('setting-link', 'g-setting-link-tarik-data', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -303,18 +401,17 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    let x = this.formValue
-    x.kode_jenis_transaksi = data['kode_jenis_transaksi']
-    x.nama_jenis_transaksi = data['nama_jenis_transaksi']
-    x.keterangan = data['keterangan']
-    this.formValue = x
+    // let x = this.formValue
+    // x.kode_bank = data['kode_bank']
+    // x.nama_bank = data['nama_bank']
+    // x.keterangan = data['keterangan']
+    this.formValue = data
     this.onUpdate = true;
     this.getBackToInput();
   }
 
   getBackToInput() {
     this.selectedTab = 0;
-    this.gbl.topPage()
     //this.getDetail()
     this.formInputCheckChanges()
   }
@@ -324,14 +421,20 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-      if (inputForm.valid && this.formValue.kode_jenis_transaksi !== "") {
-        if (this.formValue.nama_jenis_transaksi === "") {
-          this.openSnackBar('Nama Jenis Transaksi Belum Diisi.', 'info')
+      if (inputForm.valid && this.formValue.kode_setting !== "") {
+        if (this.formValue.nama_setting === "") {
+          this.openSnackBar('Nama Setting Belum Diisi.', 'info')
+        } else if (this.formValue.url === "") {
+          this.openSnackBar('URL Belum Diisi.', 'info')
+        } else if (this.formValue.url_method === "") {
+          this.openSnackBar('URL Method Belum Diisi.', 'info')
+        } else if (this.formValue.url_body === "") {
+          this.openSnackBar('URL Body Belum Diisi.', 'info')
         } else {
           this.addNewData()
         }
       } else {
-        this.openSnackBar('Kode Jenis Transaksi Belum Diisi.', 'info')
+        this.openSnackBar('Kode Setting Belum Diisi.', 'info')
       }
     }
   }
@@ -340,7 +443,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.ref.markForCheck()
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
-    this.request.apiData('jenis-transaksi', this.onUpdate ? 'u-jenis-transaksi' : 'i-jenis-transaksi', endRes).subscribe(
+    this.request.apiData('setting-link', this.onUpdate ? 'u-setting-link-tarik-data' : 'i-setting-link-tarik-data', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.resetForm()
@@ -350,7 +453,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
         } else {
           this.loading = false;
           this.ref.markForCheck()
-          this.openSnackBar(data['RESULT'])
+          this.openSnackBar('Gagal Tambah Data !', 'fail')
         }
       },
       error => {
@@ -365,9 +468,13 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
-      kode_jenis_transaksi: '',
-      nama_jenis_transaksi: '',
-      keterangan: '',
+      kode_setting: '',
+      nama_setting: '',
+      url: '',
+      url_method: '',
+      url_body: '',
+      tipe_setting: '0',
+      keterangan: ''
     }
     // this.detailData = []
     this.formInputCheckChanges()
@@ -390,7 +497,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
       this.loading = true;
       this.ref.markForCheck()
       let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
-      this.request.apiData('jenis-transaksi', 'd-jenis-transaksi', endRes).subscribe(
+      this.request.apiData('setting-link', 'd-setting-link-tarik-data', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()

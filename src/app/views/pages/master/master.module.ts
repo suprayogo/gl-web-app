@@ -54,6 +54,7 @@ import { PegaturanAkunComponent } from './pegaturan-akun/pegaturan-akun.componen
 import { ChartOfAccountComponent } from './chart-of-account/chart-of-account.component';
 import { JenisTransaksiComponent } from './jenis-transaksi/jenis-transaksi.component';
 import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan-saldo-awal.component';
+import { PengaturanLinkTarikDataComponent } from './pengaturan-link-tarik-data/pengaturan-link-tarik-data.component';
 
 
 const routes: Routes = [
@@ -80,6 +81,10 @@ const routes: Routes = [
 	{
 		path: 'pengaturan-saldo-awal',
 		component: PengaturanSaldoAwalComponent,
+	},
+	{
+		path: 'pengaturan-link-tarik-data',
+		component: PengaturanLinkTarikDataComponent,
 	}
 ];
 
@@ -147,6 +152,7 @@ const routes: Routes = [
 		ChartOfAccountComponent,
 		JenisTransaksiComponent,
 		PengaturanSaldoAwalComponent,
+		PengaturanLinkTarikDataComponent,
 	]
 })
 export class MasterModule {}

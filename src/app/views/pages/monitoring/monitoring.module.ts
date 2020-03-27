@@ -51,6 +51,7 @@ import {
 // Components
 import { TransaksiJurnalComponent } from './transaksi-jurnal/transaksi-jurnal.component';
 import { SaldoAkunComponent } from './saldo-akun/saldo-akun.component';
+import { BukuBesarComponent } from './buku-besar/buku-besar.component';
 
 
 const routes: Routes = [
@@ -123,7 +124,8 @@ const routes: Routes = [
   ],
   declarations: [
     TransaksiJurnalComponent,
-    SaldoAkunComponent
+    SaldoAkunComponent,
+    BukuBesarComponent
   ]
 })
 export class MonitoringModule { }

@@ -360,7 +360,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.nama_tombolPJ = 'Posting'
     this.nama_tombolUP = 'Unposting'
     this.nama_tombolTP = 'Tutup Periode'
-    this.gbl.needCompany(true)
+    this.gbl.need(true, false)
     this.reqKodePerusahaan()
     // this.reqActivePeriod()
     // this.madeRequest()
@@ -373,7 +373,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     if (this.kode_perusahaan !== "") {
       // this.madeRequest()
       this.reqActivePeriod()
-      this.tabTP()
+      // this.tabTP()
     }
   }
 
@@ -413,7 +413,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
             this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
             this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
-            this.nama_bulan_aktif = this.gbl.getNamaBulanAktif(this.bulanPeriodeAktif)
+            this.nama_bulan_aktif = this.gbl.getNamaBulan(this.bulanPeriodeAktif)
             this.periode_aktif = this.gbl.getActive()
             this.madeRequest()
             this.ref.markForCheck()
@@ -508,10 +508,11 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
   tabTP() {
     this.loadTab = true
+    console.log(this.periode_aktif.id_periode)
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
       this.formValueTP = {
         id_periode: '',
-        bulan_periode: this.periode_aktif.nama_bulan_periode,
+        bulan_periode: this.periode_aktif.bulan_periode,
         tahun_periode: this.periode_aktif.tahun_periode
       }
       this.c_inputLayoutTP = [
