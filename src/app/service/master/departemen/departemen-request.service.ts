@@ -15,6 +15,10 @@ export class DepartemenRequestService {
       httpBody.respondCode = 'GET-DATA-DEPARTEMEN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-departemen-divisi') {
+      httpBody.respondCode = 'GET-DATA-DEPARTEMEN-DIVISI'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

@@ -14,6 +14,7 @@ import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/dat
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
+import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
   beforeCodeTitle: 'Posting Jurnal & Tutup Periode'
@@ -31,10 +32,12 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   @ViewChild('TP', { static: false }) forminputTP;
   @ViewChild('jbp', { static: false }) djbp;
   @ViewChild('rp', { static: false }) drp;
+  @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
   // Variables
   loading: boolean = true;
   tableLoad: boolean = false;
+  detailJurnalLoad: boolean = false;
   tableLoadBP: boolean = false;
   loadingDataText: string = "Loading Data Riwayat.."
   loadingDataTextBP: string = "Loading Data Belum Posting.."
@@ -172,6 +175,83 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   ]
 
   c_inputLayoutTP = []
+
+  // Input Name
+  formDetail = {
+    id_tran: '',
+    no_tran: '',
+    tgl_tran: '',
+    nama_cabang: '',
+    nama_divisi: '',
+    nama_departemen: '',
+    keterangan: '',
+  }
+
+  detailData = []
+
+  detailInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'No. Transaksi',
+      id: 'no-tran',
+      type: 'input',
+      valueOf: 'no_tran',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tgl. Transaksi',
+      id: 'tgl-transaksi',
+      type: 'input',
+      valueOf: 'tgl_tran',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'nama-cabang',
+      type: 'input',
+      valueOf: 'nama_cabang',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Divisi',
+      id: 'nama-divisi',
+      type: 'input',
+      valueOf: 'nama_divisi',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Departemen',
+      id: 'nama-departemen',
+      type: 'input',
+      valueOf: 'nama_departemen',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Keterangan',
+      id: 'keterangan',
+      type: 'input',
+      valueOf: 'keterangan',
+      required: false,
+      readOnly: true,
+      disabled: true
+    }
+  ]
 
 
   // RIWAYAT TABLE
@@ -656,6 +736,89 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.getBackToInput();
   }
 
+  browseSelectRowBP(data) {
+    let x = JSON.parse(JSON.stringify(data))
+    this.formDetail = {
+      id_tran: x['id_tran'],
+      no_tran: x['no_tran'],
+      tgl_tran: x['tgl_tran'],
+      nama_cabang: x['nama_cabang'],
+      nama_divisi: x['nama_divisi'],
+      nama_departemen: x['nama_departemen'],
+      keterangan: x['keterangan'],
+    }
+    this.getDetail()
+  }
+
+  getDetail() {
+    this.detailJurnalLoad = true
+    this.ref.markForCheck()
+    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
+          for (var i = 0; i < resp.length; i++) {
+            let t = {
+              id_akun: resp[i]['id_akun'],
+              kode_akun: resp[i]['kode_akun'],
+              nama_akun: resp[i]['nama_akun'],
+              keterangan_akun: resp[i]['keterangan_akun'],
+              keterangan: resp[i]['keterangan'],
+              saldo_debit: parseFloat(resp[i]['nilai_debit']),
+              saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
+            }
+            res.push(t)
+          }
+          this.detailData = res
+          this.openDialog()
+        } else {
+          this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
+          this.detailJurnalLoad = false
+          this.ref.markForCheck()
+        }
+      }
+    )
+  }
+
+  openDialog() {
+    this.gbl.topPage()
+    this.ref.markForCheck()
+    this.formInputCheckChangesJurnal()
+    const dialogRef = this.dialog.open(InputdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '50px' },
+      data: {
+        width: '70vw',
+        formValue: this.formDetail,
+        inputLayout: this.detailInputLayout,
+        buttonLayout: [],
+        detailJurnal: true,
+        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false ,
+        jurnalData: this.detailData,
+        jurnalDataAkun: [],
+        noButtonSave: true,
+        inputPipe: (t, d) => null,
+        onBlur: (t, v) => null,
+        openDialog: (t) => null,
+        resetForm: () => null,
+        // onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
+        deleteData: () => null,
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        this.datatable == undefined ? null : this.datatable.reset()
+      },
+      error => null,
+    );
+  }
+
   getBackToInput() {
     this.selectedTab = 0;
     this.gbl.topPage()
@@ -880,6 +1043,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       this.forminputTP === undefined ? null : this.forminputTP.checkChanges()
       // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 10)
+  }
+
+  formInputCheckChangesJurnal() {
+    setTimeout(() => {
+      this.ref.markForCheck()
+      this.forminput === undefined ? null : this.forminput.checkChangesDetailJurnal()
+    }, 1)
   }
 
 }

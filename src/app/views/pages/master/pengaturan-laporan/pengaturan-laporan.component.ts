@@ -243,19 +243,9 @@ export class PengaturanLaporanComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.needCompany(true)
+    this.gbl.need(true, false)
     this.madeRequest()
     this.reqKodePerusahaan()
-
-    // Notify parent perusahaan and periode needed
-    window.parent.postMessage({
-      'type': 'UTIL',
-      'res': {
-        perusahaan: true,
-        periode: false,
-        access_key: this.gbl.getAccessKey()
-      }
-    }, '*')
   }
 
   ngAfterViewInit(): void {

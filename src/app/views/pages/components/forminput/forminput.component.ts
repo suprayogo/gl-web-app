@@ -67,6 +67,7 @@ export class ForminputComponent implements OnInit {
   ngOnInit() {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
     this.button_name = this.nama_tombol === undefined ? this.button_name : this.nama_tombol
+    console.log(this.nama_tombol)
     this.button_name2 = this.nama_tombol2 === undefined ? this.button_name2 : this.nama_tombol2
   }
 

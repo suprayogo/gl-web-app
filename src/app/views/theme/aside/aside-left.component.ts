@@ -173,7 +173,12 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 				icon: 'flaticon2-layers',
 				page: 'monitoring/saldo-akun-periode-aktif'
 			},
-
+			{ section: 'Transaksi' },
+			{
+				title: 'Semua Laporan',
+				icon: 'flaticon2-layers',
+				page: 'laporan/all-reports'
+			}
 		]
 
 		let menu = new MenuConfig()

@@ -44,6 +44,10 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/monitoring/monitoring.module').then(m => m.MonitoringModule)
 			},
 			{
+				path: 'laporan',
+				loadChildren: () => import('./views/pages/laporan/laporan.module').then(m => m.LaporanModule)
+			},
+			{
 				path: 'builder',
 				loadChildren: () => import('./views/theme/content/builder/builder.module').then(m => m.BuilderModule)
 			},

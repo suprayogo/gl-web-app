@@ -33,6 +33,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   loading: boolean = true;
   content: any;
   detailLoad: boolean = false;
+  detailJurnalLoad: boolean = false;
   enableDetail: boolean = false;
   editable: boolean = false;
   selectedTab: number = 0;
@@ -50,15 +51,18 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   subsAP: any;
   access_period: any;
 
-  data_jurnal = []
   // Input Name
   formDetail = {
+    id_tran: '',
     no_tran: '',
     tgl_tran: '',
+    nama_cabang: '',
     nama_divisi: '',
     nama_departemen: '',
     keterangan: '',
   }
+
+  detailData = []
 
   detailInputLayout = [
     {
@@ -78,6 +82,16 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       id: 'tgl-transaksi',
       type: 'input',
       valueOf: 'tgl_tran',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'nama-cabang',
+      type: 'input',
+      valueOf: 'nama_cabang',
       required: true,
       readOnly: true,
       disabled: true
@@ -126,6 +140,10 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       date: true
     },
     {
+      label: 'Cabang',
+      value: 'nama_cabang'
+    },
+    {
       label: 'Divisi',
       value: 'nama_divisi'
     },
@@ -157,6 +175,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   browseInterface = {
     no_tran: 'string',
     tgl_tran: 'string',
+    nama_cabang: 'string',
     nama_divisi: 'string',
     nama_departemen: 'string',
     keterangan: 'string',
@@ -253,7 +272,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.browseData = data['RESULT']
-            this.data_jurnal = data['RESULT']
             this.loading = false
             this.ref.markForCheck()
           } else {
@@ -266,50 +284,56 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openDialog(v) {
+  getDetail() {
+    this.detailJurnalLoad = true
+    this.ref.markForCheck()
+    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
+          for (var i = 0; i < resp.length; i++) {
+            let t = {
+              id_akun: resp[i]['id_akun'],
+              kode_akun: resp[i]['kode_akun'],
+              nama_akun: resp[i]['nama_akun'],
+              keterangan_akun: resp[i]['keterangan_akun'],
+              keterangan: resp[i]['keterangan'],
+              saldo_debit: parseFloat(resp[i]['nilai_debit']),
+              saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
+            }
+            res.push(t)
+          }
+          this.detailData = res
+          this.openDialog()
+        } else {
+          this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
+          this.detailJurnalLoad = false
+          this.ref.markForCheck()
+        }
+      }
+    )
+  }
+
+  openDialog() {
     this.gbl.topPage()
-    let x = JSON.parse(JSON.stringify(v))
-    this.formDetail = {
-      no_tran: x['no_tran'],
-      tgl_tran: x['tgl_tran'],
-      nama_divisi: x['nama_divisi'],
-      nama_departemen: x['nama_departemen'],
-      keterangan: x['keterangan'],
-    }
+    this.ref.markForCheck()
+    this.formInputCheckChangesJurnal()
     const dialogRef = this.dialog.open(InputdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
       position: { top: '50px' },
       data: {
+        width: '70vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
-        enableDetail: true,
-        detailLoad: true,
-        inputAkunData : [],
-        detailData : [
-          {
-            id_akun: '',
-            kode_akun: '',
-            nama_akun: '',
-            keterangan_akun: '',
-            keterangan: '',
-            saldo_debit: '',
-            saldo_kredit: ''
-          },
-          {
-            id_akun: '',
-            kode_akun: '',
-            nama_akun: '',
-            keterangan_akun: '',
-            keterangan: '',
-            saldo_debit: '',
-            saldo_kredit: ''
-          }
-        ],
+        detailJurnal: true,
+        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false ,
+        jurnalData: this.detailData,
+        jurnalDataAkun: [],
         noButtonSave: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
@@ -338,8 +362,17 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    this.formDetail = data
-    this.openDialog(this.formDetail)
+    let x = JSON.parse(JSON.stringify(data))
+    this.formDetail = {
+      id_tran: x['id_tran'],
+      no_tran: x['no_tran'],
+      tgl_tran: x['tgl_tran'],
+      nama_cabang: x['nama_cabang'],
+      nama_divisi: x['nama_divisi'],
+      nama_departemen: x['nama_departemen'],
+      keterangan: x['keterangan'],
+    }
+    this.getDetail()
   }
 
   openSnackBar(message, type?: any) {
@@ -364,7 +397,13 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
-      // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
+    }, 1)
+  }
+
+  formInputCheckChangesJurnal() {
+    setTimeout(() => {
+      this.ref.markForCheck()
+      this.forminput === undefined ? null : this.forminput.checkChangesDetailJurnal()
     }, 1)
   }
 
