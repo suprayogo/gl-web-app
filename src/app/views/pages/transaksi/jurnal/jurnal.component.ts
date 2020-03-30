@@ -74,6 +74,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     nama_departemen: '',
     keterangan: ''
   }
+  
   detailData = [
     {
       id_akun: '',
@@ -850,7 +851,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
-      this.request.apiData('jurnal', 'g-cabang-dc', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
@@ -862,7 +863,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }
       )
 
-      this.request.apiData('jurnal', 'g-divisi-dc', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('divisi', 'g-divisi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputDivisiData = data['RESULT']
@@ -879,7 +880,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   }
 
   sendRequestDepartemen(kDiv) {
-    this.request.apiData('jurnal', 'g-departemen-dc', { kode_perusahaan: this.kode_perusahaan, kode_divisi: kDiv }).subscribe(
+    this.request.apiData('departemen', 'g-departemen-divisi', { kode_perusahaan: this.kode_perusahaan, kode_divisi: kDiv }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputDepartemenData = data['RESULT']

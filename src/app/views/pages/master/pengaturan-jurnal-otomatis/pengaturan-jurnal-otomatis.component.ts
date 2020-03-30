@@ -391,18 +391,9 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.need(true, false)
     this.reqKodePerusahaan()
     this.madeRequest()
-
-    // Notify parent perusahaan and periode needed
-    window.parent.postMessage({
-      'type': 'UTIL',
-      'res': {
-        perusahaan: true,
-        periode: false,
-        access_key: this.gbl.getAccessKey()
-      }
-    }, '*')
   }
 
   ngAfterViewInit(): void {

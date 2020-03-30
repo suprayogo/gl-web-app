@@ -11,6 +11,7 @@ import { MasterModule } from './master/master.module';
 // import { ManagementModule } from './management/management.module';
 import { TransaksiModule } from './transaksi/transaksi.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { LaporanModule } from './laporan/laporan.module';
 
 @NgModule({
 	declarations: [],
@@ -24,7 +25,8 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 		MasterModule,
 		// ManagementModule,
 		TransaksiModule,
-		MonitoringModule
+		MonitoringModule,
+		LaporanModule
 	],
 	providers: []
 })
