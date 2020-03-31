@@ -28,9 +28,10 @@
           (keyup.tab)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
           style="text-transform: uppercase" [disabled]="(onUpdate && x.update.disabled) || x.disabled">
         <div class="input-group-append">
-          <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary" style="padding-right: 8px;" (click)="x.click(x.browseType)"
-            [disabled]="(onUpdate && x.update.disabled) || x.disabled"><i *ngIf="x.btnIcon" style="color: white"
-              class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+          <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary" style="padding-right: 8px;"
+            (click)="x.click(x.browseType)" [disabled]="(onUpdate && x.update.disabled) || x.disabled"><i
+              *ngIf="x.btnIcon" style="color: white" class="flaticon"
+              [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>
         <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo" type="text"
           name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled" [readOnly]="x.inputInfo.readOnly"
@@ -62,7 +63,8 @@
         <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
           (dateSelect)="onDateSelect($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
           (focus)="dd.toggle()" [disabled]="onUpdate && x.update.disabled"
-          [minDate]="x.enableMin ? getMinToday(x.minMaxDate()) : null" [maxDate]="x.enableMax ? getMaxToday(x.minMaxDate()) : null">
+          [minDate]="x.enableMin ? getMinToday(x.minMaxDate()) : null"
+          [maxDate]="x.enableMax ? getMaxToday(x.minMaxDate()) : null">
         <div class="input-group-append">
           <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
             [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
@@ -76,6 +78,43 @@
         </div>
 
       </div>
+
+      <!-- DATEPICKER RANGE -->
+      <div *ngIf="x.type === 'datepicker-range'" class="input-group">
+        <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker" readonly
+          [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
+          (dateSelect)="onDateSelection($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+          [disabled]="onUpdate && x.update.disabled"
+          [minDate]="x.enableMin ? getMinToday(x.minMaxDate()) : null"
+          [maxDate]="x.enableMax ? getMaxToday(x.minMaxDate()) : null">
+        <ng-template #t let-date let-focused="focused">
+          <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
+            [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
+            (mouseleave)="hoveredDate = null">
+            {{ date.day }}
+          </span>
+        </ng-template>
+
+        <input #dpFromDate class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate" (focus)="dpr.toggle()"
+          [value]="formatter.format(fromDate)" (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+        <div class="input-group-append">
+          <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
+            [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
+            <i class="la la-calendar" style="color: white;"></i>
+          </button>
+        </div>
+        <label class="col-1 col-form-label"></label>
+        <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" (focus)="dpr.toggle()"
+          [value]="formatter.format(toDate)" (input)="toDate = validateInput(toDate, dpToDate.value)">
+        <div class="input-group-append">
+          <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
+            [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
+            <i class="la la-calendar" style="color: white;"></i>
+          </button>
+        </div>
+
+      </div>
+
 
     </div>
   </div>
@@ -95,16 +134,13 @@
   </div>
 
   <div *ngIf="!detailLoad && detailJurnal" style="margin-bottom: 15px;">
-    <kt-detail-jurnal
-      [dataAkun]="jurnalDataAkun"
-      [dataSetting]="jurnalDataSetting"
-      [data]="jurnalData"
-      [jurnalOtomatis]="jurnalOtomatis"
-    ></kt-detail-jurnal>
+    <kt-detail-jurnal [dataAkun]="jurnalDataAkun" [dataSetting]="jurnalDataSetting" [data]="jurnalData"
+      [jurnalOtomatis]="jurnalOtomatis"></kt-detail-jurnal>
   </div>
 
   <div class="kt-form__actions" *ngIf="!noButton">
-    <button type="submit" class="btn btn-brand" *ngIf="!onSub" [disabled]="disableSubmit ? true : false">{{ button_name }}</button>
+    <button type="submit" class="btn btn-brand" *ngIf="!onSub"
+      [disabled]="disableSubmit ? true : false">{{ button_name }}</button>
     <button type="submit" class="btn btn-brand" *ngIf="onSub">{{ button_name2 }}</button>
     <button type="submit" class="btn btn-brand" *ngIf="onButton">Simpan</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" *ngIf="!noCancel" style="margin-left: 10px;"

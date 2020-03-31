@@ -10,65 +10,64 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section" style="display:flex; flex-direction: row; height:200px;" *ngIf="!loading">
+                <div class="kt-section" style="display:flex; flex-direction: row; height:290px;" *ngIf="!loading">
                     <div style="width: 50%">
-                        <h3>Neraca Saldo</h3><br>
-                        <kt-forminput #ns [inputLayout]="inputLayoutNS" [formValue]="formValueNS"
+                        <h3>Jurnal</h3><br>
+                        <kt-forminput #jl [inputLayout]="inputLayoutJL" [formValue]="formValueJL"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
-                            [tableRules]="detailRules" (onSubmit)="onSubmitNS($event)" (onCancel)="onCancelNS()" [onSub]="onSub"></kt-forminput>
+                            [tableRules]="detailRules" (onSubmit)="onSubmitJL($event)" (onCancel)="onCancelJL()"
+                            [onSub]="onSub">
+                        </kt-forminput>
                     </div>
                     <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
                     <div style="width: 50%">
                         <h3>Buku Besar</h3><br>
-                        <kt-forminput #bb [inputLayout]="inputLayoutBB" [formValue]="formValueBB" [nama_tombol]="nama_tombol"
-                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                            (onSubmit)="onSubmitBB($event)" (onCancel)="onCancelBB()" [onSub]="onSub">
+                        <kt-forminput #bb [inputLayout]="inputLayoutBB" [formValue]="formValueBB"
+                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [tableRules]="detailRules" (onSubmit)="onSubmitBB($event)" (onCancel)="onCancelBB()"
+                            [onSub]="onSub">
                         </kt-forminput>
                     </div>
                 </div>
 
                 <hr style="width: 100%;">
 
-                <div class="kt-section" style="display:flex; flex-direction: row; height:200px;" *ngIf="!loading">
+                <div class="kt-section" style="display:flex; flex-direction: row; height:290px;" *ngIf="!loading">
+                    <div style="width: 50%">
+                        <h3>Neraca Saldo</h3><br>
+                        <kt-forminput #ns [inputLayout]="inputLayoutNS" [formValue]="formValueNS"
+                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [tableRules]="detailRules" (onSubmit)="onSubmitNS($event)" (onCancel)="onCancelNS()"
+                            [onSub]="onSub">
+                        </kt-forminput>
+                    </div>
+                    <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
                     <div style="width: 50%">
                         <h3>Laba Rugi</h3><br>
-                        <kt-forminput #lr [inputLayout]="inputLayoutLR" [formValue]="formValueLR" [nama_tombol]="nama_tombol"
-                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                            (onSubmit)="onSubmitLR($event)" (onCancel)="onCancelLR()" [onSub]="onSub">
-                        </kt-forminput>
-                    </div>
-                    <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
-                    <div style="width: 50%">
-                        <h3>Arus Kas</h3><br>
-                        <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK" [nama_tombol]="nama_tombol"
-                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                            (onSubmit)="onSubmitAK($event)" (onCancel)="onCancelAK()" [onSub]="onSub">
+                        <kt-forminput #lr [inputLayout]="inputLayoutLR" [formValue]="formValueLR"
+                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [tableRules]="detailRules" (onSubmit)="onSubmitLR($event)" (onCancel)="onCancelLR()"
+                            [onSub]="onSub">
                         </kt-forminput>
                     </div>
                 </div>
 
                 <hr style="width: 100%;">
 
-                <div class="kt-section" style="display:flex; flex-direction: row; height:200px;" *ngIf="!loading">
+                <div class="kt-section" style="display:flex; flex-direction: row; height:280px;" *ngIf="!loading">
                     <div style="width: 50%">
-                        <h3>Jurnal</h3><br>
-                        <kt-forminput #jl [inputLayout]="inputLayoutJL" [formValue]="formValueJL" [nama_tombol]="nama_tombol"
-                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                            (onSubmit)="onSubmitJL($event)" (onCancel)="onCancelJL()" [onSub]="onSub">
+                        <h3>Arus Kas</h3><br>
+                        <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
+                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [tableRules]="detailRules" (onSubmit)="onSubmitAK($event)" (onCancel)="onCancelAK()"
+                            [onSub]="onSub">
                         </kt-forminput>
                     </div>
                     <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
                     <div style="width: 50%">
-                        <!-- <h3>Arus Kas</h3><br>
-                        <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
-                        [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                        (onSubmit)="onSubmitAK($event)">
-                        </kt-forminput> -->
                     </div>
                 </div>
-
             </kt-portlet-body>
-
 
         </kt-portlet>
 

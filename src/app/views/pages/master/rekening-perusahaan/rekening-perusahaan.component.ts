@@ -312,6 +312,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
       data: {
         type: type,
         tableInterface:
@@ -346,7 +347,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   openCDialog() { // Confirmation Dialog
     this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -553,7 +554,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

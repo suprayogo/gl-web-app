@@ -175,6 +175,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
       maxWidth: '95vw',
       maxHeight: '95vh',
       position: { top: '20px' },
+      backdropClass: 'bg-dialog',
       data: {
         type: type,
         tableInterface:
@@ -350,7 +351,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
