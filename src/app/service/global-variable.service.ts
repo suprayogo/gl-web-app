@@ -35,9 +35,9 @@ export class GlobalVariableService {
   getAccessKey() {
     return this.access_key
   }
-  
+
   // TOP PAGE
-  topPage(){
+  topPage() {
     window.parent.postMessage({
       'type': 'TOP-PAGE',
       'res': true
@@ -45,7 +45,7 @@ export class GlobalVariableService {
   }
 
   // TOP PAGE
-  bottomPage(){
+  bottomPage() {
     window.parent.postMessage({
       'type': 'BOTTOM-PAGE',
       'res': true
@@ -53,7 +53,7 @@ export class GlobalVariableService {
   }
 
   // NEED COMPANY AND PERIOD
-  need(Company, Period){
+  need(Company, Period) {
     window.parent.postMessage({
       'type': 'UTIL',
       'res': {
@@ -65,7 +65,7 @@ export class GlobalVariableService {
   }
 
   // TOKEN DC
-  getTokenDarkoCenter(tokenDC, uid){
+  getTokenDarkoCenter(tokenDC, uid) {
     this.token = tokenDC
     this.user_id = uid
     localStorage.setItem('token', this.token)
@@ -100,7 +100,7 @@ export class GlobalVariableService {
     return this.bulan_periode;
   }
 
-  getAccessPeriod(){
+  getAccessPeriod() {
     return {
       id_periode: this.getIdPeriode(),
       tahun_periode: this.getTahunPeriode(),
@@ -163,7 +163,21 @@ export class GlobalVariableService {
     return n;
   }
 
-  getActive(){
+  getBatasTanggal(m) {
+    let day = m == 2 ? 29 :
+      (
+        m == 1 ||
+        m == 3 ||
+        m == 5 ||
+        m == 7 ||
+        m == 8 ||
+        m == 10 ||
+        m == 12
+      ) ? 31 : 30
+    return day
+  }
+
+  getActive() {
     return {
       id_periode: this.getIdPeriodeAktif(),
       tahun_periode: this.getTahunPeriodeAktif(),
@@ -172,7 +186,7 @@ export class GlobalVariableService {
     }
   }
 
-  periodeAktif(pa_id, pa_tahun, pa_bulan, pa_nama_bulan_aktif){
+  periodeAktif(pa_id, pa_tahun, pa_bulan, pa_nama_bulan_aktif) {
     this.id_periodeAktif = pa_id
     this.tahun_periodeAktif = pa_tahun
     this.bulan_periodeAktif = pa_bulan

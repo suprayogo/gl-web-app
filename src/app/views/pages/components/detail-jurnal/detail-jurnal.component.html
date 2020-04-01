@@ -18,11 +18,12 @@
         <div *ngFor="let x of res_data; let i = index"
             style="width: 100%; height: auto; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
             [id]="i == 0 ? 'content' : null">
-            <div style="width: 32.5%; height: fit-content; padding: 10px; border-right: solid 1px lightgrey;" class="input-group">
-                <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}" (blur)="onBlur($event, i)"
-                    (keyup.enter)="onBlur($event, i)" (keyup.tab)="onBlur($event, i)"
-                    [(ngModel)]="res_data[i]['keterangan_akun']">
-                <div class="input-group-append">
+            <div style="width: 32.5%; height: fit-content; padding: 10px; border-right: solid 1px lightgrey;"
+                class="input-group">
+                <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}" (blur)="noEdit ? null : onBlur($event, i)"
+                    (keyup.enter)="noEdit ? null : onBlur($event, i)" (keyup.tab)="noEdit ? null : onBlur($event, i)"
+                    [(ngModel)]="res_data[i]['keterangan_akun']" [readonly]="noEdit">
+                <div class="input-group-append" *ngIf="!noEdit">
                     <button tabindex="-1" type="button" class="btn btn-primary" (click)="openDialog(i, 'kode_akun')">
                         Cari
                     </button>
@@ -30,7 +31,7 @@
             </div>
             <div style="width: 25%; padding: 10px; border-right: solid 1px lightgrey;">
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-' + i }}" placeholder="Keterangan"
-                    [(ngModel)]="res_data[i]['keterangan']">
+                    [(ngModel)]="res_data[i]['keterangan']" [readonly]="noEdit">
             </div>
             <!-- Jurnal Umum -->
             <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
@@ -40,7 +41,8 @@
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
                     (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
-                    [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions">
+                    [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
+                    [readonly]="noEdit" [disabled]="noEdit">
             </div>
             <div style="width: 21.25%; padding: 10px" class="input-group" *ngIf="!jurnalOtomatis">
                 <div class="input-group-prepend">
@@ -48,10 +50,12 @@
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
                     (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
-                    [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions">
+                    [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
+                    [readonly]="noEdit" [disabled]="noEdit">
             </div>
             <!-- Jurnal Otomatis -->
-            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;" *ngIf="jurnalOtomatis">
+            <div style="width: 21.25%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;"
+                *ngIf="jurnalOtomatis">
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
                         [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
@@ -80,7 +84,7 @@
         </div>
     </div>
 
-    <div style="width: 100%; height: 26px; display: flex; flex-direction: row;">
+    <div style="width: 100%; height: 26px; display: flex; flex-direction: row;" *ngIf="!noEdit">
         <div style="width: 57.5%; height: 100%;"></div>
         <div style="width: 21.25%; height: 100%; display: flex; justify-content: center; align-items: center;">
             <div class="baris" style="display: flex; justify-content: center; align-items: center; cursor: pointer;"

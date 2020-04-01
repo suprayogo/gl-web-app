@@ -16,6 +16,7 @@ export class DetailJurnalComponent implements OnInit {
   @Input() dataSetting: [];
   @Input() data: any;
   @Input() jurnalOtomatis: boolean;
+  @Input() noEdit: boolean;
 
   currencyOptions = {
     align: "right",
@@ -107,9 +108,11 @@ export class DetailJurnalComponent implements OnInit {
 
   ngOnInit() {
     let r_data_akun = []
-    for (var i = 0; i < this.dataAkun.length; i++) {
-      if (!this.checkChild(this.dataAkun[i]['id_akun'])) {
-        r_data_akun.push(this.dataAkun[i])
+    if (this.dataAkun !== undefined && this.dataAkun != null) {
+      for (var i = 0; i < this.dataAkun.length; i++) {
+        if (!this.checkChild(this.dataAkun[i]['id_akun'])) {
+          r_data_akun.push(this.dataAkun[i])
+        }
       }
     }
     this.data_akun = JSON.parse(JSON.stringify(r_data_akun))
@@ -118,7 +121,10 @@ export class DetailJurnalComponent implements OnInit {
     }
     this.countDebit()
     this.countKredit()
-    this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
+
+    if (this.dataSetting !== undefined && this.dataSetting != null) {
+      this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
+    }
   }
 
   checkChanges() {

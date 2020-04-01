@@ -63,6 +63,7 @@ export class InputdialogComponent implements OnInit {
   detailJurnal: boolean; 
   jurnalDataAkun: any;
   jurnalData: any;
+  noEditJurnal: boolean;
   
   constructor(
     public dialogRef: MatDialogRef<InputdialogComponent>,
@@ -75,6 +76,7 @@ export class InputdialogComponent implements OnInit {
     this.detailJurnal = this.parameter.detailJurnal
     this.jurnalDataAkun = this.parameter.jurnalDataAkun
     this.jurnalData = this.parameter.jurnalData
+    this.noEditJurnal = this.parameter.noEditJurnal
     this.noButtonSave = this.parameter.noButtonSave
     this.formValue = this.parameter.formValue
     this.inputLayout = this.parameter.inputLayout

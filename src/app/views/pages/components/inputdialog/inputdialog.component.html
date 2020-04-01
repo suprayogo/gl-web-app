@@ -18,7 +18,7 @@
           class="form-group m-form__group" 
           *ngFor="let x of inputLayout; let i = index" 
           [ngClass]="{'row': x.type !== 'listinput'}" 
-          [hidden]="x.hiddenOn? x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true :false : false" 
+          [hidden]="x.hiddenOn ? x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true : false : false" 
         >
           <label class="col-sm-4 col-form-label" [ngClass]="{'font-weight-bold': x.type === 'listinput', 'col-sm-8': x.type === 'listinput'}" *ngIf="x.label !== ''" [ngStyle]="{'padding-left.px': x.type === 'listinput' ? 0 : 15}">{{ x.label }}</label>
           <div style="flex: 0 0 calc(100% - 35%); max-width: calc(100% - 35%);">
@@ -153,6 +153,7 @@
           <kt-detail-jurnal
             [dataAkun]="jurnalDataAkun"
             [data]="jurnalData"
+            [noEdit]="noEditJurnal"
           ></kt-detail-jurnal>
         </div>
 

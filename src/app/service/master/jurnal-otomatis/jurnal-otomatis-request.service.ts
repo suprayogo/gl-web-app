@@ -31,6 +31,18 @@ export class JurnalOtomatisRequestService {
       httpBody.respondCode = 'DEL-DATA-SETTING-JURNAL-OTOMATIS'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-tarik-data-terakhir') {
+      httpBody.respondCode = 'GET-DATA-RIWAYAT-TARIK-JURNAL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-data-jurnal-otomatis') {
+      httpBody.respondCode = 'GET-DATA-JURNAL-OTOMATIS'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'i-jurnal-otomatis') {
+      httpBody.respondCode = 'SET-DATA-JURNAL-OTOMATIS'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

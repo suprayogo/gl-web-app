@@ -41,13 +41,12 @@
                 </div>
 
                 <div *ngIf="!tableLoadHT && !loading">
-                    <hr>
                     <h2>Hasil Tarik Data Jurnal</h2>
                     <kt-datatable-ag-grid #ht [tableColumn]="displayedColumnsTableHT" [tableData]="browseDataHT"
                         [tableRules]="browseDataRulesHT" (selectRowEvent)="browseSelectRow($event)"
                         [containerHeight]=300>
                     </kt-datatable-ag-grid>
-                    <kt-forminput (onSubmit)="openCDialog()" (onCancel)="onCancel()"></kt-forminput>
+                    <kt-forminput (onSubmit)="onSubmit()" (onCancel)="onCancel()"></kt-forminput>
                 </div>
             </kt-portlet-body>
 
