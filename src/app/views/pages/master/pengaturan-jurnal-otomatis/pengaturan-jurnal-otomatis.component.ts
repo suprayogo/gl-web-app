@@ -111,7 +111,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       content: 'Yakin akan menghapus pengaturan?',
       style: {
         'color': 'red',
-        'font-size': '20px',
+        'font-size': '18px',
         'font-weight': 'bold'
       }
     }
@@ -464,6 +464,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   //Form submit
   onSubmit(inputForm: NgForm) {
+    this.gbl.topPage()
     if (this.forminput !== undefined) {
       if (inputForm.valid && this.validateSubmit()) {
         this.loading = true;
@@ -593,6 +594,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   }
 
   deleteData() {
+    this.gbl.topPage()
     this.dialog.closeAll()
     if (this.onUpdate) {
       this.gbl.topPage()
@@ -698,12 +700,14 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   }
 
   openCDialog() { // Confirmation Dialog
+    this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: '35vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: '90px' },
       data: {
         buttonLayout: this.c_buttonLayout,
         labelLayout: this.c_labelLayout,

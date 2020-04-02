@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { NgbTimeAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimeAdapter, NgbDate, NgbCalendar, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
 import { TimeStringAdapter } from '../../time-adapter.module';
 
@@ -30,7 +30,7 @@ export class ForminputComponent implements OnInit {
   // Enable detail input ag grid
   @Input() enableDetail: boolean;
   // Enable detail input custom GL
-  @Input() detailJurnal: boolean; 
+  @Input() detailJurnal: boolean;
   @Input() jurnalDataAkun: any;
   @Input() jurnalData: any;
   @Input() jurnalOtomatis: boolean;
@@ -60,9 +60,20 @@ export class ForminputComponent implements OnInit {
   button_name2: any = 'Batal Simpan';
   errorType: any;
 
+  //Range Datepicker
+  hoveredDate: NgbDate | null = null;
+
+  fromDate: NgbDate | null;
+  toDate: NgbDate | null;
+
   constructor(
-    private ref: ChangeDetectorRef
-  ) { }
+    private ref: ChangeDetectorRef,
+    private calendar: NgbCalendar,
+    public formatter: NgbDateParserFormatter
+  ) {
+    this.fromDate = calendar.getToday();
+    this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
+  }
 
   ngOnInit() {
     this.cFormValue = this.formValue === undefined ? {} : JSON.parse(JSON.stringify(this.formValue))
@@ -97,14 +108,14 @@ export class ForminputComponent implements OnInit {
     let fres = [], v = d.target.value.toUpperCase()
     fres = data.filter(each => each[ind] === v)
     if (fres.length > 0 && fres.length < 2) {
-      for(var i = 0; i < vOf.length; i++) {
+      for (var i = 0; i < vOf.length; i++) {
         this.cFormValue[vOf[i]] = fres[0][vOf[i]]
       }
       if (onF !== undefined && onF != null) {
         onF()
       }
     } else {
-      for(var i = 0; i < vOf.length; i++) {
+      for (var i = 0; i < vOf.length; i++) {
         this.cFormValue[vOf[i]] = ""
       }
       if (onF !== undefined && onF != null) {
@@ -198,31 +209,31 @@ export class ForminputComponent implements OnInit {
       return {
         year: date.getFullYear(),
         month: date.getMonth() + 1,
-        day: (date.getMonth() + 1) == 2 ? 29 : 
-              (
-                (date.getMonth() + 1) == 1 ||
-                (date.getMonth() + 1) == 3 ||
-                (date.getMonth() + 1) == 5 ||
-                (date.getMonth() + 1) == 7 ||
-                (date.getMonth() + 1) == 8 ||
-                (date.getMonth() + 1) == 10 ||
-                (date.getMonth() + 1) == 12
-              ) ? 31 : 30
+        day: (date.getMonth() + 1) == 2 ? 29 :
+          (
+            (date.getMonth() + 1) == 1 ||
+            (date.getMonth() + 1) == 3 ||
+            (date.getMonth() + 1) == 5 ||
+            (date.getMonth() + 1) == 7 ||
+            (date.getMonth() + 1) == 8 ||
+            (date.getMonth() + 1) == 10 ||
+            (date.getMonth() + 1) == 12
+          ) ? 31 : 30
       }
     } else {
       return {
         year: parseInt(d['y']),
         month: parseInt(d['m']),
-        day: parseInt(d['m']) == 2 ? 29 : 
-              (
-                parseInt(d['m']) == 1 ||
-                parseInt(d['m']) == 3 ||
-                parseInt(d['m']) == 5 ||
-                parseInt(d['m']) == 7 ||
-                parseInt(d['m']) == 8 ||
-                parseInt(d['m']) == 10 ||
-                parseInt(d['m']) == 12
-              ) ? 31 : 30
+        day: parseInt(d['m']) == 2 ? 29 :
+          (
+            parseInt(d['m']) == 1 ||
+            parseInt(d['m']) == 3 ||
+            parseInt(d['m']) == 5 ||
+            parseInt(d['m']) == 7 ||
+            parseInt(d['m']) == 8 ||
+            parseInt(d['m']) == 10 ||
+            parseInt(d['m']) == 12
+          ) ? 31 : 30
       }
     }
   }
@@ -244,7 +255,7 @@ export class ForminputComponent implements OnInit {
         day: 1
       }
     }
-    
+
   }
 
   //End of datepicker function
@@ -262,6 +273,40 @@ export class ForminputComponent implements OnInit {
       }
       return dis
     }
+  }
+
+  // Range Date Picker
+  onDateSelection(date: NgbDate, type) {
+    if (!this.fromDate && !this.toDate) {
+      this.fromDate = date;
+    } else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
+      this.toDate = date;
+    } else {
+      this.toDate = null;
+      this.fromDate = date;
+    }
+    this.cFormValue[type] = [
+      this.fromDate,
+      this.toDate
+    ]
+    // console.log(this.cFormValue)
+  }
+
+  isHovered(date: NgbDate) {
+    return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
+  }
+
+  isInside(date: NgbDate) {
+    return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+  }
+
+  isRange(date: NgbDate) {
+    return date.equals(this.fromDate) || (this.toDate && date.equals(this.toDate)) || this.isInside(date) || this.isHovered(date);
+  }
+
+  validateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
+    const parsed = this.formatter.parse(input);
+    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
   }
 
 }

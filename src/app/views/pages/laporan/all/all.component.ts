@@ -26,11 +26,12 @@ export class AllComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('ns', { static: false }) forminputNS;
+  @ViewChild('jl', { static: false }) forminputJL;
   @ViewChild('bb', { static: false }) forminputBB;
+  @ViewChild('ns', { static: false }) forminputNS;
   @ViewChild('lr', { static: false }) forminputLR;
   @ViewChild('ak', { static: false }) forminputAK;
-  @ViewChild('jl', { static: false }) forminputJL;
+
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
   // Variables
@@ -53,11 +54,15 @@ export class AllComponent implements OnInit, AfterViewInit {
   kode_perusahaan: any;
 
   // Input Name
-  formValueNS = {
-    periode: JSON.stringify(this.getDateNow())
+  formValueJL = {
+    periode: JSON.stringify(this.getDateNow()),
   }
 
   formValueBB = {
+    periode: JSON.stringify(this.getDateNow())
+  }
+
+  formValueNS = {
     periode: JSON.stringify(this.getDateNow())
   }
 
@@ -69,17 +74,15 @@ export class AllComponent implements OnInit, AfterViewInit {
     periode: JSON.stringify(this.getDateNow())
   }
 
-  formValueJL = {
-    periode: JSON.stringify(this.getDateNow())
-  }
+  
 
   // Layout Form
-  inputLayoutNS = [
+  inputLayoutJL = [
     {
-      formWidth: 'col-8',
+      formWidth: 'col-9',
       label: 'Periode',
       id: 'periode',
-      type: 'datepicker',
+      type: 'datepicker-range',
       valueOf: 'periode',
       required: true,
       readOnly: false,
@@ -94,7 +97,25 @@ export class AllComponent implements OnInit, AfterViewInit {
 
   inputLayoutBB = [
     {
-      formWidth: 'col-8',
+      formWidth: 'col-9',
+      label: 'Periode',
+      id: 'periode',
+      type: 'datepicker-range',
+      valueOf: 'periode',
+      required: true,
+      readOnly: false,
+      update: {
+        disabled: false
+      },
+      timepick: false,
+      enableMin: false,
+      enableMax: false,
+    }
+  ]
+
+  inputLayoutNS = [
+    {
+      formWidth: 'col-9',
       label: 'Periode',
       id: 'periode',
       type: 'datepicker',
@@ -112,10 +133,10 @@ export class AllComponent implements OnInit, AfterViewInit {
 
   inputLayoutLR = [
     {
-      formWidth: 'col-8',
+      formWidth: 'col-9',
       label: 'Periode',
       id: 'periode',
-      type: 'datepicker',
+      type: 'datepicker-range',
       valueOf: 'periode',
       required: true,
       readOnly: false,
@@ -130,28 +151,10 @@ export class AllComponent implements OnInit, AfterViewInit {
 
   inputLayoutAK = [
     {
-      formWidth: 'col-8',
+      formWidth: 'col-9',
       label: 'Periode',
       id: 'periode',
-      type: 'datepicker',
-      valueOf: 'periode',
-      required: true,
-      readOnly: false,
-      update: {
-        disabled: false
-      },
-      timepick: false,
-      enableMin: false,
-      enableMax: false,
-    }
-  ]
-
-  inputLayoutJL = [
-    {
-      formWidth: 'col-8',
-      label: 'Periode',
-      id: 'periode',
-      type: 'datepicker',
+      type: 'datepicker-range',
       valueOf: 'periode',
       required: true,
       readOnly: false,
