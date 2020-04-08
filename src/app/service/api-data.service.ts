@@ -23,6 +23,7 @@ import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service'
 import { PostingJurnalRequestService } from './transaksi/posting-jurnal/posting-jurnal-request.service';
 import { PeriodeRequestService } from './transaksi/periode/periode-request.service';
 import { UserRequestService } from './management/user/user-request.service';
+import { ReportRequestService } from './master/report/report-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,7 @@ export class ApiDataService {
     private settingLaporanReq: SettingLaporanRequestService,
     private jurnalOtomatisReq: JurnalOtomatisRequestService,
     private settingLinkReq: SettingLinkRequestService,
+    private reportReq: ReportRequestService,
     
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -77,7 +79,7 @@ export class ApiDataService {
     this.akunReq.url = this.baseURL
     this.jenisTransaksiReq.url = this.baseURL
     this.settingLinkReq.url = this.baseURL
-    
+    this.reportReq.url = this.baseURL
 
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
@@ -124,6 +126,8 @@ export class ApiDataService {
       return this.jenisTransaksiReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'setting-link') {
       return this.settingLinkReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'report') {
+      return this.reportReq.validate(data, this.httpBody, this.options, formData)
     } 
 
     //Setting Services 

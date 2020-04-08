@@ -7,7 +7,7 @@
     <div class="{{ x.formWidth }}">
       <!-- FOR COMBOBOX -->
       <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="cFormValue[x.valueOf]"
-        (change)="selection($event, x.valueOf)"
+        (change)="selection($event, x.valueOf, x.onSelectFunc)"
         [disabled]="(onUpdate && x.update.disabled) || x.disabled || disabledOn(x.disabledOn) ">
         <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
       </select>
@@ -103,7 +103,7 @@
             <i class="la la-calendar" style="color: white;"></i>
           </button>
         </div>
-        <label class="col-1 col-form-label"></label>
+        <label class="col-1 col-form-label"> - </label>
         <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" (focus)="dpr.toggle()"
           [value]="formatter.format(toDate)" (input)="toDate = validateInput(toDate, dpToDate.value)">
         <div class="input-group-append">

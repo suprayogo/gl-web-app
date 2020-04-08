@@ -100,8 +100,11 @@ export class ForminputComponent implements OnInit {
   }
 
   //Selection event (Select Box)
-  selection(data, type) {
+  selection(data, type, func?) {
     this.cFormValue[type] = data.target.value
+    if (func !== undefined) {
+      func(data.target.value)
+    }
   }
 
   onBlur(d, ind, data, vOf, onF) {
@@ -146,6 +149,7 @@ export class ForminputComponent implements OnInit {
 
   checkChanges() {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
+    console.log(this.formValue)
   }
 
   updateFormValue(valueOf, data) {
@@ -289,7 +293,7 @@ export class ForminputComponent implements OnInit {
       this.fromDate,
       this.toDate
     ]
-    // console.log(this.cFormValue)
+    console.log(this.cFormValue)
   }
 
   isHovered(date: NgbDate) {
