@@ -149,7 +149,6 @@ export class ForminputComponent implements OnInit {
 
   checkChanges() {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
-    console.log(this.formValue)
   }
 
   updateFormValue(valueOf, data) {

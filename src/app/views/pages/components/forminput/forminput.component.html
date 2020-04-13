@@ -1,6 +1,6 @@
 <form #inputForm=ngForm (ngSubmit)="formSubmit(inputForm)">
   <div class="form-group m-form__group row" *ngFor="let x of inputLayout; let i = index"
-    [hidden]="x.hiddenOn? x.hiddenOn.matchValue === cFormValue[x.hiddenOn.valueOf] ? true : false : false">
+    [hidden]="x.hiddenOn ? x.hiddenOn.matchValue === cFormValue[x.hiddenOn.valueOf] ? true : false : false">
 
     <label class="col-form-label" [ngClass]="[ x.labelWidth ? x.labelWidth : 'col-2' ]">{{ x.label }}</label>
 

@@ -11,7 +11,7 @@
 
             <kt-portlet-body>
                 <div class="kt-section" style="display:flex; flex-direction: row; height:290px;" *ngIf="!loading">
-                    <div style="width: 50%">
+                    <div style="width: 50%" *ngIf="!loadingJL">
                         <h3>Jurnal</h3><br>
                         <kt-forminput #jl [inputLayout]="inputLayoutJL" [formValue]="formValueJL"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
@@ -19,8 +19,12 @@
                             [onSub]="onSub">
                         </kt-forminput>
                     </div>
+                    <div style="width: 50%" *ngIf="loadingJL">
+                        <h3>Jurnal</h3><br>
+                        <kt-loading></kt-loading>
+                    </div>
                     <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
-                    <div style="width: 50%">
+                    <div style="width: 50%" *ngIf="!loadingBB">
                         <h3>Buku Besar</h3><br>
                         <kt-forminput #bb [inputLayout]="inputLayoutBB" [formValue]="formValueBB"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
@@ -28,12 +32,16 @@
                             [onSub]="onSub">
                         </kt-forminput>
                     </div>
+                    <div style="width: 50%" *ngIf="loadingBB">
+                        <h3>Buku Besar</h3><br>
+                        <kt-loading></kt-loading>
+                    </div>
                 </div>
 
                 <hr style="width: 100%;" *ngIf="!loading">
 
                 <div class="kt-section" style="display:flex; flex-direction: row; height:290px;" *ngIf="!loading">
-                    <div style="width: 50%">
+                    <div style="width: 50%" *ngIf="!loadingNS">
                         <h3>Neraca Saldo</h3><br>
                         <kt-forminput #ns [inputLayout]="inputLayoutNS" [formValue]="formValueNS"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
@@ -41,8 +49,12 @@
                             [onSub]="onSub">
                         </kt-forminput>
                     </div>
+                    <div style="width: 50%" *ngIf="loadingNS">
+                        <h3>Neraca Saldo</h3><br>
+                        <kt-loading></kt-loading>
+                    </div>
                     <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
-                    <div style="width: 50%">
+                    <div style="width: 50%" *ngIf="!loadingLR">
                         <h3>Laba Rugi</h3><br>
                         <kt-forminput #lr [inputLayout]="inputLayoutLR" [formValue]="formValueLR"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
@@ -50,12 +62,16 @@
                             [onSub]="onSub">
                         </kt-forminput>
                     </div>
+                    <div style="width: 50%" *ngIf="loadingLR">
+                        <h3>Laba Rugi</h3><br>
+                        <kt-loading></kt-loading>
+                    </div>
                 </div>
 
                 <hr style="width: 100%;" *ngIf="!loading">
 
                 <div class="kt-section" style="display:flex; flex-direction: row; height:280px;" *ngIf="!loading">
-                    <div style="width: 50%">
+                    <div style="width: 50%" *ngIf="!loadingNR">
                         <h3>Neraca</h3><br>
                         <kt-forminput #nr [inputLayout]="inputLayoutNR" [formValue]="formValueNR"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
@@ -63,14 +79,22 @@
                             [onSub]="onSub">
                         </kt-forminput>
                     </div>
+                    <div style="width: 50%" *ngIf="loadingNR">
+                        <h3>Neraca</h3><br>
+                        <kt-loading></kt-loading>
+                    </div>
                     <div style="border-left:1px solid #dce8df; height:100%; padding:25px;"></div>
-                    <div style="width: 50%">
+                    <div style="width: 50%" *ngIf="!loadingAK">
                         <h3>Arus Kas</h3><br>
                         <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
                             [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitAK($event)" (onCancel)="onCancel('ak')"
                             [onSub]="onSub">
                         </kt-forminput>
+                    </div>
+                    <div style="width: 50%" *ngIf="loadingAK">
+                        <h3>Arus Kas</h3><br>
+                        <kt-loading></kt-loading>
                     </div>
                 </div>
             </kt-portlet-body>

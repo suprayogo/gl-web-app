@@ -43,7 +43,7 @@
                     </kt-detailinput-ag-grid>
                   </div>
 
-                  <div style="width: 47.5%;" *ngIf="LBSetting['keyPengakuanNilai'].length >= (i + 1)">
+                  <div style="width: 47.5%;" *ngIf="LBSetting['keyPengakuanNilai'].length > (i + 1)">
                     <h5>Kelompok {{ LBSetting['keyPengakuanNilai'][i + 1]['label'] }}</h5>
                     <kt-detailinput-ag-grid [buttonLayout]="buttonLBLayout"
                       [buttonFuncParam]="LBSetting['keyPengakuanNilai'][i + 1]['value']"
@@ -95,7 +95,7 @@
                     </kt-detailinput-ag-grid>
                   </div>
 
-                  <div style="width: 47.5%;" *ngIf="NRSetting['keyPengakuanNilai'].length >= (i + 1)">
+                  <div style="width: 47.5%;" *ngIf="NRSetting['keyPengakuanNilai'].length > (i + 1)">
                     <h5>Kelompok {{ NRSetting['keyPengakuanNilai'][i + 1]['label'] }}</h5>
                     <kt-detailinput-ag-grid [buttonLayout]="buttonNRLayout"
                       [buttonFuncParam]="NRSetting['keyPengakuanNilai'][i + 1]['value']"
@@ -147,7 +147,7 @@
                     </kt-detailinput-ag-grid>
                   </div>
 
-                  <div style="width: 47.5%;" *ngIf="AKSetting['keyPengakuanNilai'].length >= (i + 1)">
+                  <div style="width: 47.5%;" *ngIf="AKSetting['keyPengakuanNilai'].length > (i + 1)">
                     <h5>Kelompok {{ AKSetting['keyPengakuanNilai'][i + 1]['label'] }}</h5>
                     <kt-detailinput-ag-grid [buttonLayout]="buttonAKLayout"
                       [buttonFuncParam]="AKSetting['keyPengakuanNilai'][i + 1]['value']"
