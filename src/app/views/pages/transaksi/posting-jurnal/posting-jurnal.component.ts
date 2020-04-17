@@ -592,7 +592,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
       this.formValueTP = {
         id_periode: '',
-        bulan_periode: this.periode_aktif.bulan_periode,
+        bulan_periode: this.periode_aktif.nama_bulan_periode,
         tahun_periode: this.periode_aktif.tahun_periode
       }
       this.c_inputLayoutTP = [
@@ -630,12 +630,12 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     if (this.onSub === false) {
       const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-        width: '90vw',
+        width: 'auto',
         height: 'auto',
         maxWidth: '95vw',
         maxHeight: '95vh',
         backdropClass: 'bg-dialog',
-        position: { top: '90px' },
+        position: { top: '70px' },
         data: {
           type: type,
           buttonLayout:
@@ -664,12 +664,12 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     } else {
       if (this.enableCancel) {
         const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-          width: '90vw',
+          width: 'auto',
           height: 'auto',
           maxWidth: '95vw',
           maxHeight: '95vh',
           backdropClass: 'bg-dialog',
-          position: { top: '40px' },
+          position: { top: '70px' },
           data: {
             type: type,
             buttonLayout:

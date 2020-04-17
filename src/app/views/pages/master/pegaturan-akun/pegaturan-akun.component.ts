@@ -160,6 +160,9 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
                 this.openDialog('kode_akun')
               }
             }
+          } else {
+            this.ref.markForCheck()
+            this.openSnackBar("Gagal Ambil Data Akun", 'fail')
           }
         }
       )
