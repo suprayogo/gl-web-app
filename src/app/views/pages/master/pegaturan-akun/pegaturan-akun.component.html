@@ -10,7 +10,7 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section">
+                <div class="kt-section" *ngIf="!loading">
                     <kt-forminput [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
                         [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
                         [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
