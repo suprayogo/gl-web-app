@@ -86,7 +86,8 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
   detailDisplayColumns = [
     {
       label: 'Kode Akun',
-      value: 'kode_akun'
+      value: 'kode_akun',
+      number: false
     },
     {
       label: 'Nama Akun',

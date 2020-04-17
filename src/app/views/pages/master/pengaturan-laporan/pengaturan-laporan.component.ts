@@ -507,7 +507,6 @@ export class PengaturanLaporanComponent implements OnInit {
                 nama_laporan: this.laporanData['AK']['nama_laporan']
               }
               this.AKSetting = JSON.parse(this.laporanData['AK']['setting'])
-              console.log(this.AKSetting)
             }
             this.sendRequestAkun()
           } else {

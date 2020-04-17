@@ -577,8 +577,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            console.clear()
-            console.log(data['RESULT'])
             let t = JSON.parse(JSON.stringify(data['RESULT'])),
               res = []
             for (var i = 0; i < t.length; i++) {
