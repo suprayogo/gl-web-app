@@ -29,16 +29,20 @@ export class PengaturanLaporanComponent implements OnInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild('forminputLB', { static: false }) forminputLB;
+  @ViewChild('ak', { static: false }) forminputAK;
 
   // VARIABLES
   loading: boolean = true;
   loadingLB: boolean = false;
   loadingNR: boolean = true;
   loadingAK: boolean = true;
+  loadingAkun: boolean = false;
   content: any;
   selectedTab: number = 0;
   formNoButton: boolean = true;
   objectKey = Object.keys;
+  dialogRef: any;
+  dialogType: any;
 
   // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
@@ -55,7 +59,10 @@ export class PengaturanLaporanComponent implements OnInit {
   }
   formAKValue = {
     kode_laporan: '',
-    nama_laporan: ''
+    nama_laporan: '',
+    id_akun: '',
+    kode_akun: '',
+    nama_akun: ''
   }
 
   // DYNAMIC VARIABLE
@@ -231,6 +238,35 @@ export class PengaturanLaporanComponent implements OnInit {
         disabled: true
       },
       inputPipe: true
+    },
+    {
+      formWidth: 'col-4',
+      label: 'Akun Kas',
+      id: 'akun-kas',
+      type: 'inputgroup',
+      click: (type) => this.openADialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_akun',
+      valueOf: 'kode_akun',
+      required: false,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-akun',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_akun'
+      },
+      blurOption: {
+        ind: 'kode_akun',
+        data: [],
+        valueOf: ['id_akun', 'kode_akun', 'nama_akun'],
+        onFound: null
+      },
+      update: {
+        disabled: false
+      }
     }
   ]
 
@@ -244,7 +280,7 @@ export class PengaturanLaporanComponent implements OnInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.gbl.need(true, false)
-    this.madeRequest()
+    this.sendRequestAkun()
     this.reqKodePerusahaan()
   }
 
@@ -252,7 +288,7 @@ export class PengaturanLaporanComponent implements OnInit {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
 
     if (this.kode_perusahaan !== "") {
-      this.madeRequest()
+      this.sendRequestAkun()
     }
   }
 
@@ -267,7 +303,7 @@ export class PengaturanLaporanComponent implements OnInit {
         this.resetForm()
 
         if (this.kode_perusahaan !== "") {
-          this.madeRequest()
+          this.sendRequestAkun()
         }
       }
     )
@@ -339,8 +375,10 @@ export class PengaturanLaporanComponent implements OnInit {
         }
       )
     } else if (type === 'ak') {
+      this.formAKValue = this.forminputAK.getData()
       let res = this.formAKValue
       res['kode_perusahaan'] = this.kode_perusahaan
+      this.AKSetting['id_akun'] = this.formAKValue['id_akun']
       res['setting'] = JSON.stringify(this.AKSetting)
       this.request.apiData('setting-laporan', 'u-setting-laporan', res).subscribe(
         data => {
@@ -370,6 +408,50 @@ export class PengaturanLaporanComponent implements OnInit {
     // this.datatable == undefined ? null : this.datatable.reset()
   }
 
+  // Dialog
+  openADialog(type) {
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    this.dialogRef = this.dialog.open(DialogComponent, {
+      width: '90vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_akun" ? {} :
+            {},
+        displayedColumns:
+          type === "kode_akun" ? this.inputAkunDisplayColumns :
+            [],
+        tableData:
+          type === "kode_akun" ? this.inputAkunData :
+            [],
+        tableRules:
+          type === "kode_akun" ? [] :
+            [],
+        formValue: this.formAKValue,
+        loadingData: type === "kode_akun" ? this.loadingAkun : null
+      }
+    });
+
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_akun") {
+          if (this.forminputAK !== undefined) {
+            this.forminputAK.updateFormValue('id_akun', result.id_akun)
+            this.forminputAK.updateFormValue('kode_akun', result.kode_akun)
+            this.forminputAK.updateFormValue('nama_akun', result.nama_akun)
+          }
+        }
+        this.ref.markForCheck();
+      }
+      this.dialogRef = undefined;
+      this.dialogType = undefined;
+    });
+  }
+
   openDialog(type, st, ft) {
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
@@ -386,9 +468,9 @@ export class PengaturanLaporanComponent implements OnInit {
         tableData:
           type === "kode_akun" ? (
             st === "lbrg" ? this.inputAkunData.filter(x => !this.selectedLBAkun.includes(x['id_akun'])) :
-            st === "nr" ? this.inputAkunData.filter(x => !this.selectedNRAkun.includes(x['id_akun'])) :
-            st === "ak" ? this.inputAkunData.filter(x => !this.selectedAKAkun.includes(x['id_akun'])) :
-              this.inputAkunData
+              st === "nr" ? this.inputAkunData.filter(x => !this.selectedNRAkun.includes(x['id_akun'])) :
+                st === "ak" ? this.inputAkunData.filter(x => !this.selectedAKAkun.includes(x['id_akun'])) :
+                  this.inputAkunData
           ) :
             [],
         tableRules:
@@ -448,7 +530,7 @@ export class PengaturanLaporanComponent implements OnInit {
 
       this.selectedLBAkun = this.selectedLBAkun.filter(x => x['id_akun'] !== e['id_akun'])
       this.LBSetting['daftarPengakuanNilai'][ft] = this.LBSetting['daftarPengakuanNilai'][ft].filter(x => x['id_akun'] !== e['id_akun'])
-      
+
       setTimeout(() => {
         this.loadingLB = false
         this.ref.markForCheck()
@@ -459,7 +541,7 @@ export class PengaturanLaporanComponent implements OnInit {
 
       this.selectedNRAkun = this.selectedNRAkun.filter(x => x['id_akun'] !== e['id_akun'])
       this.NRSetting['daftarPengakuanNilai'][ft] = this.NRSetting['daftarPengakuanNilai'][ft].filter(x => x['id_akun'] !== e['id_akun'])
-      
+
       setTimeout(() => {
         this.loadingNR = false
         this.ref.markForCheck()
@@ -470,7 +552,7 @@ export class PengaturanLaporanComponent implements OnInit {
 
       this.selectedAKAkun = this.selectedAKAkun.filter(x => x['id_akun'] !== e['id_akun'])
       this.AKSetting['daftarPengakuanNilai'][ft] = this.AKSetting['daftarPengakuanNilai'][ft].filter(x => x['id_akun'] !== e['id_akun'])
-      
+
       setTimeout(() => {
         this.loadingAK = false
         this.ref.markForCheck()
@@ -502,13 +584,18 @@ export class PengaturanLaporanComponent implements OnInit {
               this.NRSetting = JSON.parse(this.laporanData['NR']['setting'])
             }
             if (this.laporanData['AK'] !== undefined) {
+              this.AKSetting = JSON.parse(this.laporanData['AK']['setting'])
+              let akun = this.inputAkunData.filter(x => x['id_akun'] === (this.AKSetting['id_akun'] === undefined ? "" : this.AKSetting['id_akun']))
               this.formAKValue = {
                 kode_laporan: this.laporanData['AK']['kode_laporan'],
-                nama_laporan: this.laporanData['AK']['nama_laporan']
+                nama_laporan: this.laporanData['AK']['nama_laporan'],
+                id_akun: this.AKSetting['id_akun'],
+                kode_akun: akun.length > 0 ? akun[0]['kode_akun'] : "",
+                nama_akun: akun.length > 0 ? akun[0]['nama_akun'] : ""
               }
-              this.AKSetting = JSON.parse(this.laporanData['AK']['setting'])
             }
-            this.sendRequestAkun()
+            this.loading = false
+            this.ref.markForCheck()
           } else {
             this.loading = false
             this.ref.markForCheck()
@@ -520,19 +607,20 @@ export class PengaturanLaporanComponent implements OnInit {
   }
 
   sendRequestAkun() {
-    this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputAkunData = data['RESULT']
-          this.loading = false
-          this.ref.markForCheck()
-        } else {
-          this.loading = false
-          this.ref.markForCheck()
-          this.openSnackBar('Gagal mendapatkan daftar akun.', 'fail')
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "" && this.kode_perusahaan != null) {
+      this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputAkunData = data['RESULT']
+            this.madeRequest()
+          } else {
+            this.loading = false
+            this.ref.markForCheck()
+            this.openSnackBar('Gagal mendapatkan daftar akun.', 'fail')
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   openSnackBar(message, type?: any, onCloseFunc?: any) {

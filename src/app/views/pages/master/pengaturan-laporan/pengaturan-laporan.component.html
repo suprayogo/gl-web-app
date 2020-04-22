@@ -130,7 +130,7 @@
             </div>
 
             <div class="kt-section" *ngIf="!loadingAK">
-              <kt-forminput [inputLayout]="inputAKLayout" [formValue]="formAKValue" [noButton]="formNoButton"
+              <kt-forminput #ak [inputLayout]="inputAKLayout" [formValue]="formAKValue" [noButton]="formNoButton"
                 (onSubmit)="onSubmit($event)" (onCancel)="onCancel()"></kt-forminput>
 
               <div *ngFor="let item of AKSetting['keyPengakuanNilai']; let i = index" style="width: 100%;">

@@ -326,7 +326,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       backdropClass: 'bg-dialog',
       position: { top: '50px' },
       data: {
-        width: '70vw',
+        width: '90vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -334,6 +334,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
         detailLoad: this.detailData === [] ? this.detailJurnalLoad : false ,
         jurnalData: this.detailData,
         jurnalDataAkun: [],
+        noEditJurnal: true,
         noButtonSave: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,

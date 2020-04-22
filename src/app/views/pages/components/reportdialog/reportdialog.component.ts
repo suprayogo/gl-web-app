@@ -12,7 +12,7 @@ export class ReportdialogComponent implements OnInit {
 
   report_id: string = ""
   report_name: string = ""
-  report_link: string = "http://int.darkologistik.com:8787/logis/viewer.html?repId="
+  report_link: string = "http://deva.darkotech.id:8702/logis/viewer.html?repId="
 
   constructor(
     public dialogRef: MatDialogRef<ReportdialogComponent>,
