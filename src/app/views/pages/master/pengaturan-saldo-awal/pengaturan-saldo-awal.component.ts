@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
-import * as MD5 from 'crypto-js/md5';
-import * as randomString from 'random-string';
 
 // Request Data API
 import { RequestDataService } from '../../../../service/request-data.service';
@@ -10,9 +8,6 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 
 // Components
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
-import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
-import { ForminputComponent } from '../../components/forminput/forminput.component';
-import { DialogComponent } from '../../components/dialog/dialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
@@ -29,7 +24,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   // Variables
   loading: boolean = true;
   content: any;
-  subscription: any;
+  sub_perusahaan: any;
   kode_perusahaan: string;
 
   data_akun = []
@@ -138,7 +133,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.gbl.need(true, false)
-    this.subscription = this.gbl.change.subscribe(
+    this.sub_perusahaan = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
         this.resetForm()
@@ -157,7 +152,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.subscription === undefined ? null : this.subscription.unsubscribe()
+    this.sub_perusahaan === undefined ? null : this.sub_perusahaan.unsubscribe()
   }
 
   //Browse binding event

@@ -39,6 +39,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   tableLoad: boolean = false;
   onUpdate: boolean = false;
   enableCancel: boolean = true;
+  enableEdit: boolean = false;
   enableDelete: boolean = false;
   disableSubmit: boolean = false;
   browseNeedUpdate: boolean = true;
@@ -547,6 +548,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     }
     this.onUpdate = true;
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
+    this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
     this.getBackToInput();
   }
 
@@ -601,7 +603,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         } else if (this.forminput.getData().kode_departemen === '') {
           this.openSnackBar('Departemen tidak valid.', 'info')
         } else {
-          this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
+          if (this.onUpdate && !this.enableEdit) {
+            this.openSnackBar('Tidak dapat diedit lagi.', 'info')
+          } else {
+            this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
+          }
         }
       }
     }
@@ -628,6 +634,12 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
       if (data['nama_departemen'] === '') valid = false
       if (data['nama_divisi'] === '') valid = false
+    }
+
+    if (this.onUpdate) {
+      if (!this.enableEdit) {
+        valid = false
+      }
     }
 
     return valid

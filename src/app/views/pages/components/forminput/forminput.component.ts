@@ -292,7 +292,6 @@ export class ForminputComponent implements OnInit {
       this.fromDate,
       this.toDate
     ]
-    console.log(this.cFormValue)
   }
 
   isHovered(date: NgbDate) {

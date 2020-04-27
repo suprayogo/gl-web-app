@@ -28,7 +28,6 @@ export class GlobalVariableService {
   bulan_periodeAktif: string = "";
   activePeriod: Subject<any> = new Subject<any>();
 
-
   constructor() { }
 
   // ACCESS KEY

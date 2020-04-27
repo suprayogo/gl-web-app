@@ -543,6 +543,9 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       }
     ]
     this.loading = false
+    setTimeout(() => {
+      this.tabTP()
+    }, 1000)
     this.ref.markForCheck()
     this.sendRequestRiwayat()
     this.sendRequesBelumPosting()
@@ -588,7 +591,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
   tabTP() {
     this.loadTab = true
-    console.log(this.periode_aktif.id_periode)
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
       this.formValueTP = {
         id_periode: '',
@@ -792,7 +794,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       backdropClass: 'bg-dialog',
       position: { top: '50px' },
       data: {
-        width: '70vw',
+        width: '90vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -800,6 +802,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         detailLoad: this.detailData === [] ? this.detailJurnalLoad : false ,
         jurnalData: this.detailData,
         jurnalDataAkun: [],
+        noEditJurnal: true,
         noButtonSave: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
@@ -926,11 +929,15 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
+          window.parent.postMessage({
+            'type': 'UPDATE-PERIODE'
+          }, "*")
           this.resetForm()
           this.browseNeedUpdate = true
+          this.loadTab = true
           this.ref.markForCheck()
           this.openSnackBar("PERIODE TELAH DITUTUP", 'success')
-          window.location.href = "/"
+          this.reqActivePeriod()
         } else {
           this.loading = false;
           this.ref.markForCheck()

@@ -201,7 +201,6 @@ export class DetailJurnalComponent implements OnInit {
 
           }
           this.ref.markForCheck();
-          console.log(this.res_data)
         }
       }
     });

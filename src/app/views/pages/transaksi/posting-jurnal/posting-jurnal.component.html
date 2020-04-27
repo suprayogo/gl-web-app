@@ -75,10 +75,10 @@
                     </ng-template>
 
                     <kt-portlet-body>
-                        <div class="kt-section" *ngIf="loadTab">
+                        <div class="kt-section" style="min-height: 200px;" *ngIf="loadTab">
                             <kt-loading></kt-loading>
                         </div>
-                        <div class="kt-section" *ngIf="!loadTab">
+                        <div class="kt-section" style="min-height: 200px;" *ngIf="!loadTab">
                             <kt-forminput #TP [inputLayout]="inputLayoutTP" [formValue]="formValueTP"
                                 [nama_tombol]="nama_tombolTP" [buttonLayout]="buttonLayout"
                                 [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"

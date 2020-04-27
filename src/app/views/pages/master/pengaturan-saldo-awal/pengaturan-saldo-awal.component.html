@@ -25,7 +25,7 @@
                         </div>
                     </div>
 
-                    <div style="overflow-y: auto; width: 100%; height: calc(100% - 38px);" id="c-container">
+                    <div style="overflow-y: overlay; width: 100%; height: calc(100% - 38px);" id="c-container">
                         <div *ngFor="let x of res_data; let i = index"
                             style="width: 100%; height: 42px; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
                             [ngStyle]="{'background-color': x['type'] === 'cat' ? '#ecf0f1' : '', 'cursor': checkChild(x['id_akun']) || x['type'] === 'cat' ? 'default' : 'pointer'}"
