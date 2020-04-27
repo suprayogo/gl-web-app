@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <kt-portlet-body>
+                <div class="kt-section"*ngIf="!loading">
+                    <div *ngIf="!loadingAK">
+                        <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
+                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [tableRules]="detailRules" (onSubmit)="onSubmitAK($event)" (onCancel)="onCancel('ak')"
+                            [onSub]="onSub">
+                        </kt-forminput>
+                    </div>
+                    <div *ngIf="loadingAK">
+                        <h3>Arus Kas</h3><br>
+                        <kt-loading></kt-loading>
+                    </div>
+                </div>
+            </kt-portlet-body>
+
+        </kt-portlet>
+
+        <!-- End of a Content -->
+
+    </div>
+</div>

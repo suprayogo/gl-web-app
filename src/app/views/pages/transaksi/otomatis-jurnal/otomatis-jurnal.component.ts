@@ -546,11 +546,11 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.browseDataRT = data['RESULT']
             if (data['RESULT'].length > 0) {
               let dt = data['RESULT'][0]['input_dt'].split(" ")[0],
-              st = dt.split("-"),
-              y = st[0],
-              m = st[1].replace("0", ""),
-              d = st[2],
-              edt = d + " " + this.gbl.getNamaBulan(m) + " " + y
+                st = dt.split("-"),
+                y = st[0],
+                m = st[1].replace("0", ""),
+                d = st[2],
+                edt = d + " " + this.gbl.getNamaBulan(m) + " " + y
               this.formValue.tgl_tarik = edt
               this.forminput.updateFormValue('tgl_tarik', edt)
             } else {
@@ -573,7 +573,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.bottomPage()
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
-      let periode = this.gbl.getTahunPeriode() + "-" + this.gbl.getBulanPeriode() + "-" + this.gbl.getBatasTanggal(this.gbl.getBulanPeriode())
+      let periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif()) + "-" + this.gbl.getBatasTanggal(this.gbl.getBulanPeriodeAktif())
       this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {

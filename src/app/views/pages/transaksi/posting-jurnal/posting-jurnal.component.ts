@@ -1017,7 +1017,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any, onCloseFunc?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

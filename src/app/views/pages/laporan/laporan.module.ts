@@ -49,11 +49,41 @@ import {
 
 // Components
 import { AllComponent } from './all/all.component';
+import { LaporanJurnalComponent } from './laporan-jurnal/laporan-jurnal.component';
+import { LaporanBukuBesarComponent } from './laporan-buku-besar/laporan-buku-besar.component';
+import { LaporanNeracaSaldoComponent } from './laporan-neraca-saldo/laporan-neraca-saldo.component';
+import { LaporanLabaRugiComponent } from './laporan-laba-rugi/laporan-laba-rugi.component';
+import { LaporanNeracaComponent } from './laporan-neraca/laporan-neraca.component';
+import { LaporanArusKasComponent } from './laporan-arus-kas/laporan-arus-kas.component';
 
 const routes: Routes = [
   {
     path: 'all-reports',
     component: AllComponent
+  },
+  {
+    path: 'jurnal',
+    component: LaporanJurnalComponent
+  },
+  {
+    path: 'buku-besar',
+    component: LaporanBukuBesarComponent
+  },
+  {
+    path: 'neraca-saldo',
+    component: LaporanNeracaSaldoComponent
+  },
+  {
+    path: 'laba-rugi',
+    component: LaporanLabaRugiComponent
+  },
+  {
+    path: 'neraca',
+    component: LaporanNeracaComponent
+  },
+  {
+    path: 'arus-kas',
+    component: LaporanArusKasComponent
   }
 ]
 
@@ -115,7 +145,13 @@ const routes: Routes = [
     ActionNotificationComponent
   ],
   declarations: [
-    AllComponent
+    AllComponent,
+    LaporanJurnalComponent,
+    LaporanBukuBesarComponent,
+    LaporanNeracaSaldoComponent,
+    LaporanLabaRugiComponent,
+    LaporanNeracaComponent,
+    LaporanArusKasComponent
   ]
 })
 export class LaporanModule { }
