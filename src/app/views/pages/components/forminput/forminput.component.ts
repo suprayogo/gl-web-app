@@ -32,6 +32,7 @@ export class ForminputComponent implements OnInit {
   // Enable detail input custom GL
   @Input() detailJurnal: boolean;
   @Input() jurnalDataAkun: any;
+  @Input() jurnalDataDivisi: any;
   @Input() jurnalData: any;
   @Input() jurnalOtomatis: boolean;
   @Input() jurnalDataSetting: any;

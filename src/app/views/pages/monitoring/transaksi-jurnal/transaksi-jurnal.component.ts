@@ -98,26 +98,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Divisi',
-      id: 'nama-divisi',
-      type: 'input',
-      valueOf: 'nama_divisi',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Departemen',
-      id: 'nama-departemen',
-      type: 'input',
-      valueOf: 'nama_departemen',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
       label: 'Keterangan',
       id: 'keterangan',
       type: 'input',
@@ -297,6 +277,10 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
               kode_akun: resp[i]['kode_akun'],
               nama_akun: resp[i]['nama_akun'],
               keterangan_akun: resp[i]['keterangan_akun'],
+              kode_divisi: resp[i]['kode_divisi'],
+              nama_divisi: resp[i]['nama_divisi'],
+              kode_departemen: resp[i]['kode_departemen'],
+              nama_departemen: resp[i]['nama_departemen'],
               keterangan: resp[i]['keterangan'],
               saldo_debit: parseFloat(resp[i]['nilai_debit']),
               saldo_kredit: parseFloat(resp[i]['nilai_kredit'])

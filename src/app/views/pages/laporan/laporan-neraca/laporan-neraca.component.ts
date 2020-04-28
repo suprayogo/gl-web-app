@@ -182,6 +182,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
     this.loading = true
     this.ref.markForCheck()
     if (this.forminputNR !== undefined) {
+      this.formValueNR = this.forminputNR.getData()
       let p = {}
       for (var i = 0; i < this.inputPeriodeData.length; i++) {
         if (this.formValueNR.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueNR.tahun === this.inputPeriodeData[i]['tahun_periode']) {
@@ -192,12 +193,39 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
 
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
+        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-neraca', p).subscribe(
           data => {
             console.clear()
             console.log(data)
             if (data['STATUS'] === 'Y') {
-              let d = data['RESULT'], res = [], totalTipe = {}, totalKategori = {}
+              let idata = data['RESULT'], d = [], res = [], totalTipe = {}, totalKategori = {}
+              let nd = JSON.parse(idata['NR']), ld = JSON.parse(idata['LBRG']), saldo_lr = 0
+              for (var i = 0; i < ld.length; i++) {
+                if (ld[i]['tipe_laporan'] === 'p') {
+                  saldo_lr = saldo_lr + parseFloat(ld[i]['saldo'])
+                }
+
+                if (ld[i]['tipe_laporan'] === 'b') {
+                  saldo_lr = saldo_lr - parseFloat(ld[i]['saldo'])
+                }
+              }
+              d.push({
+                tahun: nd.length > 0 ? nd[0]['tahun'] : "",
+                bulan: nd.length > 0 ? nd[0]['bulan'] : "",
+                group_besar: "ke",
+                nama_group_besar: "Kewajiban & Ekuitas",
+                group: "EKUITAS",
+                nama_group: "Ekuitas",
+                id_akun: "",
+                kode_akun: "LBRG",
+                nama_akun: "Laba Rugi",
+                tipe_akun: "0",
+                id_kategori_akun: "lbrg",
+                nama_kategori_akun: "Laba Rugi",
+                saldo_akhir: JSON.stringify(saldo_lr)
+              })
+              d = d.concat(nd)
               for (var i = 0; i < d.length; i++) {
                 if (totalTipe[d[i]['group']]) {
                   totalTipe[d[i]['group']] = totalTipe[d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
@@ -205,24 +233,65 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
                   totalTipe[d[i]['group']] = parseFloat(d[i]['saldo_akhir'])
                 }
 
-                if (totalKategori[d[i]['id_kategori_akun']]) {
-                  totalKategori[d[i]['id_kategori_akun']] = totalKategori[d[i]['id_kategori_akun']] + parseFloat(d[i]['id_kategori_akun'])
+                if (totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']]) {
+                  totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] = totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
                 } else {
-                  totalKategori[d[i]['id_kategori_akun']] = parseFloat(d[i]['saldo_akhir'])
+                  totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] = parseFloat(d[i]['saldo_akhir'])
+                }
+
+                if (d[i]['group'] === "AKTIVA-LANCAR" || d[i]['group'] === "AKTIVA-TETAP") {
+                  if (d[i]['group'] === "AKTIVA-LANCAR") {
+                    d[i]['nama_group'] = "Aktiva Lancar"
+                  } else if (d[i]['group'] === "AKTIVA-TETAP") {
+                    d[i]['nama_group'] = "Aktiva Tetap"
+                  }
+                  d[i]['group_besar'] = "ak"
+                  d[i]['nama_group_besar'] = "Aktiva"
+                }
+
+                if (d[i]['group'] === "KEWAJIBAN" || d[i]['group'] === "EKUITAS") {
+                  if (d[i]['group'] === "KEWAJIBAN") {
+                    d[i]['nama_group'] = "Kewajiban"
+                  } else if (d[i]['group'] === "EKUITAS") {
+                    d[i]['nama_group'] = "Ekuitas"
+                  }
+                  d[i]['group_besar'] = "ke"
+                  d[i]['nama_group_besar'] = "Kewajiban & Ekuitas"
                 }
               }
+              let totalAktiva = totalTipe['AKTIVA-LANCAR'] + totalTipe['AKTIVA-TETAP'],
+                totalKE = totalTipe['KEWAJIBAN'] + totalTipe['EKUITAS']
+
               for (var i = 0; i < d.length; i++) {
                 let t = []
 
+                t.push(d[i]['group_besar'])
+                t.push(d[i]['nama_group_besar'])
                 t.push(d[i]['group'])
+                t.push(d[i]['nama_group'])
                 t.push(d[i]['id_kategori_akun'])
                 t.push(d[i]['nama_kategori_akun'])
+                t.push(d[i]['kode_akun'])
+                t.push(d[i]['nama_akun'])
                 t.push(parseFloat(d[i]['saldo_akhir']))
-                t.push(totalKategori[d[i]['id_kategori_akun']])
+                t.push(totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']])
                 t.push(totalTipe[d[i]['group']])
+                t.push(d[i]['group_besar'] === "ak" ? (totalAktiva == null || totalAktiva === undefined || isNaN(totalAktiva) ? 0 : totalAktiva) : (totalKE == null || totalKE === undefined || isNaN(totalKE) ? 0 : totalKE))
 
                 res.push(t)
               }
+              res.sort(function (a, b) {
+                if (a[0] < b[0]) {
+                  return -1;
+                }
+
+                if (a[0] > b[0]) {
+                  return 1;
+                }
+
+                return 0;
+              })
+
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-NERACA'
@@ -234,17 +303,21 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
                 REPORT_COMPANY_ADDRESS: "",
                 REPORT_COMPANY_CITY: "",
                 REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + p['tahun_periode'] + "-" + this.gbl.getNamaBulan(p['bulan_periode'])
+                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
+                "tipeBesar",
+                "namaTipeBesar",
                 "tipe",
+                "namaTipe",
                 "kategoriAkun",
                 "namaKategoriAkun",
                 "kodeAkun",
                 "namaAkun",
                 "saldo",
                 "totalKategori",
-                "totalTipe"
+                "totalTipe",
+                "totalTipeBesar"
               ]
               rp['FIELD_TYPE'] = [
                 "string",
@@ -252,6 +325,10 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
                 "string",
                 "string",
                 "string",
+                "string",
+                "string",
+                "string",
+                "bigdecimal",
                 "bigdecimal",
                 "bigdecimal",
                 "bigdecimal"
@@ -340,7 +417,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://int.darkologistik.com:8787/logis/viewer.html?repId="+data['RESULT']);
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           this.loading = false
           this.ref.markForCheck()
         } else {

@@ -181,6 +181,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.loading = true
     this.ref.markForCheck()
     if (this.forminputJL !== undefined) {
+      this.formValueJL = this.forminputJL.getData()
       let p = {}
       for (var i = 0; i < this.inputPeriodeData.length; i++) {
         if (this.formValueJL.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.inputPeriodeData[i]['tahun_periode']) {
@@ -191,6 +192,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
+        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-jurnal', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -206,6 +208,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
                 res.push(t)
               }
+              
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-JURNAL'
@@ -217,7 +220,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 REPORT_COMPANY_ADDRESS: "",
                 REPORT_COMPANY_CITY: "",
                 REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + p['tahun_periode'] + "-" + this.gbl.getNamaBulan(p['bulan_periode'])
+                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
                 "noTran",
@@ -228,7 +231,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               ]
               rp['FIELD_TYPE'] = [
                 "string",
-                "string",
+                "date",
                 "string",
                 "bigdecimal",
                 "bigdecimal"
@@ -318,7 +321,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://int.darkologistik.com:8787/logis/viewer.html?repId="+data['RESULT']);
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           this.loading = false
           this.ref.markForCheck()
         } else {

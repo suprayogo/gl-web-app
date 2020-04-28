@@ -111,8 +111,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     no_referensi: '',
     tgl_tran: '',
     nama_cabang: '',
-    nama_divisi: '',
-    nama_departemen: '',
     keterangan: '',
   }
 
@@ -156,26 +154,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Divisi',
-      id: 'nama-divisi',
-      type: 'input',
-      valueOf: 'nama_divisi',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Departemen',
-      id: 'nama-departemen',
-      type: 'input',
-      valueOf: 'nama_departemen',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
       label: 'Keterangan',
       id: 'keterangan',
       type: 'input',
@@ -200,14 +178,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     {
       label: 'Cabang',
       value: 'nama_cabang'
-    },
-    {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
     },
     {
       label: 'Keterangan',
@@ -338,14 +308,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
+    console.log(data)
     let x = JSON.parse(JSON.stringify(data))
     this.formDetail = {
       id: x['id'],
       no_referensi: x['no_referensi'],
       tgl_tran: x['tgl_tran'],
       nama_cabang: x['nama_cabang'],
-      nama_divisi: x['nama_divisi'],
-      nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan'],
     }
     this.openDialog()
@@ -472,12 +441,15 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     for (var i = 0; i < this.browseDataHT.length; i++) {
       if (this.browseDataHT[i]['id'] === this.formDetail['id']) {
         for (var j = 0; j < this.browseDataHT[i]['detail'].length; j++) {
-          console.log(this.browseDataHT[i]['detail'][j]['id_akun'])
           let t = {
             id_akun: this.browseDataHT[i]['detail'][j]['id_akun'],
             kode_akun: this.browseDataHT[i]['detail'][j]['kode_akun'],
             nama_akun: this.browseDataHT[i]['detail'][j]['nama_akun'],
             keterangan_akun: this.browseDataHT[i]['detail'][j]['keterangan_akun'],
+            kode_divisi: this.browseDataHT[i]['detail'][j]['kode_divisi'],
+            nama_divisi: this.browseDataHT[i]['detail'][j]['nama_divisi'],
+            kode_departemen: this.browseDataHT[i]['detail'][j]['kode_departemen'],
+            nama_departemen: this.browseDataHT[i]['detail'][j]['nama_departemen'],
             keterangan: this.browseDataHT[i]['detail'][j]['keterangan'],
             saldo_debit: this.browseDataHT[i]['detail'][j]['debit'] ? parseFloat(this.browseDataHT[i]['detail'][j]['saldo']) : 0,
             saldo_kredit: !this.browseDataHT[i]['detail'][j]['debit'] ? parseFloat(this.browseDataHT[i]['detail'][j]['saldo']) : 0
@@ -591,10 +563,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
                 tgl_tran: t[i]['tgl_tran'],
                 kode_cabang: t[i]['kode_cabang'],
                 nama_cabang: t[i]['nama_cabang'],
-                kode_divisi: t[i]['kode_divisi'],
-                nama_divisi: t[i]['nama_divisi'],
-                kode_departemen: t[i]['kode_departemen'],
-                nama_departemen: t[i]['nama_departemen'],
                 keterangan: t[i]['keterangan'],
                 detail: JSON.parse(t[i]['detail'])
               }

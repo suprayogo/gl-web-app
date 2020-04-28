@@ -68,10 +68,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     tgl_tran: JSON.stringify(this.getDateNow()),
     kode_cabang: '',
     nama_cabang: '',
-    kode_divisi: '',
-    nama_divisi: '',
-    kode_departemen: '',
-    nama_departemen: '',
     keterangan: ''
   }
   
@@ -539,10 +535,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      kode_divisi: x['kode_divisi'],
-      nama_divisi: x['nama_divisi'],
-      kode_departemen: x['kode_departemen'],
-      nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
@@ -552,7 +544,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
   getBackToInput() {
     this.selectedTab = 0;
-    this.sendRequestDepartemen(this.formValue.kode_divisi)
+    // this.sendRequestDepartemen(this.formValue.kode_divisi)
     this.getDetail()
     this.formInputCheckChanges()
   }
@@ -641,10 +633,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       tgl_tran: JSON.stringify(this.getDateNow()),
       kode_cabang: '',
       nama_cabang: '',
-      kode_divisi: '',
-      nama_divisi: '',
-      kode_departemen: '',
-      nama_departemen: '',
       keterangan: ''
     }
     this.detailData = [

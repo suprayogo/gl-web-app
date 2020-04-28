@@ -182,6 +182,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
     this.loading = true
     this.ref.markForCheck()
     if (this.forminputNS !== undefined) {
+      this.formValueNS = this.forminputNS.getData()
       let p = {}
       for (var i = 0; i < this.inputPeriodeData.length; i++) {
         if (this.formValueNS.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueNS.tahun === this.inputPeriodeData[i]['tahun_periode']) {
@@ -192,6 +193,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
+        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-neraca-saldo', p).subscribe(
           data => {
             console.clear()
@@ -199,7 +201,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
-                let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
+                let t = []
 
                 t.push(d[i]['kode_akun'])
                 t.push(d[i]['nama_akun'])
@@ -208,6 +210,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
                 res.push(t)
               }
+
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-BUKU-BESAR'
@@ -219,7 +222,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
                 REPORT_COMPANY_ADDRESS: "",
                 REPORT_COMPANY_CITY: "",
                 REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + p['tahun_periode'] + "-" + this.gbl.getNamaBulan(p['bulan_periode'])
+                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
                 "kodeAkun",
@@ -318,7 +321,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://int.darkologistik.com:8787/logis/viewer.html?repId="+data['RESULT']);
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           this.loading = false
           this.ref.markForCheck()
         } else {

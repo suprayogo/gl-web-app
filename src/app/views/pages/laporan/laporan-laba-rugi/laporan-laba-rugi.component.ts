@@ -182,6 +182,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     this.loading = true
     this.ref.markForCheck()
     if (this.forminputLR !== undefined) {
+      this.formValueLR = this.forminputLR.getData()
       let p = {}
       for (var i = 0; i < this.inputPeriodeData.length; i++) {
         if (this.formValueLR.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueLR.tahun === this.inputPeriodeData[i]['tahun_periode']) {
@@ -192,6 +193,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
+        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
           data => {
             console.clear()
@@ -205,16 +207,18 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
                 t.push(d[i]['nama_tipe_laporan'])
                 t.push(d[i]['kode_akun'])
                 t.push(d[i]['nama_akun'])
-                if (d[i]['tipe_akun'] == 0) {
+                if (d[i]['tipe_laporan'] === 'b') {
                   t.push(d[i]['saldo'])
                   t.push(0)
-                } else if (d[i]['tipe_akun'] == 1) {
+                } else if (d[i]['tipe_laporan'] === 'p') {
                   t.push(0)
                   t.push(d[i]['saldo'])
+                  // t.push(d[i]['tipe_akun'] === "1" ? JSON.stringify(parseFloat(d[i]['saldo']) * -1) : d[i]['saldo'])
                 }
 
                 res.push(t)
               }
+              
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-LABA-RUGI'
@@ -226,7 +230,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
                 REPORT_COMPANY_ADDRESS: "",
                 REPORT_COMPANY_CITY: "",
                 REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + p['tahun_periode'] + "-" + this.gbl.getNamaBulan(p['bulan_periode'])
+                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
                 "tipe",
@@ -328,7 +332,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://int.darkologistik.com:8787/logis/viewer.html?repId="+data['RESULT']);
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           this.loading = false
           this.ref.markForCheck()
         } else {

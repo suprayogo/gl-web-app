@@ -58,10 +58,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     nama_jurnal: '',
     kode_cabang: '',
     nama_cabang: '',
-    kode_divisi: '',
-    nama_divisi: '',
-    kode_departemen: '',
-    nama_departemen: '',
     keterangan: ''
   }
   detailData = [
@@ -130,14 +126,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     {
       label: 'Cabang',
       value: 'nama_cabang'
-    },
-    {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
     },
     {
       label: 'Keterangan',
@@ -310,66 +298,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Divisi',
-      id: 'kode-divisi',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_divisi',
-      valueOf: 'kode_divisi',
-      required: false,
-      readOnly: false,
-      inputInfo: {
-        id: 'nama-divisi',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_divisi'
-      },
-      blurOption: {
-        ind: 'kode_divisi',
-        data: [],
-        valueOf: ['kode_divisi', 'nama_divisi'],
-        onFound: () => {
-          this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
-        }
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Departemen',
-      id: 'kode-departemen',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_departemen',
-      valueOf: 'kode_departemen',
-      required: false,
-      readOnly: false,
-      inputInfo: {
-        id: 'nama-departemen',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_departemen'
-      },
-      blurOption: {
-        ind: 'kode_departemen',
-        data: [],
-        valueOf: ['kode_departemen', 'nama_departemen'],
-        onFound: null
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
       label: 'Keterangan',
       id: 'keterangan',
       type: 'input',
@@ -444,10 +372,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       nama_jurnal: x['nama_jurnal'],
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      kode_divisi: x['kode_divisi'],
-      nama_divisi: x['nama_divisi'],
-      kode_departemen: x['kode_departemen'],
-      nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
@@ -553,10 +477,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       nama_jurnal: '',
       kode_cabang: '',
       nama_cabang: '',
-      kode_divisi: '',
-      nama_divisi: '',
-      kode_departemen: '',
-      nama_departemen: '',
       keterangan: ''
     }
     this.detailData = [
@@ -849,6 +769,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
               kode_akun: resp[i]['kode_akun'],
               nama_akun: resp[i]['nama_akun'],
               keterangan_akun: resp[i]['keterangan_akun'],
+              kode_divisi: resp[i]['kode_divisi'],
+              nama_divisi: resp[i]['nama_divisi'],
+              kode_departemen: resp[i]['kode_departemen'],
+              nama_departemen: resp[i]['nama_departemen'],
               keterangan: resp[i]['keterangan'],
               setting_debit: resp[i]['kode_debit'],
               setting_kredit: resp[i]['kode_kredit']
