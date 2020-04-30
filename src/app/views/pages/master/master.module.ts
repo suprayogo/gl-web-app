@@ -57,6 +57,8 @@ import { PengaturanSaldoAwalComponent } from './pengaturan-saldo-awal/pengaturan
 import { PengaturanLaporanComponent } from './pengaturan-laporan/pengaturan-laporan.component';
 import { PengaturanJurnalOtomatisComponent } from './pengaturan-jurnal-otomatis/pengaturan-jurnal-otomatis.component';
 import { PengaturanLinkTarikDataComponent } from './pengaturan-link-tarik-data/pengaturan-link-tarik-data.component';
+import { PengaturanSaldoKasirComponent } from './pengaturan-saldo-kasir/pengaturan-saldo-kasir.component';
+import { KasirComponent } from './kasir/kasir.component';
 
 
 const routes: Routes = [
@@ -95,6 +97,14 @@ const routes: Routes = [
 	{
 		path: 'pengaturan-link-tarik-data',
 		component: PengaturanLinkTarikDataComponent,
+	},
+	{
+		path: 'pengaturan-saldo-kasir',
+		component: PengaturanSaldoKasirComponent,
+	},
+	{
+		path: 'kasir',
+		component: KasirComponent,
 	}
 ];
 
@@ -165,6 +175,8 @@ const routes: Routes = [
 		PengaturanLaporanComponent,
 		PengaturanJurnalOtomatisComponent,
 		PengaturanLinkTarikDataComponent,
+		PengaturanSaldoKasirComponent,
+		KasirComponent,
 	]
 })
 export class MasterModule {}

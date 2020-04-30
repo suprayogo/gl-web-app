@@ -16,7 +16,7 @@
                         [detailLoad]="detailLoad" [enableDetail]="enableDetail" (onSubmit)="onSubmit($event)"
                         [onUpdate]="onUpdate" [enableDelete]="enableDelete" (onCancel)="onCancel()"
                         (deleteData)="openCDialog()" (editAction)="editDetailData($event)"
-                        (deleteAction)="deleteDetailData($event)">
+                        (deleteAction)="openCDialog($event)">
                     </kt-forminput>
                 </div>
             </kt-portlet-body>

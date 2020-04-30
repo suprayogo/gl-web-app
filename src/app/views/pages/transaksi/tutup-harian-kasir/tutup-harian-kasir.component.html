@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <kt-portlet-body>
+                <div class="kt-section" style="display:flex; flex-direction: row; height:320px;" *ngIf="!loading">
+                    <div style="width: 50%;">
+                        <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombolPJ"
+                            [nama_tombol2]="nama_tombolUP" [buttonLayout]="buttonLayout"
+                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                            [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                            (onSubmit)="openCDialog('posting_jurnal')" [onUpdate]="onUpdate"
+                            [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                            (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                            (onCancel)="onCancel()" [onSub]="onSub">
+                        </kt-forminput>
+                    </div>
+
+                    <div class="kt-section" *ngIf="tableLoadBP && !loading" style="width: 50%;">
+                        <kt-loading [loadingText]="loadingDataTextBP"></kt-loading>
+                    </div>
+
+                    <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
+                        <h2>Jurnal Belum Posting</h2>
+                        <kt-datatable-ag-grid #jbp [tableColumn]="displayedColumnsTableBP" [tableData]="browseDataBP"
+                            [tableRules]="browseDataRulesBP" (selectRowEvent)="browseSelectRowBP($event)"
+                            [containerHeight]=300>
+                        </kt-datatable-ag-grid>
+                    </div>
+                </div>
+            </kt-portlet-body>
+
+        </kt-portlet>
+
+        <!-- End of a Content -->
+
+    </div>
+</div>

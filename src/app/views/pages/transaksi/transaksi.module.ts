@@ -52,6 +52,7 @@ import { JurnalComponent } from './jurnal/jurnal.component';
 import { PostingJurnalComponent } from './posting-jurnal/posting-jurnal.component';
 import { OtomatisJurnalComponent } from './otomatis-jurnal/otomatis-jurnal.component';
 import { JurnalTransaksiComponent } from './jurnal-transaksi/jurnal-transaksi.component';
+import { TutupHarianKasirComponent } from './tutup-harian-kasir/tutup-harian-kasir.component';
 
 const routes: Routes = [
   {
@@ -74,6 +75,10 @@ const routes: Routes = [
   {
     path: 'jurnal-transaksi',
     component: JurnalTransaksiComponent,
+  },
+  {
+    path: 'tutup-kasir',
+    component: TutupHarianKasirComponent,
   }
 ]
 
@@ -138,7 +143,8 @@ const routes: Routes = [
     JurnalComponent,
     PostingJurnalComponent,
     OtomatisJurnalComponent,
-    JurnalTransaksiComponent
+    JurnalTransaksiComponent,
+    TutupHarianKasirComponent
   ]
 })
 export class TransaksiModule { }

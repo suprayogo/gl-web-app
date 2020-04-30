@@ -16,15 +16,15 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Daftar Rekening Perusahaan'
+  beforeCodeTitle: 'Daftar Kasir'
 }
 
 @Component({
-  selector: 'kt-rekening-perusahaan',
-  templateUrl: './rekening-perusahaan.component.html',
-  styleUrls: ['./rekening-perusahaan.component.scss', '../master.style.scss']
+  selector: 'kt-kasir',
+  templateUrl: './kasir.component.html',
+  styleUrls: ['./kasir.component.scss', '../master.style.scss']
 })
-export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
+export class KasirComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -49,6 +49,17 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
   kode_perusahaan: any;
+
+  status_aktif: Object = [
+    {
+      label: 'Aktif',
+      value: 'Y'
+    },
+    {
+      label: 'Non-Aktif',
+      value: 'N'
+    }
+  ]
 
   //Confirmation Variable
   c_buttonLayout = [
@@ -82,65 +93,40 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  inputCabangDisplayColumns = [
+  inputUserDisplayColumns = [
     {
-      label: 'Kode Cabang',
-      value: 'kode_cabang'
+      label: 'User ID',
+      value: 'user_id'
     },
     {
-      label: 'Nama Cabang',
-      value: 'nama_cabang'
+      label: 'Username',
+      value: 'user_id'
     }
   ]
-  inputCabangInterface = {
-    kode_cabang: 'string',
-    nama_cabang: 'string'
+  inputUserInterface = {
+    user_id: 'string',
+    user_name: 'string'
   }
-  inputCabangData = []
-  inputCabangDataRules = []
-
-  inputBankDisplayColumns = [
-    {
-      label: 'Kode Bank',
-      value: 'kode_bank'
-    },
-    {
-      label: 'Nama Bank',
-      value: 'nama_bank'
-    }
-  ]
-  inputBankInterface = {
-    kode_bank: 'string',
-    nama_bank: 'string'
-  }
-  inputBankData = []
-  inputBankDataRules = []
+  inputUserData = []
+  inputUserDataRules = []
 
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'Kode Cabang',
-      value: 'kode_cabang'
+      label: 'Nama Kasir',
+      value: 'nama_kasir'
     },
     {
-      label: 'Kode Bank',
-      value: 'kode_bank'
+      label: 'User Kasir',
+      value: 'user_kasir'
     },
     {
-      label: 'No. Rekening',
-      value: 'no_rekening'
+      label: 'Kepala Kasir',
+      value: 'user_kepala_kasir'
     },
     {
-      label: 'Atas Nama',
-      value: 'atas_nama'
-    },
-    {
-      label: 'Kantor Cabang',
-      value: 'nama_kantor_cabang'
-    },
-    {
-      label: 'Tgl. Buka Rekening',
-      value: 'tgl_buka_rekening'
+      label: 'Status Kasir',
+      value: 'status_aktif_sub'
     },
     {
       label: 'Keterangan',
@@ -164,12 +150,10 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     }
   ];
   browseInterface = {
-    kode_cabang: 'string',
-    kode_bank: 'string',
-    no_rekening: 'string',
-    atas_nama: 'string',
-    nama_kantor_cabang: 'string',
-    tgl_buka_rekening: 'string',
+    nama_kasir: 'string',
+    user_kasir: 'string',
+    user_kepala_kasir: 'string',
+    status_aktif: 'string',
     keterangan: 'string',
     //STATIC
     input_by: 'string',
@@ -178,16 +162,24 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = []
+  browseDataRules = [
+    {
+      target: 'status_aktif',
+      replacement: {
+        'Y': 'Aktif',
+        'N': 'Non-Aktif'
+      },
+      redefined: 'status_aktif_sub'
+    }
+  ]
 
   // Input Name
   formValue = {
-    kode_cabang: '',
-    kode_bank: '',
-    no_rekening: '',
-    atas_nama: '',
-    nama_kantor_cabang: '',
-    tgl_buka_rekening: JSON.stringify(this.getDateNow()),
+    id_kasir: '',
+    nama_kasir: '',
+    user_kasir: '',
+    user_kepala_kasir: '',
+    status_aktif: 'Y',
     keterangan: '',
   }
 
@@ -195,58 +187,10 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Cabang',
-      id: 'kode-cabang',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_cabang',
-      valueOf: 'kode_cabang',
-      required: true,
-      readOnly: false,
-      hiddenOn: false,
-      inputInfo: {
-        id: 'nama-cabang',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_cabang'
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Bank',
-      id: 'kode-bank',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_bank',
-      valueOf: 'kode_bank',
-      required: false,
-      readOnly: false,
-      hiddenOn: false,
-      inputInfo: {
-        id: 'nama-bank',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_bank'
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'No. Rekening',
-      id: 'no-rekening',
+      label: 'Nama Kasir',
+      id: 'nama-kasir',
       type: 'input',
-      valueOf: 'no_rekening',
+      valueOf: 'nama_kasir',
       required: false,
       readOnly: false,
       numberOnly: false,
@@ -256,41 +200,61 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Tanggal Buka Rekening',
-      id: 'tgl-buka-rekening',
-      type: 'datepicker',
-      valueOf: 'tgl_buka_rekening',
+      label: 'User Kasir',
+      id: 'user-kasir',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'user_kasir',
+      valueOf: 'user_kasir',
       required: true,
       readOnly: false,
-      update: {
-        disabled: false
+      hiddenOn: false,
+      inputInfo: {
+        id: 'user-name-kasir',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'user_name_kasir'
       },
-      timepick: false,
-      enableMin: false,
-      enableMax: false,
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Atas Nama',
-      id: 'atas-nama',
-      type: 'input',
-      valueOf: 'atas_nama',
-      required: false,
-      readOnly: false,
       update: {
         disabled: false
       }
     },
     {
       formWidth: 'col-5',
-      label: 'Kantor Cabang',
-      id: 'nama-kantor-cabang',
-      type: 'input',
-      valueOf: 'nama_kantor_cabang',
-      required: false,
+      label: 'Kepala Kasir',
+      id: 'user-kepala-kasir',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'user_kepala_kasir',
+      valueOf: 'user_kepala_kasir',
+      required: true,
       readOnly: false,
+      hiddenOn: false,
+      inputInfo: {
+        id: 'user-name-kepala-kasir',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'user_name_kepala_kasir'
+      },
       update: {
         disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Status Kasir',
+      id: 'status-aktif',
+      type: 'combobox',
+      options: this.status_aktif,
+      valueOf: 'status_aktif',
+      update: {
+        disabled: true
       }
     },
     {
@@ -355,36 +319,16 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.inputBankData = []
+    this.inputUserData = []
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('user', 'g-user', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.inputCabangData = data['RESULT']
-            this.ref.markForCheck()
-            this.reqBank()
-          } else {
-            this.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
-            this.loading = false
-            this.ref.markForCheck()
-          }
-        }
-      )
-    }
-  }
-
-  // Request Data API (to : L.O.V or Table)
-  reqBank() {
-    this.inputBankData = []
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('bank', 'g-bank', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.inputBankData = data['RESULT']
+            this.inputUserData = data['RESULT']
             this.loading = false
             this.ref.markForCheck()
           } else {
-            this.openSnackBar('Gagal mendapatkan daftar bank. mohon coba lagi nanti.')
+            this.openSnackBar('Gagal mendapatkan daftar user. mohon coba lagi nanti.')
             this.loading = false
             this.ref.markForCheck()
           }
@@ -406,20 +350,20 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_cabang" ? this.inputCabangInterface :
-            type === "kode_bank" ? this.inputBankInterface :
+          type === "user_kasir" ? this.inputUserInterface :
+            type === "user_kepala_kasir" ? this.inputUserInterface :
               {},
         displayedColumns:
-          type === "kode_cabang" ? this.inputCabangDisplayColumns :
-            type === "kode_bank" ? this.inputBankDisplayColumns :
+          type === "user_kasir" ? this.inputUserDisplayColumns :
+            type === "user_kepala_kasir" ? this.inputUserDisplayColumns :
               [],
         tableData:
-          type === "kode_cabang" ? this.inputCabangData :
-            type === "kode_bank" ? this.inputBankData :
+          type === "user_kasir" ? this.inputUserData :
+            type === "user_kepala_kasir" ? this.inputUserData :
               [],
         tableRules:
-          type === "kode_cabang" ? this.inputCabangDataRules :
-            type === "kode_bank" ? this.inputBankDataRules :
+          type === "user_kasir" ? this.inputUserDataRules :
+            type === "user_kepala_kasir" ? this.inputUserDataRules :
               [],
         formValue: this.formValue
       }
@@ -427,15 +371,15 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_bank") {
+        if (type === "user_kasir") {
           if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('kode_bank', result.kode_bank)
-            this.forminput.updateFormValue('nama_bank', result.nama_bank)
+            this.forminput.updateFormValue('user_kasir', result.user_id)
+            this.forminput.updateFormValue('user_name_kasir', result.user_name)
           }
-        } else if (type === "kode_cabang") {
+        } else if (type === "user_kepala_kasir") {
           if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
-            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.forminput.updateFormValue('user_kepala_kasir', result.user_id)
+            this.forminput.updateFormValue('user_name_kepala_kasir', result.user_name)
           }
         }
         this.ref.markForCheck();
@@ -460,7 +404,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
             label: 'Kode Bank',
             id: 'kode-bank',
             type: 'input',
-            valueOf: this.formValue.kode_bank,
+            valueOf: this.formValue.nama_kasir,
             changeOn: null,
             required: false,
             readOnly: true,
@@ -470,22 +414,12 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
             label: 'No. Rekening',
             id: 'no-rekening',
             type: 'input',
-            valueOf: this.formValue.no_rekening,
+            valueOf: this.formValue.user_kasir,
             changeOn: null,
             required: false,
             readOnly: true,
             disabled: true,
-          },
-          {
-            label: 'Atas Nama',
-            id: 'atas-nama',
-            type: 'input',
-            valueOf: this.formValue.atas_nama,
-            changeOn: null,
-            required: false,
-            readOnly: true,
-            disabled: true,
-          },
+          }
         ]
       },
       disableClose: true
@@ -536,15 +470,13 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
-    let t_buka_rek = new Date(x['tgl_buka_rekening'])
     this.formValue = {
-      kode_cabang: x['kode_cabang'],
-      kode_bank: x['kode_bank'],
-      no_rekening: x['no_rekening'],
-      atas_nama: x['atas_nama'],
-      nama_kantor_cabang: x['nama_kantor_cabang'],
-      tgl_buka_rekening: JSON.stringify(t_buka_rek.getTime()),
-      keterangan: x['keterangan'],
+      id_kasir: x['id_kasir'],
+      nama_kasir: x['nama_kasir'],
+      user_kasir: x['user_kasir'],
+      user_kepala_kasir: x['user_kepala_kasir'],
+      status_aktif: x['status_aktif'],
+      keterangan: x['keterangan']
     }
     this.onUpdate = true;
     this.getBackToInput();
@@ -561,20 +493,16 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-      if (inputForm.valid && this.formValue.kode_cabang !== undefined) {
-        if (this.formValue.kode_bank === "") {
-          this.openSnackBar('Kode Bank Belum Diisi.', 'info')
-        } else if (this.formValue.no_rekening === "") {
-          this.openSnackBar('Nomor Rekening Belum Diisi.', 'info')
-        } else if (this.formValue.atas_nama === "") {
-          this.openSnackBar('Atas Nama Nasabah Belum Diisi.', 'info')
-        } else if (this.formValue.nama_kantor_cabang === "") {
-          this.openSnackBar('Nama Kantor Cabang Belum Diisi.', 'info')
+      if (inputForm.valid && this.formValue.nama_kasir !== undefined) {
+        if (this.formValue.user_kasir === "") {
+          this.openSnackBar('User Kasir Belum Diisi.', 'info')
+        } else if (this.formValue.user_kepala_kasir === "") {
+          this.openSnackBar('User Kepala Kasir Belum Diisi.', 'info')
         } else {
           this.addNewData()
         }
       } else {
-        this.openSnackBar('Kode Cabang Belum Diisi.', 'info')
+        this.openSnackBar('Nama Kasir Belum Diisi.', 'info')
       }
     }
   }
@@ -582,6 +510,12 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   addNewData() {
     this.loading = true;
     this.ref.markForCheck()
+    this.formValue.id_kasir = this.formValue.id_kasir === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
+      length: 8,
+      numeric: true,
+      letters: false,
+      special: false
+    }))}` : this.formValue.id_kasir
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
     this.request.apiData('rekening-perusahaan', this.onUpdate ? 'u-rekening-perusahaan' : 'i-rekening-perusahaan', endRes).subscribe(
       data => {
@@ -608,12 +542,11 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
-      kode_cabang: '',
-      kode_bank: '',
-      no_rekening: '',
-      atas_nama: '',
-      nama_kantor_cabang: '',
-      tgl_buka_rekening: JSON.stringify(this.getDateNow()),
+      id_kasir: '',
+      nama_kasir: '',
+      user_kasir: '',
+      user_kepala_kasir: '',
+      status_aktif: '',
       keterangan: '',
     }
     // this.detailData = []

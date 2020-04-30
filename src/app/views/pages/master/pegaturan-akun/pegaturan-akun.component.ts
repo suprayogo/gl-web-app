@@ -13,6 +13,7 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Pengaturan Daftar Akun'
@@ -48,6 +49,38 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
   // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
   kode_perusahaan: any;
+
+  //CDialog Delete Akun
+  c_buttonLayout = [
+    {
+      btnLabel: 'Hapus Akun',
+      btnClass: 'btn btn-primary',
+      btnClick: (e) => {
+        this.deleteDetailData(e)
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin akan hapus data akun ?',
+      style: {
+        'color': 'red',
+        'font-size': '16px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
 
   buttonLayout = [
     {
@@ -111,7 +144,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false) 
+    this.gbl.need(true, false)
     this.madeRequest()
     this.reqKodePerusahaan()
   }
@@ -235,10 +268,63 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openCDialog(e) { // Confirmation Dialog
+    this.gbl.topPage()
+    let akun = {
+      kode_akun: e['kode_akun'],
+      nama_akun: e['nama_akun']
+    }
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '70px' },
+      data: {
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        formValue : akun,
+        inputLayout: [
+          {
+            label: 'Kode Akun',
+            id: 'kode-akun',
+            type: 'input',
+            valueOf: akun['kode_akun'],
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
+          {
+            label: 'Nama Akun',
+            id: 'nama-akun',
+            type: 'input',
+            valueOf: akun['nama_akun'],
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          }
+        ]
+      },
+      disableClose: true
+    })
+
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        // this.batal_alasan = ""
+      },
+      // error => null
+    )
+
+  }
+
   getDetail() {
     this.detailLoad = true
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('akun', 'g-akun', {kode_perusahaan: this.kode_perusahaan}).subscribe(
+      this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.restructureDetailData(data['RESULT'])
@@ -258,6 +344,8 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
   }
 
   deleteDetailData(data) {
+    this.dialog.closeAll()
+    console.log(data)
     for (var i = 0; i < this.detailData.length; i++) {
       if (this.detailData[i]['kode_akun'] === data['kode_akun']) {
         let x = this.detailData[i]
@@ -296,7 +384,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.openSnackBar(message, 'success')
-    this.loading = false 
+    this.loading = false
   }
 
   //Form submit
@@ -307,7 +395,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
         this.loading = true;
         this.ref.markForCheck()
         let endRes = Object.assign(
-          { 
+          {
             detail_akun: this.detailData,
             kode_perusahaan: this.kode_perusahaan
           })
@@ -318,7 +406,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
               this.browseNeedUpdate = true
               this.ref.markForCheck()
               this.openSnackBar("BERHASIL DISIMPAN", 'success')
-              this.loading = false 
+              this.loading = false
             } else {
               this.loading = false;
               this.ref.markForCheck()

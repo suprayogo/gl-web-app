@@ -46,6 +46,25 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   subscription: any;
   kode_perusahaan: any;
 
+  tipe_laporan: Object = [
+    {
+      label: 'Kas',
+      value: 'k'
+    },
+    {
+      label: 'Giro',
+      value: 'g'
+    },
+    {
+      label: 'Bank',
+      value: 'b'
+    },
+    {
+      label: 'Petty Cash',
+      value: 'p'
+    }
+  ]
+
   //Confirmation Variable
   c_buttonLayout = [
     {
@@ -89,6 +108,10 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
       value: 'nama_jenis_transaksi'
     },
     {
+      label: 'Tipe Laporan',
+      value: 'tipe_laporan_sub'
+    },
+    {
       label: 'Keterangan',
       value: 'keterangan'
     },
@@ -112,6 +135,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   browseInterface = {
     kode_jenis_transaksi: 'string',
     nama_jenis_transaksi: 'string',
+    tipe_laporan: 'string',
     keterangan: 'string',
     //STATIC
     input_by: 'string',
@@ -120,12 +144,25 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = []
+  browseDataRules = [
+    {
+      target: 'tipe_laporan',
+      replacement: {
+        'k': 'Kas',
+        'g': 'Giro',
+        'b': 'Bank',
+        'p': 'Petty Cash'
+      },
+      redefined: 'tipe_laporan_sub'
+    }
+  ]
 
   // Input Name
   formValue = {
+    id_jenis_transaksi: '',
     kode_jenis_transaksi: '',
     nama_jenis_transaksi: '',
+    tipe_laporan: 'k',
     keterangan: '',
   }
 
@@ -154,6 +191,17 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
       readOnly: false,
       update: {
         disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe Laporan',
+      id: 'tipe-laporan',
+      type: 'combobox',
+      options: this.tipe_laporan,
+      valueOf: 'tipe_laporan',
+      update: {
+        disabled: true
       }
     },
     {
@@ -339,6 +387,12 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   addNewData() {
     this.loading = true;
     this.ref.markForCheck()
+    this.formValue.id_jenis_transaksi = this.formValue.id_jenis_transaksi === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
+      length: 8,
+      numeric: true,
+      letters: false,
+      special: false
+    }))}` : this.formValue.id_jenis_transaksi
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
     this.request.apiData('jenis-transaksi', this.onUpdate ? 'u-jenis-transaksi' : 'i-jenis-transaksi', endRes).subscribe(
       data => {
@@ -365,8 +419,10 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
+      id_jenis_transaksi: '',
       kode_jenis_transaksi: '',
       nama_jenis_transaksi: '',
+      tipe_laporan: 'k',
       keterangan: '',
     }
     // this.detailData = []
