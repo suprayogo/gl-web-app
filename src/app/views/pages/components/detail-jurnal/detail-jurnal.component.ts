@@ -4,6 +4,8 @@ import { MatDialog } from '@angular/material';
 // Dialog Component
 import { DialogComponent } from '../dialog/dialog.component';
 import { AlertdialogComponent } from '../alertdialog/alertdialog.component';
+import { RequestDataService } from '../../../../service/request-data.service';
+import { GlobalVariableService } from '../../../../service/global-variable.service';
 
 @Component({
   selector: 'kt-detail-jurnal',
@@ -13,6 +15,7 @@ import { AlertdialogComponent } from '../alertdialog/alertdialog.component';
 export class DetailJurnalComponent implements OnInit {
 
   @Input() dataAkun: [];
+  @Input() dataDivisi: [];
   @Input() dataSetting: [];
   @Input() data: any;
   @Input() jurnalOtomatis: boolean;
@@ -30,7 +33,13 @@ export class DetailJurnalComponent implements OnInit {
     nullable: false
   }
 
+  loadingDepartemen = true;
+  dialogRef: any;
+  dialogType: any;
+
   data_akun = [];
+  data_divisi = [];
+  data_departemen = [];
   data_setting = [];
 
   akunDisplayColumns = [
@@ -43,6 +52,26 @@ export class DetailJurnalComponent implements OnInit {
       value: 'nama_akun'
     }
   ];
+  divisiDisplayColumns = [
+    {
+      label: 'Kode Divisi',
+      value: 'kode_divisi'
+    },
+    {
+      label: 'Nama Divisi',
+      value: 'nama_divisi'
+    }
+  ];
+  departemenDisplayColumns = [
+    {
+      label: 'Kode Departemen',
+      value: 'kode_departemen'
+    },
+    {
+      label: 'Nama Departemen',
+      value: 'nama_departemen'
+    }
+  ]
   settingDisplayColumns = [
     {
       label: 'Kode Setting',
@@ -78,6 +107,10 @@ export class DetailJurnalComponent implements OnInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
@@ -89,6 +122,10 @@ export class DetailJurnalComponent implements OnInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
@@ -103,7 +140,9 @@ export class DetailJurnalComponent implements OnInit {
 
   constructor(
     private ref: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private request: RequestDataService,
+    private gbl: GlobalVariableService
   ) { }
 
   ngOnInit() {
@@ -125,6 +164,8 @@ export class DetailJurnalComponent implements OnInit {
     if (this.dataSetting !== undefined && this.dataSetting != null) {
       this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
     }
+
+    this.data_divisi = this.dataDivisi
   }
 
   checkChanges() {
@@ -136,7 +177,23 @@ export class DetailJurnalComponent implements OnInit {
   }
 
   openDialog(ind, type, n?: any) {
-    const dialogRef = this.dialog.open(DialogComponent, {
+    if (type === "kode_departemen") {
+      if (this.res_data[ind]['kode_divisi'] === '' || this.res_data[ind]['nama_divisi'] === '') {
+        this.openSnackBar("Pilih divisi terlebih dahulu.", 'info', () => {
+          setTimeout(() => {
+            this.openDialog(ind, 'kode_divisi', n)
+          }, 100)
+        })
+        return
+      } else {
+        if (this.loadingDepartemen) {
+          this.sendRequestDepartemen(this.gbl.getKodePerusahaan(), this.res_data[ind]['kode_divisi'], ind)
+        }
+      }
+    }
+
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    this.dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
       height: 'auto',
       maxWidth: '95vw',
@@ -148,19 +205,24 @@ export class DetailJurnalComponent implements OnInit {
         displayedColumns:
           type === "kode_akun" ? this.akunDisplayColumns :
             type === "kode_setting" ? this.settingDisplayColumns :
-              [],
+              type === "kode_divisi" ? this.divisiDisplayColumns :
+                type === "kode_departemen" ? this.departemenDisplayColumns :
+                  [],
         tableData:
           type === "kode_akun" ? this.data_akun :
             type === "kode_setting" ? this.data_setting :
-              [],
+              type === "kode_divisi" ? this.data_divisi :
+                type === "kode_departemen" ? this.data_departemen :
+                  [],
         tableRules:
           type === "kode_setting" ? this.settingDataRules :
             [],
-        formValue: {}
+        formValue: {},
+        loadingData: type === "kode_departemen" ? this.loadingDepartemen : false
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (type === "kode_akun") {
           this.res_data[ind]['id_akun'] = result.id_akun
@@ -201,24 +263,71 @@ export class DetailJurnalComponent implements OnInit {
 
           }
           this.ref.markForCheck();
+        } else if (type === "kode_divisi") {
+          this.res_data[ind]['kode_divisi'] = result.kode_divisi
+          this.res_data[ind]['nama_divisi'] = result.nama_divisi
+          this.sendRequestDepartemen(result['kode_perusahaan'], result['kode_divisi'], ind)
+          this.ref.markForCheck()
+        } else if (type === "kode_departemen") {
+          this.res_data[ind]['kode_departemen'] = result.kode_departemen
+          this.res_data[ind]['nama_departemen'] = result.nama_departemen
+          this.ref.markForCheck()
         }
       }
+      this.dialogRef = undefined;
+      this.dialogType = undefined;
     });
   }
 
-  onBlur(d, ind) {
+  onBlur(d, ind, type?: any) {
     let fres = [], v = d.target.value.toUpperCase()
-    fres = this.data_akun.filter(each => each['kode_akun'].toUpperCase() === v || (each['nama_akun'] + " - " + each['kode_akun']).toUpperCase() === v)
+    if (type === "kode_departemen" && v !== "") {
+      if (this.res_data[ind]['kode_divisi'] === '' || this.res_data[ind]['nama_divisi'] === '') {
+        this.res_data[ind]['kode_departemen'] = ""
+        this.res_data[ind]['nama_departemen'] = ""
+        this.ref.markForCheck()
+        this.openSnackBar("Pilih divisi terlebih dahulu.", 'info', () => {
+          setTimeout(() => {
+            this.openDialog(ind, 'kode_divisi')
+          }, 100)
+        })
+        return
+      } else {
+        if (this.loadingDepartemen) {
+          this.sendRequestDepartemen(this.gbl.getKodePerusahaan(), this.res_data[ind]['kode_divisi'], ind)
+        }
+      }
+    }
+    fres = type === "kode_akun" ? this.data_akun.filter(each => each['kode_akun'].toUpperCase() === v || (each['nama_akun'] + " - " + each['kode_akun']).toUpperCase() === v) :
+      type === "kode_divisi" ? this.data_divisi.filter(each => each['kode_divisi'].toUpperCase() === v || each['nama_divisi'].toUpperCase() === v) :
+        type === "kode_departemen" ? this.data_departemen.filter(each => each['kode_departemen'].toUpperCase() === v || each['nama_departemen'].toUpperCase() === v) :
+          []
     if (fres.length > 0 && fres.length < 2) {
-      this.res_data[ind]['id_akun'] = fres[0]['id_akun']
-      this.res_data[ind]['kode_akun'] = fres[0]['kode_akun']
-      this.res_data[ind]['nama_akun'] = fres[0]['nama_akun']
-      this.res_data[ind]['keterangan_akun'] = fres[0]['nama_akun'] + " - " + fres[0]['kode_akun']
+      if (type === "kode_akun") {
+        this.res_data[ind]['id_akun'] = fres[0]['id_akun']
+        this.res_data[ind]['kode_akun'] = fres[0]['kode_akun']
+        this.res_data[ind]['nama_akun'] = fres[0]['nama_akun']
+        this.res_data[ind]['keterangan_akun'] = fres[0]['nama_akun'] + " - " + fres[0]['kode_akun']
+      } else if (type === "kode_divisi") {
+        this.res_data[ind]['kode_divisi'] = fres[0]['kode_divisi']
+        this.res_data[ind]['nama_divisi'] = fres[0]['nama_divisi']
+      } else if (type === "kode_departemen") {
+        this.res_data[ind]['kode_departemen'] = fres[0]['kode_departemen']
+        this.res_data[ind]['nama_departemen'] = fres[0]['nama_departemen']
+      }
     } else {
-      this.res_data[ind]['id_akun'] = ""
-      this.res_data[ind]['kode_akun'] = ""
-      this.res_data[ind]['nama_akun'] = ""
-      this.res_data[ind]['keterangan_akun'] = ""
+      if (type === "kode_akun") {
+        this.res_data[ind]['id_akun'] = ""
+        this.res_data[ind]['kode_akun'] = ""
+        this.res_data[ind]['nama_akun'] = ""
+        this.res_data[ind]['keterangan_akun'] = ""
+      } else if (type === "kode_divisi") {
+        this.res_data[ind]['kode_divisi'] = ""
+        this.res_data[ind]['nama_divisi'] = ""
+      } else if (type === "kode_departemen") {
+        this.res_data[ind]['kode_departemen'] = ""
+        this.res_data[ind]['nama_departemen'] = ""
+      }
     }
 
   }
@@ -293,6 +402,10 @@ export class DetailJurnalComponent implements OnInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
@@ -324,9 +437,37 @@ export class DetailJurnalComponent implements OnInit {
     return res
   }
 
+  sendRequestDepartemen(kPer, kDiv, ind) {
+    this.loadingDepartemen = true
+    this.request.apiData('departemen', 'g-departemen-divisi', { kode_perusahaan: kPer, kode_divisi: kDiv }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.data_departemen = data['RESULT']
+          this.loadingDepartemen = false
+          if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
+            if (this.dialogType === "kode_departemen") {
+              this.dialog.closeAll()
+              this.openDialog(ind, 'kode_departemen')
+            }
+          }
+        } else {
+          this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
+          this.loadingDepartemen = false
+          this.ref.markForCheck()
+          if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
+            if (this.dialogType === "kode_departemen") {
+              this.dialog.closeAll()
+              this.openDialog(ind, 'kode_departemen')
+            }
+          }
+        }
+      }
+    )
+  }
+
   openSnackBar(message, type?: any, onCloseFunc?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

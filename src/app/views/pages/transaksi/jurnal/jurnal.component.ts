@@ -69,10 +69,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     tgl_tran: JSON.stringify(this.getDateNow()),
     kode_cabang: '',
     nama_cabang: '',
-    kode_divisi: '',
-    nama_divisi: '',
-    kode_departemen: '',
-    nama_departemen: '',
     keterangan: ''
   }
   
@@ -81,6 +77,10 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
@@ -90,6 +90,10 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan: '',
       saldo_debit: 0,
@@ -132,11 +136,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'No. Transaksi',
+      label: 'No. Jurnal',
       value: 'no_tran'
     },
     {
-      label: 'Tgl. Transaksi',
+      label: 'Tgl. Jurnal',
       value: 'tgl_tran',
       date: true
     },
@@ -265,8 +269,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'No. Transaksi',
-      id: 'nomor-transaksi',
+      label: 'No. Jurnal',
+      id: 'nomor-jurnal',
       type: 'input',
       valueOf: 'no_tran',
       required: false,
@@ -278,8 +282,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
+      label: 'Tgl. Jurnal',
+      id: 'tgl-jurnal',
       type: 'datepicker',
       valueOf: 'tgl_tran',
       required: true,
@@ -326,66 +330,66 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         disabled: false
       }
     },
-    {
-      formWidth: 'col-5',
-      label: 'Divisi',
-      id: 'kode-divisi',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_divisi',
-      valueOf: 'kode_divisi',
-      required: false,
-      readOnly: false,
-      inputInfo: {
-        id: 'nama-divisi',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_divisi'
-      },
-      blurOption: {
-        ind: 'kode_divisi',
-        data: [],
-        valueOf: ['kode_divisi', 'nama_divisi'],
-        onFound: () => /* {
-          this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
-        } */null
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Departemen',
-      id: 'kode-departemen',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_departemen',
-      valueOf: 'kode_departemen',
-      required: false,
-      readOnly: false,
-      inputInfo: {
-        id: 'nama-departemen',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_departemen'
-      },
-      blurOption: {
-        ind: 'kode_departemen',
-        data: [],
-        valueOf: ['kode_departemen', 'nama_departemen'],
-        onFound: null
-      },
-      update: {
-        disabled: false
-      }
-    },
+    // {
+    //   formWidth: 'col-5',
+    //   label: 'Divisi',
+    //   id: 'kode-divisi',
+    //   type: 'inputgroup',
+    //   click: (type) => this.openDialog(type),
+    //   btnLabel: '',
+    //   btnIcon: 'flaticon-search',
+    //   browseType: 'kode_divisi',
+    //   valueOf: 'kode_divisi',
+    //   required: false,
+    //   readOnly: false,
+    //   inputInfo: {
+    //     id: 'nama-divisi',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'nama_divisi'
+    //   },
+    //   blurOption: {
+    //     ind: 'kode_divisi',
+    //     data: [],
+    //     valueOf: ['kode_divisi', 'nama_divisi'],
+    //     onFound: () => /* {
+    //       this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
+    //     } */null
+    //   },
+    //   update: {
+    //     disabled: false
+    //   }
+    // },
+    // {
+    //   formWidth: 'col-5',
+    //   label: 'Departemen',
+    //   id: 'kode-departemen',
+    //   type: 'inputgroup',
+    //   click: (type) => this.openDialog(type),
+    //   btnLabel: '',
+    //   btnIcon: 'flaticon-search',
+    //   browseType: 'kode_departemen',
+    //   valueOf: 'kode_departemen',
+    //   required: false,
+    //   readOnly: false,
+    //   inputInfo: {
+    //     id: 'nama-departemen',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'nama_departemen'
+    //   },
+    //   blurOption: {
+    //     ind: 'kode_departemen',
+    //     data: [],
+    //     valueOf: ['kode_departemen', 'nama_departemen'],
+    //     onFound: null
+    //   },
+    //   update: {
+    //     disabled: false
+    //   }
+    // },
     {
       formWidth: 'col-5',
       label: 'Keterangan',
@@ -540,10 +544,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      kode_divisi: x['kode_divisi'],
-      nama_divisi: x['nama_divisi'],
-      kode_departemen: x['kode_departemen'],
-      nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
@@ -554,7 +554,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   getBackToInput() {
     this.selectedTab = 0;
-    this.sendRequestDepartemen(this.formValue.kode_divisi)
+    // this.sendRequestDepartemen(this.formValue.kode_divisi)
     this.getDetail()
     this.formInputCheckChanges()
   }
@@ -653,10 +653,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       tgl_tran: JSON.stringify(this.getDateNow()),
       kode_cabang: '',
       nama_cabang: '',
-      kode_divisi: '',
-      nama_divisi: '',
-      kode_departemen: '',
-      nama_departemen: '',
       keterangan: ''
     }
     this.detailData = [
@@ -665,6 +661,10 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         kode_akun: '',
         nama_akun: '',
         keterangan_akun: '',
+        kode_divisi: '',
+        nama_divisi: '',
+        kode_departemen: '',
+        nama_departemen: '',
         keterangan: '',
         saldo_debit: 0,
         saldo_kredit: 0
@@ -674,6 +674,10 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         kode_akun: '',
         nama_akun: '',
         keterangan_akun: '',
+        kode_divisi: '',
+        nama_divisi: '',
+        kode_departemen: '',
+        nama_departemen: '',
         keterangan: '',
         saldo_debit: 0,
         saldo_kredit: 0
@@ -728,16 +732,16 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   // Dialog
   openDialog(type) {
-    if (type === 'kode_departemen') {
-      if (this.forminput.getData()['kode_divisi'] === "" || this.forminput.getData()['nama_divisi'] === "") {
-        this.openSnackBar('Pilih divisi dahulu.', 'info', () => {
-          setTimeout(() => {
-            this.openDialog('kode_divisi')
-          }, 250)
-        })
-        return
-      }
-    }
+    // if (type === 'kode_departemen') {
+    //   if (this.forminput.getData()['kode_divisi'] === "" || this.forminput.getData()['nama_divisi'] === "") {
+    //     this.openSnackBar('Pilih divisi dahulu.', 'info', () => {
+    //       setTimeout(() => {
+    //         this.openDialog('kode_divisi')
+    //       }, 250)
+    //     })
+    //     return
+    //   }
+    // }
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
@@ -773,27 +777,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_departemen") {
-          if (this.forminput !== undefined) {
-            // this.forminput.updateFormValue('kode_departemen', result.kode_departemen)
-            // this.forminput.updateFormValue('nama_departemen', result.nama_departemen)
-            // this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
-            // this.forminput.updateFormValue('nama_divisi', result.nama_divisi)
-            this.forminput.updateFormValue('kode_departemen', result.kode_departemen)
-            this.forminput.updateFormValue('nama_departemen', result.nama_departemen)
-          }
-        } else if (type === "kode_divisi") {
-          if (this.forminput !== undefined) {
-            // this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
-            // this.forminput.updateFormValue('nama_divisi', result.nama_divisi)
-            // this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
-            this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
-            this.forminput.updateFormValue('nama_divisi', result.nama_divisi)
-            this.forminput.updateFormValue('kode_departemen', "")
-            this.forminput.updateFormValue('nama_departemen', "")
-            this.sendRequestDepartemen(result.kode_divisi)
-          }
-        } else if (type === "kode_cabang") {
+        if (type === "kode_cabang") {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
@@ -864,7 +848,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
-      this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
@@ -890,20 +874,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }
       )
     }
-  }
-
-  sendRequestDepartemen(kDiv) {
-    this.request.apiData('departemen', 'g-departemen-divisi', { kode_perusahaan: this.kode_perusahaan, kode_divisi: kDiv }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputDepartemenData = data['RESULT']
-        } else {
-          this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
-          this.loading = false
-          this.ref.markForCheck()
-        }
-      }
-    )
   }
 
   sendRequestAkun() {
@@ -935,6 +905,10 @@ export class JurnalComponent implements OnInit, AfterViewInit {
               kode_akun: resp[i]['kode_akun'],
               nama_akun: resp[i]['nama_akun'],
               keterangan_akun: resp[i]['keterangan_akun'],
+              kode_divisi: resp[i]['kode_divisi'],
+              nama_divisi: resp[i]['nama_divisi'],
+              kode_departemen: resp[i]['kode_departemen'],
+              nama_departemen: resp[i]['nama_departemen'],
               keterangan: resp[i]['keterangan'],
               saldo_debit: parseFloat(resp[i]['nilai_debit']),
               saldo_kredit: parseFloat(resp[i]['nilai_kredit'])

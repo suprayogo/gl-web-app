@@ -197,6 +197,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     this.loading = true
     this.ref.markForCheck()
     if (this.forminputBB !== undefined) {
+      this.formValueBB = this.forminputBB.getData()
       let p = {}
       for (var i = 0; i < this.inputPeriodeData.length; i++) {
         if (this.formValueBB.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueBB.tahun === this.inputPeriodeData[i]['tahun_periode']) {
@@ -207,19 +208,30 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
+        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-buku-besar', p).subscribe(
           data => {
             console.clear()
-            console.log(p)
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
-                let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
+                let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran']
+
+                if (d[i]['kode_tran'] === "SALDO-AWAL") {
+                  no_tran = "Saldo Awal"
+                  if (d[i]['tipe_akun'] == 0) {
+                    d[i]['nilai_debit'] = d[i]['saldo_awal']
+                  } else if (d[i]['tipe_akun'] == 1) {
+                    d[i]['nilai_kredit'] = d[i]['saldo_awal']
+                  }
+                } else if (d[i]['kode_tran'] === "JURNAL") {
+                  no_tran = d[i]['no_tran']
+                }
 
                 t.push(d[i]['kode_akun'])
                 t.push(d[i]['nama_akun'])
-                t.push(d[i]['no_tran'])
-                t.push(new Date(d[i]['tgl_tran']).getTime())
+                t.push(no_tran)
+                t.push(new Date(tgl_tran).getTime())
                 t.push(d[i]['keterangan'])
                 t.push(parseFloat(d[i]['nilai_debit']))
                 t.push(parseFloat(d[i]['nilai_kredit']))
@@ -227,6 +239,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
                 res.push(t)
               }
+
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-BUKU-BESAR'
@@ -238,7 +251,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                 REPORT_COMPANY_ADDRESS: "",
                 REPORT_COMPANY_CITY: "",
                 REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + p['tahun_periode'] + "-" + this.gbl.getNamaBulan(p['bulan_periode'])
+                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
                 "kodeAkun",
@@ -345,7 +358,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://int.darkologistik.com:8787/logis/viewer.html?repId="+data['RESULT']);
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           this.loading = false
           this.ref.markForCheck()
         } else {

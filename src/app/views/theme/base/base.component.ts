@@ -54,6 +54,7 @@ export class BaseComponent implements OnInit, OnDestroy {
 	fluid: boolean;
 	loading: boolean = true;
 	remoteAccess: boolean = false;
+	fromIframe: boolean = true;
 
 	// Private properties
 	private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
@@ -111,6 +112,18 @@ export class BaseComponent implements OnInit, OnDestroy {
 	 * On init
 	 */
 	ngOnInit(): void {
+		if ( window.location === window.parent.location ) {
+			this.fromIframe = false
+			alert('Access Denied')
+			return
+		} else {
+			let url = this.getDomain(document.referrer)
+			if (url !== "localhost") {
+				this.fromIframe = false
+				alert('Access Denied')
+				return
+			}
+		}
 		const config = this.layoutConfigService.getConfig();
 		this.selfLayout = objectPath.get(config, 'self.layout');
 		this.asideDisplay = objectPath.get(config, 'aside.self.display');
@@ -218,5 +231,22 @@ export class BaseComponent implements OnInit, OnDestroy {
 			.subscribe((newValues => {
 				this.doDivHeightChange(newValues);
 			}));
+	}
+
+	getDomain(url) {
+		var prefix = /^https?:\/\//i;
+		var domain = /^[^\/:]+/;
+		// remove any prefix
+		url = url.replace(prefix, "");
+		// assume any URL that starts with a / is on the current page's domain
+		if (url.charAt(0) === "/") {
+			url = window.location.hostname + url;
+		}
+		// now extract just the domain
+		var match = url.match(domain);
+		if (match) {
+			return(match[0]);
+		}
+		return(null);
 	}
 }

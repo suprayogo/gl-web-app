@@ -25,9 +25,10 @@
                             <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                                 [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
                                 [enableCancel]="enableCancel" [detailJurnal]="enableDetail" [detailLoad]="detailLoad"
-                                [jurnalDataAkun]="inputAkunData" [jurnalData]="detailData" [jurnalOtomatis]="true"
-                                [jurnalDataSetting]="inputSettingData" (onSubmit)="onSubmit($event)"
-                                (onCancel)="onCancel()" (deleteData)="openCDialog()" (cnlData)="openCDialog()" (editAction)="editDetailData($event)"
+                                [jurnalDataAkun]="inputAkunData" [jurnalDataDivisi]="inputDivisiData"
+                                [jurnalData]="detailData" [jurnalOtomatis]="true" [jurnalDataSetting]="inputSettingData"
+                                (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (deleteData)="openCDialog()"
+                                (cnlData)="openCDialog()" (editAction)="editDetailData($event)"
                                 (deleteAction)="deleteDetailData($event)">
                             </kt-forminput>
                         </div>
