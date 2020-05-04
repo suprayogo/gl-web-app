@@ -136,11 +136,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'No. Transaksi',
+      label: 'No. Jurnal',
       value: 'no_tran'
     },
     {
-      label: 'Tgl. Transaksi',
+      label: 'Tgl. Jurnal',
       value: 'tgl_tran',
       date: true
     },
@@ -269,8 +269,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   inputLayout = [
     {
       formWidth: 'col-5',
-      label: 'No. Transaksi',
-      id: 'nomor-transaksi',
+      label: 'No. Jurnal',
+      id: 'nomor-jurnal',
       type: 'input',
       valueOf: 'no_tran',
       required: false,
@@ -282,8 +282,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
+      label: 'Tgl. Jurnal',
+      id: 'tgl-jurnal',
       type: 'datepicker',
       valueOf: 'tgl_tran',
       required: true,
