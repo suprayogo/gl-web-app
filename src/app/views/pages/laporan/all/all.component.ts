@@ -339,7 +339,7 @@ export class AllComponent implements OnInit, AfterViewInit {
 			id: 'tahun-periode',
 			type: 'combobox',
 			options: this.tahun,
-			onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'ns'),
+			onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'ak'),
 			valueOf: 'tahun',
 			required: true,
 			readOnly: false,
@@ -1621,7 +1621,8 @@ export class AllComponent implements OnInit, AfterViewInit {
           matchValue: "t"
         }
       },
-		)
+    )
+    console.log(this.bulanAK)
 	}
 
   getBulan(filterBulan, loopBulan, type) {

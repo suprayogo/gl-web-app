@@ -355,7 +355,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
-    this.inputBankData = []
+    this.inputCabangData = []
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
       this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {

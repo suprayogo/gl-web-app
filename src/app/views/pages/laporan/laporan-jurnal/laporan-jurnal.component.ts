@@ -42,6 +42,21 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  format_laporan = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
+    }
+  ]
+
   // Variables
   nama_tombol: any;
   onSub: boolean = false;
@@ -117,6 +132,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueJL = {
+    format_laporan: 'pdf',
     tahun: '',
     bulan: ''
   }
@@ -124,8 +140,20 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   // Layout Form
   inputLayoutJL = [
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Format Laporan',
+      id: 'format-laporan',
+      type: 'combobox',
+      options: this.format_laporan,
+      valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Tahun Periode',
       id: 'tahun-periode',
       type: 'combobox',
@@ -137,8 +165,8 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
       type: 'combobox',
@@ -208,7 +236,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
                 res.push(t)
               }
-              
+
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-JURNAL'
@@ -254,15 +282,16 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   resetFormJL() {
     this.gbl.topPage()
     this.formValueJL = {
+      format_laporan: 'pdf',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode']
     }
 
     this.bulanJL = this.initBulan[this.formValueJL['tahun']]
-    this.inputLayoutJL.splice(1, 1,
+    this.inputLayoutJL.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -409,15 +438,28 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueJL = {
+      format_laporan: this.formValueJL['format_laporan'],
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
     this.bulanJL = tmp[this.formValueJL.tahun]
-    this.inputLayoutJL.splice(0, 2,
+    this.inputLayoutJL.splice(0, 3,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Format Laporan',
+        id: 'format-laporan',
+        type: 'combobox',
+        options: this.format_laporan,
+        valueOf: 'format_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      },
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Tahun Periode',
         id: 'tahun-periode',
         type: 'combobox',
@@ -429,8 +471,8 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         disabled: false,
       },
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -444,29 +486,28 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   }
 
   getBulan(filterBulan, loopBulan, type) {
-    if (type === "jl") {
-      this.formValueJL = {
-        tahun: filterBulan,
-        bulan: ""
-      }
-      this.bulanJL = loopBulan[filterBulan]
-      this.inputLayoutJL.splice(1, 1,
-        {
-          labelWidth: 'col-4',
-          formWidth: 'col-7',
-          label: 'Bulan Periode',
-          id: 'bulan-periode',
-          type: 'combobox',
-          options: this.bulanJL,
-          valueOf: 'bulan',
-          required: true,
-          readOnly: false,
-          disabled: false,
-        }
-      )
-      setTimeout(() => {
-        this.forminputJL.checkChanges()
-      }, 1)
+    this.formValueJL = {
+      format_laporan: this.formValueJL['format_laporan'],
+      tahun: filterBulan,
+      bulan: ""
     }
+    this.bulanJL = loopBulan[filterBulan]
+    this.inputLayoutJL.splice(2, 2,
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Bulan Periode',
+        id: 'bulan-periode',
+        type: 'combobox',
+        options: this.bulanJL,
+        valueOf: 'bulan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      }
+    )
+    setTimeout(() => {
+      this.forminputJL.checkChanges()
+    }, 1)
   }
 }

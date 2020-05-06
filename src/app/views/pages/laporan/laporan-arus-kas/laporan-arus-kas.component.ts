@@ -41,6 +41,21 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  format_laporan = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
+    }
+  ]
+
   // Variables
   nama_tombol: any;
   onSub: boolean = false;
@@ -116,6 +131,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueAK = {
+    format_laporan: 'pdf',
     tipe: 't',
     tahun: '',
     bulan: ''
@@ -124,8 +140,20 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   // Layout Form
   inputLayoutAK = [
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Format Laporan',
+      id: 'format-laporan',
+      type: 'combobox',
+      options: this.format_laporan,
+      valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Tipe',
       id: 'tipe',
       type: 'combobox',
@@ -136,21 +164,21 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Tahun Periode',
       id: 'tahun-periode',
       type: 'combobox',
       options: this.tahun,
-      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'ns'),
+      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'ak'),
       valueOf: 'tahun',
       required: true,
       readOnly: false,
       disabled: false,
     },
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
       type: 'combobox',
@@ -358,16 +386,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetFormAK() {
     this.formValueAK = {
+      format_laporan: 'pdf',
       tipe: 't',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode']
     }
 
     this.bulanAK = this.initBulan[this.formValueAK['tahun']]
-    this.inputLayoutAK.splice(2, 1,
+    this.inputLayoutAK.splice(3, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -518,15 +547,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueAK = {
+      format_laporan: this.formValueAK['format_laporan'],
       tipe: this.formValueAK['tipe'],
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
-    this.inputLayoutAK.splice(1, 2,
+    this.bulanAK = tmp[this.formValueAK.tahun]
+    this.inputLayoutAK.splice(2, 3,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Tahun Periode',
         id: 'tahun-periode',
         type: 'combobox',
@@ -538,8 +569,8 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         disabled: false,
       },
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -558,15 +589,16 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
   getBulan(filterBulan, loopBulan, type) {
     this.formValueAK = {
+      format_laporan: this.formValueAK['format_laporan'],
       tipe: this.formValueAK['tipe'],
       tahun: filterBulan,
       bulan: ""
     }
     this.bulanAK = loopBulan[filterBulan]
-    this.inputLayoutAK.splice(2, 1,
+    this.inputLayoutAK.splice(3, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',

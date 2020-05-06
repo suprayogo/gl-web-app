@@ -15,19 +15,19 @@ import { ConfirmationdialogComponent } from '../../components/confirmationdialog
 import { ReportdialogComponent } from '../../components/reportdialog/reportdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Laporan Neraca'
+  beforeCodeTitle: 'Laporan Rekapitulasi Bank'
 }
 
 @Component({
-  selector: 'kt-laporan-neraca',
-  templateUrl: './laporan-neraca.component.html',
-  styleUrls: ['./laporan-neraca.component.scss', '../laporan.style.scss']
+  selector: 'kt-rekap-bank',
+  templateUrl: './rekap-bank.component.html',
+  styleUrls: ['./rekap-bank.component.scss', '../laporan.style.scss']
 })
-export class LaporanNeracaComponent implements OnInit, AfterViewInit {
+export class RekapBankComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('nr', { static: false }) forminputNR;
+  @ViewChild('jl', { static: false }) forminputJL;
 
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
@@ -61,7 +61,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
   nama_tombol: any;
   onSub: boolean = false;
   loading: boolean = true;
-  loadingNR: boolean = false;
+  loadingJL: boolean = false;
   content: any;
   detailLoad: boolean = false;
   enableDetail: boolean = false;
@@ -124,21 +124,20 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
   activePeriod = {};
   tahun: any = [];
   initBulan: any = [];
-  bulanNR: any = [];
+  bulanJL: any = [];
 
   // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
   kode_perusahaan: any;
 
   // Input Name
-  formValueNR = {
+  formValueJL = {
     format_laporan: 'pdf',
-    tahun: '',
-    bulan: '',
+    periode: ''
   }
 
   // Layout Form
-  inputLayoutNR = [
+  inputLayoutJL = [
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -152,29 +151,19 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
-      // labelWidth: 'col-4',
       formWidth: 'col-5',
-      label: 'Tahun Periode',
-      id: 'tahun-periode',
-      type: 'combobox',
-      options: this.tahun,
-      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'ns'),
-      valueOf: 'tahun',
+      label: 'Periode',
+      id: 'periode',
+      type: 'datepicker-range',
+      valueOf: 'periode',
       required: true,
       readOnly: false,
-      disabled: false,
-    },
-    {
-      // labelWidth: 'col-4',
-      formWidth: 'col-5',
-      label: 'Bulan Periode',
-      id: 'bulan-periode',
-      type: 'combobox',
-      options: this.bulanNR,
-      valueOf: 'bulan',
-      required: true,
-      readOnly: false,
-      disabled: false,
+      update: {
+        disabled: false
+      },
+      timepick: false,
+      enableMin: false,
+      enableMax: false,
     }
   ]
 
@@ -205,127 +194,44 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
   }
 
   //Form submit
-  onSubmitNR(inputForm: NgForm) {
-    this.gbl.topPage()
+  onSubmitJL(inputForm: NgForm) {
     this.loading = true
     this.ref.markForCheck()
-    if (this.forminputNR !== undefined) {
-      this.formValueNR = this.forminputNR.getData()
+    if (this.forminputJL !== undefined) {
+      this.formValueJL = this.forminputJL.getData()
       let p = {}
       for (var i = 0; i < this.inputPeriodeData.length; i++) {
-        if (this.formValueNR.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueNR.tahun === this.inputPeriodeData[i]['tahun_periode']) {
-          p = this.inputPeriodeData[i]
-          break
-        }
+        // if (this.formValueJL.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.inputPeriodeData[i]['tahun_periode']) {
+        //   p = this.inputPeriodeData[i]
+        //   break
+        // }
       }
 
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
         p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
-        this.request.apiData('report', 'g-data-neraca', p).subscribe(
+        this.request.apiData('report', 'g-data-jurnal', p).subscribe(
           data => {
-            console.clear()
-            console.log(data)
             if (data['STATUS'] === 'Y') {
-              let idata = data['RESULT'], d = [], res = [], totalTipe = {}, totalKategori = {}
-              let nd = JSON.parse(idata['NR']), ld = JSON.parse(idata['LBRG']), saldo_lr = 0
-              for (var i = 0; i < ld.length; i++) {
-                if (ld[i]['tipe_laporan'] === 'p') {
-                  saldo_lr = saldo_lr + parseFloat(ld[i]['saldo'])
-                }
-
-                if (ld[i]['tipe_laporan'] === 'b') {
-                  saldo_lr = saldo_lr - parseFloat(ld[i]['saldo'])
-                }
-              }
-              d.push({
-                tahun: nd.length > 0 ? nd[0]['tahun'] : "",
-                bulan: nd.length > 0 ? nd[0]['bulan'] : "",
-                group_besar: "ke",
-                nama_group_besar: "Kewajiban & Ekuitas",
-                group: "EKUITAS",
-                nama_group: "Ekuitas",
-                id_akun: "",
-                kode_akun: "LBRG",
-                nama_akun: "Laba Rugi",
-                tipe_akun: "0",
-                id_kategori_akun: "lbrg",
-                nama_kategori_akun: "Laba Rugi",
-                saldo_akhir: JSON.stringify(saldo_lr)
-              })
-              d = d.concat(nd)
+              let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
-                if (totalTipe[d[i]['group']]) {
-                  totalTipe[d[i]['group']] = totalTipe[d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
-                } else {
-                  totalTipe[d[i]['group']] = parseFloat(d[i]['saldo_akhir'])
-                }
+                let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
 
-                if (totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']]) {
-                  totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] = totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
-                } else {
-                  totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] = parseFloat(d[i]['saldo_akhir'])
-                }
-
-                if (d[i]['group'] === "AKTIVA-LANCAR" || d[i]['group'] === "AKTIVA-TETAP") {
-                  if (d[i]['group'] === "AKTIVA-LANCAR") {
-                    d[i]['nama_group'] = "Aktiva Lancar"
-                  } else if (d[i]['group'] === "AKTIVA-TETAP") {
-                    d[i]['nama_group'] = "Aktiva Tetap"
-                  }
-                  d[i]['group_besar'] = "ak"
-                  d[i]['nama_group_besar'] = "Aktiva"
-                }
-
-                if (d[i]['group'] === "KEWAJIBAN" || d[i]['group'] === "EKUITAS") {
-                  if (d[i]['group'] === "KEWAJIBAN") {
-                    d[i]['nama_group'] = "Kewajiban"
-                  } else if (d[i]['group'] === "EKUITAS") {
-                    d[i]['nama_group'] = "Ekuitas"
-                  }
-                  d[i]['group_besar'] = "ke"
-                  d[i]['nama_group_besar'] = "Kewajiban & Ekuitas"
-                }
-              }
-              let totalAktiva = totalTipe['AKTIVA-LANCAR'] + totalTipe['AKTIVA-TETAP'],
-                totalKE = totalTipe['KEWAJIBAN'] + totalTipe['EKUITAS']
-
-              for (var i = 0; i < d.length; i++) {
-                let t = []
-
-                t.push(d[i]['group_besar'])
-                t.push(d[i]['nama_group_besar'])
-                t.push(d[i]['group'])
-                t.push(d[i]['nama_group'])
-                t.push(d[i]['id_kategori_akun'])
-                t.push(d[i]['nama_kategori_akun'])
-                t.push(d[i]['kode_akun'])
+                t.push(d[i]['no_tran'])
+                t.push(new Date(d[i]['tgl_tran']).getTime())
                 t.push(d[i]['nama_akun'])
-                t.push(parseFloat(d[i]['saldo_akhir']))
-                t.push(totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']])
-                t.push(totalTipe[d[i]['group']])
-                t.push(d[i]['group_besar'] === "ak" ? (totalAktiva == null || totalAktiva === undefined || isNaN(totalAktiva) ? 0 : totalAktiva) : (totalKE == null || totalKE === undefined || isNaN(totalKE) ? 0 : totalKE))
+                t.push(parseFloat(d[i]['nilai_debit']))
+                t.push(parseFloat(d[i]['nilai_kredit']))
 
                 res.push(t)
               }
-              res.sort(function (a, b) {
-                if (a[0] < b[0]) {
-                  return -1;
-                }
-
-                if (a[0] > b[0]) {
-                  return 1;
-                }
-
-                return 0;
-              })
 
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              rp['REPORT_CODE'] = 'RPT-NERACA'
-              rp['REPORT_NAME'] = 'Laporan Neraca'
+              rp['REPORT_CODE'] = 'RPT-JURNAL'
+              rp['REPORT_NAME'] = 'Laporan Transaksi Jurnal'
               rp['REPORT_FORMAT_CODE'] = 'pdf'
-              rp['JASPER_FILE'] = 'rptNeraca.jasper'
+              rp['JASPER_FILE'] = 'rptJurnal.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",
                 REPORT_COMPANY_ADDRESS: "",
@@ -334,40 +240,26 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
                 REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
-                "tipeBesar",
-                "namaTipeBesar",
-                "tipe",
-                "namaTipe",
-                "kategoriAkun",
-                "namaKategoriAkun",
-                "kodeAkun",
+                "noTran",
+                "tglTran",
                 "namaAkun",
-                "saldo",
-                "totalKategori",
-                "totalTipe",
-                "totalTipeBesar"
+                "nilaiDebit",
+                "nilaiKredit"
               ]
               rp['FIELD_TYPE'] = [
                 "string",
+                "date",
                 "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "bigdecimal",
-                "bigdecimal",
                 "bigdecimal",
                 "bigdecimal"
               ]
               rp['FIELD_DATA'] = res
 
-              this.sendGetReport(rp, 'lr')
+              this.sendGetReport(rp, 'jl')
             } else {
               this.loading = false
               this.ref.markForCheck()
-              this.openSnackBar('Gagal mendapatkan data neraca.', 'fail')
+              this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
             }
           }
         )
@@ -376,40 +268,39 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
   }
 
   //Reset Value
-  resetFormNR() {
-    this.formValueNR = {
+  resetFormJL() {
+    this.gbl.topPage()
+    this.formValueJL = {
       format_laporan: 'pdf',
-      tahun: this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode']
+      periode: ''
     }
+    /*  this.bulanJL = this.initBulan[this.formValueJL['tahun']]
+     this.inputLayoutJL.splice(2, 2,
+       {
+         // labelWidth: 'col-4',
+         formWidth: 'col-5',
+         label: 'Bulan Periode',
+         id: 'bulan-periode',
+         type: 'combobox',
+         options: this.bulanJL,
+         valueOf: 'bulan',
+         required: true,
+         readOnly: false,
+         disabled: false,
+       }
+     ) */
 
-    this.bulanNR = this.initBulan[this.formValueNR['tahun']]
-    this.inputLayoutNR.splice(2, 2,
-      {
-        // labelWidth: 'col-4',
-        formWidth: 'col-5',
-        label: 'Bulan Periode',
-        id: 'bulan-periode',
-        type: 'combobox',
-        options: this.bulanNR,
-        valueOf: 'bulan',
-        required: true,
-        readOnly: false,
-        disabled: false,
-      }
-    )
-
-    this.loadingNR = true
+    this.loadingJL = true
     this.ref.markForCheck()
 
     setTimeout(() => {
-      this.loadingNR = false
+      this.loadingJL = false
       this.ref.markForCheck()
     }, 1000)
   }
 
   onCancel(type) {
-    this.resetFormNR()
+    this.resetFormJL()
   }
 
   // Request Data API (to : L.O.V or Table)
@@ -533,14 +424,14 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
     }
 
     this.tahun = outputTahun
-    this.formValueNR = {
-      format_laporan: this.formValueNR['format_laporan'],
+    /* this.formValueJL = {
+      format_laporan: this.formValueJL['format_laporan'],
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
-    this.bulanNR = tmp[this.formValueNR.tahun]
-    this.inputLayoutNR.splice(0, 3,
+    this.bulanJL = tmp[this.formValueJL.tahun]
+    this.inputLayoutJL.splice(0, 3,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -560,7 +451,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         id: 'tahun-periode',
         type: 'combobox',
         options: this.tahun,
-        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp, 'nr'),
+        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp, "jl"),
         valueOf: 'tahun',
         required: true,
         readOnly: false,
@@ -572,30 +463,30 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
-        options: this.bulanNR,
+        options: this.bulanJL,
         valueOf: 'bulan',
         required: true,
         readOnly: false,
         disabled: false,
       },
-    )
+    )*/
   }
 
   getBulan(filterBulan, loopBulan, type) {
-    this.formValueNR = {
-      format_laporan: this.formValueNR['format_laporan'],
+    /* this.formValueJL = {
+      format_laporan: this.formValueJL['format_laporan'],
       tahun: filterBulan,
       bulan: ""
-    }
-    this.bulanNR = loopBulan[filterBulan]
-    this.inputLayoutNR.splice(2, 2,
+    } */
+    this.bulanJL = loopBulan[filterBulan]
+    this.inputLayoutJL.splice(2, 2,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
-        options: this.bulanNR,
+        options: this.bulanJL,
         valueOf: 'bulan',
         required: true,
         readOnly: false,
@@ -603,7 +494,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
       }
     )
     setTimeout(() => {
-      this.forminputNR.checkChanges()
+      this.forminputJL.checkChanges()
     }, 1)
   }
 }

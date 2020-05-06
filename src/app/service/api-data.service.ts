@@ -24,6 +24,7 @@ import { PostingJurnalRequestService } from './transaksi/posting-jurnal/posting-
 import { PeriodeRequestService } from './transaksi/periode/periode-request.service';
 import { UserRequestService } from './management/user/user-request.service';
 import { ReportRequestService } from './master/report/report-request.service';
+import { KasirRequestService } from './master/kasir/kasir-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,7 @@ export class ApiDataService {
     private jurnalOtomatisReq: JurnalOtomatisRequestService,
     private settingLinkReq: SettingLinkRequestService,
     private reportReq: ReportRequestService,
+    private kasirReq: KasirRequestService,
     
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -80,6 +82,7 @@ export class ApiDataService {
     this.jenisTransaksiReq.url = this.baseURL
     this.settingLinkReq.url = this.baseURL
     this.reportReq.url = this.baseURL
+    this.kasirReq.url =  this.baseURL
 
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
@@ -128,6 +131,8 @@ export class ApiDataService {
       return this.settingLinkReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'report') {
       return this.reportReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'kasir') {
+      return this.kasirReq.validate(data, this.httpBody, this.options, formData)
     } 
 
     //Setting Services 

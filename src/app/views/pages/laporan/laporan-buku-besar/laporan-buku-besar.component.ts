@@ -42,6 +42,21 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  format_laporan = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
+    }
+  ]
+
   // Variables
   nama_tombol: any;
   onSub: boolean = false;
@@ -118,6 +133,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   // Input Name
   formValueBB = {
     // periode: JSON.stringify(this.getDateNow()),
+    format_laporan: 'pdf',
     tahun: '',
     bulan: ''
   }
@@ -140,8 +156,20 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     //   enableMax: false,
     // },
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Format Laporan',
+      id: 'format-laporan',
+      type: 'combobox',
+      options: this.format_laporan,
+      valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Tahun Periode',
       id: 'tahun-periode',
       type: 'combobox',
@@ -153,8 +181,8 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
       type: 'combobox',
@@ -291,15 +319,16 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   resetFormBB() {
     this.gbl.topPage()
     this.formValueBB = {
+      format_laporan: 'pdf',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode']
     }
 
     this.bulanBB = this.initBulan[this.formValueBB['tahun']]
-    this.inputLayoutBB.splice(1, 1,
+    this.inputLayoutBB.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -446,15 +475,28 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueBB = {
+      format_laporan: this.formValueBB['format_laporan'],
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
     this.bulanBB = tmp[this.formValueBB.tahun]
-    this.inputLayoutBB.splice(0, 2,
+    this.inputLayoutBB.splice(0, 3,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Format Laporan',
+        id: 'format-laporan',
+        type: 'combobox',
+        options: this.format_laporan,
+        valueOf: 'format_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      },
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Tahun Periode',
         id: 'tahun-periode',
         type: 'combobox',
@@ -466,8 +508,8 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         disabled: false,
       },
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -482,14 +524,15 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
   getBulan(filterBulan, loopBulan, type) {
     this.formValueBB = {
+      format_laporan: this.formValueBB['format_laporan'],
       tahun: filterBulan,
       bulan: ""
     }
     this.bulanBB = loopBulan[filterBulan]
-    this.inputLayoutBB.splice(1, 1,
+    this.inputLayoutBB.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',

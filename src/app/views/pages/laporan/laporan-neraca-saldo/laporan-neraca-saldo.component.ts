@@ -42,6 +42,21 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  format_laporan = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
+    }
+  ]
+
   // Variables
   nama_tombol: any;
   onSub: boolean = false;
@@ -117,6 +132,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueNS = {
+    format_laporan: 'pdf',
     tahun: '',
     bulan: ''
   }
@@ -124,7 +140,19 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
   // Layout Form
   inputLayoutNS = [
     {
-      labelWidth: 'col-4',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Format Laporan',
+      id: 'format-laporan',
+      type: 'combobox',
+      options: this.format_laporan,
+      valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
       formWidth: 'col-7',
       label: 'Tahun Periode',
       id: 'tahun-periode',
@@ -137,7 +165,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
-      labelWidth: 'col-4',
+      // labelWidth: 'col-4',
       formWidth: 'col-7',
       label: 'Bulan Periode',
       id: 'bulan-periode',
@@ -254,15 +282,16 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetFormNS() {
     this.formValueNS = {
+      format_laporan: 'pdf',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode']
     }
 
     this.bulanNS = this.initBulan[this.formValueNS['tahun']]
-    this.inputLayoutNS.splice(1, 1,
+    this.inputLayoutNS.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -409,15 +438,28 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueNS = {
+      format_laporan: this.formValueNS['format_laporan'],
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
     this.bulanNS = tmp[this.formValueNS.tahun]
-    this.inputLayoutNS.splice(0, 2,
+    this.inputLayoutNS.splice(0, 3,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Format Laporan',
+        id: 'format-laporan',
+        type: 'combobox',
+        options: this.format_laporan,
+        valueOf: 'format_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      },
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Tahun Periode',
         id: 'tahun-periode',
         type: 'combobox',
@@ -429,8 +471,8 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         disabled: false,
       },
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -445,14 +487,15 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
   getBulan(filterBulan, loopBulan, type) {
     this.formValueNS = {
+      format_laporan: this.formValueNS['format_laporan'],
       tahun: filterBulan,
       bulan: ""
     }
     this.bulanNS = loopBulan[filterBulan]
-    this.inputLayoutNS.splice(1, 1,
+    this.inputLayoutNS.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',

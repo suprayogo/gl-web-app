@@ -10,7 +10,7 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section" style="display:flex; flex-direction: row; height:320px;" *ngIf="!loading">
+                <div class="kt-section" style="display:flex; flex-direction: row; height:480px;" *ngIf="!loading">
                     <div style="width: 50%;">
                         <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombolPJ"
                             [nama_tombol2]="nama_tombolUP" [buttonLayout]="buttonLayout"
@@ -28,10 +28,10 @@
                     </div>
 
                     <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
-                        <h2>Jurnal Belum Posting</h2>
+                        <h2>Riwayat Data Tutup Harian</h2>
                         <kt-datatable-ag-grid #jbp [tableColumn]="displayedColumnsTableBP" [tableData]="browseDataBP"
                             [tableRules]="browseDataRulesBP" (selectRowEvent)="browseSelectRowBP($event)"
-                            [containerHeight]=300>
+                            [containerHeight]=460>
                         </kt-datatable-ag-grid>
                     </div>
                 </div>

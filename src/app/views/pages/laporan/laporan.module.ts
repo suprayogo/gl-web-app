@@ -55,6 +55,10 @@ import { LaporanNeracaSaldoComponent } from './laporan-neraca-saldo/laporan-nera
 import { LaporanLabaRugiComponent } from './laporan-laba-rugi/laporan-laba-rugi.component';
 import { LaporanNeracaComponent } from './laporan-neraca/laporan-neraca.component';
 import { LaporanArusKasComponent } from './laporan-arus-kas/laporan-arus-kas.component';
+import { RekapKasComponent } from './rekap-kas/rekap-kas.component';
+import { RekapGiroComponent } from './rekap-giro/rekap-giro.component';
+import { RekapBankComponent } from './rekap-bank/rekap-bank.component';
+import { RekapPettyCashComponent } from './rekap-petty-cash/rekap-petty-cash.component';
 
 const routes: Routes = [
   {
@@ -84,7 +88,23 @@ const routes: Routes = [
   {
     path: 'arus-kas',
     component: LaporanArusKasComponent
-  }
+  },
+  {
+    path: 'rekap-kas',
+    component: RekapKasComponent
+  },
+  {
+    path: 'rekap-giro',
+    component: RekapGiroComponent
+  },
+  {
+    path: 'rekap-bank',
+    component: RekapBankComponent
+  },
+  {
+    path: 'rekap-petty-cash',
+    component: RekapPettyCashComponent
+  },
 ]
 
 @NgModule({
@@ -151,7 +171,11 @@ const routes: Routes = [
     LaporanNeracaSaldoComponent,
     LaporanLabaRugiComponent,
     LaporanNeracaComponent,
-    LaporanArusKasComponent
+    LaporanArusKasComponent,
+    RekapKasComponent,
+    RekapGiroComponent,
+    RekapBankComponent,
+    RekapPettyCashComponent
   ]
 })
 export class LaporanModule { }

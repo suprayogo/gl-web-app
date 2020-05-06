@@ -73,7 +73,7 @@ export class ForminputComponent implements OnInit {
     public formatter: NgbDateParserFormatter
   ) {
     this.fromDate = calendar.getToday();
-    this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
+    this.toDate = calendar.getNext(calendar.getToday(), 'd', 0);
   }
 
   ngOnInit() {

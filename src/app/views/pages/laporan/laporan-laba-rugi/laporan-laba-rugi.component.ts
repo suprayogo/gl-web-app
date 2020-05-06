@@ -42,6 +42,21 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  format_laporan = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
+    }
+  ]
+
   // Variables
   nama_tombol: any;
   onSub: boolean = false;
@@ -117,6 +132,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueLR = {
+    format_laporan: 'pdf',
     tahun: '',
     bulan: ''
   }
@@ -124,8 +140,20 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   // Layout Form
   inputLayoutLR = [
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Format Laporan',
+      id: 'format-laporan',
+      type: 'combobox',
+      options: this.format_laporan,
+      valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Tahun Periode',
       id: 'tahun-periode',
       type: 'combobox',
@@ -137,8 +165,8 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
-      labelWidth: 'col-4',
-      formWidth: 'col-7',
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
       type: 'combobox',
@@ -265,15 +293,16 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetFormLR() {
     this.formValueLR = {
+      format_laporan: 'pdf',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode']
     }
 
     this.bulanLR = this.initBulan[this.formValueLR['tahun']]
-    this.inputLayoutLR.splice(1, 1,
+    this.inputLayoutLR.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -420,15 +449,28 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueLR = {
+      format_laporan: this.formValueLR['format_laporan'],
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
-    this.inputLayoutLR.splice(0, 2,
+    this.inputLayoutLR.splice(0, 3,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Format Laporan',
+        id: 'format-laporan',
+        type: 'combobox',
+        options: this.format_laporan,
+        valueOf: 'format_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      },
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Tahun Periode',
         id: 'tahun-periode',
         type: 'combobox',
@@ -440,8 +482,8 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         disabled: false,
       },
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',
@@ -456,14 +498,15 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
   getBulan(filterBulan, loopBulan, type) {
     this.formValueLR = {
+      format_laporan: this.formValueLR['format_laporan'],
       tahun: filterBulan,
       bulan: ""
     }
     this.bulanLR = loopBulan[filterBulan]
-    this.inputLayoutLR.splice(1, 1,
+    this.inputLayoutLR.splice(2, 2,
       {
-        labelWidth: 'col-4',
-        formWidth: 'col-7',
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
         type: 'combobox',

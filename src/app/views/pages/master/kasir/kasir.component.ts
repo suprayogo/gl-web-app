@@ -50,7 +50,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
   subscription: any;
   kode_perusahaan: any;
 
-  status_aktif: Object = [
+  aktif: Object = [
     {
       label: 'Aktif',
       value: 'Y'
@@ -122,11 +122,11 @@ export class KasirComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Kepala Kasir',
-      value: 'user_kepala_kasir'
+      value: 'id_kepala_kasir'
     },
     {
       label: 'Status Kasir',
-      value: 'status_aktif_sub'
+      value: 'aktif_sub'
     },
     {
       label: 'Keterangan',
@@ -152,8 +152,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
   browseInterface = {
     nama_kasir: 'string',
     user_kasir: 'string',
-    user_kepala_kasir: 'string',
-    status_aktif: 'string',
+    id_kepala_kasir: 'string',
+    aktif: 'string',
     keterangan: 'string',
     //STATIC
     input_by: 'string',
@@ -164,12 +164,12 @@ export class KasirComponent implements OnInit, AfterViewInit {
   browseData = []
   browseDataRules = [
     {
-      target: 'status_aktif',
+      target: 'aktif',
       replacement: {
         'Y': 'Aktif',
         'N': 'Non-Aktif'
       },
-      redefined: 'status_aktif_sub'
+      redefined: 'aktif_sub'
     }
   ]
 
@@ -178,8 +178,10 @@ export class KasirComponent implements OnInit, AfterViewInit {
     id_kasir: '',
     nama_kasir: '',
     user_kasir: '',
-    user_kepala_kasir: '',
-    status_aktif: 'Y',
+    nama_user_kasir: '',
+    id_kepala_kasir: '',
+    nama_kepala_kasir: '',
+    aktif: 'Y',
     keterangan: '',
   }
 
@@ -212,11 +214,11 @@ export class KasirComponent implements OnInit, AfterViewInit {
       readOnly: false,
       hiddenOn: false,
       inputInfo: {
-        id: 'user-name-kasir',
+        id: 'nama-user-kasir',
         disabled: false,
         readOnly: true,
         required: false,
-        valueOf: 'user_name_kasir'
+        valueOf: 'nama_user_kasir'
       },
       update: {
         disabled: false
@@ -225,22 +227,22 @@ export class KasirComponent implements OnInit, AfterViewInit {
     {
       formWidth: 'col-5',
       label: 'Kepala Kasir',
-      id: 'user-kepala-kasir',
+      id: 'id-kepala-kasir',
       type: 'inputgroup',
       click: (type) => this.openDialog(type),
       btnLabel: '',
       btnIcon: 'flaticon-search',
-      browseType: 'user_kepala_kasir',
-      valueOf: 'user_kepala_kasir',
+      browseType: 'id_kepala_kasir',
+      valueOf: 'id_kepala_kasir',
       required: true,
       readOnly: false,
       hiddenOn: false,
       inputInfo: {
-        id: 'user-name-kepala-kasir',
+        id: 'nama-kepala-kasir',
         disabled: false,
         readOnly: true,
         required: false,
-        valueOf: 'user_name_kepala_kasir'
+        valueOf: 'nama_kepala_kasir'
       },
       update: {
         disabled: false
@@ -249,10 +251,10 @@ export class KasirComponent implements OnInit, AfterViewInit {
     {
       formWidth: 'col-5',
       label: 'Status Kasir',
-      id: 'status-aktif',
+      id: 'aktif',
       type: 'combobox',
-      options: this.status_aktif,
-      valueOf: 'status_aktif',
+      options: this.aktif,
+      valueOf: 'aktif',
       update: {
         disabled: true
       }
@@ -351,19 +353,19 @@ export class KasirComponent implements OnInit, AfterViewInit {
         type: type,
         tableInterface:
           type === "user_kasir" ? this.inputUserInterface :
-            type === "user_kepala_kasir" ? this.inputUserInterface :
+            type === "id_kepala_kasir" ? this.inputUserInterface :
               {},
         displayedColumns:
           type === "user_kasir" ? this.inputUserDisplayColumns :
-            type === "user_kepala_kasir" ? this.inputUserDisplayColumns :
+            type === "id_kepala_kasir" ? this.inputUserDisplayColumns :
               [],
         tableData:
           type === "user_kasir" ? this.inputUserData :
-            type === "user_kepala_kasir" ? this.inputUserData :
+            type === "id_kepala_kasir" ? this.inputUserData :
               [],
         tableRules:
           type === "user_kasir" ? this.inputUserDataRules :
-            type === "user_kepala_kasir" ? this.inputUserDataRules :
+            type === "id_kepala_kasir" ? this.inputUserDataRules :
               [],
         formValue: this.formValue
       }
@@ -374,12 +376,12 @@ export class KasirComponent implements OnInit, AfterViewInit {
         if (type === "user_kasir") {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('user_kasir', result.user_id)
-            this.forminput.updateFormValue('user_name_kasir', result.user_name)
+            this.forminput.updateFormValue('nama_user_kasir', result.user_name)
           }
-        } else if (type === "user_kepala_kasir") {
+        } else if (type === "id_kepala_kasir") {
           if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('user_kepala_kasir', result.user_id)
-            this.forminput.updateFormValue('user_name_kepala_kasir', result.user_name)
+            this.forminput.updateFormValue('id_kepala_kasir', result.user_id)
+            this.forminput.updateFormValue('nama_kepala_kasir', result.user_name)
           }
         }
         this.ref.markForCheck();
@@ -401,8 +403,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
         labelLayout: this.c_labelLayout,
         inputLayout: [
           {
-            label: 'Kode Bank',
-            id: 'kode-bank',
+            label: 'Nama Kasir',
+            id: 'nama-kasir',
             type: 'input',
             valueOf: this.formValue.nama_kasir,
             changeOn: null,
@@ -411,15 +413,25 @@ export class KasirComponent implements OnInit, AfterViewInit {
             disabled: true,
           },
           {
-            label: 'No. Rekening',
-            id: 'no-rekening',
+            label: 'User Kasir',
+            id: 'nama-user-kasir',
             type: 'input',
-            valueOf: this.formValue.user_kasir,
+            valueOf: this.formValue.nama_user_kasir,
             changeOn: null,
             required: false,
             readOnly: true,
             disabled: true,
-          }
+          },
+          {
+            label: 'Kepala Kasir',
+            id: 'nama-kepala-kasir',
+            type: 'input',
+            valueOf: this.formValue.nama_kepala_kasir,
+            changeOn: null,
+            required: false,
+            readOnly: true,
+            disabled: true,
+          },
         ]
       },
       disableClose: true
@@ -445,7 +457,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('rekening-perusahaan', 'g-rekening-perusahaan', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('kasir', 'g-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
@@ -474,8 +486,10 @@ export class KasirComponent implements OnInit, AfterViewInit {
       id_kasir: x['id_kasir'],
       nama_kasir: x['nama_kasir'],
       user_kasir: x['user_kasir'],
-      user_kepala_kasir: x['user_kepala_kasir'],
-      status_aktif: x['status_aktif'],
+      nama_user_kasir: x['nama_user_kasir'],
+      id_kepala_kasir: x['id_kepala_kasir'],
+      nama_kepala_kasir: x['nama_kepala_kasir'],
+      aktif: x['aktif'],
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
@@ -496,7 +510,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
       if (inputForm.valid && this.formValue.nama_kasir !== undefined) {
         if (this.formValue.user_kasir === "") {
           this.openSnackBar('User Kasir Belum Diisi.', 'info')
-        } else if (this.formValue.user_kepala_kasir === "") {
+        } else if (this.formValue.id_kepala_kasir === "") {
           this.openSnackBar('User Kepala Kasir Belum Diisi.', 'info')
         } else {
           this.addNewData()
@@ -517,7 +531,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
       special: false
     }))}` : this.formValue.id_kasir
     let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
-    this.request.apiData('rekening-perusahaan', this.onUpdate ? 'u-rekening-perusahaan' : 'i-rekening-perusahaan', endRes).subscribe(
+    this.request.apiData('kasir', this.onUpdate ? 'u-kasir' : 'i-kasir', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.resetForm()
@@ -545,8 +559,10 @@ export class KasirComponent implements OnInit, AfterViewInit {
       id_kasir: '',
       nama_kasir: '',
       user_kasir: '',
-      user_kepala_kasir: '',
-      status_aktif: '',
+      nama_user_kasir: '',
+      id_kepala_kasir: '',
+      nama_kepala_kasir: '',
+      aktif: 'Y',
       keterangan: '',
     }
     // this.detailData = []
@@ -570,7 +586,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
       this.loading = true;
       this.ref.markForCheck()
       let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
-      this.request.apiData('rekening-perusahaan', 'd-rekening-perusahaan', endRes).subscribe(
+      this.request.apiData('kasir', 'd-kasir', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
