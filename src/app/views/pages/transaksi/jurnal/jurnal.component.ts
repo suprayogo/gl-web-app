@@ -71,7 +71,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     nama_cabang: '',
     keterangan: ''
   }
-  
+
   detailData = [
     {
       id_akun: '',
@@ -413,6 +413,12 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    if (this.gbl.getPeriodeState() === "pk") {
+      window.parent.postMessage({
+        'type': 'UPDATE-PERIODE'
+      }, "*")
+      this.gbl.setPeriodeState("p")
+    }
     this.gbl.need(true, true)
     // this.reqKodePerusahaan()
     // this.reqIdPeriode()
@@ -434,7 +440,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       bulan_periode: this.gbl.getBulanPeriodeAktif()
     }
     if (this.kode_perusahaan !== "" && this.periode_akses.id_periode !== "") {
-     
+
       this.reqActivePeriod()
     }
   }
@@ -503,7 +509,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'], '')
+            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             this.gbl.getIdPeriodeAktif()
             this.gbl.getTahunPeriodeAktif()
             this.gbl.getBulanPeriodeAktif()

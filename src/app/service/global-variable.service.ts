@@ -23,6 +23,15 @@ export class GlobalVariableService {
   bulan_periode: string = "";
   change_periode: Subject<any> = new Subject<any>();
 
+  // PERIODE KASIR
+  id_periode_kasir: string = "";
+  tgl_periode: string = "";
+  chPeriodeKasir: Subject<any> = new Subject<any>();
+
+  id_periode_kasir_aktif: string = "";
+  tgl_periode_aktif: string = "";
+  chPeriodeKasirAktif: Subject<any> = new Subject<any>();
+
   id_periodeAktif: string = "";
   tahun_periodeAktif: string = "";
   bulan_periodeAktif: string = "";
@@ -52,12 +61,13 @@ export class GlobalVariableService {
   }
 
   // NEED COMPANY AND PERIOD
-  need(Company, Period) {
+  need(Company, Period, isPeriodeKasir?: boolean) {
     window.parent.postMessage({
       'type': 'UTIL',
       'res': {
         perusahaan: Company,
-        periode: Period,
+        periode: isPeriodeKasir ? undefined : Period,
+        periode_kasir: isPeriodeKasir ? Period : undefined,
         access_key: this.access_key
       }
     }, '*')
@@ -87,6 +97,10 @@ export class GlobalVariableService {
   }
 
   // PERIODE
+  getPeriodeState() {
+    return localStorage.getItem('p') == null ? "p" : localStorage.getItem('p');
+  }
+
   getIdPeriode() {
     return this.id_periode;
   }
@@ -107,6 +121,10 @@ export class GlobalVariableService {
     }
   }
 
+  setPeriodeState(v) {
+    localStorage.setItem('p', v);
+  }
+
   setPeriode(ip, tp, bp) {
     this.id_periode = ip
     this.tahun_periode = tp
@@ -117,6 +135,50 @@ export class GlobalVariableService {
       bulan_periode: this.bulan_periode
     }
     this.change_periode.next(d)
+  }
+
+  // PERIODE KASIR
+  getPeriodeKasir() {
+    return {
+      id_periode: this.id_periode_kasir,
+      tgl_periode: this.tgl_periode
+    }
+  }
+
+  getIdPeriodeKasir() {
+    return this.id_periode_kasir
+  }
+
+  getIdPeriodeKasirAktif() {
+    return this.id_periode_kasir_aktif
+  }
+
+  getTglPeriodeKasir() {
+    return this.tgl_periode
+  }
+
+  getTglPeriodeKasirAktif() {
+    return this.tgl_periode_aktif
+  }
+
+  setPeriodeKasir(ip, tgp?) {
+    this.id_periode_kasir = ip
+    this.tgl_periode = tgp
+    let d = {
+      id_periode: this.id_periode_kasir,
+      tgl_periode: this.tgl_periode
+    }
+    this.chPeriodeKasir.next(d)
+  }
+
+  setPeriodeKasirAktif(pa_id, tgp){
+    this.id_periode_kasir_aktif = pa_id
+    this.tgl_periode_aktif = tgp
+    let res = {
+      id_periode: pa_id,
+      tgl_periode: tgp
+    }
+    this.chPeriodeKasirAktif.next(res)
   }
 
   // PERIODE AKTIF
@@ -185,7 +247,7 @@ export class GlobalVariableService {
     }
   }
 
-  periodeAktif(pa_id, pa_tahun, pa_bulan, pa_nama_bulan_aktif) {
+  periodeAktif(pa_id, pa_tahun, pa_bulan) {
     this.id_periodeAktif = pa_id
     this.tahun_periodeAktif = pa_tahun
     this.bulan_periodeAktif = pa_bulan

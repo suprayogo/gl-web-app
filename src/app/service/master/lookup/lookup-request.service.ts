@@ -11,11 +11,9 @@ export class LookupRequestService {
   constructor(private http: HttpClient) { }
 
   validate(data, httpBody, options, formData?: Object){
-    if(data === 'g-nama-perusahaan'){
-      httpBody.respondCode = 'GET-DATA-NAMA-PERUSAHAAN'
-      return this.get(httpBody, options)
-    }else if(data === 'g-home-url'){
-      httpBody.respondCode = 'GET-MST-HOME-URL'
+    if (data === 'g-lookup') {
+      httpBody.respondCode = 'GET-DATA-LOOKUP'
+      httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }
   }

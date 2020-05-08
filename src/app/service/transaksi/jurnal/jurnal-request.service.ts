@@ -19,6 +19,10 @@ export class JurnalRequestService {
       httpBody.respondCode = 'GET-DATA-JURNAL-DETAIL'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === "g-jurnal-transaksi") {
+      httpBody.respondCode = 'GET-DATA-JURNAL-TRANSAKSI'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'i-jurnal') {
       httpBody.respondCode = 'SET-DATA-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)
@@ -29,6 +33,18 @@ export class JurnalRequestService {
       return this.get(httpBody, options)
     } else if (data === 'c-jurnal') {
       httpBody.respondCode = 'CNL-DATA-JURNAL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'i-jurnal-transaksi') {
+      httpBody.respondCode = 'SET-DATA-JURNAL-TRANSAKSI'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'u-jurnal-transaksi') {
+      httpBody.respondCode = 'UPT-DATA-JURNAL-TRANSAKSI'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'c-jurnal-transaksi') {
+      httpBody.respondCode = 'CNL-DATA-JURNAL-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

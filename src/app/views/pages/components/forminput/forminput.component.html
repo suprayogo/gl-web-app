@@ -1,6 +1,12 @@
 <form #inputForm=ngForm (ngSubmit)="formSubmit(inputForm)">
   <div class="form-group m-form__group row" *ngFor="let x of inputLayout; let i = index"
-    [hidden]="x.hiddenOn ? x.hiddenOn.matchValue === cFormValue[x.hiddenOn.valueOf] ? true : false : false">
+    [hidden]="x.hiddenOn ?       
+          (
+            isArray(x.hiddenOn.matchValue === undefined ? '' : x.hiddenOn.matchValue) ? 
+            (x.hiddenOn.matchValue.includes(cFormValue[x.hiddenOn.valueOf]) ? true : false) : 
+            x.hiddenOn.matchValue === cFormValue[x.hiddenOn.valueOf] ? true : false
+          )
+     : false">
 
     <label class="col-form-label" [ngClass]="[ x.labelWidth ? x.labelWidth : 'col-2' ]">{{ x.label }}</label>
 
@@ -55,28 +61,30 @@
           currencyMask [options]="x.currencyOptions">
         <div class="input-group-append" *ngIf="x.rightAddon"><span class="input-group-text"
             id="basic-addon-right">{{ x.rightAddon }}</span></div>
-        <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
       </div>
 
       <!-- DATEPICKER && TIME PICKER -->
-      <div *ngIf="x.type === 'datepicker'" class="input-group">
-        <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
+      <div *ngIf="x.type === 'datepicker'">
+        <div class="input-group">
+          <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
           (dateSelect)="onDateSelect($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
           (focus)="dd.toggle()" [disabled]="onUpdate && x.update.disabled || x.disabled"
-          [minDate]="x.enableMin ? getMinToday(x.minMaxDate()) : null"
-          [maxDate]="x.enableMax ? getMaxToday(x.minMaxDate()) : null">
-        <div class="input-group-append">
-          <button *ngIf="!x.noButton" tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
-            [disabled]="onUpdate && x.update.disabled " style="padding-right: 6px;">
-            <i class="la la-calendar" style="color: white;"></i>
-          </button>
+          [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
+          [maxDate]="x.enableMax ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
+          <div class="input-group-append">
+            <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
+              [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
+              <i class="la la-calendar" style="color: white;"></i>
+            </button>
+          </div>
+
+          <div class="m--margin-left-10" *ngIf="x.timepick == true">
+            <ngb-timepicker [(ngModel)]="cFormValue[x.time_valueOf]" [spinners]="x.time_spinners"
+              [meridian]="x.time_meridian" name="{{ x.id + '-time' }}"></ngb-timepicker>
+          </div>
         </div>
 
-        <div class="m--margin-left-10" *ngIf="x.timepick == true">
-          <ngb-timepicker [(ngModel)]="cFormValue[x.time_valueOf]" [spinners]="x.time_spinners"
-            [meridian]="x.time_meridian" name="{{ x.id + '-time' }}"></ngb-timepicker>
-        </div>
-
+        <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
       </div>
 
       <!-- DATEPICKER RANGE -->

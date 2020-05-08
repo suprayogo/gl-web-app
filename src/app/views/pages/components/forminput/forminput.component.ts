@@ -312,4 +312,8 @@ export class ForminputComponent implements OnInit {
     return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
   }
 
+  isArray(obj) {
+    return Array.isArray(obj)
+  }
+
 }
