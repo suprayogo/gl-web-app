@@ -145,13 +145,13 @@
     <div
         style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;">
         <span>Total Debit :</span>
-        <h6 [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
             {{ numberFormatter(total_debit, 2) }}</h6>
     </div>
     <div
         style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;">
         <span>Total Kredit :</span>
-        <h6 [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
             {{ numberFormatter(total_kredit, 2) }}</h6>
     </div>
 </div>

@@ -340,7 +340,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'], '')
+            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
             this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
             this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
