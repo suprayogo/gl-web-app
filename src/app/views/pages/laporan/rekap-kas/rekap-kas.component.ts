@@ -27,7 +27,6 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('jl', { static: false }) forminputJL;
 
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
@@ -72,6 +71,8 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = true;
   browseNeedUpdate: boolean = true;
   search: string;
+  dialogRef: any;
+  dialogType: string = null;
 
   // REPORT
   reportObj = {
@@ -131,13 +132,30 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
   kode_perusahaan: any;
 
   // Input Name
-  formValueJL = {
+  formValue = {
     format_laporan: 'pdf',
     periode: ''
   }
 
+  inputCabangDisplayColumns = [
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
+      label: 'Nama Cabang',
+      value: 'nama_cabang'
+    }
+  ]
+  inputCabangInterface = {
+    kode_cabang: 'string',
+    nama_cabang: 'string'
+  }
+  inputCabangData = []
+  inputCabangDataRules = []
+
   // Layout Form
-  inputLayoutJL = [
+  inputLayout = [
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -149,6 +167,35 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
     },
     {
       formWidth: 'col-5',
@@ -164,6 +211,22 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
       timepick: false,
       enableMin: false,
       enableMax: false,
+      // minDate: () => {
+      //   let dt = new Date(Date.now())
+      //   return {
+      //     year: dt.getFullYear(),
+      //     month: dt.getMonth() + 1,
+      //     day: dt.getDate()
+      //   }
+      // },
+      // maxDate: () => {
+      //   let dt = new Date(Date.now())
+      //   return {
+      //     year: dt.getFullYear(),
+      //     month: dt.getMonth() + 1,
+      //     day: dt.getDate()
+      //   }
+      // }
     }
   ]
 
@@ -197,65 +260,59 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
   onSubmitJL(inputForm: NgForm) {
     this.loading = true
     this.ref.markForCheck()
-    if (this.forminputJL !== undefined) {
-      this.formValueJL = this.forminputJL.getData()
+    if (this.forminput !== undefined) {
+      this.formValue = this.forminput.getData()
       let p = {}
-      for (var i = 0; i < this.inputPeriodeData.length; i++) {
-        // if (this.formValueJL.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.inputPeriodeData[i]['tahun_periode']) {
-        //   p = this.inputPeriodeData[i]
-        //   break
-        // }
-      }
-
-      if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
-        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
-        this.request.apiData('report', 'g-data-jurnal', p).subscribe(
+        p['tgl_periode_awal'] = "2020-05-08"
+        p['tgl_periode_akhir'] = "2020-05-10"
+        this.request.apiData('report', 'g-data-rekapitulasi-kas', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
-              for (var i = 0; i < d.length; i++) {
-                let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
+              console.log(data['RESULT'])
+              // for (var i = 0; i < d.length; i++) {
+              //   let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
 
-                t.push(d[i]['no_tran'])
-                t.push(new Date(d[i]['tgl_tran']).getTime())
-                t.push(d[i]['nama_akun'])
-                t.push(parseFloat(d[i]['nilai_debit']))
-                t.push(parseFloat(d[i]['nilai_kredit']))
+              //   t.push(d[i]['no_tran'])
+              //   t.push(new Date(d[i]['tgl_tran']).getTime())
+              //   t.push(d[i]['nama_akun'])
+              //   t.push(parseFloat(d[i]['nilai_debit']))
+              //   t.push(parseFloat(d[i]['nilai_kredit']))
 
-                res.push(t)
-              }
+              //   res.push(t)
+              // }
 
-              let rp = JSON.parse(JSON.stringify(this.reportObj))
-              rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              rp['REPORT_CODE'] = 'RPT-JURNAL'
-              rp['REPORT_NAME'] = 'Laporan Transaksi Jurnal'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
-              rp['JASPER_FILE'] = 'rptJurnal.jasper'
-              rp['REPORT_PARAMETERS'] = {
-                USER_NAME: "",
-                REPORT_COMPANY_ADDRESS: "",
-                REPORT_COMPANY_CITY: "",
-                REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-              }
-              rp['FIELD_NAME'] = [
-                "noTran",
-                "tglTran",
-                "namaAkun",
-                "nilaiDebit",
-                "nilaiKredit"
-              ]
-              rp['FIELD_TYPE'] = [
-                "string",
-                "date",
-                "string",
-                "bigdecimal",
-                "bigdecimal"
-              ]
-              rp['FIELD_DATA'] = res
+              // let rp = JSON.parse(JSON.stringify(this.reportObj))
+              // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+              // rp['REPORT_CODE'] = 'RPT-JURNAL'
+              // rp['REPORT_NAME'] = 'Laporan Transaksi Jurnal'
+              // rp['REPORT_FORMAT_CODE'] = 'pdf'
+              // rp['JASPER_FILE'] = 'rptJurnal.jasper'
+              // rp['REPORT_PARAMETERS'] = {
+              //   USER_NAME: "",
+              //   REPORT_COMPANY_ADDRESS: "",
+              //   REPORT_COMPANY_CITY: "",
+              //   REPORT_COMPANY_TLPN: "",
+              //   REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+              // }
+              // rp['FIELD_NAME'] = [
+              //   "noTran",
+              //   "tglTran",
+              //   "namaAkun",
+              //   "nilaiDebit",
+              //   "nilaiKredit"
+              // ]
+              // rp['FIELD_TYPE'] = [
+              //   "string",
+              //   "date",
+              //   "string",
+              //   "bigdecimal",
+              //   "bigdecimal"
+              // ]
+              // rp['FIELD_DATA'] = res
 
-              this.sendGetReport(rp, 'jl')
+              // this.sendGetReport(rp, 'jl')
             } else {
               this.loading = false
               this.ref.markForCheck()
@@ -263,14 +320,13 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
             }
           }
         )
-      }
     }
   }
 
   //Reset Value
   resetFormJL() {
     this.gbl.topPage()
-    this.formValueJL = {
+    this.formValue = {
       format_laporan: 'pdf',
       periode: ''
     }
@@ -303,27 +359,110 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
     this.resetFormJL()
   }
 
+  openDialog(type) {
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '90vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_cabang" ? this.inputCabangInterface :
+            {},
+        displayedColumns:
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            [],
+        tableData:
+          type === "kode_cabang" ? this.inputCabangData :
+            [],
+        tableRules:
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            [],
+        formValue: this.formValue
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_cabang") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.sendRequestPeriodeKasir(result.kode_cabang)
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
+  }
+
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.inputPeriodeData = data['RESULT']
-            if (this.inputPeriodeData.length > 0) {
-              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
-              this.distinctPeriode()
-            }
+            this.inputCabangData = data['RESULT']
             this.loading = false
             this.ref.markForCheck()
           } else {
             this.loading = false
+            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
           }
         }
       )
     }
+  }
+
+  sendRequestPeriodeKasir(kc) {
+    this.request.apiData('periode', 'g-periode-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        console.log(data['RESULT'])
+        if (data['STATUS'] === 'Y') {
+          // this.inputLayout.splice(2, 1, {
+          //   formWidth: 'col-5',
+          //   label: 'Periode',
+          //   id: 'periode',
+          //   type: 'datepicker-range',
+          //   valueOf: 'periode',
+          //   required: true,
+          //   readOnly: false,
+          //   update: {
+          //     disabled: false
+          //   },
+          //   timepick: false,
+          //   enableMin: true,
+          //   enableMax: true,
+          //   minDate: () => {
+          //     let dt = new Date(Date.now())
+          //     return {
+          //       year: dt.getFullYear(),
+          //       month: dt.getMonth() + 1,
+          //       day: dt.getDate()
+          //     }
+          //   },
+          //   maxDate: () => {
+          //     let dt = new Date(Date.now())
+          //     return {
+          //       year: dt.getFullYear(),
+          //       month: dt.getMonth() + 1,
+          //       day: dt.getDate()
+          //     }
+          //   }
+          // })
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
+        }
+      }
+    )
   }
 
   refreshBrowse(message) {
@@ -479,7 +618,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
       bulan: ""
     } */
     this.bulanJL = loopBulan[filterBulan]
-    this.inputLayoutJL.splice(2, 2,
+    this.inputLayout.splice(2, 2,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -494,7 +633,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
       }
     )
     setTimeout(() => {
-      this.forminputJL.checkChanges()
+      this.forminput.checkChanges()
     }, 1)
   }
 }

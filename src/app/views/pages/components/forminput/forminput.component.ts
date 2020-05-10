@@ -42,6 +42,7 @@ export class ForminputComponent implements OnInit {
   @Input() enableDelete: boolean;
   @Input() enableCancel: boolean;
   @Input() disableSubmit: boolean;
+  @Input() disableForm: boolean;
   @Input() noCancel: boolean;
   @Input() onSub: any;
   @Input() onButton: any;

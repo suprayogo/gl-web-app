@@ -15,6 +15,10 @@ export class KasirRequestService {
       httpBody.respondCode = 'GET-DATA-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-status-user-kasir') {
+      httpBody.respondCode = 'GET-DATA-STATUS-USER-KASIR'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'i-kasir') {
       httpBody.respondCode = 'SET-DATA-KASIR'
       httpBody.requestParam = JSON.stringify(formData)

@@ -35,6 +35,22 @@ export class ReportRequestService {
       httpBody.respondCode = 'GET-DATA-REPORT-ARUS-KAS'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-data-rekapitulasi-kas') {
+      httpBody.respondCode = 'GET-DATA-REPORT-REKAPITULASI-KAS'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-data-rekapitulasi-giro') {
+      httpBody.respondCode = 'GET-DATA-REPORT-REKAPITULASI-GIRO'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-data-rekapitulasi-bank') {
+      httpBody.respondCode = 'GET-DATA-REPORT-REKAPITULASI-BANK'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-data-rekapitulasi-petty-cash') {
+      httpBody.respondCode = 'GET-DATA-REPORT-REKAPITULASI-PETTY-CASH'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-report') {
       httpBody.respondCode = 'GET-REPORT'
       httpBody.requestParam = JSON.stringify(formData)
