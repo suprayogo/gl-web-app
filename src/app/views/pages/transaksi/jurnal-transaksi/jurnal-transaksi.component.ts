@@ -78,6 +78,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   dialogRef: any;
   dialogType: string = null;
 
+  id_periode = "";
+
   // Input Name
   formValue = {
     id_tran: '',
@@ -159,11 +161,15 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'No. Jurnal',
+      label: 'No. Transaksi',
       value: 'no_tran'
     },
     {
-      label: 'Tgl. Jurnal',
+      label: 'No. Jurnal',
+      value: 'no_jurnal'
+    },
+    {
+      label: 'Tgl. Transaksi',
       value: 'tgl_tran',
       date: true
     },
@@ -172,16 +178,21 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       value: 'nama_cabang'
     },
     {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
+      label: 'Jenis Transaksi',
+      value: 'nama_jenis_transaksi'
     },
     {
       label: 'Keterangan',
       value: 'keterangan'
+    },
+    {
+      label: 'Tipe Transaksi',
+      value: 'tipe_transaksi_sub'
+    },
+    {
+      label: 'Saldo Transaksi',
+      value: 'saldo_transaksi',
+      number: true
     },
     {
       label: 'Status',
@@ -225,6 +236,14 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         'f': ''
       },
       redefined: 'batal_status_sub'
+    },
+    {
+      target: 'tipe_transaksi',
+      replacement: {
+        '0': 'Masuk',
+        '1': 'Keluar'
+      },
+      redefined: 'tipe_transaksi_sub'
     }
   ]
   inputDepartemenDisplayColumns = [
@@ -356,11 +375,12 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       update: {
-        disabled: false
+        disabled: true
       },
       timepick: false,
       enableMin: true,
       enableMax: true,
+      disabled: false,
       minDate: () => {
         let dt = new Date(Date.now())
         return {
@@ -394,7 +414,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       },
       required: true,
       readOnly: false,
-      disabled: false
+      disabled: false,
+      update: {
+        disabled: true
+      }
     },
     {
       formWidth: 'col-5',
@@ -409,6 +432,9 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       hiddenOn: {
         valueOf: 'kode_jenis_transaksi',
         matchValue: ["KAS", "PETTYCASH", ""]
+      },
+      update: {
+        disabled: true
       }
     },
     {
@@ -420,7 +446,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       valueOf: 'tipe_transaksi',
       required: true,
       readOnly: false,
-      disabled: false
+      disabled: false,
+      update: {
+        disabled: false
+      }
     },
     {
       formWidth: 'col-5',
@@ -509,8 +538,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
-    console.log(x)
     let t_tran = new Date(x['tgl_tran'])
+    console.log(x)
     this.formValue = {
       id_tran: x['id_tran_jurnal'],
       id_tran_jt: x['id_tran'],
@@ -526,6 +555,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       saldo_transaksi: parseFloat(x['saldo_transaksi']),
       keterangan: x['keterangan']
     }
+    this.id_periode = x['id_periode']
     this.onUpdate = true;
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
     this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
@@ -561,16 +591,19 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
         let tgl = new Date(parseInt(this.formValue['tgl_tran'])), idp = ""
-        for (var i = 0; i < this.daftar_periode_kasir.length; i++) {
-          let dpk = new Date(this.daftar_periode_kasir[i]['tgl_periode'])
-          if (tgl.getTime() == (dpk.getTime() - 25200000)) {
-            idp = this.daftar_periode_kasir[i]['id_periode']
-            break
+        if (!this.onUpdate) {
+          for (var i = 0; i < this.daftar_periode_kasir.length; i++) {
+            let dpk = new Date(this.daftar_periode_kasir[i]['tgl_periode'])
+            if (tgl.getTime() == (dpk.getTime() - 25200000) && this.formValue['kode_cabang'] === this.daftar_periode_kasir[i]['kode_cabang']) {
+              idp = this.daftar_periode_kasir[i]['id_periode']
+              break
+            }
           }
         }
-        let endRes = Object.assign({ id_kasir: this.id_kasir, kode_perusahaan: this.kode_perusahaan, id_periode_kasir: idp, id_periode_jurnal: this.periode_jurnal['id_periode'] }, this.formValue)
+        let endRes = Object.assign({ id_kasir: this.id_kasir, kode_perusahaan: this.kode_perusahaan, id_periode_kasir: this.onUpdate ? this.id_periode : idp, id_periode_jurnal: this.periode_jurnal['id_periode'] }, this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal-transaksi' : 'i-jurnal-transaksi', endRes).subscribe(
           data => {
+            this.total_debit = 0
             if (data['STATUS'] === 'Y') {
               this.resetForm()
               this.browseNeedUpdate = true
@@ -606,6 +639,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             }
           }
         }
+        this.total_debit = 0
       }
     }
   }
@@ -655,8 +689,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       no_jurnal: '',
       no_tran: '',
       tgl_tran: '',
-      kode_cabang: '',
-      nama_cabang: '',
+      kode_cabang: this.formValue.kode_cabang,
+      nama_cabang: this.formValue.nama_cabang,
       id_jenis_transaksi: '',
       kode_jenis_transaksi: '',
       nilai_jenis_transaksi: '',
@@ -692,38 +726,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         saldo_kredit: 0
       }
     ]
-    this.inputLayout.splice(3, 1, {
-      formWidth: 'col-5',
-      label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
-      type: 'datepicker',
-      valueOf: 'tgl_tran',
-      required: true,
-      readOnly: false,
-      update: {
-        disabled: false
-      },
-      timepick: false,
-      enableMin: true,
-      enableMax: true,
-      minDate: () => {
-        let dt = new Date(Date.now())
-        return {
-          year: dt.getFullYear(),
-          month: dt.getMonth() + 1,
-          day: dt.getDate()
-        }
-      },
-      maxDate: () => {
-        let dt = new Date(Date.now())
-        return {
-          year: dt.getFullYear(),
-          month: dt.getMonth() + 1,
-          day: dt.getDate()
-        }
-      },
-      toolTip: 'Tgl. jurnal akan sama dengan tgl. transaksi'
-    })
+    this.id_periode = ""
     this.formInputCheckChanges()
     this.formInputCheckChangesJurnal()
   }
@@ -746,10 +749,11 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       let endRes = {
         kode_perusahaan: val ? val : this.kode_perusahaan,
         id_tran: this.formValue.id_tran,
+        id_tran_jt: this.formValue.id_tran_jt,
         batal_alasan: this.batal_alasan
       }
       this.dialog.closeAll()
-      this.request.apiData('jurnal', 'c-jurnal', endRes).subscribe(
+      this.request.apiData('jurnal', 'c-jurnal-transaksi', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
@@ -820,11 +824,12 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
                 required: true,
                 readOnly: false,
                 update: {
-                  disabled: false
+                  disabled: true
                 },
                 timepick: false,
                 enableMin: true,
                 enableMax: true,
+                disabled: false,
                 minDate: () => {
                   let dt = new Date(this.periode_kasir['tgl_periode'])
                   return {
@@ -1063,7 +1068,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             },
             required: true,
             readOnly: false,
-            disabled: false
+            disabled: false,
+            update: {
+              disabled: true
+            }
           })
           this.sendRequestRekeningPerusahaan()
         } else {
@@ -1102,6 +1110,9 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             hiddenOn: {
               valueOf: 'kode_jenis_transaksi',
               matchValue: ["KAS", "PETTYCASH", ""]
+            },
+            update: {
+              disabled: true
             }
           })
           this.loading = false

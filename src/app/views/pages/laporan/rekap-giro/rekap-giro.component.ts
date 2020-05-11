@@ -11,8 +11,6 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
-import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
-import { ReportdialogComponent } from '../../components/reportdialog/reportdialog.component';
 
 const content = {
   beforeCodeTitle: 'Laporan Rekapitulasi Giro'
@@ -27,7 +25,6 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
 
   // View child to call function
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('jl', { static: false }) forminputJL;
 
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
@@ -72,6 +69,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = true;
   browseNeedUpdate: boolean = true;
   search: string;
+  dialogRef: any;
+  dialogType: string = null;
 
   // REPORT
   reportObj = {
@@ -131,13 +130,43 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
   kode_perusahaan: any;
 
   // Input Name
-  formValueJL = {
+  formValue = {
     format_laporan: 'pdf',
-    periode: ''
+    kode_cabang: '',
+    nama_cabang: '',
+    periode: [
+      {
+        year: new Date(Date.now()).getFullYear(),
+        month: new Date(Date.now()).getMonth() + 1,
+        day: new Date(Date.now()).getDate()
+      },
+      {
+        year: new Date(Date.now()).getFullYear(),
+        month: new Date(Date.now()).getMonth() + 1,
+        day: new Date(Date.now()).getDate()
+      }
+    ]
   }
 
+  inputCabangDisplayColumns = [
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
+      label: 'Nama Cabang',
+      value: 'nama_cabang'
+    }
+  ]
+  inputCabangInterface = {
+    kode_cabang: 'string',
+    nama_cabang: 'string'
+  }
+  inputCabangData = []
+  inputCabangDataRules = []
+
   // Layout Form
-  inputLayoutJL = [
+  inputLayout = [
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -149,6 +178,35 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
     },
     {
       formWidth: 'col-5',
@@ -164,6 +222,22 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
       timepick: false,
       enableMin: false,
       enableMax: false,
+      minDate: () => {
+        let dt = new Date(Date.now())
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate()
+        }
+      },
+      maxDate: () => {
+        let dt = new Date(Date.now())
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate()
+        }
+      }
     }
   ]
 
@@ -197,59 +271,93 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
   onSubmitJL(inputForm: NgForm) {
     this.loading = true
     this.ref.markForCheck()
-    if (this.forminputJL !== undefined) {
-      this.formValueJL = this.forminputJL.getData()
+    if (this.forminput !== undefined) {
+      this.formValue = this.forminput.getData()
       let p = {}
-      for (var i = 0; i < this.inputPeriodeData.length; i++) {
-        // if (this.formValueJL.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.inputPeriodeData[i]['tahun_periode']) {
-        //   p = this.inputPeriodeData[i]
-        //   break
-        // }
-      }
-
-      if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
-        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
-        this.request.apiData('report', 'g-data-jurnal', p).subscribe(
+        p['kode_cabang'] = this.formValue['kode_cabang']
+        p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
+        p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+        this.request.apiData('report', 'g-data-rekapitulasi-bank', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
-                let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
+                let t = []
 
+                t.push(d[i]['kode_cabang'])
+                t.push(d[i]['nama_cabang'])
+                t.push(d[i]['id_kasir'])
+                t.push(d[i]['nama_kasir'])
+                t.push(d[i]['kode_bank'])
+                t.push(d[i]['nama_bank'])
+                t.push(d[i]['no_rekening'])
+                t.push(d[i]['atas_nama'])
                 t.push(d[i]['no_tran'])
+                t.push(d[i]['no_jurnal'])
                 t.push(new Date(d[i]['tgl_tran']).getTime())
-                t.push(d[i]['nama_akun'])
-                t.push(parseFloat(d[i]['nilai_debit']))
-                t.push(parseFloat(d[i]['nilai_kredit']))
+                t.push(d[i]['keterangan'])
+                t.push(parseFloat(d[i]['saldo_masuk']))
+                t.push(parseFloat(d[i]['saldo_keluar']))
+                t.push(parseFloat(d[i]['saldo_akhir']))
+                t.push(parseFloat(d[i]['saldo_awal']))
 
                 res.push(t)
               }
 
               let rp = JSON.parse(JSON.stringify(this.reportObj))
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              rp['REPORT_CODE'] = 'RPT-JURNAL'
-              rp['REPORT_NAME'] = 'Laporan Transaksi Jurnal'
+              rp['REPORT_CODE'] = 'RPT-REKAPITULASI-GIRO'
+              rp['REPORT_NAME'] = 'Laporan Rekapitulasi Giro'
               rp['REPORT_FORMAT_CODE'] = 'pdf'
-              rp['JASPER_FILE'] = 'rptJurnal.jasper'
+              rp['JASPER_FILE'] = 'rptRekapitulasiBank.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",
                 REPORT_COMPANY_ADDRESS: "",
                 REPORT_COMPANY_CITY: "",
                 REPORT_COMPANY_TLPN: "",
-                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                REPORT_PERIODE: "Periode: " + 
+                                  JSON.stringify(this.formValue['periode'][0]['year']) + " " + 
+                                    this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
+                                    (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
+                                      JSON.stringify(this.formValue['periode'][1]['year']) + " " +
+                                        this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
+                                          (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+                                      
               }
               rp['FIELD_NAME'] = [
+                "kodeCabang",
+                "namaCabang",
+                "idKasir",
+                "namaKasir",
+                "kodeBank",
+                "namaBank",
+                "noRekening",
+                "atasNama",
                 "noTran",
+                "noJurnal",
                 "tglTran",
-                "namaAkun",
-                "nilaiDebit",
-                "nilaiKredit"
+                "keterangan",
+                "saldoMasuk",
+                "saldoKeluar",
+                "saldoAkhir",
+                "saldoAwal"
               ]
               rp['FIELD_TYPE'] = [
                 "string",
+                "string",
+                "string",
+                "string",
+                "string",
+                "string",
+                "string",
+                "string",
+                "string",
+                "string",
                 "date",
                 "string",
+                "bigdecimal",
+                "bigdecimal",
                 "bigdecimal",
                 "bigdecimal"
               ]
@@ -263,67 +371,134 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
             }
           }
         )
+    }
+  }
+
+  openDialog(type) {
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '90vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_cabang" ? this.inputCabangInterface :
+            {},
+        displayedColumns:
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            [],
+        tableData:
+          type === "kode_cabang" ? this.inputCabangData :
+            [],
+        tableRules:
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            [],
+        formValue: this.formValue
       }
-    }
-  }
+    });
 
-  //Reset Value
-  resetFormJL() {
-    this.gbl.topPage()
-    this.formValueJL = {
-      format_laporan: 'pdf',
-      periode: ''
-    }
-    /*  this.bulanJL = this.initBulan[this.formValueJL['tahun']]
-     this.inputLayoutJL.splice(2, 2,
-       {
-         // labelWidth: 'col-4',
-         formWidth: 'col-5',
-         label: 'Bulan Periode',
-         id: 'bulan-periode',
-         type: 'combobox',
-         options: this.bulanJL,
-         valueOf: 'bulan',
-         required: true,
-         readOnly: false,
-         disabled: false,
-       }
-     ) */
-
-    this.loadingJL = true
-    this.ref.markForCheck()
-
-    setTimeout(() => {
-      this.loadingJL = false
-      this.ref.markForCheck()
-    }, 1000)
-  }
-
-  onCancel(type) {
-    this.resetFormJL()
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_cabang") {
+          if (this.forminput !== undefined) {
+            // this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+            // this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.formValue.kode_cabang = result.kode_cabang
+            this.formValue.nama_cabang = result.nama_cabang
+            this.loading = true
+            this.ref.markForCheck()
+            this.sendRequestPeriodeKasir(result.kode_cabang)
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
   }
 
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.inputPeriodeData = data['RESULT']
-            if (this.inputPeriodeData.length > 0) {
-              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
-              this.distinctPeriode()
-            }
+            this.inputCabangData = data['RESULT']
             this.loading = false
             this.ref.markForCheck()
           } else {
             this.loading = false
+            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
           }
         }
       )
     }
+  }
+
+  sendRequestPeriodeKasir(kc) {
+    this.request.apiData('periode', 'g-periode-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let periode = data['RESULT'].filter(x => x['kode_cabang'] === kc), perMin = "", perMax = ""
+          for (var i = 0; i < periode.length; i++) {
+            if (perMin === "") {
+              perMin = periode[i]['tgl_periode']
+            }
+
+            if (perMax === "") {
+              perMax = periode[i]['tgl_periode']
+            }
+
+            if (new Date(periode[i]['tgl_periode']).getTime() < new Date(perMin).getTime()) {
+              perMin = periode[i]['tgl_periode']
+            }
+
+            if (new Date(periode[i]['tgl_periode']).getTime() > new Date(perMax).getTime()) {
+              perMax = periode[i]['tgl_periode']
+            }
+          }
+          this.inputLayout.splice(2, 1, {
+            formWidth: 'col-5',
+            label: 'Periode',
+            id: 'periode',
+            type: 'datepicker-range',
+            valueOf: 'periode',
+            required: true,
+            readOnly: false,
+            update: {
+              disabled: false
+            },
+            timepick: false,
+            enableMin: true,
+            enableMax: true,
+            minDate: () => {
+              let dt = new Date(perMin)
+              return {
+                year: dt.getFullYear(),
+                month: dt.getMonth() + 1,
+                day: dt.getDate()
+              }
+            },
+            maxDate: () => {
+              let dt = new Date(perMax)
+              return {
+                year: dt.getFullYear(),
+                month: dt.getMonth() + 1,
+                day: dt.getDate()
+              }
+            }
+          })
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
+        }
+      }
+    )
   }
 
   refreshBrowse(message) {
@@ -389,112 +564,5 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
     let date = new Date(data)
 
     return JSON.stringify(date.getTime())
-  }
-
-  distinctPeriode() {
-    let x = []
-
-    var flags = [],
-      outputTahun = [];
-
-    for (var i = 0; i < this.inputPeriodeData.length; i++) {
-      if (flags[this.inputPeriodeData[i]['tahun_periode']]) continue;
-      flags[this.inputPeriodeData[i]['tahun_periode']] = true;
-      x.push(this.inputPeriodeData[i]['tahun_periode'])
-      outputTahun.push({
-        label: this.inputPeriodeData[i]['tahun_periode'],
-        value: this.inputPeriodeData[i]['tahun_periode']
-      });
-    }
-
-    let tmp = {}
-    for (var i = 0; i < x.length; i++) {
-      tmp[x[i]] = []
-      for (var j = 0; j < this.inputPeriodeData.length; j++) {
-
-        if (this.inputPeriodeData[j]['tahun_periode'] === x[i]) {
-          flags[this.inputPeriodeData[j]['bulan_periode']] = true;
-          tmp[x[i]].push({
-            label: this.inputPeriodeData[j]['bulan_periode'],
-            value: this.inputPeriodeData[j]['bulan_periode']
-          })
-        }
-      }
-
-    }
-
-    this.tahun = outputTahun
-    /* this.formValueJL = {
-      format_laporan: this.formValueJL['format_laporan'],
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
-    }
-    this.initBulan = tmp
-    this.bulanJL = tmp[this.formValueJL.tahun]
-    this.inputLayoutJL.splice(0, 3,
-      {
-        // labelWidth: 'col-4',
-        formWidth: 'col-5',
-        label: 'Format Laporan',
-        id: 'format-laporan',
-        type: 'combobox',
-        options: this.format_laporan,
-        valueOf: 'format_laporan',
-        required: true,
-        readOnly: false,
-        disabled: false,
-      },
-      {
-        // labelWidth: 'col-4',
-        formWidth: 'col-5',
-        label: 'Tahun Periode',
-        id: 'tahun-periode',
-        type: 'combobox',
-        options: this.tahun,
-        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp, "jl"),
-        valueOf: 'tahun',
-        required: true,
-        readOnly: false,
-        disabled: false,
-      },
-      {
-        // labelWidth: 'col-4',
-        formWidth: 'col-5',
-        label: 'Bulan Periode',
-        id: 'bulan-periode',
-        type: 'combobox',
-        options: this.bulanJL,
-        valueOf: 'bulan',
-        required: true,
-        readOnly: false,
-        disabled: false,
-      },
-    )*/
-  }
-
-  getBulan(filterBulan, loopBulan, type) {
-    /* this.formValueJL = {
-      format_laporan: this.formValueJL['format_laporan'],
-      tahun: filterBulan,
-      bulan: ""
-    } */
-    this.bulanJL = loopBulan[filterBulan]
-    this.inputLayoutJL.splice(2, 2,
-      {
-        // labelWidth: 'col-4',
-        formWidth: 'col-5',
-        label: 'Bulan Periode',
-        id: 'bulan-periode',
-        type: 'combobox',
-        options: this.bulanJL,
-        valueOf: 'bulan',
-        required: true,
-        readOnly: false,
-        disabled: false,
-      }
-    )
-    setTimeout(() => {
-      this.forminputJL.checkChanges()
-    }, 1)
   }
 }

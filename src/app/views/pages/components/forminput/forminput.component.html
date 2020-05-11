@@ -1,6 +1,5 @@
 <form #inputForm=ngForm (ngSubmit)="formSubmit(inputForm)">
-  <div class="form-group m-form__group row" *ngFor="let x of inputLayout; let i = index"
-    [hidden]="x.hiddenOn ?       
+  <div class="form-group m-form__group row" *ngFor="let x of inputLayout; let i = index" [hidden]="x.hiddenOn ?       
           (
             isArray(x.hiddenOn.matchValue === undefined ? '' : x.hiddenOn.matchValue) ? 
             (x.hiddenOn.matchValue.includes(cFormValue[x.hiddenOn.valueOf]) ? true : false) : 
@@ -14,14 +13,14 @@
       <!-- FOR COMBOBOX -->
       <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input" [value]="cFormValue[x.valueOf]"
         (change)="selection($event, x.valueOf, x.onSelectFunc)"
-        [disabled]="(onUpdate && x.update.disabled) || x.disabled || disabledOn(x.disabledOn) || disableForm">
+        [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
         <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
       </select>
 
       <!-- DYNAMIC COMBOBOX -->
       <select *ngIf="x.type === 'comboboxcustom'" id="{{ x.id }}" class="form-control m-input"
         [value]="otoritas_data.length > 0 && otoritas_data[x.index] !== undefined ? otoritas_data[x.index][x.valueOf] : ''"
-        (change)="x.change($event)" [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm">
+        [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
         <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
       </select>
 
@@ -32,10 +31,12 @@
           (blur)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
           (keyup.enter)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
           (keyup.tab)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
-          style="text-transform: uppercase" [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm">
+          style="text-transform: uppercase"
+          [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
         <div class="input-group-append">
           <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary" style="padding-right: 8px;"
-            (click)="x.click(x.browseType)" [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm"><i
+            (click)="x.click(x.browseType)"
+            [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
               *ngIf="x.btnIcon" style="color: white" class="flaticon"
               [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
         </div>
@@ -50,14 +51,15 @@
             id="basic-addon-left">{{ x.leftAddon }}</span></div>
         <input *ngIf="!x.numberOnly && !x.currency" class="form-control m-input" type="text" name="{{ x.id }}"
           [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
-          [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm"
+          [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
           (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null">
         <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
           [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
-          [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm">
+          [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
         <input *ngIf="x.currency" class="form-control m-input number-align-right" type="text" name="{{ x.id }}"
           [(ngModel)]="cFormValue[x.valueOf]" (keyup)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null"
-          [readonly]="x.readOnly" [required]="x.required" [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm"
+          [readonly]="x.readOnly" [required]="x.required"
+          [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
           currencyMask [options]="x.currencyOptions">
         <div class="input-group-append" *ngIf="x.rightAddon"><span class="input-group-text"
             id="basic-addon-right">{{ x.rightAddon }}</span></div>
@@ -67,13 +69,17 @@
       <div *ngIf="x.type === 'datepicker'">
         <div class="input-group">
           <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
-          (dateSelect)="onDateSelect($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
-          (focus)="dd.toggle()" [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm"
-          [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
-          [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
+            (dateSelect)="onDateSelect($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+            (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
+            [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+            [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
+            [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
           <div class="input-group-append">
-            <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
-              [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
+            <button tabindex="-1" class="btn btn-primary"
+              (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
+              type="button"
+              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+              style="padding-right: 6px;">
               <i class="la la-calendar" style="color: white;"></i>
             </button>
           </div>
@@ -92,7 +98,9 @@
         <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker" readonly
           [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
           (dateSelect)="onDateSelection($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
-          [disabled]="(onUpdate && x.update.disabled) || x.disabled || disableForm">
+          [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+          [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
+          [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
         <ng-template #t let-date let-focused="focused">
           <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
             [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
@@ -105,7 +113,8 @@
           [value]="formatter.format(fromDate)" (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
         <div class="input-group-append">
           <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
-            [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
+            [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+            style="padding-right: 6px;">
             <i class="la la-calendar" style="color: white;"></i>
           </button>
         </div>
@@ -114,7 +123,8 @@
           [value]="formatter.format(toDate)" (input)="toDate = validateInput(toDate, dpToDate.value)">
         <div class="input-group-append">
           <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
-            [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
+            [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+            style="padding-right: 6px;">
             <i class="la la-calendar" style="color: white;"></i>
           </button>
         </div>

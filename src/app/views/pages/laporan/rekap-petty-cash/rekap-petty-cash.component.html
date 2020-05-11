@@ -10,17 +10,16 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section" *ngIf="!loading" style="height: 280px;">
+                <div class="kt-section" *ngIf="!loading" style="height: 380px;">
                     <div *ngIf="!loadingJL">
-                        <kt-forminput #jl [inputLayout]="inputLayoutJL" [formValue]="formValueJL"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
-                            [tableRules]="detailRules" (onSubmit)="onSubmitJL($event)" (onCancel)="onCancel('jl')"
-                            [onSub]="onSub">
+                        <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombol"
+                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                            (onSubmit)="onSubmitJL($event)" [onSub]="onSub" [noCancel]="true">
                         </kt-forminput>
                     </div>
                     <div *ngIf="loadingJL">
                         <kt-loading></kt-loading>
-                    </div>  
+                    </div>
                 </div>
             </kt-portlet-body>
 
