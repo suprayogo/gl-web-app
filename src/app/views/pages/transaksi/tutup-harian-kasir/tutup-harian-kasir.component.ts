@@ -55,9 +55,11 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = false;
   browseNeedUpdate: boolean = true;
   search: string;
-  a: any;
-  b: any;
-  c: any;
+
+  // Variable Temporary For Range Date
+  tgl_terakhir_tutup: any; 
+  tgl_saat_ini: any;
+  jarak_antar_tgl: any;
 
   dialogRef: any;
   dialogType: string = null;
@@ -260,23 +262,24 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   browseDataBP = []
   browseDataRulesBP = []
 
-  // Input Name POSTING JURNAL
+  // Input Name Tutup Harian Kasir
   formValue = {
+    id_periode: '',
     kode_cabang: '',
     nama_cabang: '',
-    tgl_tutup_akhir: '',
-    sisa_hari_tutup: '',
-    set_tgl_tutup: JSON.stringify(this.getDateNow())
+    tgl_terakhir_tutup: '',
+    set_tgl_tutup: JSON.stringify(this.getDateNow()),
+    jarak_tgl_periode: ''
   }
 
-  // Layout Form POSTING JURNAL
+  // Layout Form Harian Kasir
   inputLayout = [
     {
-      formWidth: 'col-9',
+      formWidth: 'col-5',
       label: 'Cabang',
       id: 'kode-cabang',
       type: 'inputgroup',
-      click: (type) => this.openDialogCabang(type),
+      click: (type) => this.inputDialog(type),
       btnLabel: '',
       btnIcon: 'flaticon-search',
       browseType: 'kode_cabang',
@@ -296,11 +299,11 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       }
     },
    {
-      formWidth: 'col-9',
-      label: 'Tgl. Tutup Terakhir',
-      id: 'tgl-tutup-akhir',
+      formWidth: 'col-5',
+      label: 'Tgl. Terakhir Tutup',
+      id: 'tgl-terakhir-tutup',
       type: 'datepicker',
-      valueOf: 'tgl_tutup_akhir',
+      valueOf: 'tgl_terakhir_tutup',
       required: true,
       readOnly: true,
       disabled: true,
@@ -313,11 +316,29 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       enableMax: false,
     },
     {
-      formWidth: 'col-9',
-      label: 'Sisa Hari Belum Tutup',
-      id: 'sisa-hari-tutup',
+      formWidth: 'col-5',
+      label: 'Atur Tgl. Tutup',
+      id: 'set-tgl-tutup',
+      type: 'datepicker',
+      valueOf: 'set_tgl_tutup',
+      required: true,
+      readOnly: false,
+      onSelectFunc: (v) => {
+        this.getHari(v)
+      },
+      update: {
+        disabled: false
+      },
+      timepick: false,
+      enableMin: true,
+      enableMax: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Atur Tutup Sisa Hari',
+      id: 'jarak-tgl-periode',
       type: 'input',
-      valueOf: 'sisa_hari_tutup',
+      valueOf: 'jarak_tgl_periode',
       required: false,
       readOnly: true,
       numberOnly: false,
@@ -325,21 +346,6 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       update: {
         disabled: false
       }
-    },
-    {
-      formWidth: 'col-9',
-      label: 'Atur Tgl. Tutup',
-      id: 'set-tgl-tutup',
-      type: 'datepicker',
-      valueOf: 'set_tgl_tutup',
-      required: true,
-      readOnly: false,
-      update: {
-        disabled: false
-      },
-      timepick: false,
-      enableMin: false,
-      enableMax: false,
     }
   ]
 
@@ -423,6 +429,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
+            this.loading = false
             this.ref.markForCheck()
           } else {
             this.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
@@ -432,27 +439,64 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         }
       )
     }
-    this.loading = false
-    this.ref.markForCheck()
-    // this.updateForm()
   }
 
-  updateForm(kc, nc) {
-    this.loading = true
-    this.a = 1588266000000 
-    this.b = JSON.stringify(this.getDateNow())
-    var i = this.a / 86400000
-    var j = this.b / 86400000
-    this.c = Math.floor(j-i)
+  updateForm(kode_cabang, nama_cabang) {
+    this.tgl_terakhir_tutup = 1588266000000 // <-- (2020-05-01) CONTOH Tanggal Terakhir Tutup Kasir After Get Kode Cabang
+    this.tgl_saat_ini = JSON.stringify(this.getDateNow())
+
+    // Hitung Jarak Tanggal
+    var tgl_awal = this.tgl_terakhir_tutup / 86400000
+    var tgl_akhir = this.tgl_saat_ini / 86400000
+    this.jarak_antar_tgl = Math.floor(tgl_akhir-tgl_awal)
+
+    // Set New Value
     this.formValue = {
-      kode_cabang: kc,
-      nama_cabang: nc,
-      tgl_tutup_akhir: this.a,
-      sisa_hari_tutup: this.c+' Hari',
-      set_tgl_tutup: this.b
+      id_periode: '',
+      kode_cabang: kode_cabang,
+      nama_cabang: nama_cabang,
+      tgl_terakhir_tutup: this.tgl_terakhir_tutup,
+      set_tgl_tutup: this.tgl_saat_ini,
+      jarak_tgl_periode: this.jarak_antar_tgl
     }
     this.formInputCheckChanges()
-    this.loading = false
+    this.ref.markForCheck()
+  }
+
+  getHari(set_tgl_tutup) {
+    // Hitung Jarak Tanggal Custom
+    var tgl_awal = this.tgl_terakhir_tutup / 86400000
+    var tgl_akhir = set_tgl_tutup / 86400000
+    this.jarak_antar_tgl = Math.floor(tgl_akhir-tgl_awal)
+    console.log(this.jarak_antar_tgl)
+
+    // Set New Value Custom
+    this.formValue = {
+      id_periode: '',
+      kode_cabang: this.formValue['kode_cabang'],
+      nama_cabang: this.formValue['nama_cabang'],
+      tgl_terakhir_tutup: this.formValue['tgl_terakhir_tutup'],
+      set_tgl_tutup: set_tgl_tutup,
+      jarak_tgl_periode: this.jarak_antar_tgl
+    }
+    console.log(this.formValue.jarak_tgl_periode)
+    this.inputLayout.splice(3, 3,
+      {
+        formWidth: 'col-5',
+        label: 'Atur Tutup Sisa Hari',
+        id: 'sisa-hari-tutup',
+        type: 'input',
+        valueOf: 'jarak_tgl_periode',
+        required: false,
+        readOnly: true,
+        numberOnly: false,
+        disabled: true,
+        update: {
+          disabled: false
+        }
+      }
+    )
+    this.formInputCheckChanges()
     this.ref.markForCheck()
   }
 
@@ -476,7 +520,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   }
 
   // Dialog
-  openDialogCabang(type) {
+  inputDialog(type) {
     this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -510,7 +554,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
             this.updateForm(result.kode_cabang, result.nama_cabang)
-            this.sendRequestRiwayatTutup(result.kode_cabang)
+            // this.sendRequestRiwayatTutup(result.kode_cabang)
           }
         }
         this.ref.markForCheck();
@@ -683,12 +727,12 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.ref.markForCheck()
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-    // this.formValue.id_posting = this.formValue.id_posting === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-    //   length: 8,
-    //   numeric: true,
-    //   letters: false,
-    //   special: false
-    // }))}` : this.formValue.id_posting
+    this.formValue.id_periode = this.formValue.id_periode === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
+      length: 8,
+      numeric: true,
+      letters: false,
+      special: false
+    }))}` : this.formValue.id_periode
     let endRes = Object.assign(
       {
         user_id: u_id,
@@ -696,11 +740,11 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         id_periode: this.periode_aktif.id_periode
       },
       this.formValue)
-    this.request.apiData('posting-jurnal', this.onUpdate ? '' : 'i-posting-jurnal', endRes).subscribe(
+    this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode-kasir', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.loading = false
-          this.refreshTab(this.onUpdate ? "" : "BERHASIL DITAMBAH")
+          this.refreshTab(this.onUpdate ? "" : "PERIODE HARIAN BERHASIL DITUTUP")
           this.resetForm()
           this.browseNeedUpdate = true
           this.ref.markForCheck()
@@ -723,11 +767,12 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
+      id_periode: '',
       kode_cabang: '',
       nama_cabang: '',
-      tgl_tutup_akhir: '',
-      sisa_hari_tutup: '',
-      set_tgl_tutup: JSON.stringify(this.getDateNow())
+      tgl_terakhir_tutup: '',
+      set_tgl_tutup: JSON.stringify(this.getDateNow()),
+      jarak_tgl_periode: ''
     }
     this.enableCancel = false;
     this.onSub = false;

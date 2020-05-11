@@ -10,8 +10,9 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section" style="display:flex; flex-direction: row; height:480px;" *ngIf="!loading">
-                    <div style="width: 50%;">
+                <!-- display:flex; flex-direction: row;  -->
+                <div class="kt-section" style="height:350px;" *ngIf="!loading">
+                    <!-- <div style="width: 50%;"> -->
                         <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombolPJ"
                             [nama_tombol2]="nama_tombolUP" [buttonLayout]="buttonLayout"
                             [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
@@ -21,19 +22,19 @@
                             (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
                             (onCancel)="onCancel()" [onSub]="onSub">
                         </kt-forminput>
-                    </div>
+                    <!-- </div> -->
 
-                    <div class="kt-section" *ngIf="tableLoadBP && !loading" style="width: 50%;">
+                    <!-- <div class="kt-section" *ngIf="tableLoadBP && !loading" style="width: 50%;">
                         <kt-loading [loadingText]="loadingDataTextBP"></kt-loading>
-                    </div>
+                    </div> -->
 
-                    <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
+                    <!-- <div *ngIf="!tableLoadBP && !loading" style="width: 50%;">
                         <h2>Riwayat Data Tutup Harian</h2>
                         <kt-datatable-ag-grid #jbp [tableColumn]="displayedColumnsTableBP" [tableData]="browseDataBP"
                             [tableRules]="browseDataRulesBP" (selectRowEvent)="browseSelectRowBP($event)"
                             [containerHeight]=460>
                         </kt-datatable-ag-grid>
-                    </div>
+                    </div> -->
                 </div>
             </kt-portlet-body>
 

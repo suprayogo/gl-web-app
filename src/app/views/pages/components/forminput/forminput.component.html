@@ -67,12 +67,12 @@
       <div *ngIf="x.type === 'datepicker'">
         <div class="input-group">
           <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
-          (dateSelect)="onDateSelect($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+          (dateSelect)="onDateSelect($event, x.valueOf, x.onSelectFunc)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
           (focus)="dd.toggle()" [disabled]="onUpdate && x.update.disabled || x.disabled"
           [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
           [maxDate]="x.enableMax ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
           <div class="input-group-append">
-            <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
+            <button *ngIf="!x.noButton" tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
               [disabled]="onUpdate && x.update.disabled" style="padding-right: 6px;">
               <i class="la la-calendar" style="color: white;"></i>
             </button>
