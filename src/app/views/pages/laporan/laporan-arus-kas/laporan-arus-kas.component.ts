@@ -341,7 +341,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
               rp['REPORT_NAME'] = 'Laporan Arus Kas'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
               rp['JASPER_FILE'] = 'rptArusKas.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",
