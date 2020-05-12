@@ -295,7 +295,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   madeRequest() {
     this.loading = true
     this.ref.markForCheck()
-    this.request.apiData('akun', 'g-saldo-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('akun', 'g-saldo-awal-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
