@@ -351,11 +351,15 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    let x = this.formValue
-    x.kode_jenis_transaksi = data['kode_jenis_transaksi']
-    x.nama_jenis_transaksi = data['nama_jenis_transaksi']
-    x.keterangan = data['keterangan']
-    this.formValue = x
+    let x = JSON.parse(JSON.stringify(data))
+    console.log(data)
+    this.formValue = {
+      id_jenis_transaksi: x['id_jenis_transaksi'],
+      kode_jenis_transaksi: x['kode_jenis_transaksi'],
+      nama_jenis_transaksi: x['nama_jenis_transaksi'],
+      tipe_laporan: x['tipe_laporan'],
+      keterangan: x['keterangan']
+    }
     this.onUpdate = true;
     this.getBackToInput();
   }
@@ -456,7 +460,7 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
           } else {
             this.loading = false;
             this.ref.markForCheck()
-            this.openSnackBar(data['RESULT'])
+            this.openSnackBar(data['RESULT'], 'fail')
           }
         },
         error => {

@@ -77,14 +77,14 @@ export class PengaturanLaporanComponent implements OnInit {
         return true
       }
     },
-    {
-      btnLabel: 'Ulang',
-      btnClass: 'btn btn-secondary',
-      btnClick: () => null,
-      btnCondition: () => {
-        return true
-      }
-    }
+    // {
+    //   btnLabel: 'Ulang',
+    //   btnClass: 'btn btn-secondary',
+    //   btnClick: () => null,
+    //   btnCondition: () => {
+    //     return true
+    //   }
+    // }
   ]
   buttonNRLayout = [
     {
@@ -97,14 +97,14 @@ export class PengaturanLaporanComponent implements OnInit {
         return true
       }
     },
-    {
-      btnLabel: 'Ulang',
-      btnClass: 'btn btn-secondary',
-      btnClick: () => null,
-      btnCondition: () => {
-        return true
-      }
-    }
+    // {
+    //   btnLabel: 'Ulang',
+    //   btnClass: 'btn btn-secondary',
+    //   btnClick: () => null,
+    //   btnCondition: () => {
+    //     return true
+    //   }
+    // }
   ]
   buttonAKLayout = [
     {
@@ -117,14 +117,14 @@ export class PengaturanLaporanComponent implements OnInit {
         return true
       }
     },
-    {
-      btnLabel: 'Ulang',
-      btnClass: 'btn btn-secondary',
-      btnClick: () => null,
-      btnCondition: () => {
-        return true
-      }
-    }
+    // {
+    //   btnLabel: 'Ulang',
+    //   btnClass: 'btn btn-secondary',
+    //   btnClick: () => null,
+    //   btnCondition: () => {
+    //     return true
+    //   }
+    // }
   ]
   inputAkunDisplayColumns = [
     {
