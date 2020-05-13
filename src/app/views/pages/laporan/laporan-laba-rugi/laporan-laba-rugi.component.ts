@@ -251,7 +251,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-LABA-RUGI'
               rp['REPORT_NAME'] = 'Laporan Laba Rugi'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValueLR['format_laporan']
               rp['JASPER_FILE'] = 'rptLabaRugi.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",

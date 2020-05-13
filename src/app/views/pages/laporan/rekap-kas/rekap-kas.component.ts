@@ -302,7 +302,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-REKAPITULASI-KAS'
               rp['REPORT_NAME'] = 'Laporan Rekapitulasi Kas'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
               rp['JASPER_FILE'] = 'rptRekapitulasiKas.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",

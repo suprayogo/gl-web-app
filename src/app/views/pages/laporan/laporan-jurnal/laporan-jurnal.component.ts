@@ -241,7 +241,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-JURNAL'
               rp['REPORT_NAME'] = 'Laporan Transaksi Jurnal'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValueJL['format_laporan']
               rp['JASPER_FILE'] = 'rptJurnal.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",

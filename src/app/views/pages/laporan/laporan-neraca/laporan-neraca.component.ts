@@ -324,7 +324,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-NERACA'
               rp['REPORT_NAME'] = 'Laporan Neraca'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValueNR['format_laporan']
               rp['JASPER_FILE'] = 'rptNeraca.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",

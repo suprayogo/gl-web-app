@@ -35,8 +35,12 @@ export class KasirRequestService {
       httpBody.respondCode = 'GET-DATA-SALDO-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'i-saldo-kasir') {
-      httpBody.respondCode = 'SET-DATA-SALDO-KASIR'
+    } else if (data === 'g-saldo-awal-kasir') {
+      httpBody.respondCode = 'GET-DATA-SALDO-AWAL-KASIR'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'i-saldo-awal-kasir') {
+      httpBody.respondCode = 'SET-DATA-SALDO-AWAL-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

@@ -177,8 +177,11 @@ export class ForminputComponent implements OnInit {
     }
   }
 
-  onDateSelect(e, type) {
+  onDateSelect(e, type, func?) {
     this.cFormValue[type] = `${this.convertTime(e)}`
+    if (func !== undefined) {
+      func(`${this.convertTime(e)}`)
+    }
   }
 
   convertTime(data) {

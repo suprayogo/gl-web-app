@@ -29,25 +29,25 @@ export class PengaturanSaldoKasirComponent implements OnInit {
 
   data_akun = []
   res_data = []
-  total_debit = 0
-  total_kredit = 0
+  total_saldo_awal_kasir = 0
 
   formDetail = {
-    id_akun:  '', 
-    kode_akun: '',
-    nama_akun : '',
-    nama_tipe_akun: '',
-    saldo_debit: 0,
-    saldo_kredit: 0
+    kode_cabang: '',
+    nama_cabang: '',
+    id_kasir: '',
+    nama_kasir: '',
+    id_jenis_transaksi: '',
+    kode_jenis_transaksi: '',
+    saldo_awal: 0
   }
 
   detailInputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Kode Akun',
-      id: 'kode-akun',
+      label: 'Cabang',
+      id: 'nama-cabang',
       type: 'input',
-      valueOf: 'kode_akun',
+      valueOf: 'nama_cabang',
       required: false,
       readOnly: false,
       disabled: true,
@@ -57,10 +57,10 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Nama Akun',
-      id: 'nama-akun',
+      label: 'Kasir',
+      id: 'nama-kasir',
       type: 'input',
-      valueOf: 'nama_akun',
+      valueOf: 'nama_kasir',
       required: false,
       readOnly: false,
       disabled: true,
@@ -70,10 +70,10 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Tipe Akun',
-      id: 'tipe-akun',
+      label: 'Jenis Transaksi',
+      id: 'kode-jenis-transaksi',
       type: 'input',
-      valueOf: 'nama_tipe_akun',
+      valueOf: 'kode_jenis_transaksi',
       required: false,
       readOnly: false,
       disabled: true,
@@ -83,39 +83,15 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Saldo Awal Debit ',
-      id: 'saldo-awal-debit',
+      label: 'Saldo',
+      id: 'saldo-awal',
       type: 'input',
-      valueOf: 'saldo_debit',
+      valueOf: 'saldo_awal',
       required: false,
       readOnly: false,
       numberOnly: true,
       currencyOptions: {
         precision: 2
-      },
-      resetOption: {
-        type: 'saldo_kredit',
-        value: 0
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Saldo Awal Kredit ',
-      id: 'saldo-awal-kredit',
-      type: 'input',
-      valueOf: 'saldo_kredit',
-      required: false,
-      readOnly: false,
-      numberOnly: true,
-      currencyOptions: {
-        precision: 2
-      },
-      resetOption: {
-        type: 'saldo_debit',
-        value: 0
       },
       update: {
         disabled: false
@@ -169,51 +145,38 @@ export class PengaturanSaldoKasirComponent implements OnInit {
 
   //Form submit
   onSubmit() {
-    if (this.validateSaldo()) {
-      this.gbl.topPage()
-      this.loading = true
-      this.ref.markForCheck()
-      let res = []
-      for (var i = 0; i < this.data_akun.length; i++) {
-        if (this.data_akun[i]['edited']) {
-          let t = {
-            id_akun: this.data_akun[i]['id_akun'],
-            saldo: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? parseFloat(this.data_akun[i]['saldo_debit']) : parseFloat(this.data_akun[i]['saldo_kredit']),
-            tipe: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? 0 : 1
-          }
-          res.push(t)
+    this.gbl.topPage()
+    this.loading = true
+    this.ref.markForCheck()
+    let res = []
+    for (var i = 0; i < this.data_akun.length; i++) {
+      if (this.data_akun[i]['edited']) {
+        let t = {
+          kode_cabang: this.data_akun[i]['kode_cabang'],
+          id_kasir: this.data_akun[i]['id_kasir'],
+          id_jenis_transaksi: this.data_akun[i]['id_jenis_transaksi'],
+          saldo: parseFloat(this.data_akun[i]['saldo_awal']),
+          // tipe: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? 0 : 1
+        }
+        res.push(t)
+      }
+    }
+
+    this.request.apiData('kasir', 'i-saldo-awal-kasir', { kode_perusahaan: this.kode_perusahaan, detail: res }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.data_akun = []
+          this.res_data = []
+          this.total_saldo_awal_kasir = 0
+          this.openSnackBar('Berhasil memperbaharui saldo awal kasir', 'success')
+          this.madeRequest()
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal memperbaharui saldo awal kasir.', 'fail')
         }
       }
-  
-      this.request.apiData('akun', 'i-saldo-awal-akun', { kode_perusahaan: this.kode_perusahaan, detail: res }).subscribe(
-        data =>  {
-          if (data['STATUS'] === 'Y') {
-            this.data_akun = []
-            this.res_data = []
-            this.total_debit = 0
-            this.total_kredit = 0
-            this.openSnackBar('Berhasil memperbaharui saldo awal akun', 'success')
-            this.madeRequest()
-          } else {
-            this.loading = false;
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal memperbaharui saldo awal akun.', 'fail')
-          }
-        }
-      )
-    } else {
-      this.openSnackBar('Saldo debit dan kredit tidak seimbang.', 'info')
-    }
-  }
-
-  validateSaldo() {
-    let valid = false;
-
-    if (this.total_debit == this.total_kredit) {
-      valid = true;
-    }
-
-    return valid
+    )
   }
 
   //Reset Value
@@ -222,12 +185,13 @@ export class PengaturanSaldoKasirComponent implements OnInit {
 
   resetDetailForm() {
     this.formDetail = {
-      id_akun:  '', 
-      kode_akun: '',
-      nama_akun : '',
-      nama_tipe_akun: '',
-      saldo_debit: 0,
-      saldo_kredit: 0
+      kode_cabang: '',
+      nama_cabang: '',
+      id_kasir: '',
+      nama_kasir: '',
+      id_jenis_transaksi: '',
+      kode_jenis_transaksi: '',
+      saldo_awal: 0
     }
   }
 
@@ -242,12 +206,13 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     this.gbl.topPage()
     let x = JSON.parse(JSON.stringify(v))
     this.formDetail = {
-      id_akun: x['id_akun'],
-      kode_akun: x['kode_akun'],
-      nama_akun: x['nama_akun'],
-      nama_tipe_akun: x['nama_tipe_akun'],
-      saldo_debit: x['saldo_debit'],
-      saldo_kredit: x['saldo_kredit']
+      kode_cabang: x['kode_cabang'],
+      nama_cabang: x['nama_cabang'],
+      id_kasir: x['id_kasir'],
+      nama_kasir: x['nama_kasir'],
+      id_jenis_transaksi: x['id_jenis_transaksi'],
+      kode_jenis_transaksi: x['kode_jenis_transaksi'],
+      saldo_awal: x['saldo_awal']
     }
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
@@ -279,10 +244,9 @@ export class PengaturanSaldoKasirComponent implements OnInit {
 
   submitDetailData(v) {
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (this.data_akun[i]['id_akun'] === v['id_akun']) {
+      if (this.data_akun[i]['kode_cabang'] === v['kode_cabang'] && this.data_akun[i]['id_kasir'] === v['id_kasir'] && this.data_akun[i]['id_jenis_transaksi'] === v['id_jenis_transaksi']) {
         let t = JSON.parse(JSON.stringify(this.data_akun[i]))
-        t['saldo_debit'] = v['saldo_debit']
-        t['saldo_kredit'] = v['saldo_kredit']
+        t['saldo_awal'] = v['saldo_awal']
         t['edited'] = true
         this.data_akun[i] = t
         break
@@ -290,12 +254,12 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     }
     this.dialog.closeAll()
     this.restructureData(this.data_akun)
-  } 
+  }
 
   madeRequest() {
     this.loading = true
     this.ref.markForCheck()
-    this.request.apiData('kasir', 'g-saldo-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('kasir', 'g-saldo-awal-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
@@ -304,8 +268,7 @@ export class PengaturanSaldoKasirComponent implements OnInit {
           this.loading = false
           this.data_akun = []
           this.res_data = []
-          this.total_debit = 0
-          this.total_kredit = 0
+          this.total_saldo_awal_kasir = 0
           this.ref.markForCheck()
           this.openSnackBar('Gagal mendapatkan daftar saldo kasir.', 'fail')
         }
@@ -362,37 +325,74 @@ export class PengaturanSaldoKasirComponent implements OnInit {
   restructureData(data) {
     this.loading = true
     this.ref.markForCheck()
+
+    // Variable Kolom Jenis Kasir
     var flags = [],
-      output = [],
+      outputCabang = [],
+      outputKasir = [],
+      outputJTrans = [],
       res = [];
 
+    // Looping Data Cabang
     for (var i = 0; i < data.length; i++) {
-      if (flags[data[i]['id_kategori_akun']]) continue;
-      flags[data[i]['id_kategori_akun']] = true;
-      output.push({
-        id_kategori_akun: data[i]['id_kategori_akun'],
-        nama_kategori_akun: data[i]['nama_kategori_akun'],
+      if (flags[data[i]['kode_cabang']]) continue;
+      flags[data[i]['kode_cabang']] = true;
+      outputCabang.push({
+        kode_cabang: data[i]['kode_cabang'],
+        nama_cabang: data[i]['nama_cabang'],
         type: 'cat'
       });
     }
 
-    for (var i = 0; i < output.length; i++) {
-      res.push(output[i])
-      for (var j = 0; j < data.length; j++) {
-        if (data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
-          res.push(data[j])
-          for (var k = 0; k < data.length; k++) {
-            if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
-              res.push(data[k])
+    // Looping Data Kasir
+    for (var i = 0; i < data.length; i++) {
+      if (flags[data[i]['id_kasir']]) continue;
+      flags[data[i]['id_kasir']] = true;
+      outputKasir.push({
+        id_kasir: data[i]['id_kasir'],
+        nama_kasir: data[i]['nama_kasir'],
+        keterangan: data[i]['keterangan'],
+        type: 'cat'
+      });
+    }
+
+    // Looping Data Jenis Transaksi
+    for (var i = 0; i < data.length; i++) {
+      if (flags[data[i]['id_jenis_transaksi']]) continue;
+      flags[data[i]['id_jenis_transaksi']] = true;
+      outputJTrans.push({
+        id_jenis_transaksi: data[i]['id_jenis_transaksi'],
+        kode_jenis_transaksi: data[i]['kode_jenis_transaksi'],
+        nama_jenis_transaksi: data[i]['nama_jenis_transaksi']
+      });
+    }
+    // Looping Kolom Kasir
+    for (var i = 0; i < outputCabang.length; i++) {
+      res.push(outputCabang[i])
+      for (var j = 0; j < outputKasir.length; j++) {
+        res.push(outputKasir[j])
+        for (var k = 0; k < outputJTrans.length; k++) {
+          outputJTrans[k]
+          for (var l = 0; l < data.length; l++) {
+            if (outputCabang[i]['kode_cabang'] === data[l]['kode_cabang'] && outputKasir[j]['id_kasir'] === data[l]['id_kasir'] && outputJTrans[k]['id_jenis_transaksi'] === data[l]['id_jenis_transaksi']) {
+              res.push({
+                kode_cabang: data[l]['kode_cabang'],
+                nama_cabang: data[l]['nama_cabang'],
+                id_kasir: data[l]['id_kasir'],
+                nama_kasir: data[l]['nama_kasir'],
+                id_jenis_transaksi: data[l]['id_jenis_transaksi'],
+                kode_jenis_transaksi: data[l]['kode_jenis_transaksi'],
+                nama_jenis_transaksi: data[l]['nama_jenis_transaksi'],
+                saldo_awal: data[l]['saldo_awal']
+              }
+              )
             }
           }
         }
       }
     }
-
     this.res_data = res
-    this.countDebit()
-    this.countKredit()
+    this.countSaldoAwalKasir()
     this.loading = false
     this.ref.markForCheck()
     setTimeout(() => {
@@ -406,7 +406,7 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     if (id_parent === "" || id_parent === undefined) return mul * 10
 
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (id_parent === this.data_akun[i]['id_akun']) {
+      if (id_parent === this.data_akun[i]['id_jenis_transaksi']) {
         data = this.data_akun[i]
         break
       }
@@ -414,18 +414,18 @@ export class PengaturanSaldoKasirComponent implements OnInit {
 
     if (data != null) {
       mul = mul + 1
-      return this.checkParent(data['id_induk_akun'], mul)
+      return this.checkParent(data['id_kasir'], mul)
     } else {
       return mul
     }
-    
+
   }
 
   checkChild(id) {
     let hasChild = false
 
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (this.data_akun[i]['id_induk_akun'] === id) {
+      if (this.data_akun[i]['id_kasir'] === id) {
         hasChild = true
         break;
       }
@@ -434,26 +434,15 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     return hasChild
   }
 
-  countDebit() {
+  countSaldoAwalKasir() {
     let sum = 0
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (!this.checkChild(this.data_akun[i]['id_akun'])) {
-        sum = sum + parseFloat(this.data_akun[i]['saldo_debit'])
+      if (!this.checkChild(this.data_akun[i]['id_jenis_transaksi'])) {
+        sum = sum + parseFloat(this.data_akun[i]['saldo_awal'])
       }
     }
 
-    this.total_debit = sum
-  }
-
-  countKredit() {
-    let sum = 0
-    for (var i = 0; i < this.data_akun.length; i++) {
-      if (!this.checkChild(this.data_akun[i]['id_akun'])) {
-        sum = sum + parseFloat(this.data_akun[i]['saldo_kredit'])
-      }
-    }
-
-    this.total_kredit = sum
+    this.total_saldo_awal_kasir = sum
   }
 }
 

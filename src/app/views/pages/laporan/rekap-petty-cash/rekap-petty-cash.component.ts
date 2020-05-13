@@ -303,7 +303,7 @@ export class RekapPettyCashComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-REKAPITULASI-PETTY-CASH'
               rp['REPORT_NAME'] = 'Laporan Rekapitulasi Petty Cash'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
               rp['JASPER_FILE'] = 'rptRekapitulasiKas.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",

@@ -272,7 +272,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
               rp['REPORT_CODE'] = 'RPT-BUKU-BESAR'
               rp['REPORT_NAME'] = 'Laporan Buku Besar'
-              rp['REPORT_FORMAT_CODE'] = 'pdf'
+              rp['REPORT_FORMAT_CODE'] = this.formValueBB['format_laporan']
               rp['JASPER_FILE'] = 'rptGeneralLedger.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",

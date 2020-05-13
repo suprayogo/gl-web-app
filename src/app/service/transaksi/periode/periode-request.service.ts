@@ -23,6 +23,10 @@ export class PeriodeRequestService {
       httpBody.respondCode = 'SET-TUTUP-PERIODE'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'i-tutup-periode-kasir') {
+      httpBody.respondCode = 'SET-TUTUP-PERIODE-KASIR'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 
