@@ -18,10 +18,10 @@
                             <span class="title">Kasir</span>
                         </div>
                         <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey;" id="h-debit">
-                            <span class="title">Saldo</span>
-                        </div>
-                        <div style="width: 20%; padding: 10px" id="h-kredit">
                             <span class="title">Keterangan</span>
+                        </div>
+                        <div style="width: 20%; padding: 10px;" id="h-kredit">
+                            <span class="title">Saldo</span>
                         </div>
                     </div>
 
@@ -38,12 +38,12 @@
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 10px;"
                                 [ngStyle]="{'border-right': x['type'] === 'cat' ? '' : 'solid 1px lightgrey'}">
-                                <span style="color: black" *ngIf="!x['type']">Rp
-                                    {{ numberFormatter(x['saldo_awal'], 2)  }}</span>
-                            </div>
-                            <div style="width: 20%; padding: 10px; padding-right: 10px;">
                                 <span style="color: black" *ngIf="x['type']">
                                     {{ x['keterangan'] }}</span>
+                            </div>
+                            <div style="width: 20%; padding: 10px; padding-right: 10px;">
+                                <span style="color: black" *ngIf="!x['type']">Rp
+                                    {{ numberFormatter(x['saldo_awal'], 2)  }}</span>
                             </div>
                         </div>
                     </div>
@@ -53,6 +53,7 @@
                 <div style="width: 100%; height: 38px; display: flex; flex-direction: row; margin-top: 5px;"
                     *ngIf="!loading">
                     <div style="width: 60%;"></div>
+                    <div style="width: 20%; padding: 10px;"></div>
                     <div style="width: 20%; padding: 10px;">
                         <span [ngStyle]="{'color': total_saldo_awal_kasir ? 'black' : 'black'}">Rp
                             {{ numberFormatter(total_saldo_awal_kasir, 2)  }}</span>

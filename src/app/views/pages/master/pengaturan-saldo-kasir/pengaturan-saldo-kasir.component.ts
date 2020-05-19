@@ -316,9 +316,12 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     let ctr = document.getElementById('c-container').offsetHeight,
       ctn = document.getElementById('content') == null ? 0 : document.getElementById('content').offsetHeight
     if (ctn * this.data_akun.length > ctr) {
-      document.getElementById('h-akun').style.width = '59%'
-      document.getElementById('h-debit').style.width = '19.6%'
-      document.getElementById('h-kredit').style.width = '21.4%'
+      // document.getElementById('h-akun').style.width = '59%'
+      // document.getElementById('h-debit').style.width = '19.6%'
+      // document.getElementById('h-kredit').style.width = '21.4%'
+      document.getElementById('h-akun').style.width = '60%'
+      document.getElementById('h-debit').style.width = '20%'
+      document.getElementById('h-kredit').style.width = '20%'
     }
   }
 

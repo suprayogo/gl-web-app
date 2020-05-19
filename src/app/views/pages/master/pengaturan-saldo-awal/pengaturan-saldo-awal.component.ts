@@ -11,7 +11,7 @@ import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.c
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Pengaturan Saldo Awal'
+  beforeCodeTitle: 'Pengaturan Saldo Awal Akun'
 }
 
 @Component({
@@ -353,13 +353,18 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     let ctr = document.getElementById('c-container').offsetHeight,
       ctn = document.getElementById('content') == null ? 0 : document.getElementById('content').offsetHeight
     if (ctn * this.data_akun.length > ctr) {
-      document.getElementById('h-akun').style.width = '59%'
-      document.getElementById('h-debit').style.width = '19.6%'
-      document.getElementById('h-kredit').style.width = '21.4%'
+      // document.getElementById('h-akun').style.width = '59%'
+      // document.getElementById('h-debit').style.width = '19.6%'
+      // document.getElementById('h-kredit').style.width = '21.4%'
+      document.getElementById('h-akun').style.width = '60%'
+      document.getElementById('h-debit').style.width = '20%'
+      document.getElementById('h-kredit').style.width = '20%'
     }
   }
 
   restructureData(data) {
+    console.clear()
+    console.log(data)
     this.loading = true
     this.ref.markForCheck()
     var flags = [],
@@ -384,11 +389,18 @@ export class PengaturanSaldoAwalComponent implements OnInit {
           for (var k = 0; k < data.length; k++) {
             if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
               res.push(data[k])
+              for (var l = 0; l < data.length; l++) {
+                if (data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
+                  res.push(data[l])
+                }
+              }
             }
           }
         }
       }
     }
+
+    console.log(res)
 
     this.res_data = res
     this.countDebit()

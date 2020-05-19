@@ -283,7 +283,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Kantor Cabang',
+      label: 'Kantor Cabang Pembukaan Rekening',
       id: 'nama-kantor-cabang',
       type: 'input',
       valueOf: 'nama_kantor_cabang',
