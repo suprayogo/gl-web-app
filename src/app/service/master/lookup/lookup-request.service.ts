@@ -15,6 +15,10 @@ export class LookupRequestService {
       httpBody.respondCode = 'GET-DATA-LOOKUP'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-info-company') {
+      httpBody.respondCode = 'GET-DATA-LOOKUP-INFO-COMPANY'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

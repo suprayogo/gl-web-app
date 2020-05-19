@@ -464,7 +464,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         }
       )
 
-      this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']

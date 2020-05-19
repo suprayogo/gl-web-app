@@ -119,6 +119,13 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     FIELD_DATA: []
   }
 
+  // INFO PERUSAHAAN
+  info_company = {
+    alamat: '',
+    kota: '',
+    telepon: ''
+  }
+
   // PERIODE
   inputPeriodeData = [];
   activePeriod = {};
@@ -276,9 +283,9 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
               rp['JASPER_FILE'] = 'rptGeneralLedger.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",
-                REPORT_COMPANY_ADDRESS: "",
-                REPORT_COMPANY_CITY: "",
-                REPORT_COMPANY_TLPN: "",
+                REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                REPORT_COMPANY_CITY: this.info_company.kota,
+                REPORT_COMPANY_TLPN: this.info_company.telepon,
                 REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
@@ -356,6 +363,26 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
+      this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            for(var i = 0; i < data['RESULT'].length; i++) {
+              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
+                this.info_company.alamat = data['RESULT'][i]['nilai1']
+              }
+              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
+                this.info_company.kota = data['RESULT'][i]['nilai1']
+              }
+              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
+                this.info_company.telepon = data['RESULT'][i]['nilai1']
+              }
+            }
+          } else {
+            this.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+          }
+        }
+      )
+
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {

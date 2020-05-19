@@ -10,9 +10,6 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
-import { DialogComponent } from '../../components/dialog/dialog.component';
-import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
-import { ReportdialogComponent } from '../../components/reportdialog/reportdialog.component';
 
 const content = {
   beforeCodeTitle: 'Laporan Jurnal'
@@ -117,6 +114,13 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
       "bigdecimal"
     ],
     FIELD_DATA: []
+  }
+
+  // INFO PERUSAHAAN
+  info_company = {
+    alamat: '',
+    kota: '',
+    telepon: ''
   }
 
   // PERIODE
@@ -228,24 +232,16 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               for (var i = 0; i < d.length; i++) {
                 let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran'].split("-")
 
-                if (d[i]['kode_tran'] === "SALDO-AWAL") {
-                  no_tran = "Saldo Awal"
-                  if (d[i]['tipe_akun'] == 0) {
-                    d[i]['nilai_debit'] = d[i]['saldo_awal']
-                  } else if (d[i]['tipe_akun'] == 1) {
-                    d[i]['nilai_kredit'] = d[i]['saldo_awal']
-                  }
-                } else if (d[i]['kode_tran'] === "JURNAL") {
-                  no_tran = d[i]['no_tran']
+                if (d[i]['kode_tran'] !== "SALDO-AWAL") {
+                  t.push(d[i]['no_tran'])
+                  t.push(new Date(d[i]['tgl_tran']).getTime())
+                  t.push(d[i]['kode_akun'])
+                  t.push(d[i]['nama_akun'])
+                  t.push(parseFloat(d[i]['nilai_debit']))
+                  t.push(parseFloat(d[i]['nilai_kredit']))
+  
+                  res.push(t) 
                 }
-
-                t.push(no_tran)
-                t.push(new Date(d[i]['tgl_tran']).getTime())
-                t.push(d[i]['nama_akun'])
-                t.push(parseFloat(d[i]['nilai_debit']))
-                t.push(parseFloat(d[i]['nilai_kredit']))
-
-                res.push(t)
               }
 
               let rp = JSON.parse(JSON.stringify(this.reportObj))
@@ -256,14 +252,15 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               rp['JASPER_FILE'] = 'rptJurnal.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: "",
-                REPORT_COMPANY_ADDRESS: "",
-                REPORT_COMPANY_CITY: "",
-                REPORT_COMPANY_TLPN: "",
+                REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                REPORT_COMPANY_CITY: this.info_company.kota,
+                REPORT_COMPANY_TLPN: this.info_company.telepon,
                 REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
               rp['FIELD_NAME'] = [
                 "noTran",
                 "tglTran",
+                "kodeAkun",
                 "namaAkun",
                 "nilaiDebit",
                 "nilaiKredit"
@@ -272,11 +269,12 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 "string",
                 "date",
                 "string",
+                "string",
                 "bigdecimal",
                 "bigdecimal"
               ]
               rp['FIELD_DATA'] = res
-
+              console.log(res)
               this.sendGetReport(rp, 'jl')
             } else {
               this.loading = false
@@ -330,6 +328,26 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   // Request Data API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
+      this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            for(var i = 0; i < data['RESULT'].length; i++) {
+              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
+                this.info_company.alamat = data['RESULT'][i]['nilai1']
+              }
+              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
+                this.info_company.kota = data['RESULT'][i]['nilai1']
+              }
+              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
+                this.info_company.telepon = data['RESULT'][i]['nilai1']
+              }
+            }
+          } else {
+            this.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+          }
+        }
+      )
+
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
