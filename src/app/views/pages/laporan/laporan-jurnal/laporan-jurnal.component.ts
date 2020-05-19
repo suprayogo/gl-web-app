@@ -226,9 +226,20 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
-                let t = [], tgl_tran = d[i]['tgl_tran'].split("-")
+                let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran'].split("-")
 
-                t.push(d[i]['no_tran'])
+                if (d[i]['kode_tran'] === "SALDO-AWAL") {
+                  no_tran = "Saldo Awal"
+                  if (d[i]['tipe_akun'] == 0) {
+                    d[i]['nilai_debit'] = d[i]['saldo_awal']
+                  } else if (d[i]['tipe_akun'] == 1) {
+                    d[i]['nilai_kredit'] = d[i]['saldo_awal']
+                  }
+                } else if (d[i]['kode_tran'] === "JURNAL") {
+                  no_tran = d[i]['no_tran']
+                }
+
+                t.push(no_tran)
                 t.push(new Date(d[i]['tgl_tran']).getTime())
                 t.push(d[i]['nama_akun'])
                 t.push(parseFloat(d[i]['nilai_debit']))

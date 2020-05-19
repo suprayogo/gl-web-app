@@ -135,12 +135,12 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
       {
         year: new Date(Date.now()).getFullYear(),
         month: new Date(Date.now()).getMonth() + 1,
-        day: new Date(Date.now()).getDate()
+        day: 1
       },
       {
         year: new Date(Date.now()).getFullYear(),
         month: new Date(Date.now()).getMonth() + 1,
-        day: new Date(Date.now()).getDate()
+        day: 1
       }
     ]
   }

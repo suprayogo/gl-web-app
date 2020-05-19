@@ -69,7 +69,7 @@
       <div *ngIf="x.type === 'datepicker'">
         <div class="input-group">
           <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
-            (dateSelect)="onDateSelect($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+            (dateSelect)="onDateSelect($event, x.valueOf, x.onSelectFunc)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
             (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
             [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
             [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
@@ -97,7 +97,7 @@
       <div *ngIf="x.type === 'datepicker-range'" class="input-group">
         <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker" readonly
           [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
-          (dateSelect)="onDateSelection($event, x.valueOf)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+          (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
           [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
           [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
           [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">

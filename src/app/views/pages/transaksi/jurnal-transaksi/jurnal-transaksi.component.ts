@@ -539,7 +539,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
     let t_tran = new Date(x['tgl_tran'])
-    console.log(x)
     this.formValue = {
       id_tran: x['id_tran_jurnal'],
       id_tran_jt: x['id_tran'],

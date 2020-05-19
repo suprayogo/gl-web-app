@@ -55,9 +55,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = false;
   browseNeedUpdate: boolean = true;
   search: string;
+  dayLimit: any = 0;
 
   // Variable Temporary For Range Date
-  tgl_terakhir_tutup: any; 
+  tgl_terakhir_tutup: any;
   tgl_saat_ini: any;
   jarak_antar_tgl: any;
 
@@ -77,15 +78,19 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   nama_bulan_aktif: any;
 
   // GLOBAL VARIABLE AKSES PERIODE
-  //
+  daftar_periode_kasir: any = [];
+  periode_kasir: any = {
+    id_periode: '',
+    tgl_periode: ''
+  };
 
   //CDialog Posting Jurnal
   c_buttonLayoutPJ = [
     {
-      btnLabel: 'Posting Jurnal',
+      btnLabel: 'Tutup periode',
       btnClass: 'btn btn-primary',
-      btnClick: (pj) => {
-        this.onSubmit(pj)
+      btnClick: () => {
+        this.onSubmit()
       },
       btnCondition: () => {
         return true
@@ -102,7 +107,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   ]
   c_labelLayoutPJ = [
     {
-      content: 'Yakin akan memposting data jurnal ?',
+      content: 'Yakin akan tutup periode kasir ?',
       style: {
         'color': 'red',
         'font-size': '16px',
@@ -114,6 +119,13 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   c_inputLayoutPJ = []
 
   // Input Name
+  formValue = {
+    kode_cabang: '',
+    nama_cabang: '',
+    tgl_terakhir_tutup: '',
+    set_tgl_tutup: '',
+    jarak_tgl_periode: 0
+  }
   formDetail = {
     id_tran: '',
     no_tran: '',
@@ -262,16 +274,6 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   browseDataBP = []
   browseDataRulesBP = []
 
-  // Input Name Tutup Harian Kasir
-  formValue = {
-    id_periode: '',
-    kode_cabang: '',
-    nama_cabang: '',
-    tgl_terakhir_tutup: '',
-    set_tgl_tutup: JSON.stringify(this.getDateNow()),
-    jarak_tgl_periode: ''
-  }
-
   // Layout Form Harian Kasir
   inputLayout = [
     {
@@ -298,7 +300,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         disabled: false
       }
     },
-   {
+    {
       formWidth: 'col-5',
       label: 'Tgl. Terakhir Tutup',
       id: 'tgl-terakhir-tutup',
@@ -327,15 +329,32 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         this.getHari(v)
       },
       update: {
-        disabled: false
+        disabled: true
       },
       timepick: false,
       enableMin: true,
-      enableMax: true
+      enableMax: true,
+      disabled: false,
+      minDate: () => {
+        let dt = new Date(Date.now())
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate()
+        }
+      },
+      maxDate: () => {
+        let dt = new Date(Date.now())
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate()
+        }
+      }
     },
     {
       formWidth: 'col-5',
-      label: 'Atur Tutup Sisa Hari',
+      label: 'Jumlah Hari Ditutup',
       id: 'jarak-tgl-periode',
       type: 'input',
       valueOf: 'jarak_tgl_periode',
@@ -398,20 +417,27 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     )
   }
 
-  reqActivePeriod() {
+  reqActivePeriod(skip?: boolean) {
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('periode', 'g-periode-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
-            this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
-            this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
-            this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
-            this.nama_bulan_aktif = this.gbl.getNamaBulan(this.bulanPeriodeAktif)
-            this.periode_aktif = this.gbl.getActive()
-            this.madeRequest()
-            this.ref.markForCheck()
+            // this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
+            // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
+            // this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
+            // this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
+            // this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
+            // this.nama_bulan_aktif = this.gbl.getNamaBulan(this.bulanPeriodeAktif)
+            // this.periode_aktif = this.gbl.getActive()
+            this.daftar_periode_kasir = data['RESULT']
+            if (skip) {
+              this.loading = false
+              this.updateForm(this.formValue.kode_cabang, this.formValue.nama_cabang)
+              this.ref.markForCheck()
+            } else {
+              this.madeRequest()
+              this.ref.markForCheck()
+            }
           } else {
             this.ref.markForCheck()
             this.openSnackBar('Data Periode tidak ditemukan.')
@@ -425,6 +451,19 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   madeRequest() {
     this.inputCabangData = []
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+      this.request.apiData('lookup', 'g-lookup', { kode_perusahaan: this.kode_perusahaan, kode_group_lookup: 'BATAS-HARI-TRANSAKSI', kode_lookup: 'BATAS-HARI-TRANSAKSI-KASIR' }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            let l = parseInt(data['RESULT'][0]['nilai1'])
+            this.dayLimit = l
+          } else {
+            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
+            return
+          }
+        }
+      )
+
       this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -442,22 +481,58 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   }
 
   updateForm(kode_cabang, nama_cabang) {
-    this.tgl_terakhir_tutup = 1588266000000 // <-- (2020-05-01) CONTOH Tanggal Terakhir Tutup Kasir After Get Kode Cabang
-    this.tgl_saat_ini = JSON.stringify(this.getDateNow())
+    if (kode_cabang === '' || nama_cabang === '') return
+    let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1')[0]
+    let tgp = new Date(lp['tgl_periode']).getTime()
+    this.tgl_terakhir_tutup = tgp - 86400000 // <-- (2020-05-01) CONTOH Tanggal Terakhir Tutup Kasir After Get Kode Cabang
 
-    // Hitung Jarak Tanggal
-    var tgl_awal = this.tgl_terakhir_tutup / 86400000
-    var tgl_akhir = this.tgl_saat_ini / 86400000
-    this.jarak_antar_tgl = Math.floor(tgl_akhir-tgl_awal)
+    this.periode_kasir = {
+      id_periode: lp['id_periode'],
+      tgl_periode: lp['tgl_periode']
+    }
+    this.inputLayout.splice(2, 1, {
+      formWidth: 'col-5',
+      label: 'Atur Tgl. Tutup',
+      id: 'set-tgl-tutup',
+      type: 'datepicker',
+      valueOf: 'set_tgl_tutup',
+      required: true,
+      readOnly: false,
+      onSelectFunc: (v) => {
+        this.getHari(v)
+      },
+      update: {
+        disabled: true
+      },
+      timepick: false,
+      enableMin: true,
+      enableMax: true,
+      disabled: false,
+      minDate: () => {
+        let dt = new Date(this.periode_kasir['tgl_periode'])
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate()
+        }
+      },
+      maxDate: () => {
+        let dt = new Date(this.periode_kasir['tgl_periode'])
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate() + this.dayLimit
+        }
+      }
+    })
 
     // Set New Value
     this.formValue = {
-      id_periode: '',
       kode_cabang: kode_cabang,
       nama_cabang: nama_cabang,
       tgl_terakhir_tutup: this.tgl_terakhir_tutup,
-      set_tgl_tutup: this.tgl_saat_ini,
-      jarak_tgl_periode: this.jarak_antar_tgl
+      set_tgl_tutup: '',
+      jarak_tgl_periode: 0
     }
     this.formInputCheckChanges()
     this.ref.markForCheck()
@@ -467,23 +542,20 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     // Hitung Jarak Tanggal Custom
     var tgl_awal = this.tgl_terakhir_tutup / 86400000
     var tgl_akhir = set_tgl_tutup / 86400000
-    this.jarak_antar_tgl = Math.floor(tgl_akhir-tgl_awal)
-    console.log(this.jarak_antar_tgl)
+    this.jarak_antar_tgl = Math.ceil(tgl_akhir - tgl_awal)
 
     // Set New Value Custom
     this.formValue = {
-      id_periode: '',
       kode_cabang: this.formValue['kode_cabang'],
       nama_cabang: this.formValue['nama_cabang'],
       tgl_terakhir_tutup: this.formValue['tgl_terakhir_tutup'],
       set_tgl_tutup: set_tgl_tutup,
       jarak_tgl_periode: this.jarak_antar_tgl
     }
-    console.log(this.formValue.jarak_tgl_periode)
     this.inputLayout.splice(3, 3,
       {
         formWidth: 'col-5',
-        label: 'Atur Tutup Sisa Hari',
+        label: 'Jumlah Hari Ditutup',
         id: 'sisa-hari-tutup',
         type: 'input',
         valueOf: 'jarak_tgl_periode',
@@ -554,7 +626,6 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
             this.updateForm(result.kode_cabang, result.nama_cabang)
-            // this.sendRequestRiwayatTutup(result.kode_cabang)
           }
         }
         this.ref.markForCheck();
@@ -720,35 +791,25 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   }
 
   //Form submit
-  onSubmit(inputForm: NgForm) {
+  onSubmit() {
     this.dialog.closeAll()
     this.gbl.topPage()
     let u_id = localStorage.getItem('user_id')
     this.loading = true;
     this.ref.markForCheck()
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-    this.formValue.id_periode = this.formValue.id_periode === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-      length: 8,
-      numeric: true,
-      letters: false,
-      special: false
-    }))}` : this.formValue.id_periode
     let endRes = Object.assign(
       {
         user_id: u_id,
-        kode_perusahaan: this.kode_perusahaan,
-        id_periode: this.periode_aktif.id_periode
+        kode_perusahaan: this.kode_perusahaan
       },
       this.formValue)
     this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode-kasir', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          this.loading = false
-          this.refreshTab(this.onUpdate ? "" : "PERIODE HARIAN BERHASIL DITUTUP")
+          this.openSnackBar('Periode berhasil ditutup.', 'success')
           this.resetForm()
-          this.browseNeedUpdate = true
-          this.ref.markForCheck()
-          // this.sendRequesBelumPosting()
+          this.reqActivePeriod(true)
         } else {
           this.loading = false;
           this.ref.markForCheck()
@@ -767,12 +828,11 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
-      id_periode: '',
-      kode_cabang: '',
-      nama_cabang: '',
-      tgl_terakhir_tutup: '',
-      set_tgl_tutup: JSON.stringify(this.getDateNow()),
-      jarak_tgl_periode: ''
+      kode_cabang: this.formValue.kode_cabang,
+      nama_cabang: this.formValue.nama_cabang,
+      tgl_terakhir_tutup: this.formValue.tgl_terakhir_tutup,
+      set_tgl_tutup: '',
+      jarak_tgl_periode: 0
     }
     this.enableCancel = false;
     this.onSub = false;
