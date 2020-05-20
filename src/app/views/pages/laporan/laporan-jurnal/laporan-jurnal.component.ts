@@ -274,8 +274,12 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 "bigdecimal"
               ]
               rp['FIELD_DATA'] = res
-              console.log(res)
-              this.sendGetReport(rp, 'jl')
+
+              // if (this.formValueJL['format_laporan'] === 'pdf') {
+                this.sendGetReport(rp, 'jl')
+              // } else {
+
+              // }
             } else {
               this.loading = false
               this.ref.markForCheck()
