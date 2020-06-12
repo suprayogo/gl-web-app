@@ -47,7 +47,7 @@ import {
   UserEffects
 } from '../../../core/auth';
 
-// Components
+// COMPONENTS
 import { AllComponent } from './all/all.component';
 import { LaporanJurnalComponent } from './laporan-jurnal/laporan-jurnal.component';
 import { LaporanBukuBesarComponent } from './laporan-buku-besar/laporan-buku-besar.component';

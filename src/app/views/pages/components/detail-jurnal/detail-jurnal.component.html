@@ -65,8 +65,12 @@
                 </div>
             </div>
             <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey;">
-                <input class="form-control m-input" type="text" name="{{ 'keterangan-' + i }}" placeholder="Keterangan"
-                    [(ngModel)]="res_data[i]['keterangan']" [readonly]="noEdit">
+                <input class="form-control m-input" type="text" name="{{ 'keterangan1-' + i }}"
+                    placeholder="Keterangan 1" [(ngModel)]="res_data[i]['keterangan1']" [readonly]="noEdit">
+                <div style="margin-top: 15px;">
+                    <input class="form-control m-input" type="text" name="{{ 'keterangan2-' + i }}"
+                        placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan2']" [readonly]="noEdit">
+                </div>
             </div>
             <!-- Jurnal Umum -->
             <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"

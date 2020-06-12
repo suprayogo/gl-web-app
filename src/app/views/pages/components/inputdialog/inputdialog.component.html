@@ -159,7 +159,7 @@
 
         <!-- Button -->
         <div class="m-form__actions">
-          <button type="submit" class="btn btn-brand" *ngIf="!noButtonSave">Simpan</button>
+          <button type="submit" class="btn btn-brand" *ngIf="!noButtonSave">{{ buttonName }}</button>
           <button type="button" class="btn btn-secondary margin-left-10" (click)="closeDialog()" *ngIf="!noButtonSave">Batal</button>
           <button type="button" *ngFor="let x of buttonLayout" [className]="x.btnClass" (click)="x.getSelectedOnpress ? x.btnClick(getSelected()) : x.btnClick()">{{ x.btnLabel }}</button>
         </div>

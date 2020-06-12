@@ -55,6 +55,7 @@ export class InputdialogComponent implements OnInit {
   detailButtonLayout: Object[] = [];
   isDetail: boolean = false;
   editable: boolean = false;
+  buttonName: any;
   noButtonSave: boolean;
 
   //Detail loading variable
@@ -77,6 +78,7 @@ export class InputdialogComponent implements OnInit {
     this.jurnalDataAkun = this.parameter.jurnalDataAkun
     this.jurnalData = this.parameter.jurnalData
     this.noEditJurnal = this.parameter.noEditJurnal
+    this.buttonName = this.parameter.buttonName === undefined ? "Simpan" : this.parameter.buttonName
     this.noButtonSave = this.parameter.noButtonSave
     this.formValue = this.parameter.formValue
     this.inputLayout = this.parameter.inputLayout
@@ -105,6 +107,7 @@ export class InputdialogComponent implements OnInit {
       this.selectIndicator = this.parameter.selectIndicator
       this.selected = this.parameter.selected
       this.noButton = this.parameter.noButton
+
     }
     if(this.parameter.checkUponInit == true) this.initCheck()
     this.cWidth = this.parameter.width === undefined ? null : this.parameter.width

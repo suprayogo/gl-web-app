@@ -48,10 +48,11 @@ import {
 } from '../../../core/auth';
 
 
-// Components
+// COMPONENTS
 import { TransaksiJurnalComponent } from './transaksi-jurnal/transaksi-jurnal.component';
 import { SaldoAkunComponent } from './saldo-akun/saldo-akun.component';
 import { BukuBesarComponent } from './buku-besar/buku-besar.component';
+import { TransaksiKasirComponent } from './transaksi-kasir/transaksi-kasir.component';
 
 
 const routes: Routes = [
@@ -63,6 +64,10 @@ const routes: Routes = [
     path: 'saldo-akun-periode-aktif',
     component: SaldoAkunComponent
   },
+  {
+    path: 'transaksi-kasir',
+    component: TransaksiKasirComponent
+  }
 ];
 
 @NgModule({
@@ -125,7 +130,8 @@ const routes: Routes = [
   declarations: [
     TransaksiJurnalComponent,
     SaldoAkunComponent,
-    BukuBesarComponent
+    BukuBesarComponent,
+    TransaksiKasirComponent
   ]
 })
 export class MonitoringModule { }

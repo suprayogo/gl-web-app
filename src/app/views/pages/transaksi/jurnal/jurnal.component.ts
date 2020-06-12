@@ -4,16 +4,17 @@ import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
+import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
   beforeCodeTitle: 'Jurnal Umum'
@@ -26,11 +27,12 @@ const content = {
 })
 export class JurnalComponent implements OnInit, AfterViewInit {
 
-  // View child to call function
+  // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
-  // Variables
+  // VARIABLES
+  keyReportFormatExcel: any;
   loading: boolean = true;
   content: any;
   detailLoad: boolean = false;
@@ -38,6 +40,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   selectedTab: number = 0;
   tableLoad: boolean = false;
   onUpdate: boolean = false;
+  namaTombolPrintDoc: any;
+  onSubPrintDoc: boolean = true;
   enableCancel: boolean = true;
   enableEdit: boolean = false;
   enableDelete: boolean = false;
@@ -62,6 +66,67 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   dialogRef: any;
   dialogType: string = null;
 
+  format_cetak = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
+    }
+  ]
+
+  // REPORT
+  reportObj = {
+    REPORT_COMPANY: "",
+    REPORT_CODE: "DOK-DELIVERY-ORDER",
+    REPORT_NAME: "Delivery Order",
+    REPORT_FORMAT_CODE: "pdf",
+    JASPER_FILE: "rptDokDeliveryOrder.jasper",
+    REPORT_PARAMETERS: {
+    },
+    FIELD_NAME: [
+      "noTran",
+      "tglTran",
+      "kodePengirim",
+      "namaPengirim",
+      "alamatPengirim",
+      "kotaPengirim",
+      "teleponPengirim",
+      "kodePenerima",
+      "namaPenerima",
+      "alamatPenerima",
+      "kotaPenerima",
+      "teleponPenerima",
+      "noResi",
+      "namaBarang",
+      "jumlahBarang"
+    ],
+    FIELD_TYPE: [
+      "string",
+      "date",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "string",
+      "bigdecimal"
+    ],
+    FIELD_DATA: []
+  }
+
   // Input Name
   formValue = {
     id_tran: '',
@@ -82,7 +147,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan: '',
+      keterangan1: '',
+      keterangan2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     },
@@ -95,9 +161,29 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan: '',
+      keterangan1: '',
+      keterangan2: '',
       saldo_debit: 0,
       saldo_kredit: 0
+    }
+  ]
+
+  formDetail = {
+   format_cetak: 'pdf'
+  }
+
+  detailInputLayout = [
+    {
+      
+      formWidth: 'col-5',
+      label: 'Format Cetak',
+      id: 'format-cetak',
+      type: 'combobox',
+      options: this.format_cetak,
+      valueOf: 'format_cetak',
+      required: true,
+      readOnly: false,
+      disabled: false,
     }
   ]
 
@@ -404,6 +490,9 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  checkPeriodReport = ""
+  checkKeyReport = ""
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -420,6 +509,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       this.gbl.setPeriodeState("p")
     }
     this.gbl.need(true, true)
+    this.namaTombolPrintDoc = "Cetak Transaksi"
     // this.reqKodePerusahaan()
     // this.reqIdPeriode()
     // this.reqIdPeriodeAktif()
@@ -619,6 +709,177 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     }
   }
 
+  printDoc(v){
+    this.loading = true
+    this.ref.markForCheck()
+    if (this.forminput !== undefined) {
+      this.formValue = this.forminput.getData()
+      let p = {}
+      p['kode_perusahaan'] = this.kode_perusahaan
+      p['kode_cabang'] = this.formValue['kode_cabang']
+      p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
+      p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+      this.request.apiData('report', 'g-data-rekapitulasi-kas', p).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            let d = data['RESULT'], res = []
+            for (var i = 0; i < d.length; i++) {
+              let t = []
+
+              if (d[i]['id_tran'] !== '') {
+                t.push(d[i]['kode_cabang'])
+                t.push(d[i]['nama_cabang'])
+                t.push(d[i]['id_kasir'])
+                t.push(d[i]['nama_kasir'])
+                t.push(d[i]['no_tran'])
+                t.push(d[i]['no_jurnal'])
+                t.push(new Date(d[i]['tgl_tran']).getTime())
+                t.push(d[i]['keterangan'])
+                t.push(parseFloat(d[i]['saldo_masuk']))
+                t.push(parseFloat(d[i]['saldo_keluar']))
+                t.push(parseFloat(d[i]['saldo_akhir']))
+                t.push(parseFloat(d[i]['saldo_awal']))
+
+                res.push(t)
+              }
+
+            }
+
+            let rp = JSON.parse(JSON.stringify(this.reportObj))
+            rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+            rp['REPORT_CODE'] = 'RPT-REKAPITULASI-KAS'
+            rp['REPORT_NAME'] = 'Laporan Rekapitulasi Kas'
+            rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
+            rp['JASPER_FILE'] = 'rptRekapitulasiKas.jasper'
+            rp['REPORT_PARAMETERS'] = {
+              USER_NAME: "",
+              REPORT_PERIODE: "Periode: " +
+                JSON.stringify(this.formValue['periode'][0]['year']) + " " +
+                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
+                (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
+                JSON.stringify(this.formValue['periode'][1]['year']) + " " +
+                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
+                (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+
+            }
+            rp['FIELD_TITLE'] = [
+              "Kode Cabang",
+              "Nama Cabang",
+              "Id Kasir",
+              "Nama Kasir",
+              "No. Transaksi",
+              "No. Jurnal",
+              "Tgl. Transaksi",
+              "Keterangan",
+              "Saldo Masuk",
+              "Saldo Keluar",
+              "Saldo Akhir",
+              "Saldo Awal"
+            ]
+            rp['FIELD_NAME'] = [
+              "kodeCabang",
+              "namaCabang",
+              "idKasir",
+              "namaKasir",
+              "noTran",
+              "noJurnal",
+              "tglTran",
+              "keterangan",
+              "saldoMasuk",
+              "saldoKeluar",
+              "saldoAkhir",
+              "saldoAwal"
+            ]
+            rp['FIELD_TYPE'] = [
+              "string",
+              "string",
+              "string",
+              "string",
+              "string",
+              "string",
+              "date",
+              "string",
+              "bigdecimal",
+              "bigdecimal",
+              "bigdecimal",
+              "bigdecimal"
+            ]
+            rp['FIELD_DATA'] = res
+
+            this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
+          } else {
+            this.loading = false
+            this.ref.markForCheck()
+            this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
+          }
+        }
+      )
+    }
+  }
+
+  sendGetPrintDoc(p, type) {
+    this.request.apiData('report', 'g-report', p).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          if (type === 'pdf') {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+            } else {
+              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport, "_blank");
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+            }
+          } else if (type === 'xlsx') {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
+          } else {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              this.keyReportFormatExcel = data['RESULT'] + '.xls'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xls'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
+          }
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          this.loading = false
+          this.ref.markForCheck()
+          this.gbl.topPage()
+          this.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
+        }
+      }
+    )
+  }
+
   validateSubmit() {
     let valid = true
 
@@ -671,7 +932,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         nama_divisi: '',
         kode_departemen: '',
         nama_departemen: '',
-        keterangan: '',
+        keterangan1: '',
+        keterangan2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       },
@@ -684,13 +946,20 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         nama_divisi: '',
         kode_departemen: '',
         nama_departemen: '',
-        keterangan: '',
+        keterangan1: '',
+        keterangan2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       }
     ]
     this.formInputCheckChanges()
     this.formInputCheckChangesJurnal()
+  }
+
+  resetDetailForm() {
+    this.formDetail = {
+     format_cetak: 'pdf'
+    }
   }
 
   onCancel() {
@@ -794,6 +1063,37 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     });
   }
 
+  inputDialog() {
+    this.gbl.topPage()
+    const dialogRef = this.dialog.open(InputdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '150px' },
+      data: {
+        formValue: this.formDetail,
+        inputLayout: this.detailInputLayout,
+        buttonLayout: [],
+        buttonName: 'Cetak',
+        inputPipe: (t, d) => null,
+        onBlur: (t, v) => null,
+        openDialog: (t) => null,
+        resetForm: () => this.resetDetailForm(),
+        onSubmit: (x: NgForm) => this.printDoc(this.formDetail),
+        deleteData: () => null,
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+      },
+      error => null,
+    );
+  }
+
   openCDialog() { // Confirmation Dialog
     this.gbl.topPage()
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
@@ -850,7 +1150,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     )
   }
 
-  // Request Data API (to : L.O.V or Table)
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
@@ -915,7 +1215,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
               nama_divisi: resp[i]['nama_divisi'],
               kode_departemen: resp[i]['kode_departemen'],
               nama_departemen: resp[i]['nama_departemen'],
-              keterangan: resp[i]['keterangan'],
+              keterangan1: resp[i]['keterangan1'],
+              keterangan2: resp[i]['keterangan2'],
               saldo_debit: parseFloat(resp[i]['nilai_debit']),
               saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
             }

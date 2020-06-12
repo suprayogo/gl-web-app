@@ -62,7 +62,7 @@ var KTWizard = function(elementId, options) {
             the.btnLast = KTUtil.find(element, '[data-ktwizard-type="action-last"]');
             the.btnFirst = KTUtil.find(element, '[data-ktwizard-type="action-first"]');
 
-            // Variables
+            // VARIABLES
             the.events = [];
             the.currentStep = 1;
             the.stopped = false;

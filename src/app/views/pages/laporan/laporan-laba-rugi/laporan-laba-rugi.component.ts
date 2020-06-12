@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '
 import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -25,7 +25,7 @@ const content = {
 })
 export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
-  // View child to call function
+  // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild('lr', { static: false }) forminputLR;
 
@@ -57,7 +57,8 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  // Variables
+  // VARIABLES
+  keyReportFormatExcel: any;
   nama_tombol: any;
   onSub: boolean = false;
   loading: boolean = true;
@@ -72,6 +73,8 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = true;
   browseNeedUpdate: boolean = true;
   search: string;
+  dialogRef: any;
+  dialogType: string = null;
 
   // REPORT
   reportObj = {
@@ -128,6 +131,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
   // PERIODE
   inputPeriodeData = [];
+  submitPeriodeData = [];
   activePeriod = {};
   tahun: any = [];
   initBulan: any = [];
@@ -140,9 +144,28 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   // Input Name
   formValueLR = {
     format_laporan: 'pdf',
+    kode_cabang: '',
+    nama_cabang: '',
     tahun: '',
     bulan: ''
   }
+
+  inputCabangDisplayColumns = [
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
+      label: 'Nama Cabang',
+      value: 'nama_cabang'
+    }
+  ]
+  inputCabangInterface = {
+    kode_cabang: 'string',
+    nama_cabang: 'string'
+  }
+  inputCabangData = []
+  inputCabangDataRules = []
 
   // Layout Form
   inputLayoutLR = [
@@ -157,6 +180,35 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
     },
     {
       // labelWidth: 'col-4',
@@ -184,6 +236,9 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       disabled: false,
     }
   ]
+
+  checkPeriodReport = ""
+  checkKeyReport = ""
 
   constructor(
     public dialog: MatDialog,
@@ -219,9 +274,9 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     if (this.forminputLR !== undefined) {
       this.formValueLR = this.forminputLR.getData()
       let p = {}
-      for (var i = 0; i < this.inputPeriodeData.length; i++) {
-        if (this.formValueLR.bulan === this.inputPeriodeData[i]['bulan_periode'] && this.formValueLR.tahun === this.inputPeriodeData[i]['tahun_periode']) {
-          p = this.inputPeriodeData[i]
+      for (var i = 0; i < this.submitPeriodeData.length; i++) {
+        if (this.formValueLR.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueLR.tahun === this.submitPeriodeData[i]['tahun_periode']) {
+          p = this.submitPeriodeData[i]
           break
         }
       }
@@ -267,6 +322,14 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
                 REPORT_COMPANY_TLPN: this.info_company.telepon,
                 REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
               }
+              rp['FIELD_TITLE'] = [
+                "Tipe",
+                "Nama Tipe",
+                "Kode Akun",
+                "Nama Akun",
+                "Nilai Beban",
+                "Nilai Pendapatan"
+              ]
               rp['FIELD_NAME'] = [
                 "tipe",
                 "namaTipe",
@@ -284,12 +347,13 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
                 "bigdecimal"
               ]
               rp['FIELD_DATA'] = res
+              p['bulan_periode'] = +p['bulan_periode']
 
-              this.sendGetReport(rp, 'lr')
+              this.sendGetReport(rp, this.formValueLR['format_laporan'])
             } else {
-              this.loading = false
-              this.ref.markForCheck()
               this.openSnackBar('Gagal mendapatkan data laba rugi.', 'fail')
+              this.distinctPeriode()
+              this.ref.markForCheck()
             }
           }
         )
@@ -301,12 +365,14 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   resetFormLR() {
     this.formValueLR = {
       format_laporan: 'pdf',
+      kode_cabang: '',
+      nama_cabang: '',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode']
     }
 
     this.bulanLR = this.initBulan[this.formValueLR['tahun']]
-    this.inputLayoutLR.splice(2, 2,
+    this.inputLayoutLR.splice(3, 3,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -334,7 +400,46 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     this.resetFormLR()
   }
 
-  // Request Data API (to : L.O.V or Table)
+  openDialog(type) {
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '90vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_cabang" ? this.inputCabangInterface :
+            {},
+        displayedColumns:
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            [],
+        tableData:
+          type === "kode_cabang" ? this.inputCabangData :
+            [],
+        tableRules:
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            [],
+        formValue: this.formValueLR
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_cabang") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
+  }
+
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
@@ -357,10 +462,23 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         }
       )
 
+      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputCabangData = data['RESULT']
+            this.ref.markForCheck()
+          } else {
+            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
+          }
+        }
+      )
+
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputPeriodeData = data['RESULT']
+            this.submitPeriodeData = Array.from(data['RESULT'])
             if (this.inputPeriodeData.length > 0) {
               this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
               this.distinctPeriode()
@@ -388,14 +506,60 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
-          this.loading = false
+          if (type === 'pdf') {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+            } else if (this.checkPeriodReport === p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport, "_blank");
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+            }
+          } else if (type === 'xlsx') {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
+          } else {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              this.keyReportFormatExcel = data['RESULT'] + '.xls'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xls'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
+          }
+          this.distinctPeriode()
           this.ref.markForCheck()
         } else {
-          this.loading = false
-          this.ref.markForCheck()
           this.gbl.topPage()
           this.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
+          this.distinctPeriode()
+          this.ref.markForCheck()
         }
       }
     )
@@ -476,13 +640,15 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueLR = {
-      format_laporan: this.formValueLR['format_laporan'],
+      format_laporan: 'pdf',
+      kode_cabang: '',
+      nama_cabang: '',
       tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
-    this.inputLayoutLR.splice(0, 3,
+    this.inputLayoutLR.splice(0, 4,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -494,6 +660,35 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Cabang',
+        id: 'kode-cabang',
+        type: 'inputgroup',
+        click: (type) => this.openDialog(type),
+        btnLabel: '',
+        btnIcon: 'flaticon-search',
+        browseType: 'kode_cabang',
+        valueOf: 'kode_cabang',
+        required: true,
+        readOnly: false,
+        inputInfo: {
+          id: 'nama-cabang',
+          disabled: false,
+          readOnly: true,
+          required: false,
+          valueOf: 'nama_cabang'
+        },
+        blurOption: {
+          ind: 'kode_cabang',
+          data: [],
+          valueOf: ['kode_cabang', 'nama_cabang'],
+          onFound: () => null
+        },
+        update: {
+          disabled: true
+        }
       },
       {
         // labelWidth: 'col-4',
@@ -521,16 +716,21 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         disabled: false,
       },
     )
+    if(this.loading === true){
+      this.loading = false
+    }
   }
 
   getBulan(filterBulan, loopBulan, type) {
     this.formValueLR = {
       format_laporan: this.formValueLR['format_laporan'],
+      kode_cabang: this.formValueLR['kode_cabang'],
+      nama_cabang: this.formValueLR['nama_cabang'],
       tahun: filterBulan,
       bulan: ""
     }
     this.bulanLR = loopBulan[filterBulan]
-    this.inputLayoutLR.splice(2, 2,
+    this.inputLayoutLR.splice(3, 3,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -545,7 +745,8 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       }
     )
     setTimeout(() => {
-      this.forminputLR.checkChanges()
+      this.ref.markForCheck()
+      // this.forminputLR.checkChanges()
     }, 1)
   }
 }

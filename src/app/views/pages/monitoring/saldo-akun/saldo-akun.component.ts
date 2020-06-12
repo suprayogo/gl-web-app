@@ -4,11 +4,11 @@ import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -26,7 +26,7 @@ const content = {
 })
 export class SaldoAkunComponent implements OnInit {
 
-  // Variables
+  // VARIABLES
   loading: boolean = true;
   content: any;
   subscription: any;
@@ -140,7 +140,7 @@ export class SaldoAkunComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false)
+    this.gbl.need(true, true)
     this.subscription = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value

@@ -4,11 +4,11 @@ import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -26,11 +26,11 @@ const content = {
 })
 export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
-  // View child to call function
+  // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
-  // Variables
+  // VARIABLES
   loading: boolean = true;
   loadingAkun: boolean = false;
   content: any;
@@ -95,7 +95,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  // Aplikasi List
+  // Set Field Data Akun
   inputAkunDisplayColumns = [
     {
       label: 'Kode Akun',
@@ -177,7 +177,7 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
     )
   }
 
-  // Request Data API (to : L.O.V or Table)
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
       this.request.apiData('akun', 'g-akun-dc', { kode_perusahaan: this.kode_perusahaan }).subscribe(

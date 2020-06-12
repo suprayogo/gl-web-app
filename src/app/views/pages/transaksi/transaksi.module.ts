@@ -47,7 +47,7 @@ import {
   UserEffects
 } from '../../../core/auth';
 
-// Components
+// COMPONENTS
 import { JurnalComponent } from './jurnal/jurnal.component';
 import { PostingJurnalComponent } from './posting-jurnal/posting-jurnal.component';
 import { OtomatisJurnalComponent } from './otomatis-jurnal/otomatis-jurnal.component';

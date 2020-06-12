@@ -15,15 +15,15 @@ import { ConfirmationdialogComponent } from '../../components/confirmationdialog
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Transaksi Jurnal'
+  beforeCodeTitle: 'Transaksi Kasir'
 }
 
 @Component({
-  selector: 'kt-transaksi-jurnal',
-  templateUrl: './transaksi-jurnal.component.html',
-  styleUrls: ['./transaksi-jurnal.component.scss', '../monitoring.style.scss']
+  selector: 'kt-transaksi-kasir',
+  templateUrl: './transaksi-kasir.component.html',
+  styleUrls: ['./transaksi-kasir.component.scss', '../monitoring.style.scss']
 })
-export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
+export class TransaksiKasirComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -55,14 +55,13 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   subsAP: any;
   access_period: any;
 
-  // INPUT VALUE
   formValue = {
     id_periode: '',
     bulan_periode: '',
     tahun_periode: ''
   }
 
-  // INPUT VALUE DETAIL
+  // Input Name
   formDetail = {
     id_tran: '',
     no_tran: '',
@@ -72,7 +71,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     nama_departemen: '',
     keterangan: '',
   }
-  
+
   inputPeriodeDisplayColumns = [
     {
       label: 'Bulan Periode',
@@ -175,20 +174,24 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       date: true
     },
     {
-      label: 'Cabang',
+      label: 'Kode Perusahaan',
+      value: 'kode_perusahaan'
+    },
+    {
+      label: 'Nama Cabang',
       value: 'nama_cabang'
-    },
-    {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
     },
     {
       label: 'Keterangan',
       value: 'keterangan'
+    },
+    {
+      label: 'Nama Jenis Transaksi',
+      value: 'nama_jenis_transaksi'
+    },
+    {
+      label: 'Nilai Jenis Transaksi',
+      value: 'nilai_jenis_transaksi'
     },
     {
       label: 'Diinput oleh',
@@ -428,7 +431,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
         detailJurnal: true,
-        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false,
+        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false ,
         jurnalData: this.detailData,
         jurnalDataAkun: [],
         noEditJurnal: true,

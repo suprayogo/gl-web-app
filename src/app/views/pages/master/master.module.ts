@@ -47,7 +47,7 @@ import {
 	UserEffects
 } from '../../../core/auth';
 
-// Components
+// COMPONENTS
 import { BankComponent } from './bank/bank.component';
 import { RekeningPerusahaanComponent } from './rekening-perusahaan/rekening-perusahaan.component';
 import { PegaturanAkunComponent } from './pegaturan-akun/pegaturan-akun.component';

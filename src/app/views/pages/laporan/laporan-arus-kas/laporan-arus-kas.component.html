@@ -13,10 +13,16 @@
                 <div class="kt-section"*ngIf="!loading">
                     <div *ngIf="!loadingAK">
                         <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitAK($event)" (onCancel)="onCancel('ak')"
                             [onSub]="onSub">
                         </kt-forminput>
+                        <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
+                            method="post" target="_blank">
+                            <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                            <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                value="Submit">Submit</button>
+                        </form>
                     </div>
                     <div *ngIf="loadingAK">
                         <kt-loading></kt-loading>

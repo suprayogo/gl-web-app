@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '
 import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -23,7 +23,7 @@ const content = {
 })
 export class RekapBankComponent implements OnInit, AfterViewInit {
 
-  // View child to call function
+  // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
 
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
@@ -54,7 +54,8 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  // Variables
+  // VARIABLES
+  keyReportFormatExcel: any;
   nama_tombol: any;
   onSub: boolean = false;
   loading: boolean = true;
@@ -248,6 +249,9 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  checkPeriodReport = ""
+  checkKeyReport = ""
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -333,6 +337,24 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
                 (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
 
             }
+            rp['FIELD_TITLE'] = [
+              "Kode Cabang",
+              "Nama Cabang",
+              "Id Kasir",
+              "Nama Kasir",
+              "Kode Bank",
+              "Nama Bank",
+              "No. Rekening",
+              "Atas Nama",
+              "No. Transaksi",
+              "No. Jurnal",
+              "Tgl Transaksi",
+              "Keterangan",
+              "Saldo Masuk",
+              "Saldo Keluar",
+              "Saldo Akhir",
+              "Saldo Awal"
+            ]
             rp['FIELD_NAME'] = [
               "kodeCabang",
               "namaCabang",
@@ -371,7 +393,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
             ]
             rp['FIELD_DATA'] = res
 
-            this.sendGetReport(rp, 'jl')
+            this.sendGetReport(rp, this.formValue['format_laporan'])
           } else {
             this.loading = false
             this.ref.markForCheck()
@@ -412,13 +434,15 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
       if (result) {
         if (type === "kode_cabang") {
           if (this.forminput !== undefined) {
-            // this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
-            // this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-            this.formValue.kode_cabang = result.kode_cabang
-            this.formValue.nama_cabang = result.nama_cabang
-            this.loading = true
-            this.ref.markForCheck()
-            this.sendRequestPeriodeKasir(result.kode_cabang)
+            if (this.formValue.kode_cabang !== result.kode_cabang) {
+              this.formValue.kode_cabang = result.kode_cabang
+              this.formValue.nama_cabang = result.nama_cabang
+              this.loading = true
+              this.sendRequestPeriodeKasir(result.kode_cabang)
+            }else{
+              this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+              this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            }
           }
         }
         this.ref.markForCheck();
@@ -426,7 +450,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Request Data API (to : L.O.V or Table)
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
@@ -540,7 +564,53 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+          if (type === 'pdf') {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+            } else {
+              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport, "_blank");
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+            }
+          } else if (type === 'xlsx') {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
+          } else {
+            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
+              this.keyReportFormatExcel = data['RESULT'] + '.xls'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xls'
+              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
+              this.checkKeyReport = data['RESULT']
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
+          }
           this.loading = false
           this.ref.markForCheck()
         } else {
