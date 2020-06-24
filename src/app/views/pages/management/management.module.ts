@@ -47,7 +47,7 @@ import {
 	UserEffects
 } from '../../../core/auth';
 
-// Components
+// COMPONENTS
 
 const routes: Routes = [
 	/* {

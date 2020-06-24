@@ -4,11 +4,11 @@ import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -560,7 +560,7 @@ export class PengaturanLaporanComponent implements OnInit {
     }
   }
 
-  // Request Data API (to : L.O.V or Table)
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "" && this.kode_perusahaan != null) {
       this.request.apiData('setting-laporan', 'g-setting-laporan', { kode_perusahaan: this.kode_perusahaan }).subscribe(

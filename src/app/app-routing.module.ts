@@ -1,7 +1,7 @@
 // Angular
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-// Components
+// COMPONENTS
 import { BaseComponent } from './views/theme/base/base.component';
 import { ErrorPageComponent } from './views/theme/content/error-page/error-page.component';
 // Auth

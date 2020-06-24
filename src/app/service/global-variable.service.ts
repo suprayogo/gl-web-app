@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { AlertdialogComponent } from '../views/pages/components/alertdialog/alertdialog.component';
+import { MatDialog } from '@angular/material';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +39,9 @@ export class GlobalVariableService {
   bulan_periodeAktif: string = "";
   activePeriod: Subject<any> = new Subject<any>();
 
-  constructor() { }
+  constructor(
+    public dialog: MatDialog
+  ) { }
 
   // ACCESS KEY
   getAccessKey() {
@@ -196,23 +200,23 @@ export class GlobalVariableService {
 
   getNamaBulan(m) {
     let n = "" // NAMA BULAN
-    if (m === '1') {
+    if (m === '1' || m === '01') {
       n = 'Januari'
-    } else if (m === '2') {
+    } else if (m === '2' || m === '02') {
       n = 'Februari'
-    } else if (m === '3') {
+    } else if (m === '3' || m === '03') {
       n = 'Maret'
-    } else if (m === '4') {
+    } else if (m === '4'|| m === '04') {
       n = 'April'
-    } else if (m === '5') {
+    } else if (m === '5' || m === '05') {
       n = 'Mei'
-    } else if (m === '6') {
+    } else if (m === '6' || m === '06') {
       n = 'Juni'
-    } else if (m === '7') {
+    } else if (m === '7' || m === '07') {
       n = 'Juli'
-    } else if (m === '8') {
+    } else if (m === '8' || m === '08') {
       n = 'Agustus'
-    } else if (m === '9') {
+    } else if (m === '9' || m === '09') {
       n = 'September'
     } else if (m === '10') {
       n = 'Oktober'
@@ -257,5 +261,44 @@ export class GlobalVariableService {
       bulan_periode: pa_bulan
     }
     this.activePeriod.next(res)
+  }
+
+   //General Get Date Now
+   getDateNow() {
+    let p = new Date().getTime()
+    return p
+  }
+
+  //onBlur L.O.V Layout Form
+  updateInputdata(d, vOf, inputLayout) {
+    let t = JSON.parse(JSON.stringify(d))
+    for (var i = 0; i < inputLayout.length; i++) {
+      if (inputLayout[i]['type'] === 'inputgroup' && inputLayout[i]['browseType'] === vOf) {
+        inputLayout[i]['blurOption']['data'] = t
+        break
+      }
+    }
+  }
+
+  // Alert Dialog
+  openSnackBar(message, type?: any, onCloseFunc?: any) {
+    const dialogRef = this.dialog.open(AlertdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '120px' },
+      data: {
+        type: type === undefined || type == null ? '' : type,
+        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase(),
+        onCloseFunc: onCloseFunc === undefined || onCloseFunc == null ? null : () => onCloseFunc()
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.dialog.closeAll()
+    })
   }
 }

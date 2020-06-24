@@ -4,11 +4,11 @@ import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -26,7 +26,7 @@ const content = {
 })
 export class SaldoAkunComponent implements OnInit {
 
-  // Variables
+  // VARIABLES
   loading: boolean = true;
   content: any;
   subscription: any;
@@ -140,7 +140,7 @@ export class SaldoAkunComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false)
+    this.gbl.need(true, true)
     this.subscription = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
@@ -379,6 +379,20 @@ export class SaldoAkunComponent implements OnInit {
       });
     }
 
+    // for (var i = 0; i < output.length; i++) {
+    //   res.push(output[i])
+    //   for (var j = 0; j < data.length; j++) {
+    //     if (data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
+    //       res.push(data[j])
+    //       for (var k = 0; k < data.length; k++) {
+    //         if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
+    //           res.push(data[k])
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
     for (var i = 0; i < output.length; i++) {
       res.push(output[i])
       for (var j = 0; j < data.length; j++) {
@@ -387,6 +401,11 @@ export class SaldoAkunComponent implements OnInit {
           for (var k = 0; k < data.length; k++) {
             if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
               res.push(data[k])
+              for (var l = 0; l < data.length; l++) {
+                if (data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
+                  res.push(data[l])
+                }
+              }
             }
           }
         }
@@ -440,8 +459,8 @@ export class SaldoAkunComponent implements OnInit {
   countDebit() {
     let sum = 0
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (!this.checkChild(this.data_akun[i]['id_akun'])) {
-        sum = sum + parseFloat(this.data_akun[i]['saldo_debit'])
+      if (!this.checkChild(this.data_akun[i]['id_akun']) && this.data_akun[i]['tipe_akun'] === "0") {
+        sum = sum + parseFloat(this.data_akun[i]['saldo_saat_ini_buku_besar'])
       }
     }
 
@@ -451,8 +470,8 @@ export class SaldoAkunComponent implements OnInit {
   countKredit() {
     let sum = 0
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (!this.checkChild(this.data_akun[i]['id_akun'])) {
-        sum = sum + parseFloat(this.data_akun[i]['saldo_kredit'])
+      if (!this.checkChild(this.data_akun[i]['id_akun']) && this.data_akun[i]['tipe_akun'] === "1") {
+        sum = sum + parseFloat(this.data_akun[i]['saldo_saat_ini_buku_besar'])
       }
     }
 

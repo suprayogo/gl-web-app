@@ -1,4 +1,4 @@
-// Components
+// COMPONENTS
 export { UpdateStatusDialogComponent } from './update-status-dialog/update-status-dialog.component';
 export { FetchEntityDialogComponent } from './fetch-entity-dialog/fetch-entity-dialog.component';
 export { DeleteEntityDialogComponent } from './delete-entity-dialog/delete-entity-dialog.component';

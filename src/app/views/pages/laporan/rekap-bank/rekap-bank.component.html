@@ -12,10 +12,16 @@
             <kt-portlet-body>
                 <div class="kt-section" *ngIf="!loading" style="height: 380px;">
                     <div *ngIf="!loadingJL">
-                        <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [nama_tombol]="nama_tombol"
+                        <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [namaTombol]="nama_tombol"
                             [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
                             (onSubmit)="onSubmitJL($event)" [onSub]="onSub" [noCancel]="true">
                         </kt-forminput>
+                        <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
+                            method="post" target="_blank">
+                            <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                            <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                value="Submit">Submit</button>
+                        </form>
                     </div>
                     <div *ngIf="loadingJL">
                         <kt-loading></kt-loading>

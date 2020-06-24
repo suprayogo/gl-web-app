@@ -35,6 +35,7 @@ export class ForminputComponent implements OnInit {
   @Input() jurnalDataDivisi: any;
   @Input() jurnalData: any;
   @Input() jurnalOtomatis: boolean;
+  @Input() templateTransaksi: boolean;
   @Input() jurnalDataSetting: any;
   //On parent form 'update' state
   @Input() onUpdate: any;
@@ -42,24 +43,35 @@ export class ForminputComponent implements OnInit {
   @Input() enableDelete: boolean;
   @Input() enableCancel: boolean;
   @Input() disableSubmit: boolean;
+  @Input() disablePrintButton: boolean;
+  @Input() disablePrintButton2: boolean;
   @Input() disableForm: boolean;
   @Input() noCancel: boolean;
   @Input() onSub: any;
-  @Input() onButton: any;
-  @Input() nama_tombol: any;
-  @Input() nama_tombol2: any;
+  @Input() noSaveButton: any;
+  @Input() onSubPrintDoc: any;
+  
+  @Input() onSubPrintDoc2: any;
+  @Input() namaTombol: any;
+  @Input() namaTombol2: any;
+  @Input() namaTombolPrintDoc: any;
+  @Input() namaTombolPrintDoc2: any;
 
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
   @Output() deleteData = new EventEmitter();
   @Output() cnlData = new EventEmitter();
+  @Output() prntDoc = new EventEmitter();
+  @Output() prntDoc2 = new EventEmitter();
   @Output() editAction = new EventEmitter();
   @Output() deleteAction = new EventEmitter();
 
   //Variable
   cFormValue: any; //Component Form Value, form value that is independent to the component
   button_name: any = 'Simpan';
-  button_name2: any = 'Batal Simpan';
+  button_name2: any = 'Example';
+  button_name_print_doc = 'Cetak Dokumen'
+  button_name_print_doc2 = 'Cetak Dokumen'
   errorType: any;
 
   //Range Datepicker
@@ -79,8 +91,10 @@ export class ForminputComponent implements OnInit {
 
   ngOnInit() {
     this.cFormValue = this.formValue === undefined ? {} : JSON.parse(JSON.stringify(this.formValue))
-    this.button_name = this.nama_tombol === undefined ? this.button_name : this.nama_tombol
-    this.button_name2 = this.nama_tombol2 === undefined ? this.button_name2 : this.nama_tombol2
+    this.button_name = this.namaTombol === undefined ? this.button_name : this.namaTombol
+    this.button_name2 = this.namaTombol2 === undefined ? this.button_name2 : this.namaTombol2
+    this.button_name_print_doc = this.namaTombolPrintDoc === undefined ? this.button_name_print_doc : this.namaTombolPrintDoc
+    this.button_name_print_doc2 = this.namaTombolPrintDoc2 === undefined ? this.button_name_print_doc2 : this.namaTombolPrintDoc2
   }
 
   getData() {
@@ -139,6 +153,14 @@ export class ForminputComponent implements OnInit {
 
   cancelData() { // Cancel Data
     this.cnlData.emit()
+  }
+
+  printDoc(){
+    this.prntDoc.emit()
+  }
+
+  printDoc2(){
+    this.prntDoc2.emit()
   }
 
   editDetailData(data) {
@@ -264,6 +286,12 @@ export class ForminputComponent implements OnInit {
       }
     }
 
+  }
+
+  getdisableCustomDate(d?: any){
+    let pdata = Date.now()
+    let date = pdata == null ? null : new Date(pdata)
+    
   }
 
   //End of datepicker function

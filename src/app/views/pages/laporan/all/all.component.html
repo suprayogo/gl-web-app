@@ -14,7 +14,7 @@
                     <div style="width: 50%" *ngIf="!loadingJL">
                         <h3>Jurnal</h3><br>
                         <kt-forminput #jl [inputLayout]="inputLayoutJL" [formValue]="formValueJL"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitJL($event)" (onCancel)="onCancel('jl')"
                             [onSub]="onSub">
                         </kt-forminput>
@@ -27,7 +27,7 @@
                     <div style="width: 50%" *ngIf="!loadingBB">
                         <h3>Buku Besar</h3><br>
                         <kt-forminput #bb [inputLayout]="inputLayoutBB" [formValue]="formValueBB"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitBB($event)" (onCancel)="onCancel('bb')"
                             [onSub]="onSub">
                         </kt-forminput>
@@ -44,7 +44,7 @@
                     <div style="width: 50%" *ngIf="!loadingNS">
                         <h3>Neraca Saldo</h3><br>
                         <kt-forminput #ns [inputLayout]="inputLayoutNS" [formValue]="formValueNS"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitNS($event)" (onCancel)="onCancel('ns')"
                             [onSub]="onSub">
                         </kt-forminput>
@@ -57,7 +57,7 @@
                     <div style="width: 50%" *ngIf="!loadingLR">
                         <h3>Laba Rugi</h3><br>
                         <kt-forminput #lr [inputLayout]="inputLayoutLR" [formValue]="formValueLR"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitLR($event)" (onCancel)="onCancel('lr')"
                             [onSub]="onSub">
                         </kt-forminput>
@@ -74,7 +74,7 @@
                     <div style="width: 50%" *ngIf="!loadingNR">
                         <h3>Neraca</h3><br>
                         <kt-forminput #nr [inputLayout]="inputLayoutNR" [formValue]="formValueNR"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitNR($event)" (onCancel)="onCancel('nr')"
                             [onSub]="onSub">
                         </kt-forminput>
@@ -87,7 +87,7 @@
                     <div style="width: 50%" *ngIf="!loadingAK">
                         <h3>Arus Kas</h3><br>
                         <kt-forminput #ak [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
-                            [nama_tombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" (onSubmit)="onSubmitAK($event)" (onCancel)="onCancel('ak')"
                             [onSub]="onSub">
                         </kt-forminput>

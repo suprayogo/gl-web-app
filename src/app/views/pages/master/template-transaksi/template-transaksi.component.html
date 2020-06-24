@@ -1,0 +1,76 @@
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <!-- Start of Tabs -->
+            <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
+
+                <!-- Start of tab input-->
+                <mat-tab label="">
+
+                    <!-- Tab Label -->
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Input</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section">
+                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
+                                [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
+                                [enableCancel]="enableCancel" [disableSubmit]="disableSubmit"
+                                [detailJurnal]="enableDetail" [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
+                                [jurnalDataDivisi]="inputDivisiData" [jurnalData]="detailData"
+                                (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (cnlData)="openCDialog()"
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                [namaTombolPrintDoc]="namaTombolPrintDoc" (prntDoc)="inputDialog()"
+                                [onSubPrintDoc]="onSubPrintDoc" [templateTransaksi]="true">
+                            </kt-forminput>
+                            <!-- <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
+                                method="post" target="_blank">
+                                <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                                <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                    value="Submit">Submit</button>
+                            </form> -->
+                        </div>
+                    </kt-portlet-body>
+
+                </mat-tab>
+                <!-- End of tab input-->
+                <!-- Start of tab browse-->
+                <mat-tab label="">
+
+                    <!-- Tab Label -->
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Browse</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section" *ngIf="tableLoad">
+                            <kt-loading></kt-loading>
+                        </div>
+
+                        <div *ngIf="!tableLoad">
+                            <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
+                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)">
+                            </kt-datatable-ag-grid>
+                        </div>
+                    </kt-portlet-body>
+
+                </mat-tab>
+                <!-- End of tab browse-->
+
+            </mat-tab-group>
+            <!-- End of Tabs -->
+        </kt-portlet>
+
+        <!-- End of a Content -->
+
+    </div>
+</div>

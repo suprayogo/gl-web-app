@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '
 import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -25,7 +25,7 @@ const content = {
 })
 export class AllComponent implements OnInit, AfterViewInit {
 
-  // View child to call function
+  // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild('jl', { static: false }) forminputJL;
   @ViewChild('bb', { static: false }) forminputBB;
@@ -47,7 +47,7 @@ export class AllComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  // Variables
+  // VARIABLES
   nama_tombol: any;
   onSub: boolean = false;
   loading: boolean = true;
@@ -1289,7 +1289,7 @@ export class AllComponent implements OnInit, AfterViewInit {
     );
   }
 
-  // Request Data API (to : L.O.V or Table)
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     if (this.kode_perusahaan !== '' && this.kode_perusahaan != null && this.kode_perusahaan !== undefined) {
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(

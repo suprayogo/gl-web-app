@@ -4,11 +4,11 @@ import { NgForm } from '@angular/forms';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
-// Request Data API
+// REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Components
+// COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
@@ -27,11 +27,11 @@ const content = {
 
 export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
 
-  // View child to call function
+  // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
-  // Variables
+  // VARIABLES
   loading: boolean = true;
   content: any;
   detailLoad: boolean = false;
@@ -314,7 +314,7 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
     )
   }
 
-  // Request Data API (to : L.O.V or Table)
+  // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
     this.loading = false
   }

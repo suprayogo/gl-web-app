@@ -24,12 +24,23 @@
                         <div class="kt-section">
                             <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                                 [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
-                                [enableCancel]="enableCancel" [disableSubmit]="disableSubmit" [disableForm]="disableForm"
-                                [detailJurnal]="enableDetail" [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
-                                [jurnalDataDivisi]="inputDivisiData" [jurnalData]="detailData"
-                                (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (cnlData)="openCDialog()"
-                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)">
+                                [enableCancel]="enableCancel" [disableSubmit]="disableSubmit"
+                                [disablePrintButton]="disablePrintButton" [disablePrintButton2]="disablePrintButton2"
+                                [disableForm]="disableForm" [detailJurnal]="enableDetail" [detailLoad]="detailLoad"
+                                [jurnalDataAkun]="inputAkunData" [jurnalDataDivisi]="inputDivisiData"
+                                [jurnalData]="detailData" (onSubmit)="onSubmit($event)" (onCancel)="onCancel()"
+                                (cnlData)="openCDialog()" (editAction)="editDetailData($event)"
+                                (deleteAction)="deleteDetailData($event)" [namaTombolPrintDoc]="namaTombolPrintDoc"
+                                (prntDoc)="inputDialog('cetakJurnalUmum')" [onSubPrintDoc]="onSubPrintDoc"
+                                [namaTombolPrintDoc2]="namaTombolPrintDoc2" (prntDoc2)="inputDialog('cetakTransKasir')"
+                                [onSubPrintDoc2]="onSubPrintDoc2">
                             </kt-forminput>
+                            <!-- <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
+                                method="post" target="_blank">
+                                <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                                <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                    value="Submit">Submit</button>
+                            </form> -->
                         </div>
                     </kt-portlet-body>
 

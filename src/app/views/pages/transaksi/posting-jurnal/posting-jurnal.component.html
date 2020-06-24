@@ -24,7 +24,7 @@
                         <div class="kt-section" style="display:flex; flex-direction: row; height:320px;">
                             <div style="width: 50%;">
                                 <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
-                                    [nama_tombol]="nama_tombolPJ" [nama_tombol2]="nama_tombolUP"
+                                    [namaTombol]="nama_tombolPJ" [namaTombol2]="nama_tombolUP"
                                     [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns"
                                     [tableData]="detailData" [tableRules]="detailRules" [editable]="editable"
                                     [detailLoad]="detailLoad" [enableDetail]="enableDetail"
@@ -80,7 +80,7 @@
                         </div>
                         <div class="kt-section" style="min-height: 200px;" *ngIf="!loadTab">
                             <kt-forminput #TP [inputLayout]="inputLayoutTP" [formValue]="formValueTP"
-                                [nama_tombol]="nama_tombolTP" [buttonLayout]="buttonLayout"
+                                [namaTombol]="nama_tombolTP" [buttonLayout]="buttonLayout"
                                 [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
                                 [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
                                 (onSubmit)="openCDialog('tutup_periode')" [onUpdate]="onUpdate"

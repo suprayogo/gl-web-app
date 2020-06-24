@@ -25,11 +25,20 @@
                             <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                                 [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
                                 [enableCancel]="enableCancel" [disableSubmit]="disableSubmit"
-                                [detailJurnal]="enableDetail" [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
+                                [disablePrintButton]="disablePrintButton" [detailJurnal]="enableDetail"
+                                [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
                                 [jurnalDataDivisi]="inputDivisiData" [jurnalData]="detailData"
                                 (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (cnlData)="openCDialog()"
-                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)">
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                [namaTombolPrintDoc]="namaTombolPrintDoc" (prntDoc)="inputDialog()"
+                                [onSubPrintDoc]="onSubPrintDoc">
                             </kt-forminput>
+                            <!-- <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
+                                method="post" target="_blank">
+                                <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                                <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                    value="Submit">Submit</button>
+                            </form> -->
                         </div>
                     </kt-portlet-body>
 

@@ -69,11 +69,12 @@
       <div *ngIf="x.type === 'datepicker'">
         <div class="input-group">
           <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
-            (dateSelect)="onDateSelect($event, x.valueOf, x.onSelectFunc)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+            (dateSelect)="onDateSelect($event, x.valueOf, x.onSelectFunc)"
+            [ngModel]="getDateFormat(cFormValue[x.valueOf])"
             (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
             [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
             [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
-            [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
+            [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null" [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null">
           <div class="input-group-append">
             <button tabindex="-1" class="btn btn-primary"
               (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
@@ -97,7 +98,8 @@
       <div *ngIf="x.type === 'datepicker-range'" class="input-group">
         <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker" readonly
           [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
-          (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)" [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+          (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
+          [ngModel]="getDateFormat(cFormValue[x.valueOf])"
           [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
           [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
           [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
@@ -151,19 +153,22 @@
 
   <div *ngIf="!detailLoad && detailJurnal" style="margin-bottom: 15px;">
     <kt-detail-jurnal [dataAkun]="jurnalDataAkun" [dataDivisi]="jurnalDataDivisi" [dataSetting]="jurnalDataSetting"
-      [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis"></kt-detail-jurnal>
+      [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis" [templateTransaksi]="templateTransaksi"></kt-detail-jurnal>
   </div>
 
   <div class="kt-form__actions" *ngIf="!noButton">
-    <button type="submit" class="btn btn-brand" *ngIf="!onSub"
+    <button type="submit" class="btn btn-brand" *ngIf="!onSub && !noSaveButton"
       [disabled]="disableSubmit ? true : false">{{ button_name }}</button>
     <button type="submit" class="btn btn-brand" *ngIf="onSub">{{ button_name2 }}</button>
-    <button type="submit" class="btn btn-brand" *ngIf="onButton">Simpan</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" *ngIf="!noCancel" style="margin-left: 10px;"
       (click)="onReset()">Batal</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="delData()"
       *ngIf="onUpdate && enableDelete">Hapus</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
       *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
+    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc()"
+      *ngIf="onSubPrintDoc" [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
+    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2()"
+      *ngIf="onSubPrintDoc2" [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
   </div>
 </form>

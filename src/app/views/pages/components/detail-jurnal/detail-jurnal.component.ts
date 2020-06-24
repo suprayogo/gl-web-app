@@ -19,6 +19,7 @@ export class DetailJurnalComponent implements OnInit {
   @Input() dataSetting: [];
   @Input() data: any;
   @Input() jurnalOtomatis: boolean;
+  @Input() templateTransaksi: boolean;
   @Input() noEdit: boolean;
 
   currencyOptions = {
@@ -112,11 +113,14 @@ export class DetailJurnalComponent implements OnInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan: '',
+      keterangan1: '',
+      keterangan2: '',
       saldo_debit: 0,
       saldo_kredit: 0,
       setting_debit: '',
-      setting_kredit: ''
+      setting_kredit: '',
+      percent_debit: 0,
+      percent_kredit: 0
     },
     {
       id_akun: '',
@@ -126,12 +130,14 @@ export class DetailJurnalComponent implements OnInit {
       nama_divisi: '',
       kode_departemen: '',
       nama_departemen: '',
-      keterangan_akun: '',
-      keterangan: '',
+      keterangan1: '',
+      keterangan2: '',
       saldo_debit: 0,
       saldo_kredit: 0,
       setting_debit: '',
-      setting_kredit: ''
+      setting_kredit: '',
+      percent_debit: 0,
+      percent_kredit: 0
     }
   ];
   total_debit = 0
@@ -374,10 +380,28 @@ export class DetailJurnalComponent implements OnInit {
     }
 
     this.total_debit = sum
-    if (ind) {
+    if (ind !== undefined) {
+
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0) {
         this.res_data[ind]['saldo_kredit'] = 0
         this.countKredit(ind)
+      }
+    }
+    this.ref.markForCheck()
+  }
+
+  countDebitPercent(ind?) {
+    let sum = 0
+    for (var i = 0; i < this.res_data.length; i++) {
+      sum = sum + parseFloat(JSON.stringify(this.res_data[i]['percent_debit']))
+    }
+
+    this.total_debit = sum
+    if (ind !== undefined) {
+
+      if (parseFloat(JSON.stringify(this.res_data[ind]['percent_debit'])) > 0) {
+        this.res_data[ind]['precent_kredit'] = 0
+        this.countKreditPercent(ind)
       }
     }
     this.ref.markForCheck()
@@ -390,10 +414,26 @@ export class DetailJurnalComponent implements OnInit {
     }
 
     this.total_kredit = sum
-    if (ind) {
+    if (ind !== undefined) {
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0) {
         this.res_data[ind]['saldo_debit'] = 0
         this.countDebit(ind)
+      }
+    }
+    this.ref.markForCheck()
+  }
+
+  countKreditPercent(ind?) {
+    let sum = 0
+    for (var i = 0; i < this.res_data.length; i++) {
+      sum = sum + parseFloat(JSON.stringify(this.res_data[i]['percent_kredit']))
+    }
+
+    this.total_kredit = sum
+    if (ind !== undefined) {
+      if (parseFloat(JSON.stringify(this.res_data[ind]['percent_kredit'])) > 0) {
+        this.res_data[ind]['percent_debit'] = 0
+        this.countDebitPercent(ind)
       }
     }
     this.ref.markForCheck()
@@ -409,11 +449,14 @@ export class DetailJurnalComponent implements OnInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan: '',
+      keterangan1: '',
+      keterangan2: '',
       saldo_debit: 0,
       saldo_kredit: 0,
       setting_debit: '',
-      setting_kredit: ''
+      setting_kredit: '',
+      percent_debit: 0,
+      percent_kredit: 0
     }
     this.res_data.push(r)
   }

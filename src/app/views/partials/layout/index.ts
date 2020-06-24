@@ -1,4 +1,4 @@
-// Components
+// COMPONENTS
 export { ContextMenuComponent } from './context-menu/context-menu.component';
 export { ContextMenu2Component } from './context-menu2/context-menu2.component';
 export { ScrollTopComponent } from './scroll-top/scroll-top.component';
