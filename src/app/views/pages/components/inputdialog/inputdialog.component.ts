@@ -56,6 +56,7 @@ export class InputdialogComponent implements OnInit {
   isDetail: boolean = false;
   editable: boolean = false;
   noButtonSave: boolean;
+  title = false;
 
   //Detail loading variable
   // @Input() enableDetail: boolean;
@@ -123,7 +124,7 @@ export class InputdialogComponent implements OnInit {
     this.parameter.deleteData()
   }
 
-  closeDialog(){
+  closeDialog(t?){
     if(this.comparison == true){
       this.resetWholeCompare()
     }

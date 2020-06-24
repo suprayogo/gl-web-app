@@ -29,7 +29,7 @@ export class ReportdialogComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.report_link + this.report_id)
   }
 
-  closeDialog() {
+  closeDialog(t?) {
     this.dialogRef.close()
   }
 

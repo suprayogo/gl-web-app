@@ -138,6 +138,8 @@ export class DetailJurnalComponent implements OnInit {
   total_kredit = 0
   tipe_setting = ""
 
+  loading = false;
+
   constructor(
     private ref: ChangeDetectorRef,
     private dialog: MatDialog,

@@ -42,6 +42,7 @@ import { AlertdialogComponent } from './components/alertdialog/alertdialog.compo
 import { ForminputComponent } from './components/forminput/forminput.component';
 import { InputdialogComponent } from './components/inputdialog/inputdialog.component';
 import { DetailJurnalComponent } from './components/detail-jurnal/detail-jurnal.component';
+import { AddableDetailInputComponent } from './components/addable-detail-input/addable-detail-input.component';
 
 const currencyOptions = {
   align: "left",
@@ -85,6 +86,7 @@ const currencyOptions = {
     // DetailinputComponent, DELETE
     DetailinputAgGridComponent,
     DetailJurnalComponent,
+    AddableDetailInputComponent,
 
     //Datatable
     // DatatableComponent, DELETE
@@ -127,6 +129,7 @@ const currencyOptions = {
     // DetailinputComponent, DELETE
     DetailinputAgGridComponent,
     DetailJurnalComponent,
+    AddableDetailInputComponent,
 
     //Datatable
     // DatatableComponent, DELETE
@@ -161,6 +164,7 @@ const currencyOptions = {
     InputdialogComponent,
     ConfirmationdialogComponent,
     ReportdialogComponent,
+    AddableDetailInputComponent,
     // ViewdialogComponent DELETE
   ],
 })

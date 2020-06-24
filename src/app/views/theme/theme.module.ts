@@ -15,8 +15,6 @@ import { LoadingBarModule } from '@ngx-loading-bar/core';
 // NGRX
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-// Ngx DatePicker
-import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 // Perfect Scrollbar
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 // SVG inline
@@ -107,7 +105,6 @@ import { SharedModule } from '../pages/shared.module';
 		MatTooltipModule,
 		TranslateModule.forChild(),
 		LoadingBarModule,
-		NgxDaterangepickerMd,
 		InlineSVGModule,
 
 		// ng-bootstrap modules

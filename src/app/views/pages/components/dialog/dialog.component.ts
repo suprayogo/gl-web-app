@@ -40,7 +40,7 @@ export class DialogComponent implements OnInit {
     this.dialogRef.close(data)
   }
 
-  closeDialog(){
+  closeDialog(t?){
     this.dialogRef.close()
     if(this.parameter.closeDialogFunc !== undefined && this.parameter.closeDialogFunc != null){
       this.parameter.closeDialogFunc()

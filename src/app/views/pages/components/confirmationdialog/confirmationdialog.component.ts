@@ -14,6 +14,7 @@ export class ConfirmationdialogComponent implements OnInit {
   lblLayout: any;
   inpLayout: any;
   formValue: any;
+  title = false;
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationdialogComponent>,
@@ -42,7 +43,7 @@ export class ConfirmationdialogComponent implements OnInit {
     this.formValue = this.parameter.formValue
   }
 
-  closeDialog(){
+  closeDialog(t?){
     this.dialogRef.close()
     if(this.parameter.closeDialogFunc !== undefined && this.parameter.closeDialogFunc != null){
       this.parameter.closeDialogFunc()

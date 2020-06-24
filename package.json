@@ -52,7 +52,6 @@
         "ngrx-store-freeze": "^0.2.4",
         "ngx-clipboard": "^12.2.0",
         "ngx-currency": "^2.2.2",
-        "ngx-daterangepicker-material": "^2.1.7",
         "ngx-highlightjs": "^3.0.3",
         "ngx-perfect-scrollbar": "^8.0.0",
         "ngx-permissions": "^7.0.3",
@@ -68,7 +67,7 @@
         "zone.js": "~0.9.1"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "^0.800.6",
+        "@angular-devkit/build-angular": "0.803.23",
         "@angular/cli": "^8.3.3",
         "@angular/compiler-cli": "^8.2.5",
         "@angular/language-service": "^8.2.5",
