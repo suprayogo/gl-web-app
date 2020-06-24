@@ -118,11 +118,11 @@ export class BaseComponent implements OnInit, OnDestroy {
 			return
 		} else {
 			let url = this.getDomain(document.referrer)
-			if (url !== "localhost") {
-				this.fromIframe = false
-				alert('Access Denied')
-				return
-			}
+			// if (url !== "localhost") {
+			// 	this.fromIframe = false
+			// 	alert('Access Denied')
+			// 	return
+			// }
 		}
 		const config = this.layoutConfigService.getConfig();
 		this.selfLayout = objectPath.get(config, 'self.layout');
