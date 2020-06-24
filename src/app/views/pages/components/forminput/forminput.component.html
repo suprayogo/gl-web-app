@@ -74,7 +74,7 @@
             (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
             [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
             [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
-            [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
+            [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null" [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null">
           <div class="input-group-append">
             <button tabindex="-1" class="btn btn-primary"
               (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
@@ -153,7 +153,7 @@
 
   <div *ngIf="!detailLoad && detailJurnal" style="margin-bottom: 15px;">
     <kt-detail-jurnal [dataAkun]="jurnalDataAkun" [dataDivisi]="jurnalDataDivisi" [dataSetting]="jurnalDataSetting"
-      [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis"></kt-detail-jurnal>
+      [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis" [templateTransaksi]="templateTransaksi"></kt-detail-jurnal>
   </div>
 
   <div class="kt-form__actions" *ngIf="!noButton">
@@ -167,8 +167,8 @@
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
       *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
     <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc()"
-      *ngIf="onSubPrintDoc">{{ button_name_print_doc }}</button>
+      *ngIf="onSubPrintDoc" [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
     <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2()"
-      *ngIf="onSubPrintDoc2">{{ button_name_print_doc2 }}</button>
+      *ngIf="onSubPrintDoc2" [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
   </div>
 </form>

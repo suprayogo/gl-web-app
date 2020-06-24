@@ -59,6 +59,8 @@ import { PengaturanJurnalOtomatisComponent } from './pengaturan-jurnal-otomatis/
 import { PengaturanLinkTarikDataComponent } from './pengaturan-link-tarik-data/pengaturan-link-tarik-data.component';
 import { PengaturanSaldoKasirComponent } from './pengaturan-saldo-kasir/pengaturan-saldo-kasir.component';
 import { KasirComponent } from './kasir/kasir.component';
+import { TemplateTransaksiComponent } from './template-transaksi/template-transaksi.component';
+import { PengajuanBukaPeriodeKasirComponent } from './pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir.component';
 
 
 const routes: Routes = [
@@ -105,6 +107,14 @@ const routes: Routes = [
 	{
 		path: 'kasir',
 		component: KasirComponent,
+	},
+	{
+		path: 'template-transaksi',
+		component: TemplateTransaksiComponent,
+	},
+	{
+		path: 'pengajuan-buka-periode-kasir',
+		component: PengajuanBukaPeriodeKasirComponent,
 	}
 ];
 
@@ -177,6 +187,8 @@ const routes: Routes = [
 		PengaturanLinkTarikDataComponent,
 		PengaturanSaldoKasirComponent,
 		KasirComponent,
+		TemplateTransaksiComponent,
+		PengajuanBukaPeriodeKasirComponent,
 	]
 })
 export class MasterModule {}

@@ -35,6 +35,7 @@ export class ForminputComponent implements OnInit {
   @Input() jurnalDataDivisi: any;
   @Input() jurnalData: any;
   @Input() jurnalOtomatis: boolean;
+  @Input() templateTransaksi: boolean;
   @Input() jurnalDataSetting: any;
   //On parent form 'update' state
   @Input() onUpdate: any;
@@ -42,11 +43,14 @@ export class ForminputComponent implements OnInit {
   @Input() enableDelete: boolean;
   @Input() enableCancel: boolean;
   @Input() disableSubmit: boolean;
+  @Input() disablePrintButton: boolean;
+  @Input() disablePrintButton2: boolean;
   @Input() disableForm: boolean;
   @Input() noCancel: boolean;
   @Input() onSub: any;
   @Input() noSaveButton: any;
   @Input() onSubPrintDoc: any;
+  
   @Input() onSubPrintDoc2: any;
   @Input() namaTombol: any;
   @Input() namaTombol2: any;
@@ -282,6 +286,12 @@ export class ForminputComponent implements OnInit {
       }
     }
 
+  }
+
+  getdisableCustomDate(d?: any){
+    let pdata = Date.now()
+    let date = pdata == null ? null : new Date(pdata)
+    
   }
 
   //End of datepicker function

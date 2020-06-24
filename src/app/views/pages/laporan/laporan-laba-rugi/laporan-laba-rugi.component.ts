@@ -181,35 +181,35 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       readOnly: false,
       disabled: false,
     },
-    {
-      formWidth: 'col-5',
-      label: 'Cabang',
-      id: 'kode-cabang',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_cabang',
-      valueOf: 'kode_cabang',
-      required: true,
-      readOnly: false,
-      inputInfo: {
-        id: 'nama-cabang',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_cabang'
-      },
-      blurOption: {
-        ind: 'kode_cabang',
-        data: [],
-        valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: () => null
-      },
-      update: {
-        disabled: true
-      }
-    },
+    // {
+    //   formWidth: 'col-5',
+    //   label: 'Cabang',
+    //   id: 'kode-cabang',
+    //   type: 'inputgroup',
+    //   click: (type) => this.openDialog(type),
+    //   btnLabel: '',
+    //   btnIcon: 'flaticon-search',
+    //   browseType: 'kode_cabang',
+    //   valueOf: 'kode_cabang',
+    //   required: true,
+    //   readOnly: false,
+    //   inputInfo: {
+    //     id: 'nama-cabang',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'nama_cabang'
+    //   },
+    //   blurOption: {
+    //     ind: 'kode_cabang',
+    //     data: [],
+    //     valueOf: ['kode_cabang', 'nama_cabang'],
+    //     onFound: () => null
+    //   },
+    //   update: {
+    //     disabled: true
+    //   }
+    // },
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -286,8 +286,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
           data => {
-            console.clear()
-            console.log(data)
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
@@ -372,7 +370,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
 
     this.bulanLR = this.initBulan[this.formValueLR['tahun']]
-    this.inputLayoutLR.splice(3, 3,
+    this.inputLayoutLR.splice(2, 2,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -648,7 +646,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
-    this.inputLayoutLR.splice(0, 4,
+    this.inputLayoutLR.splice(0, 3,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -661,35 +659,35 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         readOnly: false,
         disabled: false,
       },
-      {
-        formWidth: 'col-5',
-        label: 'Cabang',
-        id: 'kode-cabang',
-        type: 'inputgroup',
-        click: (type) => this.openDialog(type),
-        btnLabel: '',
-        btnIcon: 'flaticon-search',
-        browseType: 'kode_cabang',
-        valueOf: 'kode_cabang',
-        required: true,
-        readOnly: false,
-        inputInfo: {
-          id: 'nama-cabang',
-          disabled: false,
-          readOnly: true,
-          required: false,
-          valueOf: 'nama_cabang'
-        },
-        blurOption: {
-          ind: 'kode_cabang',
-          data: [],
-          valueOf: ['kode_cabang', 'nama_cabang'],
-          onFound: () => null
-        },
-        update: {
-          disabled: true
-        }
-      },
+      // {
+      //   formWidth: 'col-5',
+      //   label: 'Cabang',
+      //   id: 'kode-cabang',
+      //   type: 'inputgroup',
+      //   click: (type) => this.openDialog(type),
+      //   btnLabel: '',
+      //   btnIcon: 'flaticon-search',
+      //   browseType: 'kode_cabang',
+      //   valueOf: 'kode_cabang',
+      //   required: true,
+      //   readOnly: false,
+      //   inputInfo: {
+      //     id: 'nama-cabang',
+      //     disabled: false,
+      //     readOnly: true,
+      //     required: false,
+      //     valueOf: 'nama_cabang'
+      //   },
+      //   blurOption: {
+      //     ind: 'kode_cabang',
+      //     data: [],
+      //     valueOf: ['kode_cabang', 'nama_cabang'],
+      //     onFound: () => null
+      //   },
+      //   update: {
+      //     disabled: true
+      //   }
+      // },
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -730,7 +728,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       bulan: ""
     }
     this.bulanLR = loopBulan[filterBulan]
-    this.inputLayoutLR.splice(3, 3,
+    this.inputLayoutLR.splice(2, 2,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',

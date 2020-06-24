@@ -14,36 +14,22 @@ import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/dat
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
-import { Router } from '@angular/router';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Jurnal Transaksi'
+  beforeCodeTitle: 'Template Transaksi'
 }
 
 @Component({
-  selector: 'kt-jurnal-transaksi',
-  templateUrl: './jurnal-transaksi.component.html',
-  styleUrls: ['./jurnal-transaksi.component.scss', '../transaksi.style.scss']
+  selector: 'kt-template-transaksi',
+  templateUrl: './template-transaksi.component.html',
+  styleUrls: ['./template-transaksi.component.scss', '../master.style.scss']
 })
-export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
+export class TemplateTransaksiComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
-
-  jenis_transaksi = [];
-  bank = [];
-  tipe_transaksi = [
-    {
-      label: 'Masuk',
-      value: '0'
-    },
-    {
-      label: 'Keluar',
-      value: '1'
-    }
-  ];
 
   // VARIABLES
   keyReportFormatExcel: any;
@@ -55,38 +41,30 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   tableLoad: boolean = false;
   onUpdate: boolean = false;
   namaTombolPrintDoc: any;
-  namaTombolPrintDoc2: any;
   onSubPrintDoc: boolean = true;
-  onSubPrintDoc2: boolean = true;
   enableCancel: boolean = true;
   enableEdit: boolean = false;
   enableDelete: boolean = false;
-  disableForm: boolean = false;
-  disableSubmit: boolean = true;
-  disablePrintButton: boolean = true;
-  disablePrintButton2: boolean = true;
+  disableSubmit: boolean = false;
   browseNeedUpdate: boolean = true;
-  subPerusahaan: any;
+  subscription: any;
+  subPeriode: any;
+  subPeriodeAktif: any;
   kode_perusahaan: any;
-  daftar_periode_kasir: any = [];
-  periode_jurnal: any = {
+  periode_akses: any = {
     id_periode: '',
     tahun_periode: '',
     bulan_periode: ''
   };
-  periode_kasir: any = {
+  periode_aktif: any = {
     id_periode: '',
-    tgl_periode: ''
+    tahun_periode: '',
+    bulan_periode: ''
   };
   requestMade: boolean = false;
   batal_alasan: any = "";
-  id_kasir: any = "";
-  dayLimit: any = 0;
-  total_debit: any = 0;
   dialogRef: any;
   dialogType: string = null;
-
-  id_periode = "";
 
   format_cetak = [
     {
@@ -152,17 +130,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   // Input Name
   formValue = {
     id_tran: '',
-    id_tran_jt: '',
-    no_jurnal: '',
     no_tran: '',
-    tgl_tran: '',
+    tgl_tran: JSON.stringify(this.getDateNow()),
     kode_cabang: '',
     nama_cabang: '',
-    id_jenis_transaksi: '',
-    kode_jenis_transaksi: '',
-    nilai_jenis_transaksi: '',
-    tipe_transaksi: '0',
-    saldo_transaksi: 0,
     keterangan: ''
   }
 
@@ -178,8 +149,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       keterangan_akun: '',
       keterangan1: '',
       keterangan2: '',
-      saldo_debit: 0,
-      saldo_kredit: 0
+      percent_debit: 0,
+      percent_kredit: 0
     },
     {
       id_akun: '',
@@ -192,18 +163,18 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       keterangan_akun: '',
       keterangan1: '',
       keterangan2: '',
-      saldo_debit: 0,
-      saldo_kredit: 0
+      percent_debit: 0,
+      percent_kredit: 0
     }
   ]
 
   formDetail = {
-    format_cetak: 'pdf'
+   format_cetak: 'pdf'
   }
 
   detailInputLayout = [
     {
-
+      
       formWidth: 'col-5',
       label: 'Format Cetak',
       id: 'format-cetak',
@@ -251,15 +222,11 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'No. Transaksi',
+      label: 'No. Jurnal',
       value: 'no_tran'
     },
     {
-      label: 'No. Jurnal',
-      value: 'no_jurnal'
-    },
-    {
-      label: 'Tgl. Transaksi',
+      label: 'Tgl. Jurnal',
       value: 'tgl_tran',
       date: true
     },
@@ -268,21 +235,16 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       value: 'nama_cabang'
     },
     {
-      label: 'Jenis Transaksi',
-      value: 'nama_jenis_transaksi'
+      label: 'Divisi',
+      value: 'nama_divisi'
+    },
+    {
+      label: 'Departemen',
+      value: 'nama_departemen'
     },
     {
       label: 'Keterangan',
       value: 'keterangan'
-    },
-    {
-      label: 'Tipe Transaksi',
-      value: 'tipe_transaksi_sub'
-    },
-    {
-      label: 'Saldo Transaksi',
-      value: 'saldo_transaksi',
-      number: true
     },
     {
       label: 'Status',
@@ -326,14 +288,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         'f': ''
       },
       redefined: 'batal_status_sub'
-    },
-    {
-      target: 'tipe_transaksi',
-      replacement: {
-        '0': 'Masuk',
-        '1': 'Keluar'
-      },
-      redefined: 'tipe_transaksi_sub'
     }
   ]
   inputDepartemenDisplayColumns = [
@@ -396,11 +350,43 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   inputCabangData = []
   inputCabangDataRules = []
   inputAkunData = []
-  inputJenisTransaksiData = []
-  inputRekeningPerusahaanData = []
 
   // Layout Form
   inputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'No. Jurnal',
+      id: 'nomor-jurnal',
+      type: 'input',
+      valueOf: 'no_tran',
+      required: false,
+      readOnly: false,
+      disabled: true,
+      update: {
+        disabled: true
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tgl. Jurnal',
+      id: 'tgl-jurnal',
+      type: 'datepicker',
+      valueOf: 'tgl_tran',
+      required: true,
+      readOnly: false,
+      update: {
+        disabled: false
+      },
+      timepick: false,
+      enableMin: true,
+      enableMax: true,
+      minMaxDate: () => {
+        return {
+          y: this.gbl.getTahunPeriode(),
+          m: this.gbl.getBulanPeriode()
+        }
+      }
+    },
     {
       formWidth: 'col-5',
       label: 'Cabang',
@@ -427,155 +413,69 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         onFound: () => null
       },
       update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'No. Jurnal',
-      id: 'nomor-jurnal',
-      type: 'input',
-      valueOf: 'no_jurnal',
-      required: false,
-      readOnly: false,
-      disabled: true,
-      update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'No. Transaksi',
-      id: 'nomor-transaksi',
-      type: 'input',
-      valueOf: 'no_tran',
-      required: false,
-      readOnly: false,
-      disabled: true,
-      update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
-      type: 'datepicker',
-      valueOf: 'tgl_tran',
-      required: true,
-      readOnly: false,
-      update: {
-        disabled: true
-      },
-      timepick: false,
-      enableMin: true,
-      enableMax: true,
-      disabled: false,
-      minDate: () => {
-        let dt = new Date(Date.now())
-        return {
-          year: dt.getFullYear(),
-          month: dt.getMonth() + 1,
-          day: dt.getDate()
-        }
-      },
-      maxDate: () => {
-        let dt = new Date(Date.now())
-        return {
-          year: dt.getFullYear(),
-          month: dt.getMonth() + 1,
-          day: dt.getDate()
-        }
-      },
-      toolTip: 'Tgl. jurnal akan sama dengan tgl. transaksi'
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Jenis Transaksi',
-      id: 'jenis-transaksi',
-      type: 'combobox',
-      options: this.jenis_transaksi,
-      valueOf: 'id_jenis_transaksi',
-      onSelectFunc: (v) => {
-        let d = this.inputJenisTransaksiData.filter(x => x['id_jenis_transaksi'] === v)
-        if (d.length > 0) {
-          this.forminput.updateFormValue('kode_jenis_transaksi', d[0]['kode_jenis_transaksi'])
-        }
-      },
-      required: true,
-      readOnly: false,
-      disabled: false,
-      update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Rekening Perusahaan',
-      id: 'rekening-perusahaan',
-      type: 'combobox',
-      options: this.bank,
-      valueOf: 'nilai_jenis_transaksi',
-      required: true,
-      readOnly: false,
-      disabled: false,
-      hiddenOn: {
-        valueOf: 'kode_jenis_transaksi',
-        matchValue: ["KAS", "PETTYCASH", ""]
-      },
-      update: {
-        disabled: true
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Lembar Giro',
-      id: 'lembar-giro',
-      type: 'input',
-      valueOf: 'lembar_giro',
-      required: false,
-      readOnly: false,
-      hiddenOn: {
-        valueOf: 'kode_jenis_transaksi',
-        matchValue: ["KAS", "PETTYCASH", "BANK", ""]
-      },
-      numberOnly: true,
-      update: {
         disabled: false
       }
     },
-    {
-      formWidth: 'col-5',
-      label: 'Tipe Transaksi',
-      id: 'tipe-transaksi',
-      type: 'combobox',
-      options: this.tipe_transaksi,
-      valueOf: 'tipe_transaksi',
-      required: true,
-      readOnly: false,
-      disabled: false,
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Nilai Transaksi',
-      id: 'nilai-transaksi',
-      type: 'input',
-      valueOf: 'saldo_transaksi',
-      currency: true,
-      required: true,
-      disabled: false,
-      readOnly: false,
-      leftAddon: 'Rp.',
-      currencyOptions: {
-        precision: 2
-      },
-      update: {
-        disabled: false
-      }
-    },
+    // {
+    //   formWidth: 'col-5',
+    //   label: 'Divisi',
+    //   id: 'kode-divisi',
+    //   type: 'inputgroup',
+    //   click: (type) => this.openDialog(type),
+    //   btnLabel: '',
+    //   btnIcon: 'flaticon-search',
+    //   browseType: 'kode_divisi',
+    //   valueOf: 'kode_divisi',
+    //   required: false,
+    //   readOnly: false,
+    //   inputInfo: {
+    //     id: 'nama-divisi',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'nama_divisi'
+    //   },
+    //   blurOption: {
+    //     ind: 'kode_divisi',
+    //     data: [],
+    //     valueOf: ['kode_divisi', 'nama_divisi'],
+    //     onFound: () => /* {
+    //       this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
+    //     } */null
+    //   },
+    //   update: {
+    //     disabled: false
+    //   }
+    // },
+    // {
+    //   formWidth: 'col-5',
+    //   label: 'Departemen',
+    //   id: 'kode-departemen',
+    //   type: 'inputgroup',
+    //   click: (type) => this.openDialog(type),
+    //   btnLabel: '',
+    //   btnIcon: 'flaticon-search',
+    //   browseType: 'kode_departemen',
+    //   valueOf: 'kode_departemen',
+    //   required: false,
+    //   readOnly: false,
+    //   inputInfo: {
+    //     id: 'nama-departemen',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'nama_departemen'
+    //   },
+    //   blurOption: {
+    //     ind: 'kode_departemen',
+    //     data: [],
+    //     valueOf: ['kode_departemen', 'nama_departemen'],
+    //     onFound: null
+    //   },
+    //   update: {
+    //     disabled: false
+    //   }
+    // },
     {
       formWidth: 'col-5',
       label: 'Keterangan',
@@ -597,31 +497,52 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
     private request: RequestDataService,
-    private router: Router,
     private gbl: GlobalVariableService
   ) { }
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false)
-    this.namaTombolPrintDoc = "Cetak Transaksi Jurnal Umum"
-    this.namaTombolPrintDoc2 = "Cetak Transaksi Kasir"
-    this.sendRequestKasir()
+    if (this.gbl.getPeriodeState() === "pk") {
+      window.parent.postMessage({
+        'type': 'UPDATE-PERIODE'
+      }, "*")
+      this.gbl.setPeriodeState("p")
+    }
+    this.gbl.need(true, true)
+    this.namaTombolPrintDoc = "Cetak Transaksi"
+    // this.reqKodePerusahaan()
+    // this.reqIdPeriode()
+    // this.reqIdPeriodeAktif()
+    this.reqActivePeriod()
+    // this.madeRequest()
   }
 
   ngAfterViewInit(): void {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
-    if (this.kode_perusahaan !== "") {
-      this.sendRequestKasir()
+    this.periode_akses = {
+      id_periode: this.gbl.getIdPeriode(),
+      tahun_periode: this.gbl.getTahunPeriode(),
+      bulan_periode: this.gbl.getBulanPeriode()
+    }
+    this.periode_aktif = {
+      id_periode: this.gbl.getIdPeriodeAktif(),
+      tahun_periode: this.gbl.getTahunPeriodeAktif(),
+      bulan_periode: this.gbl.getBulanPeriodeAktif()
+    }
+    if (this.kode_perusahaan !== "" && this.periode_akses.id_periode !== "") {
+
+      this.reqActivePeriod()
     }
   }
 
   ngOnDestroy(): void {
-    this.subPerusahaan === undefined ? null : this.subPerusahaan.unsubscribe()
+    this.subscription === undefined ? null : this.subscription.unsubscribe()
+    this.subPeriode === undefined ? null : this.subPeriode.unsubscribe()
+    this.subPeriodeAktif === undefined ? null : this.subPeriodeAktif.unsubscribe()
   }
 
   reqKodePerusahaan() {
-    this.subPerusahaan = this.gbl.change.subscribe(
+    this.subscription = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
         this.resetForm()
@@ -635,6 +556,68 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         }
       }
     )
+  }
+
+  reqIdPeriode() {
+    this.subPeriode = this.gbl.change_periode.subscribe(
+      value => {
+        this.periode_akses = value
+        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
+          this.disableSubmit = true
+        } else {
+          this.disableSubmit = false
+        }
+        this.resetForm()
+        this.browseData = []
+        this.browseNeedUpdate = true
+        this.ref.markForCheck()
+        this.madeRequest()
+
+        if (this.selectedTab == 1 && this.browseNeedUpdate) {
+          this.refreshBrowse('')
+        }
+      }
+    )
+  }
+
+  reqIdPeriodeAktif() {
+    this.subPeriodeAktif = this.gbl.activePeriod.subscribe(
+      value => {
+        this.periode_aktif = value
+        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
+          this.disableSubmit = true
+        } else {
+          this.disableSubmit = false
+        }
+      }
+    )
+  }
+
+  reqActivePeriod() {
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
+            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
+            this.gbl.getIdPeriodeAktif()
+            this.gbl.getTahunPeriodeAktif()
+            this.gbl.getBulanPeriodeAktif()
+            this.periode_aktif = this.gbl.getActive()
+            if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
+              this.disableSubmit = true
+            } else {
+              this.disableSubmit = false
+            }
+            this.madeRequest()
+            this.ref.markForCheck()
+          } else {
+            this.ref.markForCheck()
+            this.openSnackBar('Data Periode tidak ditemukan.')
+          }
+        }
+      )
+    }
   }
 
   //Tab change event
@@ -652,26 +635,14 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     let x = JSON.parse(JSON.stringify(data))
     let t_tran = new Date(x['tgl_tran'])
     this.formValue = {
-      id_tran: x['id_tran_jurnal'],
-      id_tran_jt: x['id_tran'],
-      no_jurnal: x['no_jurnal'],
+      id_tran: x['id_tran'],
       no_tran: x['no_tran'],
       tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      id_jenis_transaksi: x['id_jenis_transaksi'],
-      kode_jenis_transaksi: x['kode_jenis_transaksi'],
-      nilai_jenis_transaksi: x['nilai_jenis_transaksi'],
-      tipe_transaksi: x['tipe_transaksi'],
-      saldo_transaksi: parseFloat(x['saldo_transaksi']),
       keterangan: x['keterangan']
     }
-    this.id_periode = x['id_periode']
     this.onUpdate = true;
-    if(this.onUpdate === true){
-      this.disablePrintButton = false
-      this.disablePrintButton2 = false
-    }
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
     this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
     this.getBackToInput();
@@ -679,6 +650,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
   getBackToInput() {
     this.selectedTab = 0;
+    // this.sendRequestDepartemen(this.formValue.kode_divisi)
     this.getDetail()
     this.formInputCheckChanges()
   }
@@ -697,28 +669,11 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           letters: false,
           special: false
         }))}` : this.formValue.id_tran
-        this.formValue.id_tran_jt = this.formValue.id_tran_jt === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-          length: 8,
-          numeric: true,
-          letters: false,
-          special: false
-        }))}` : this.formValue.id_tran_jt
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let tgl = new Date(parseInt(this.formValue['tgl_tran'])), idp = ""
-        if (!this.onUpdate) {
-          for (var i = 0; i < this.daftar_periode_kasir.length; i++) {
-            let dpk = new Date(this.daftar_periode_kasir[i]['tgl_periode'])
-            if (tgl.getTime() == (dpk.getTime() - 25200000) && this.formValue['kode_cabang'] === this.daftar_periode_kasir[i]['kode_cabang']) {
-              idp = this.daftar_periode_kasir[i]['id_periode']
-              break
-            }
-          }
-        }
-        let endRes = Object.assign({ id_kasir: this.id_kasir, kode_perusahaan: this.kode_perusahaan, id_periode_kasir: this.onUpdate ? this.id_periode : idp, id_periode_jurnal: this.periode_jurnal['id_periode'] }, this.formValue)
-        this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal-transaksi' : 'i-jurnal-transaksi', endRes).subscribe(
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }, this.formValue)
+        this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
           data => {
-            this.total_debit = 0
             if (data['STATUS'] === 'Y') {
               this.resetForm()
               this.browseNeedUpdate = true
@@ -747,127 +702,14 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           if (this.onUpdate && !this.enableEdit) {
             this.openSnackBar('Tidak dapat diedit lagi.', 'info')
           } else {
-            if (this.total_debit != this.forminput.getData().saldo_transaksi) {
-              this.openSnackBar('Saldo transaksi tidak sesuai dengan nilai jurnal', 'info')
-            } else {
-              this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
-            }
+            this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
           }
         }
-        this.total_debit = 0
       }
     }
   }
 
-  printDoc(v) {
-    this.loading = true
-    this.ref.markForCheck()
-    if (this.forminput !== undefined) {
-      this.formValue = this.forminput.getData()
-      let p = {}
-      p['kode_perusahaan'] = this.kode_perusahaan
-      p['kode_cabang'] = this.formValue['kode_cabang']
-      p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
-      p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
-      this.request.apiData('report', 'g-data-rekapitulasi-kas', p).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            let d = data['RESULT'], res = []
-            for (var i = 0; i < d.length; i++) {
-              let t = []
-
-              if (d[i]['id_tran'] !== '') {
-                t.push(d[i]['kode_cabang'])
-                t.push(d[i]['nama_cabang'])
-                t.push(d[i]['id_kasir'])
-                t.push(d[i]['nama_kasir'])
-                t.push(d[i]['no_tran'])
-                t.push(d[i]['no_jurnal'])
-                t.push(new Date(d[i]['tgl_tran']).getTime())
-                t.push(d[i]['keterangan'])
-                t.push(parseFloat(d[i]['saldo_masuk']))
-                t.push(parseFloat(d[i]['saldo_keluar']))
-                t.push(parseFloat(d[i]['saldo_akhir']))
-                t.push(parseFloat(d[i]['saldo_awal']))
-
-                res.push(t)
-              }
-
-            }
-
-            let rp = JSON.parse(JSON.stringify(this.reportObj))
-            rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-            rp['REPORT_CODE'] = 'RPT-REKAPITULASI-KAS'
-            rp['REPORT_NAME'] = 'Laporan Rekapitulasi Kas'
-            rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
-            rp['JASPER_FILE'] = 'rptRekapitulasiKas.jasper'
-            rp['REPORT_PARAMETERS'] = {
-              USER_NAME: "",
-              REPORT_PERIODE: "Periode: " +
-                JSON.stringify(this.formValue['periode'][0]['year']) + " " +
-                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
-                (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
-                JSON.stringify(this.formValue['periode'][1]['year']) + " " +
-                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
-                (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
-
-            }
-            rp['FIELD_TITLE'] = [
-              "Kode Cabang",
-              "Nama Cabang",
-              "Id Kasir",
-              "Nama Kasir",
-              "No. Transaksi",
-              "No. Jurnal",
-              "Tgl. Transaksi",
-              "Keterangan",
-              "Saldo Masuk",
-              "Saldo Keluar",
-              "Saldo Akhir",
-              "Saldo Awal"
-            ]
-            rp['FIELD_NAME'] = [
-              "kodeCabang",
-              "namaCabang",
-              "idKasir",
-              "namaKasir",
-              "noTran",
-              "noJurnal",
-              "tglTran",
-              "keterangan",
-              "saldoMasuk",
-              "saldoKeluar",
-              "saldoAkhir",
-              "saldoAwal"
-            ]
-            rp['FIELD_TYPE'] = [
-              "string",
-              "string",
-              "string",
-              "string",
-              "string",
-              "string",
-              "date",
-              "string",
-              "bigdecimal",
-              "bigdecimal",
-              "bigdecimal",
-              "bigdecimal"
-            ]
-            rp['FIELD_DATA'] = res
-
-            this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
-          }
-        }
-      )
-    }
-  }
-
-  printDoc2(v) {
+  printDoc(v){
     this.loading = true
     this.ref.markForCheck()
     if (this.forminput !== undefined) {
@@ -1051,7 +893,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       }
 
       for (var i = 0; i < data['detail']['data'].length; i++) {
-        this.total_debit = this.total_debit + parseFloat(data['detail']['data'][i]['saldo_debit'])
         if (data['detail']['data'][i]['id_akun'] === '') {
           valid = false
           break;
@@ -1060,10 +901,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
       if (data['nama_departemen'] === '') valid = false
       if (data['nama_divisi'] === '') valid = false
-
-      if (this.total_debit != data['saldo_transaksi']) {
-        valid = false
-      }
     }
 
     if (this.onUpdate) {
@@ -1079,17 +916,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.formValue = {
       id_tran: '',
-      id_tran_jt: '',
-      no_jurnal: '',
       no_tran: '',
-      tgl_tran: '',
-      kode_cabang: this.formValue.kode_cabang,
-      nama_cabang: this.formValue.nama_cabang,
-      id_jenis_transaksi: '',
-      kode_jenis_transaksi: '',
-      nilai_jenis_transaksi: '',
-      tipe_transaksi: '0',
-      saldo_transaksi: 0,
+      tgl_tran: JSON.stringify(this.getDateNow()),
+      kode_cabang: '',
+      nama_cabang: '',
       keterangan: ''
     }
     this.detailData = [
@@ -1104,8 +934,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         nama_departemen: '',
         keterangan1: '',
         keterangan2: '',
-        saldo_debit: 0,
-        saldo_kredit: 0
+        percent_debit: 0,
+        percent_kredit: 0
       },
       {
         id_akun: '',
@@ -1118,13 +948,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         nama_departemen: '',
         keterangan1: '',
         keterangan2: '',
-        saldo_debit: 0,
-        saldo_kredit: 0
+        percent_debit: 0,
+        percent_kredit: 0
       }
     ]
-    this.id_periode = ""
-    this.disablePrintButton = true
-    this.disablePrintButton2 = true
     this.formInputCheckChanges()
     this.formInputCheckChangesJurnal()
   }
@@ -1153,11 +980,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       let endRes = {
         kode_perusahaan: val ? val : this.kode_perusahaan,
         id_tran: this.formValue.id_tran,
-        id_tran_jt: this.formValue.id_tran_jt,
         batal_alasan: this.batal_alasan
       }
       this.dialog.closeAll()
-      this.request.apiData('jurnal', 'c-jurnal-transaksi', endRes).subscribe(
+      this.request.apiData('jurnal', 'c-jurnal', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel()
@@ -1181,6 +1007,16 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
   // Dialog
   openDialog(type) {
+    // if (type === 'kode_departemen') {
+    //   if (this.forminput.getData()['kode_divisi'] === "" || this.forminput.getData()['nama_divisi'] === "") {
+    //     this.openSnackBar('Pilih divisi dahulu.', 'info', () => {
+    //       setTimeout(() => {
+    //         this.openDialog('kode_divisi')
+    //       }, 250)
+    //     })
+    //     return
+    //   }
+    // }
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
@@ -1192,16 +1028,24 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         type: type,
         tableInterface:
           type === "kode_cabang" ? this.inputCabangInterface :
-            {},
+            type === "kode_divisi" ? this.inputDivisiInterface :
+              type === "kode_departemen" ? this.inputDepartemenInterface :
+                {},
         displayedColumns:
           type === "kode_cabang" ? this.inputCabangDisplayColumns :
-            [],
+            type === "kode_divisi" ? this.inputDivisiDisplayColumns :
+              type === "kode_departemen" ? this.inputDepartemenDisplayColumns :
+                [],
         tableData:
           type === "kode_cabang" ? this.inputCabangData :
-            [],
+            type === "kode_divisi" ? this.inputDivisiData :
+              type === "kode_departemen" ? this.inputDepartemenData/* .filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])) */ :
+                [],
         tableRules:
           type === "kode_cabang" ? this.inputCabangDataRules :
-            [],
+            type === "kode_divisi" ? this.inputDivisiDataRules :
+              type === "kode_departemen" ? this.inputDepartemenDataRules :
+                [],
         formValue: this.formValue
       }
     });
@@ -1212,54 +1056,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-            let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['aktif'] === '1')[0]
-            let dt = new Date(lp['tgl_periode'])
-            if (JSON.stringify(dt.getFullYear()) === this.periode_jurnal['tahun_periode'] && JSON.stringify(dt.getMonth() + 1) === this.periode_jurnal['bulan_periode']) {
-              this.periode_kasir = {
-                id_periode: lp['id_periode'],
-                tgl_periode: lp['tgl_periode']
-              }
-              this.inputLayout.splice(3, 1, {
-                formWidth: 'col-5',
-                label: 'Tgl. Transaksi',
-                id: 'tgl-transaksi',
-                type: 'datepicker',
-                valueOf: 'tgl_tran',
-                required: true,
-                readOnly: false,
-                update: {
-                  disabled: true
-                },
-                timepick: false,
-                enableMin: true,
-                enableMax: true,
-                disabled: false,
-                minDate: () => {
-                  let dt = new Date(this.periode_kasir['tgl_periode'])
-                  return {
-                    year: dt.getFullYear(),
-                    month: dt.getMonth() + 1,
-                    day: dt.getDate()
-                  }
-                },
-                maxDate: () => {
-                  let dt = new Date(this.periode_kasir['tgl_periode'])
-                  return {
-                    year: dt.getFullYear(),
-                    month: dt.getMonth() + 1,
-                    day: dt.getDate() + this.dayLimit
-                  }
-                },
-                toolTip: 'Tgl. jurnal akan sama dengan tgl. transaksi'
-              })
-              this.browseNeedUpdate = true
-              this.disableSubmit = false
-              this.ref.markForCheck()
-            } else {
-              this.disableSubmit = true
-              this.ref.markForCheck()
-              this.openSnackBar('Tanggal periode jurnal dan transaksi tidak sesuai.', 'info')
-            }
           }
         }
         this.ref.markForCheck();
@@ -1267,7 +1063,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     });
   }
 
-  inputDialog(type) {
+  inputDialog() {
     this.gbl.topPage()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
@@ -1285,10 +1081,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         onBlur: (t, v) => null,
         openDialog: (t) => null,
         resetForm: () => this.resetDetailForm(),
-        onSubmit: (x: NgForm) =>
-          type === "cetakJurnalUmum" ? this.printDoc(this.formDetail) :
-            type === "cetakTransKasir" ? this.printDoc2(this.formDetail) :
-              {},
+        onSubmit: (x: NgForm) => this.printDoc(this.formDetail),
         deleteData: () => null,
       },
       disableClose: true
@@ -1359,7 +1152,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && !this.requestMade) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
       this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
@@ -1369,19 +1162,6 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           } else {
             this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
-          }
-        }
-      )
-
-      this.request.apiData('lookup', 'g-lookup', { kode_perusahaan: this.kode_perusahaan, kode_group_lookup: 'BATAS-HARI-TRANSAKSI', kode_lookup: 'BATAS-HARI-TRANSAKSI-KASIR' }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            let l = parseInt(data['RESULT'][0]['nilai1'])
-            this.dayLimit = l
-          } else {
-            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
-            this.ref.markForCheck()
-            return
           }
         }
       )
@@ -1402,161 +1182,15 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendRequestKasir() {
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('kasir', 'g-status-user-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            let t = data['RESULT'][0]
-            if (t['aktif'] !== 'Y') {
-              this.loading = false
-              this.disableForm = true
-              this.ref.markForCheck()
-              this.openSnackBar('User bukan merupakan kasir aktif.', 'info')
-            } else {
-              this.id_kasir = t['id_kasir']
-              this.sendRequestPeriode()
-            }
-          } else {
-            this.loading = false
-            this.disableForm = true
-            this.ref.markForCheck()
-            this.openSnackBar('User tidak memiliki akses kasir.', 'info', () => this.router.navigateByUrl('/'))
-          }
-        }
-      )
-    }
-  }
-
-  sendRequestPeriode() {
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        dp => {
-          if (dp['STATUS'] === 'Y') {
-            let pj_aktif = dp['RESULT'].filter(x => x['aktif'] === '1')[0]
-            this.periode_jurnal = {
-              id_periode: pj_aktif['id_periode'],
-              tahun_periode: pj_aktif['tahun_periode'],
-              bulan_periode: pj_aktif['bulan_periode']
-            }
-            this.request.apiData('periode', 'g-periode-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-              data => {
-                if (data['STATUS'] === 'Y') {
-                  this.daftar_periode_kasir = data['RESULT']
-                  this.madeRequest()
-                  this.ref.markForCheck()
-                } else {
-                  this.loading = false
-                  this.ref.markForCheck()
-                  this.openSnackBar('Data Periode tidak ditemukan.')
-                }
-              }
-            )
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan periode jurnal atau periode belum tersedia.', 'fail')
-          }
-        }
-      )
-    }
-  }
-
   sendRequestAkun() {
     this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputAkunData = data['RESULT']
-          this.sendRequestJenisTransaksi()
+          this.loading = false
+          this.ref.markForCheck()
         } else {
           this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
-          this.loading = false
-          this.ref.markForCheck()
-        }
-      }
-    )
-  }
-
-  sendRequestJenisTransaksi() {
-    this.request.apiData('jenis-transaksi', 'g-jenis-transaksi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          let res = []
-          for (var i = 0; i < data['RESULT'].length; i++) {
-            let t = {
-              label: data['RESULT'][i]['kode_jenis_transaksi'] + " - " + data['RESULT'][i]['nama_jenis_transaksi'],
-              value: data['RESULT'][i]['id_jenis_transaksi']
-            }
-            res.push(t)
-          }
-          this.jenis_transaksi = res
-          this.inputJenisTransaksiData = data['RESULT']
-          this.inputLayout.splice(4, 1, {
-            formWidth: 'col-5',
-            label: 'Jenis Transaksi',
-            id: 'jenis-transaksi',
-            type: 'combobox',
-            options: this.jenis_transaksi,
-            valueOf: 'id_jenis_transaksi',
-            onSelectFunc: (v) => {
-              let d = this.inputJenisTransaksiData.filter(x => x['id_jenis_transaksi'] === v)
-              if (d.length > 0) {
-                this.forminput.updateFormValue('kode_jenis_transaksi', d[0]['kode_jenis_transaksi'])
-              }
-            },
-            required: true,
-            readOnly: false,
-            disabled: false,
-            update: {
-              disabled: true
-            }
-          })
-          this.sendRequestRekeningPerusahaan()
-        } else {
-          this.openSnackBar('Gagal mendapatkan daftar jenis transaksi. Mohon coba lagi nanti.', 'fail')
-          this.loading = false
-          this.ref.markForCheck()
-        }
-      }
-    )
-  }
-
-  sendRequestRekeningPerusahaan() {
-    this.request.apiData('rekening-perusahaan', 'g-rekening-perusahaan', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          let res = []
-          for (var i = 0; i < data['RESULT'].length; i++) {
-            let t = {
-              label: data['RESULT'][i]['no_rekening'] + " - " + data['RESULT'][i]['atas_nama'],
-              value: data['RESULT'][i]['no_rekening']
-            }
-            res.push(t)
-          }
-          this.bank = res
-          this.inputRekeningPerusahaanData = data['RESULT']
-          this.inputLayout.splice(5, 1, {
-            formWidth: 'col-5',
-            label: 'Rekening Perusahaan',
-            id: 'rekening-perusahaan',
-            type: 'combobox',
-            options: this.bank,
-            valueOf: 'nilai_jenis_transaksi',
-            required: true,
-            readOnly: false,
-            disabled: false,
-            hiddenOn: {
-              valueOf: 'kode_jenis_transaksi',
-              matchValue: ["KAS", "PETTYCASH", ""]
-            },
-            update: {
-              disabled: true
-            }
-          })
-          this.loading = false
-          this.ref.markForCheck()
-        } else {
-          this.openSnackBar('Gagal mendapatkan daftar rekening perusahaan. Mohon coba lagi nanti.', 'fail')
           this.loading = false
           this.ref.markForCheck()
         }
@@ -1583,8 +1217,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
               nama_departemen: resp[i]['nama_departemen'],
               keterangan1: resp[i]['keterangan1'],
               keterangan2: resp[i]['keterangan2'],
-              saldo_debit: parseFloat(resp[i]['nilai_debit']),
-              saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
+              percent_debit: parseFloat(resp[i]['nilai_debit']),
+              percent_kredit: parseFloat(resp[i]['nilai_kredit'])
             }
             res.push(t)
           }
@@ -1602,50 +1236,33 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   }
 
   refreshBrowse(message) {
-    if (this.periode_kasir['tgl_periode'] !== '') {
-      this.tableLoad = true
-      let tga = this.periode_kasir['tgl_periode'], tgk = new Date(this.periode_kasir['tgl_periode'])
-      this.request.apiData(
-        'jurnal',
-        'g-jurnal-transaksi',
-        {
-          kode_perusahaan: this.kode_perusahaan,
-          tgl_periode_awal: tga,
-          tgl_periode_akhir: (JSON.stringify(tgk.getFullYear()) + "-" + JSON.stringify(tgk.getMonth() + 1) + "-" + JSON.stringify(tgk.getDate() + this.dayLimit))
-        }
-      ).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            if (message !== '') {
-              this.browseData = data['RESULT']
-              this.loading = false
-              this.tableLoad = false
-              this.browseNeedUpdate = false
-              this.ref.markForCheck()
-              this.openSnackBar(message, 'success')
-              this.onUpdate = false
-            } else {
-              this.browseData = data['RESULT']
-              this.loading = false
-              this.tableLoad = false
-              this.browseNeedUpdate = false
-              this.ref.markForCheck()
-            }
-          } else {
-            this.browseData = []
+    this.tableLoad = true
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          if (message !== '') {
+            this.browseData = data['RESULT']
             this.loading = false
             this.tableLoad = false
-            this.browseNeedUpdate = true
+            this.ref.markForCheck()
+            this.openSnackBar(message, 'success')
+            this.onUpdate = false
+          } else {
+            this.browseData = data['RESULT']
+            this.loading = false
+            this.tableLoad = false
+            this.browseNeedUpdate = false
             this.ref.markForCheck()
           }
+        } else {
+          this.browseData = []
+          this.loading = false
+          this.tableLoad = false
+          this.browseNeedUpdate = true
+          this.ref.markForCheck()
         }
-      )
-    } else {
-      this.openSnackBar('Pilih cabang terlebih dahulu.', 'info', () => {
-        this.selectedTab = 0
-        this.ref.markForCheck()
-      })
-    }
+      }
+    )
   }
 
   openSnackBar(message, type?: any, onCloseFunc?: any) {

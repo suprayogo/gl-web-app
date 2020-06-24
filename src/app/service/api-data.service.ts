@@ -25,6 +25,7 @@ import { PeriodeRequestService } from './transaksi/periode/periode-request.servi
 import { UserRequestService } from './management/user/user-request.service';
 import { ReportRequestService } from './master/report/report-request.service';
 import { KasirRequestService } from './master/kasir/kasir-request.service';
+import { PengajuanBukaPeriodeKasirRequestService } from './transaksi/pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -56,11 +57,12 @@ export class ApiDataService {
     private settingLinkReq: SettingLinkRequestService,
     private reportReq: ReportRequestService,
     private kasirReq: KasirRequestService,
-    
+
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
     private periodeReq: PeriodeRequestService,
-    private jurnalReq: JurnalRequestService
+    private jurnalReq: JurnalRequestService,
+    private pengajuanBukaReq: PengajuanBukaPeriodeKasirRequestService
   ) {
   }
 
@@ -82,7 +84,7 @@ export class ApiDataService {
     this.jenisTransaksiReq.url = this.baseURL
     this.settingLinkReq.url = this.baseURL
     this.reportReq.url = this.baseURL
-    this.kasirReq.url =  this.baseURL
+    this.kasirReq.url = this.baseURL
 
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
@@ -94,6 +96,7 @@ export class ApiDataService {
     //Transaksi Services
     this.postingJurnalReq.url = this.baseURL
     this.periodeReq.url = this.baseURL
+    this.pengajuanBukaReq.url = this.baseURL
   }
 
   apiData(type, data, formData?: Object) {
@@ -119,7 +122,7 @@ export class ApiDataService {
       return this.divisiReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'departemen') {
       return this.departemenReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'rekening-perusahaan') {
+    } else if (type === 'rekening-perusahaan') {
       return this.rekeningPerusahaanReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'kategori-akun') {
       return this.kategoriAkunReq.validate(data, this.httpBody, this.options, formData)
@@ -133,7 +136,7 @@ export class ApiDataService {
       return this.reportReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'kasir') {
       return this.kasirReq.validate(data, this.httpBody, this.options, formData)
-    } 
+    }
 
     //Setting Services 
     else if (type === 'setting-laporan') {
@@ -145,10 +148,12 @@ export class ApiDataService {
     //Transaksi Services
     else if (type === 'jurnal') {
       return this.jurnalReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'posting-jurnal') {
+    } else if (type === 'posting-jurnal') {
       return this.postingJurnalReq.validate(data, this.httpBody, this.options, formData)
-    } else if(type === 'periode') {
+    } else if (type === 'periode') {
       return this.periodeReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'pengajuan') {
+      return this.pengajuanBukaReq.validate(data, this.httpBody, this.options, formData)
     }
   }
 }

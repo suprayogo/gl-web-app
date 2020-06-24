@@ -417,6 +417,7 @@ export class RekapPettyCashComponent implements OnInit, AfterViewInit {
         if (type === "kode_cabang") {
           if (this.forminput !== undefined) {
             if (this.formValue.kode_cabang !== result.kode_cabang) {
+              this.formValue.format_laporan = this.forminput.getData()['format_laporan']
               this.formValue.kode_cabang = result.kode_cabang
               this.formValue.nama_cabang = result.nama_cabang
               this.loading = true

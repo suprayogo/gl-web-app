@@ -72,9 +72,10 @@
                         placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan2']" [readonly]="noEdit">
                 </div>
             </div>
-            <!-- Jurnal Umum -->
+
+            <!-- Begin: Jurnal Umum -->
             <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
-                *ngIf="!jurnalOtomatis">
+                *ngIf="!jurnalOtomatis && !templateTransaksi">
                 <div class="input-group-prepend" style="height: fit-content;">
                     <span class="input-group-text" id="basic-addon-left">Rp.</span>
                 </div>
@@ -83,7 +84,7 @@
                     [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
                     [readonly]="noEdit" [disabled]="noEdit">
             </div>
-            <div style="width: 20%; padding: 10px" class="input-group" *ngIf="!jurnalOtomatis">
+            <div style="width: 20%; padding: 10px" class="input-group" *ngIf="!jurnalOtomatis && !templateTransaksi">
                 <div class="input-group-prepend" style="height: fit-content;">
                     <span class="input-group-text" id="basic-addon-left">Rp.</span>
                 </div>
@@ -92,9 +93,11 @@
                     [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
                     [readonly]="noEdit" [disabled]="noEdit">
             </div>
-            <!-- Jurnal Otomatis -->
+            <!-- End: Jurnal Umum -->
+
+            <!-- Begin: Jurnal Otomatis -->
             <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;"
-                *ngIf="jurnalOtomatis">
+                *ngIf="jurnalOtomatis && !templateTransaksi">
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
                         [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
@@ -107,7 +110,7 @@
                 </div>
                 <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
             </div>
-            <div style="width: 20%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis">
+            <div style="width: 20%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis && !templateTransaksi">
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
                         [(ngModel)]="res_data[i]['setting_kredit']" placeholder="Sumber data" readonly>
@@ -122,6 +125,29 @@
             </div>
         </div>
     </div>
+    <!-- End: Jurnal Otomatis -->
+
+    <!-- Begin: Template Transaksi -->
+    <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
+        *ngIf="!jurnalOtomatis && templateTransaksi">
+        <!-- <div class="input-group-prepend" style="height: fit-content;">
+            <span class="input-group-text" id="basic-addon-left">Rp.</span>
+        </div>
+        <input class="form-control m-input number-align-right" type="text" name="{{ 'pdebit-' + i }}"
+            (blur)="countDebitPercent(i)" (keyup.enter)="countDebitPercent(i)" (keyup.tab)="countDebitPercent(i)"
+            [(ngModel)]="res_data[i]['percent_debit']" currencyMask [options]="currencyOptions" [readonly]="noEdit"
+            [disabled]="noEdit"> -->
+    </div>
+    <div style="width: 20%; padding: 10px" class="input-group" *ngIf="!jurnalOtomatis && templateTransaksi">
+        <!-- <div class="input-group-prepend" style="height: fit-content;">
+            <span class="input-group-text" id="basic-addon-left">Rp.</span>
+        </div>
+        <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
+            (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
+            [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions" [readonly]="noEdit"
+            [disabled]="noEdit"> -->
+    </div>
+    <!-- End: Template Transaksi -->
 
     <div style="width: 100%; height: 26px; display: flex; flex-direction: row;" *ngIf="!noEdit">
         <div style="width: 60%; height: 100%;"></div>

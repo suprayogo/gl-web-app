@@ -46,6 +46,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   enableEdit: boolean = false;
   enableDelete: boolean = false;
   disableSubmit: boolean = false;
+  disablePrintButton: boolean = true;
   browseNeedUpdate: boolean = true;
   subscription: any;
   subPeriode: any;
@@ -643,6 +644,9 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
+    if(this.onUpdate === true){
+      this.disablePrintButton = false
+    }
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
     this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
     this.getBackToInput();
@@ -952,6 +956,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         saldo_kredit: 0
       }
     ]
+    this.disablePrintButton = true
     this.formInputCheckChanges()
     this.formInputCheckChangesJurnal()
   }
