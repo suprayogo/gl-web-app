@@ -148,8 +148,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan1: '',
-      keterangan2: '',
+      keterangan_1: '',
+      keterangan_2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     },
@@ -162,8 +162,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan1: '',
-      keterangan2: '',
+      keterangan_1: '',
+      keterangan_2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     }
@@ -936,8 +936,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         nama_divisi: '',
         kode_departemen: '',
         nama_departemen: '',
-        keterangan1: '',
-        keterangan2: '',
+        keterangan_1: '',
+        keterangan_2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       },
@@ -950,8 +950,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         nama_divisi: '',
         kode_departemen: '',
         nama_departemen: '',
-        keterangan1: '',
-        keterangan2: '',
+        keterangan_1: '',
+        keterangan_2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       }
@@ -1220,8 +1220,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
               nama_divisi: resp[i]['nama_divisi'],
               kode_departemen: resp[i]['kode_departemen'],
               nama_departemen: resp[i]['nama_departemen'],
-              keterangan1: resp[i]['keterangan1'],
-              keterangan2: resp[i]['keterangan2'],
+              keterangan_1: resp[i]['keterangan_1'],
+              keterangan_2: resp[i]['keterangan_2'],
               saldo_debit: parseFloat(resp[i]['nilai_debit']),
               saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
             }

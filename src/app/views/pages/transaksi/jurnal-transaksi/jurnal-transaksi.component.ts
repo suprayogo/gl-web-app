@@ -163,7 +163,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     nilai_jenis_transaksi: '',
     tipe_transaksi: '0',
     saldo_transaksi: 0,
-    keterangan: ''
+    keterangan: '',
+    tipe_laporan: ''
   }
 
   detailData = [
@@ -176,8 +177,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan1: '',
-      keterangan2: '',
+      keterangan_1: '',
+      keterangan_2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     },
@@ -190,8 +191,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       kode_departemen: '',
       nama_departemen: '',
       keterangan_akun: '',
-      keterangan1: '',
-      keterangan2: '',
+      keterangan_1: '',
+      keterangan_2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     }
@@ -520,8 +521,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       readOnly: false,
       disabled: false,
       hiddenOn: {
-        valueOf: 'kode_jenis_transaksi',
-        matchValue: ["KAS", "PETTYCASH", ""]
+        valueOf: 'tipe_laporan',
+        matchValue: ["k", "p", ""]
       },
       update: {
         disabled: true
@@ -536,8 +537,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: false,
       hiddenOn: {
-        valueOf: 'kode_jenis_transaksi',
-        matchValue: ["KAS", "PETTYCASH", "BANK", ""]
+        valueOf: 'tipe_laporan',
+        matchValue: ["k", "p", "b", ""]
       },
       numberOnly: true,
       update: {
@@ -664,7 +665,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       nilai_jenis_transaksi: x['nilai_jenis_transaksi'],
       tipe_transaksi: x['tipe_transaksi'],
       saldo_transaksi: parseFloat(x['saldo_transaksi']),
-      keterangan: x['keterangan']
+      keterangan: x['keterangan'],
+      tipe_laporan: x['tipe_laporan']
     }
     this.id_periode = x['id_periode']
     this.onUpdate = true;
@@ -1090,7 +1092,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       nilai_jenis_transaksi: '',
       tipe_transaksi: '0',
       saldo_transaksi: 0,
-      keterangan: ''
+      keterangan: '',
+      tipe_laporan: ''
     }
     this.detailData = [
       {
@@ -1102,8 +1105,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         nama_divisi: '',
         kode_departemen: '',
         nama_departemen: '',
-        keterangan1: '',
-        keterangan2: '',
+        keterangan_1: '',
+        keterangan_2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       },
@@ -1116,8 +1119,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         nama_divisi: '',
         kode_departemen: '',
         nama_departemen: '',
-        keterangan1: '',
-        keterangan2: '',
+        keterangan_1: '',
+        keterangan_2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       }
@@ -1214,7 +1217,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
             let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['aktif'] === '1')[0]
             let dt = new Date(lp['tgl_periode'])
-            if (JSON.stringify(dt.getFullYear()) === this.periode_jurnal['tahun_periode'] && JSON.stringify(dt.getMonth() + 1) === this.periode_jurnal['bulan_periode']) {
+            if (dt.getFullYear() == this.periode_jurnal['tahun_periode'] && (dt.getMonth() + 1) == this.periode_jurnal['bulan_periode']) {
               this.periode_kasir = {
                 id_periode: lp['id_periode'],
                 tgl_periode: lp['tgl_periode']
@@ -1502,6 +1505,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
               let d = this.inputJenisTransaksiData.filter(x => x['id_jenis_transaksi'] === v)
               if (d.length > 0) {
                 this.forminput.updateFormValue('kode_jenis_transaksi', d[0]['kode_jenis_transaksi'])
+                this.forminput.updateFormValue('tipe_laporan', d[0]['tipe_laporan'])
               }
             },
             required: true,
@@ -1546,8 +1550,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             readOnly: false,
             disabled: false,
             hiddenOn: {
-              valueOf: 'kode_jenis_transaksi',
-              matchValue: ["KAS", "PETTYCASH", ""]
+              valueOf: 'tipe_laporan',
+              matchValue: ["k", "p", ""]
             },
             update: {
               disabled: true
@@ -1581,8 +1585,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
               nama_divisi: resp[i]['nama_divisi'],
               kode_departemen: resp[i]['kode_departemen'],
               nama_departemen: resp[i]['nama_departemen'],
-              keterangan1: resp[i]['keterangan1'],
-              keterangan2: resp[i]['keterangan2'],
+              keterangan_1: resp[i]['keterangan_1'],
+              keterangan_2: resp[i]['keterangan_2'],
               saldo_debit: parseFloat(resp[i]['nilai_debit']),
               saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
             }
@@ -1611,7 +1615,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         {
           kode_perusahaan: this.kode_perusahaan,
           tgl_periode_awal: tga,
-          tgl_periode_akhir: (JSON.stringify(tgk.getFullYear()) + "-" + JSON.stringify(tgk.getMonth() + 1) + "-" + JSON.stringify(tgk.getDate() + this.dayLimit))
+          tgl_periode_akhir: (JSON.stringify(tgk.getFullYear()) + "-" + (JSON.stringify(tgk.getMonth() + 1).length > 1 ? JSON.stringify(tgk.getMonth() + 1) : '0' + JSON.stringify(tgk.getMonth() + 1))  + "-" + JSON.stringify(tgk.getDate() + this.dayLimit))
         }
       ).subscribe(
         data => {

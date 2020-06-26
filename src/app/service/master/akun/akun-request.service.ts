@@ -16,7 +16,7 @@ export class AkunRequestService {
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'g-akun-dc') {
-      this.url = 'https://kyyjvswyq1.execute-api.ap-southeast-1.amazonaws.com/dev/dc'
+      this.url = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc'
       httpBody.respondCode = 'GET-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)

@@ -9,8 +9,8 @@ import { HttpClient } from '@angular/common/http';
 export class AuthRequestService {
 
   //  baseURL: string = 'https://4h4f9wqhi4.execute-api.ap-southeast-1.amazonaws.com/dev/gl' //aris
-  // baseURL: string = 'https://6txd2ktbz6.execute-api.ap-southeast-1.amazonaws.com/dev/dc' //billy
-  baseURL = "https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct" //test
+  baseURL: string = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc' //billy
+  // baseURL = "https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct" //test
 
   httpBody = {
     respondCode: '',
