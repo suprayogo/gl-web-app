@@ -50,6 +50,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   dialogType: string = null;
   bulanTahun: any;
   batal_alasan: any = "";
+  setBatal: boolean = false;
 
   // Perusahaan Global Variable
   subPerusahaan: any;
@@ -621,7 +622,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         }
         this.dialogRef = undefined
         this.dialogType = null
-        this.ref.markForCheck();
+        this.ref.markForCheck()
       }
     });
   }
@@ -696,6 +697,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
             this.ref.markForCheck()
             this.gbl.openSnackBar(message, 'success')
             this.onUpdate = false
+            this.setBatal = false
           } else {
             this.browseData = data['RESULT']
             this.loading = false
@@ -819,38 +821,10 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     this.formInputCheckChangesDetail()
   }
 
-  cancelTran(val = null) {
+  cancelTran() {
     this.gbl.topPage()
-    this.formValue.batal_status = "true"
-    if (this.onUpdate) {
-      this.loading = true;
-      this.ref.markForCheck()
-      let endRes =  Object.assign({
-        kode_perusahaan: val ? val : this.kode_perusahaan,
-        detail: this.detailData,
-        batal_alasan: this.batal_alasan
-      }, this.formValue)
-      this.dialog.closeAll()
-      this.request.apiData('pengajuan', 'u-pengajuan-buka', endRes).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.onCancel()
-            this.ref.markForCheck()
-            this.browseNeedUpdate = true
-            this.refreshBrowse('BERHASIL DIBATALKAN')
-          } else {
-            this.loading = false;
-            this.ref.markForCheck()
-            this.gbl.openSnackBar(data['RESULT'])
-          }
-        },
-        error => {
-          this.loading = false;
-          this.ref.markForCheck()
-          this.gbl.openSnackBar('GAGAL MELAKUKAN PENGHAPUSAN.')
-        }
-      )
-    }
+    this.setBatal = true
+    this.save()
   }
 
   // Function: Button Save Input
@@ -861,41 +835,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         if (this.detailData.length <= 0) {
           this.gbl.openSnackBar('Tanggal Pengajuan Belum Diisi.', 'info')
         } else {
-          this.loading = true;
-          this.ref.markForCheck()
-          this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-          this.formValue.id_tran = this.formValue.id_tran === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-            length: 8,
-            numeric: true,
-            letters: false,
-            special: false
-          }))}` : this.formValue.id_tran
-          let endRes = Object.assign(
-            {
-              detail: this.detailData,
-              kode_perusahaan: this.kode_perusahaan
-            },
-            this.formValue
-          )
-          this.request.apiData('pengajuan', this.onUpdate ? 'u-pengajuan-buka' : 'i-pengajuan-buka', endRes).subscribe(
-            data => {
-              if (data['STATUS'] === 'Y') {
-                this.resetForm()
-                this.browseNeedUpdate = true
-                this.ref.markForCheck()
-                this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
-              } else {
-                this.loading = false;
-                this.ref.markForCheck()
-                this.gbl.openSnackBar(data['RESULT'], 'fail')
-              }
-            },
-            error => {
-              this.loading = false;
-              this.ref.markForCheck()
-              this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
-            }
-          )
+          this.save()
         }
       } else {
         // Validate Layout Form
@@ -906,6 +846,51 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         }
       }
     }
+  }
+
+  save() {
+    this.loading = true;
+    this.ref.markForCheck()
+    this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+    if(this.setBatal === true){
+    this.formValue.batal_status = "true"
+    this.formValue.batal_alasan = this.batal_alasan
+    }
+    this.formValue.id_tran = this.formValue.id_tran === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
+      length: 8,
+      numeric: true,
+      letters: false,
+      special: false
+    }))}` : this.formValue.id_tran
+    let endRes = Object.assign(
+      {
+        detail: this.detailData,
+        kode_perusahaan: this.kode_perusahaan
+        
+      },
+      this.formValue
+    )
+    this.dialog.closeAll()
+    this.request.apiData('pengajuan', this.onUpdate ? 'u-pengajuan-buka' : 'i-pengajuan-buka', endRes).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.resetForm()
+          this.browseNeedUpdate = true
+          this.ref.markForCheck()
+          console.log(this.formValue.batal_status)
+          this.refreshBrowse(this.onUpdate ? this.setBatal ? "BERHASIL DIBATALKAN" : "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.gbl.openSnackBar(data['RESULT'], 'fail')
+        }
+      },
+      error => {
+        this.loading = false;
+        this.ref.markForCheck()
+        this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
+      }
+    )
   }
 
   // Reset Value

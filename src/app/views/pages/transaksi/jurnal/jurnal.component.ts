@@ -140,6 +140,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   detailData = [
     {
+      seq: '',
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
@@ -154,6 +155,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       saldo_kredit: 0
     },
     {
+      seq: '',
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
@@ -530,7 +532,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       tahun_periode: this.gbl.getTahunPeriodeAktif(),
       bulan_periode: this.gbl.getBulanPeriodeAktif()
     }
-    if (this.kode_perusahaan !== "" && this.periode_akses.id_periode !== "") {
+    if (this.kode_perusahaan !== "") {
 
       this.reqActivePeriod()
     }
@@ -600,16 +602,16 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
-            this.gbl.getIdPeriodeAktif()
-            this.gbl.getTahunPeriodeAktif()
-            this.gbl.getBulanPeriodeAktif()
-            this.periode_aktif = this.gbl.getActive()
-            if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-              this.disableSubmit = true
-            } else {
-              this.disableSubmit = false
-            }
+            // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
+            // this.gbl.getIdPeriodeAktif()
+            // this.gbl.getTahunPeriodeAktif()
+            // this.gbl.getBulanPeriodeAktif()
+            // this.periode_aktif = this.gbl.getActive()
+            // if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
+            //   this.disableSubmit = true
+            // } else {
+            //   this.disableSubmit = false
+            // }
             this.madeRequest()
             this.ref.markForCheck()
           } else {
@@ -928,6 +930,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     }
     this.detailData = [
       {
+        seq: '',
         id_akun: '',
         kode_akun: '',
         nama_akun: '',
@@ -942,6 +945,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         saldo_kredit: 0
       },
       {
+        seq: '',
         id_akun: '',
         kode_akun: '',
         nama_akun: '',
@@ -1157,7 +1161,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_akses !== undefined && this.periode_akses.id_periode !== "") && !this.requestMade) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif !== undefined && this.periode_aktif.id_periode !== "") && !this.requestMade) {
       this.requestMade = true
       this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
@@ -1212,6 +1216,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
           for (var i = 0; i < resp.length; i++) {
             let t = {
+              seq: resp[i]['seq'],
               id_akun: resp[i]['id_akun'],
               kode_akun: resp[i]['kode_akun'],
               nama_akun: resp[i]['nama_akun'],
@@ -1242,7 +1247,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
