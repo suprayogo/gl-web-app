@@ -42,7 +42,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   selectedTab: number = 0;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
-  loadingDataText: string = "Loading Data Transaksi Jurnal.."
+  loadingDataText: string = "Loading Data Transaksi Kasir.."
   search: string;
   browseNeedUpdate: boolean = true;
   dialogRef: any;

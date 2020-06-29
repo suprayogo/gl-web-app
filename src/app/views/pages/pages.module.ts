@@ -12,6 +12,7 @@ import { MasterModule } from './master/master.module';
 import { TransaksiModule } from './transaksi/transaksi.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { LaporanModule } from './laporan/laporan.module';
+import { UtilitasModule } from './utilitas/utilitas.module';
 
 @NgModule({
 	declarations: [],
@@ -23,7 +24,7 @@ import { LaporanModule } from './laporan/laporan.module';
 		CoreModule,
 		PartialsModule,
 		MasterModule,
-		// ManagementModule,
+		UtilitasModule,
 		TransaksiModule,
 		MonitoringModule,
 		LaporanModule

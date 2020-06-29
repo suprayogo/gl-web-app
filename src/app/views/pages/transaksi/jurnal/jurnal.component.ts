@@ -505,12 +505,12 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    if (this.gbl.getPeriodeState() === "pk") {
-      window.parent.postMessage({
-        'type': 'UPDATE-PERIODE'
-      }, "*")
-      this.gbl.setPeriodeState("p")
-    }
+    // if (this.gbl.getPeriodeState() === "pk") {
+    //   window.parent.postMessage({
+    //     'type': 'UPDATE-PERIODE'
+    //   }, "*")
+    //   this.gbl.setPeriodeState("p")
+    // }
     this.gbl.need(true, true)
     this.namaTombolPrintDoc = "Cetak Transaksi"
     // this.reqKodePerusahaan()
@@ -522,16 +522,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
-    this.periode_akses = {
-      id_periode: this.gbl.getIdPeriode(),
-      tahun_periode: this.gbl.getTahunPeriode(),
-      bulan_periode: this.gbl.getBulanPeriode()
-    }
-    this.periode_aktif = {
-      id_periode: this.gbl.getIdPeriodeAktif(),
-      tahun_periode: this.gbl.getTahunPeriodeAktif(),
-      bulan_periode: this.gbl.getBulanPeriodeAktif()
-    }
+
     if (this.kode_perusahaan !== "") {
 
       this.reqActivePeriod()
@@ -540,8 +531,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   ngOnDestroy(): void {
     this.subscription === undefined ? null : this.subscription.unsubscribe()
-    this.subPeriode === undefined ? null : this.subPeriode.unsubscribe()
-    this.subPeriodeAktif === undefined ? null : this.subPeriodeAktif.unsubscribe()
   }
 
   reqKodePerusahaan() {
@@ -561,57 +550,17 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     )
   }
 
-  reqIdPeriode() {
-    this.subPeriode = this.gbl.change_periode.subscribe(
-      value => {
-        this.periode_akses = value
-        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-          this.disableSubmit = true
-        } else {
-          this.disableSubmit = false
-        }
-        this.resetForm()
-        this.browseData = []
-        this.browseNeedUpdate = true
-        this.ref.markForCheck()
-        this.madeRequest()
-
-        if (this.selectedTab == 1 && this.browseNeedUpdate) {
-          this.refreshBrowse('')
-        }
-      }
-    )
-  }
-
-  reqIdPeriodeAktif() {
-    this.subPeriodeAktif = this.gbl.activePeriod.subscribe(
-      value => {
-        this.periode_aktif = value
-        if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-          this.disableSubmit = true
-        } else {
-          this.disableSubmit = false
-        }
-      }
-    )
-  }
-
   reqActivePeriod() {
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
-            // this.gbl.getIdPeriodeAktif()
-            // this.gbl.getTahunPeriodeAktif()
-            // this.gbl.getBulanPeriodeAktif()
-            // this.periode_aktif = this.gbl.getActive()
-            // if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-            //   this.disableSubmit = true
-            // } else {
-            //   this.disableSubmit = false
-            // }
+            if (this.periode_aktif.aktif !== "1") {
+              this.disableSubmit = true
+            } else {
+              this.disableSubmit = false
+            }
             this.madeRequest()
             this.ref.markForCheck()
           } else {
@@ -677,7 +626,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }))}` : this.formValue.id_tran
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }, this.formValue)
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }, this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
