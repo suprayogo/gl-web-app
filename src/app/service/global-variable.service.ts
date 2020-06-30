@@ -13,6 +13,7 @@ export class GlobalVariableService {
   //Token
   token: string = "";
   user_id: string = "";
+  user_name: string = "";
 
   // PERUSAHAAN
   kode_perusahaan: string = "";
@@ -78,11 +79,13 @@ export class GlobalVariableService {
   }
 
   // TOKEN DC
-  getTokenDarkoCenter(tokenDC, uid) {
+  getTokenDarkoCenter(tokenDC, uid, uname) {
     this.token = tokenDC
     this.user_id = uid
+    this.user_name = uname
     localStorage.setItem('token', this.token)
     localStorage.setItem('user_id', this.user_id)
+    localStorage.setItem('user_name', this.user_name)
   }
 
   // PERUSAHAAN

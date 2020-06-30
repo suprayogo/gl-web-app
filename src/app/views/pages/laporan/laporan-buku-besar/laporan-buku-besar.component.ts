@@ -336,6 +336,8 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
         p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+        p['kode_cabang'] = this.formValueBB['kode_cabang'] === "" ? undefined : this.formValueBB['kode_cabang']
+        p['id_akun'] = this.formValueBB['id_akun'] === "" ? undefined : this.formValueBB['id_akun']
         this.request.apiData('report', 'g-data-buku-besar', p).subscribe(
           data => {
             // console.clear()
@@ -359,7 +361,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                 t.push(d[i]['nama_akun'])
                 t.push(no_tran)
                 t.push(new Date(tgl_tran).getTime())
-                t.push(d[i]['keterangan'])
+                t.push(d[i]['keterangan_1'])
                 t.push(parseFloat(d[i]['nilai_debit']))
                 t.push(parseFloat(d[i]['nilai_kredit']))
                 t.push(parseFloat(d[i]['saldo_akhir']))

@@ -289,6 +289,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
       p['kode_cabang'] = this.formValue['kode_cabang']
       p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
       p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+      p['kode_cabang'] = this.formValue['kode_cabang'] === "" ? undefined : this.formValue['kode_cabang']
+      p['id_akun'] = this.formValue['id_akun'] === "" ? undefined : this.formValue['id_akun']
       this.request.apiData('report', 'g-data-rekapitulasi-bank', p).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -324,7 +326,7 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
             rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
             rp['JASPER_FILE'] = 'rptRekapitulasiBank.jasper'
             rp['REPORT_PARAMETERS'] = {
-              USER_NAME: "",
+              USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
               REPORT_COMPANY_ADDRESS: this.info_company.alamat,
               REPORT_COMPANY_CITY: this.info_company.kota,
               REPORT_COMPANY_TLPN: this.info_company.telepon,

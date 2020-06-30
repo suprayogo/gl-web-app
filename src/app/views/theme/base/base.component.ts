@@ -142,7 +142,8 @@ export class BaseComponent implements OnInit, OnDestroy {
 		this.router.queryParams.subscribe(params => {
 			params['remote'] === '1' ? this.remoteAccess = true : this.remoteAccess = false
 			if (params['token'] && params['uid']) {
-				this.gbl.getTokenDarkoCenter(params['token'], params['uid'])
+				let pjwt = this.parseJwt(params['token'])
+				this.gbl.getTokenDarkoCenter(params['token'], params['uid'], pjwt['user_name'])
 				this.auth.manualValidation(params['token']).then(
 					res => {
 						if (res) {
@@ -253,4 +254,14 @@ export class BaseComponent implements OnInit, OnDestroy {
 		}
 		return(null);
 	}
+
+	parseJwt (token) {
+		var base64Url = token.split('.')[1];
+		var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+		var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+			return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+		}).join(''));
+	
+		return JSON.parse(jsonPayload);
+	};
 }

@@ -308,6 +308,8 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
           p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
           p['bulan_periode'] = "12"
           p['bulan_periode_sebelum'] = this.getBulanTertinggi(p['tahun_periode_sebelum'])
+          p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
+          p['id_akun'] = this.formValueAK['id_akun'] === "" ? undefined : this.formValueAK['id_akun']
         } else if (this.formValueAK['tipe'] === "b") {
           if (p['bulan_periode'] === "1") {
             if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
@@ -404,7 +406,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
               rp['JASPER_FILE'] = 'rptArusKas.jasper'
               rp['REPORT_PARAMETERS'] = {
-                USER_NAME: "",
+                USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
                 REPORT_COMPANY_ADDRESS: this.info_company.alamat,
                 REPORT_COMPANY_CITY: this.info_company.kota,
                 REPORT_COMPANY_TLPN: this.info_company.telepon,

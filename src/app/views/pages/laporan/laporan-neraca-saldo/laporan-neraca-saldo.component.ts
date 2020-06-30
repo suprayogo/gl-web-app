@@ -336,6 +336,8 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       if (p['id_periode'] !== undefined) {
         p['kode_perusahaan'] = this.kode_perusahaan
         p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+        p['kode_cabang'] = this.formValueNS['kode_cabang'] === "" ? undefined : this.formValueNS['kode_cabang']
+        p['id_akun'] = this.formValueNS['id_akun'] === "" ? undefined : this.formValueNS['id_akun']
         this.request.apiData('report', 'g-data-neraca-saldo', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -361,7 +363,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
               rp['REPORT_FORMAT_CODE'] = this.formValueNS['format_laporan']
               rp['JASPER_FILE'] = 'rptNeracaSaldo.jasper'
               rp['REPORT_PARAMETERS'] = {
-                USER_NAME: "",
+                USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
                 REPORT_COMPANY_ADDRESS: this.info_company.alamat,
                 REPORT_COMPANY_CITY: this.info_company.kota,
                 REPORT_COMPANY_TLPN: this.info_company.telepon,

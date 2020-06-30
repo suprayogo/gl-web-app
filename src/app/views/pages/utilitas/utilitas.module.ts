@@ -16,6 +16,7 @@ import { SharedModule } from '../shared.module';
 import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsService } from '../../../core/_base/crud';
 // Shared
 import { ActionNotificationComponent } from '../../partials/content/crud';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 // Material
 import {
@@ -89,7 +90,8 @@ const routes: Routes = [
     MatExpansionModule,
     MatTabsModule,
     MatTooltipModule,
-    MatDialogModule
+    MatDialogModule,
+    NgxDropzoneModule
   ],
   providers: [
     InterceptService,

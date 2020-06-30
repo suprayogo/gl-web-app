@@ -17,19 +17,25 @@ import { ConfirmationdialogComponent } from '../../components/confirmationdialog
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Jurnal Umum'
+  beforeCodeTitle: 'Jurnal Umum Tutup Sementara'
 }
 
 @Component({
-  selector: 'kt-jurnal',
-  templateUrl: './jurnal.component.html',
-  styleUrls: ['./jurnal.component.scss', '../transaksi.style.scss']
+  selector: 'kt-jurnal-umum-tutup-sementara',
+  templateUrl: './jurnal-umum-tutup-sementara.component.html',
+  styleUrls: ['./jurnal-umum-tutup-sementara.component.scss', '../transaksi.style.scss']
 })
-export class JurnalComponent implements OnInit, AfterViewInit {
-
+export class JurnalUmumTutupSementaraComponent implements OnInit {
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
+
+  daftar_periode = [
+    {
+      label: '',
+      value: ''
+    }
+  ]
 
   // VARIABLES
   keyReportFormatExcel: any;
@@ -52,11 +58,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   subPeriode: any;
   subPeriodeAktif: any;
   kode_perusahaan: any;
-  periode_akses: any = {
-    id_periode: '',
-    tahun_periode: '',
-    bulan_periode: ''
-  };
+  periode_akses: any = [];
   periode_aktif: any = {
     id_periode: '',
     tahun_periode: '',
@@ -140,7 +142,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     id_tran: '',
     id_akses_periode: '',
     no_tran: '',
-    tgl_tran: JSON.stringify(this.getDateNow()),
+    tgl_tran: '',
     kode_cabang: '',
     nama_cabang: '',
     keterangan: ''
@@ -180,12 +182,12 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   ]
 
   formDetail = {
-   format_cetak: 'pdf'
+    format_cetak: 'pdf'
   }
 
   detailInputLayout = [
     {
-      
+
       formWidth: 'col-5',
       label: 'Format Cetak',
       id: 'format-cetak',
@@ -366,6 +368,18 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   inputLayout = [
     {
       formWidth: 'col-5',
+      label: 'Periode Akses',
+      id: 'periode-akses',
+      type: 'combobox',
+      options: this.daftar_periode,
+      valueOf: 'id_periode_akses',
+      required: true,
+      readOnly: false,
+      disabled: true,
+      onSelectFunc: (v) => this.setPeriode(v)
+    },
+    {
+      formWidth: 'col-5',
       label: 'No. Jurnal',
       id: 'nomor-jurnal',
       type: 'input',
@@ -427,66 +441,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         disabled: false
       }
     },
-    // {
-    //   formWidth: 'col-5',
-    //   label: 'Divisi',
-    //   id: 'kode-divisi',
-    //   type: 'inputgroup',
-    //   click: (type) => this.openDialog(type),
-    //   btnLabel: '',
-    //   btnIcon: 'flaticon-search',
-    //   browseType: 'kode_divisi',
-    //   valueOf: 'kode_divisi',
-    //   required: false,
-    //   readOnly: false,
-    //   inputInfo: {
-    //     id: 'nama-divisi',
-    //     disabled: false,
-    //     readOnly: true,
-    //     required: false,
-    //     valueOf: 'nama_divisi'
-    //   },
-    //   blurOption: {
-    //     ind: 'kode_divisi',
-    //     data: [],
-    //     valueOf: ['kode_divisi', 'nama_divisi'],
-    //     onFound: () => /* {
-    //       this.updateInputdata(this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])), 'kode_departemen')
-    //     } */null
-    //   },
-    //   update: {
-    //     disabled: false
-    //   }
-    // },
-    // {
-    //   formWidth: 'col-5',
-    //   label: 'Departemen',
-    //   id: 'kode-departemen',
-    //   type: 'inputgroup',
-    //   click: (type) => this.openDialog(type),
-    //   btnLabel: '',
-    //   btnIcon: 'flaticon-search',
-    //   browseType: 'kode_departemen',
-    //   valueOf: 'kode_departemen',
-    //   required: false,
-    //   readOnly: false,
-    //   inputInfo: {
-    //     id: 'nama-departemen',
-    //     disabled: false,
-    //     readOnly: true,
-    //     required: false,
-    //     valueOf: 'nama_departemen'
-    //   },
-    //   blurOption: {
-    //     ind: 'kode_departemen',
-    //     data: [],
-    //     valueOf: ['kode_departemen', 'nama_departemen'],
-    //     onFound: null
-    //   },
-    //   update: {
-    //     disabled: false
-    //   }
-    // },
     {
       formWidth: 'col-5',
       label: 'Keterangan',
@@ -513,19 +467,9 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    // if (this.gbl.getPeriodeState() === "pk") {
-    //   window.parent.postMessage({
-    //     'type': 'UPDATE-PERIODE'
-    //   }, "*")
-    //   this.gbl.setPeriodeState("p")
-    // }
     this.gbl.need(true, true)
     this.namaTombolPrintDoc = "Cetak Transaksi"
-    // this.reqKodePerusahaan()
-    // this.reqIdPeriode()
-    // this.reqIdPeriodeAktif()
     this.reqActivePeriod()
-    // this.madeRequest()
   }
 
   ngAfterViewInit(): void {
@@ -563,23 +507,75 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            this.formValue.id_akses_periode = this.periode_aktif['id_periode']
-            // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
-            // this.gbl.getIdPeriodeAktif()
-            // this.gbl.getTahunPeriodeAktif()
-            // this.gbl.getBulanPeriodeAktif()
-            // this.periode_aktif = this.gbl.getActive()
-            // if (this.periode_akses.id_periode !== this.periode_aktif.id_periode) {
-            //   this.disableSubmit = true
-            // } else {
-            //   this.disableSubmit = false
-            // }
-            if (this.periode_aktif.aktif !== "1") {
+            this.periode_aktif = data['RESULT'].filter(x => x.tutup_sementara === '1')[0] || {}
+            this.periode_akses = data['RESULT']
+            let periode = data['RESULT'].filter(x => x.tutup_sementara === '1'), dp = []
+
+            if (periode.length < 1) {
+              this.loading = false
               this.disableSubmit = true
-            } else {
-              this.disableSubmit = false
+              this.ref.markForCheck()
+              this.openSnackBar('Tidak ada periode tutup sementara.', 'info')
+              return 
             }
+
+            for (var i = 0; i < periode.length; i++) {
+              let t = {
+                label: this.gbl.getNamaBulan(periode[i]['bulan_periode']) + " " + periode[i]['tahun_periode'],
+                value: periode[i]['id_periode']
+              }
+              dp.push(t)
+            }
+            this.daftar_periode = dp
+            this.formValue.id_akses_periode = this.periode_aktif['id_periode'] === undefined ? '' : this.periode_aktif['id_periode']
+            if (this.daftar_periode.length < 2) {
+              this.inputLayout.splice(0, 1, {
+                formWidth: 'col-5',
+                label: 'Periode Tutup Sementara',
+                id: 'periode-akses',
+                type: 'combobox',
+                options: this.daftar_periode,
+                valueOf: 'id_akses_periode',
+                required: true,
+                readOnly: false,
+                disabled: true,
+                onSelectFunc: (v) => this.setPeriode(v)
+              })
+            } else {
+              this.inputLayout.splice(0, 1, {
+                formWidth: 'col-5',
+                label: 'Periode Tutup Sementara',
+                id: 'periode-akses',
+                type: 'combobox',
+                options: this.daftar_periode,
+                valueOf: 'id_akses_periode',
+                required: true,
+                readOnly: false,
+                disabled: false,
+                onSelectFunc: (v) => this.setPeriode(v)
+              })
+            }
+            this.inputLayout.splice(2, 1, {
+              formWidth: 'col-5',
+              label: 'Tgl. Jurnal',
+              id: 'tgl-jurnal',
+              type: 'datepicker',
+              valueOf: 'tgl_tran',
+              required: true,
+              readOnly: false,
+              update: {
+                disabled: false
+              },
+              timepick: false,
+              enableMin: true,
+              enableMax: true,
+              minMaxDate: () => {
+                return {
+                  y: this.periode_aktif['tahun_periode'],
+                  m: this.periode_aktif['bulan_periode']
+                }
+              }
+            })
             this.madeRequest()
             this.ref.markForCheck()
           } else {
@@ -615,7 +611,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
-    if(this.onUpdate === true){
+    if (this.onUpdate === true) {
       this.disablePrintButton = false
     }
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
@@ -689,6 +685,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.ref.markForCheck()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput.getData()
+      console.log(this.formValue)
       let data = []
 
       for (var i = 0 ; i < this.detailData.length; i++) {
@@ -907,7 +904,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   resetDetailForm() {
     this.formDetail = {
-     format_cetak: 'pdf'
+      format_cetak: 'pdf'
     }
   }
 
@@ -956,16 +953,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   // Dialog
   openDialog(type) {
-    // if (type === 'kode_departemen') {
-    //   if (this.forminput.getData()['kode_divisi'] === "" || this.forminput.getData()['nama_divisi'] === "") {
-    //     this.openSnackBar('Pilih divisi dahulu.', 'info', () => {
-    //       setTimeout(() => {
-    //         this.openDialog('kode_divisi')
-    //       }, 250)
-    //     })
-    //     return
-    //   }
-    // }
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
@@ -1066,16 +1053,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             readOnly: true,
             disabled: true,
           },
-          // {
-          //   label: 'Tanggal Transaksi',
-          //   id: 'tanggal-transaksi',
-          //   type: 'input',
-          //   valueOf: this.formValue.tgl_tran,
-          //   changeOn: null,
-          //   required: false,
-          //   readOnly: true,
-          //   disabled: true,
-          // },
           {
             label: 'Alasan Batal',
             id: 'alasan-batal',
@@ -1292,5 +1269,41 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     let date = new Date(data)
 
     return JSON.stringify(date.getTime())
+  }
+
+  // Additional
+  setPeriode(v) {
+    if (v !== this.formValue.id_akses_periode) {
+      this.browseNeedUpdate = true
+      this.formValue.id_akses_periode = v
+    }
+    for (var i = 0; i < this.periode_akses.length; i++) {
+      if (v === this.periode_akses[i]['id_periode']) {
+        this.periode_aktif = this.periode_akses[i]
+        this.inputLayout.splice(2, 1, {
+          formWidth: 'col-5',
+          label: 'Tgl. Jurnal',
+          id: 'tgl-jurnal',
+          type: 'datepicker',
+          valueOf: 'tgl_tran',
+          required: true,
+          readOnly: false,
+          update: {
+            disabled: false
+          },
+          timepick: false,
+          enableMin: true,
+          enableMax: true,
+          minMaxDate: () => {
+            return {
+              y: this.periode_aktif['tahun_periode'],
+              m: this.periode_aktif['bulan_periode']
+            }
+          }
+        })
+        this.ref.markForCheck()
+        break
+      }
+    }
   }
 }
