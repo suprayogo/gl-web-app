@@ -338,8 +338,6 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         this.request.apiData('report', 'g-data-neraca-saldo', p).subscribe(
           data => {
-            console.clear()
-            console.log(data)
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
               for (var i = 0; i < d.length; i++) {
@@ -349,6 +347,9 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
                 t.push(d[i]['nama_akun'])
                 t.push(parseFloat(d[i]['debet']))
                 t.push(parseFloat(d[i]['kredit']))
+                t.push(parseFloat(d[i]['total_debit']))
+                t.push(parseFloat(d[i]['total_kredit']))
+                t.push(d[i]['kode_induk_akun'])
 
                 res.push(t)
               }
@@ -370,19 +371,28 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
                 "Kode Akun",
                 "Nama Akun",
                 "Nilai Debit",
-                "Nilai Kredit"
+                "Nilai Kredit",
+                "Total Debit",
+                "Total Kredit",
+                "Kode Induk Akun"
               ]
               rp['FIELD_NAME'] = [
                 "kodeAkun",
                 "namaAkun",
                 "nilaiDebit",
-                "nilaiKredit"
+                "nilaiKredit",
+                "totalDebit",
+                "totalKredit",
+                "kodeIndukAkun"
               ]
               rp['FIELD_TYPE'] = [
                 "string",
                 "string",
                 "bigdecimal",
-                "bigdecimal"
+                "bigdecimal",
+                "bigdecimal",
+                "bigdecimal",
+                "string"
               ]
               rp['FIELD_DATA'] = res
               p['bulan_periode'] = +p['bulan_periode']

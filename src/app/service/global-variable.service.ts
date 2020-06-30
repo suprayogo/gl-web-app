@@ -200,29 +200,29 @@ export class GlobalVariableService {
 
   getNamaBulan(m) {
     let n = "" // NAMA BULAN
-    if (m === '1' || m === '01') {
+    if (m === '1' || m === '01' || m == 1) {
       n = 'Januari'
-    } else if (m === '2' || m === '02') {
+    } else if (m === '2' || m === '02' || m == 2) {
       n = 'Februari'
-    } else if (m === '3' || m === '03') {
+    } else if (m === '3' || m === '03' || m == 3) {
       n = 'Maret'
-    } else if (m === '4'|| m === '04') {
+    } else if (m === '4'|| m === '04' || m == 4) {
       n = 'April'
-    } else if (m === '5' || m === '05') {
+    } else if (m === '5' || m === '05' || m == 5) {
       n = 'Mei'
-    } else if (m === '6' || m === '06') {
+    } else if (m === '6' || m === '06' || m == 6) {
       n = 'Juni'
-    } else if (m === '7' || m === '07') {
+    } else if (m === '7' || m === '07' || m == 7) {
       n = 'Juli'
-    } else if (m === '8' || m === '08') {
+    } else if (m === '8' || m === '08' || m == 8) {
       n = 'Agustus'
-    } else if (m === '9' || m === '09') {
+    } else if (m === '9' || m === '09' || m == 9) {
       n = 'September'
-    } else if (m === '10') {
+    } else if (m === '10' || m == 10) {
       n = 'Oktober'
-    } else if (m === '11') {
+    } else if (m === '11' || m == 11) {
       n = 'November'
-    } else if (m === '12') {
+    } else if (m === '12' || m == 12) {
       n = 'Desember'
     }
     return n;

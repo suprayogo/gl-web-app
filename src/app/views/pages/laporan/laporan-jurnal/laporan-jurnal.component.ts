@@ -318,10 +318,10 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmitJL(inputForm: NgForm) {
-    this.loading = true
-    this.ref.markForCheck()
     if (this.forminputJL !== undefined) {
       this.formValueJL = this.forminputJL.getData()
+      this.loading = true
+      this.ref.markForCheck()
       let p = {}
       for (var i = 0; i < this.submitPeriodeData.length; i++) {
         if (this.formValueJL.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.submitPeriodeData[i]['tahun_periode']) {

@@ -30,6 +30,13 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
+  
+  daftar_periode = [
+    {
+      label: '',
+      value: ''
+    }
+  ]
 
   // VARIABLES
   keyReportFormatExcel: any;
@@ -131,6 +138,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   // Input Name
   formValue = {
     id_tran: '',
+    id_akses_periode: '',
     no_tran: '',
     tgl_tran: JSON.stringify(this.getDateNow()),
     kode_cabang: '',
@@ -356,6 +364,17 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   // Layout Form
   inputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Periode Akses',
+      id: 'periode-akses',
+      type: 'combobox',
+      options: this.daftar_periode,
+      valueOf: 'id_periode_akses',
+      required: true,
+      readOnly: false,
+      disabled: true,
+    },
     {
       formWidth: 'col-5',
       label: 'No. Jurnal',
@@ -602,6 +621,41 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
+            let periode = data['RESULT'].filter(x => x.aktif === '1' || x.tutup_sementara === '1'), dp = []
+            for (var i = 0; i < periode.length; i++) {
+              let t = {
+                label: this.gbl.getNamaBulan(periode[i]['bulan_periode']) + " " + periode[i]['tahun_periode'] + (periode[i]['aktif'] === '1' ? ' (Periode Aktif)' : ''),
+                value: periode[i]['id_periode']
+              }
+              dp.push(t)
+            }
+            this.daftar_periode = dp
+            this.formValue.id_akses_periode = this.periode_aktif['id_periode']
+            if (this.daftar_periode.length < 2) {
+              this.inputLayout.splice(0, 1, {
+                formWidth: 'col-5',
+                label: 'Periode Akses',
+                id: 'periode-akses',
+                type: 'combobox',
+                options: this.daftar_periode,
+                valueOf: 'id_akses_periode',
+                required: true,
+                readOnly: false,
+                disabled: true,
+              })
+            } else {
+              this.inputLayout.splice(0, 1, {
+                formWidth: 'col-5',
+                label: 'Periode Akses',
+                id: 'periode-akses',
+                type: 'combobox',
+                options: this.daftar_periode,
+                valueOf: 'id_akses_periode',
+                required: true,
+                readOnly: false,
+                disabled: false,
+              })
+            }
             // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             // this.gbl.getIdPeriodeAktif()
             // this.gbl.getTahunPeriodeAktif()
@@ -640,6 +694,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.formValue = {
       id_tran: x['id_tran'],
       no_tran: x['no_tran'],
+      id_akses_periode: x['id_periode'],
       tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
@@ -677,7 +732,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }))}` : this.formValue.id_tran
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_akses['id_periode'] }, this.formValue)
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.formValue['id_akses_periode'] }, this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -924,6 +979,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       id_tran: '',
       no_tran: '',
       tgl_tran: JSON.stringify(this.getDateNow()),
+      id_akses_periode: '',
       kode_cabang: '',
       nama_cabang: '',
       keterangan: ''
@@ -1247,7 +1303,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.formValue.id_akses_periode }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {
