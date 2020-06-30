@@ -33,6 +33,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   noSaveButton: boolean = true;
   noCancel: boolean = true;
   loading: boolean = true;
+  tableLoad: boolean = true;
   content: any;
   detailLoad: boolean = false;
   detailJurnalLoad: boolean = false;
@@ -72,7 +73,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     nama_departemen: '',
     keterangan: '',
   }
-  
+
   inputPeriodeDisplayColumns = [
     {
       label: 'Bulan Periode',
@@ -105,7 +106,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       browseType: 'periode',
       valueOf: 'bulan_periode',
       required: false,
-      readOnly: false,
+      readOnly: true,
       inputInfo: {
         id: 'tahun_periode',
         disabled: false,
@@ -306,10 +307,12 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.inputPeriodeData = data['RESULT']
             this.loading = false
+            this.tableLoad = false
             this.ref.markForCheck()
           } else {
             this.openSnackBar('Gagal mendapatkan data periode. Mohon coba lagi nanti.', 'fail')
             this.loading = false
+            this.tableLoad = false
             this.ref.markForCheck()
           }
         }
@@ -319,16 +322,16 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
   sendReqPeriodeJurnal(id_periode) {
-    this.loading = true
+    this.tableLoad = true
     this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.browseData = data['RESULT']
-          this.loading = false
+          this.tableLoad = false
           this.ref.markForCheck()
         } else {
           this.openSnackBar('Gagal mendapatkan data. Mohon coba lagi nanti.', 'fail')
-          this.loading = false
+          this.tableLoad = false
           this.ref.markForCheck()
         }
       }
@@ -372,7 +375,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   openDialog(type) {
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: 'auto',
+      width: '50vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -398,15 +401,21 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (type === "periode") {
-          if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('bulan_periode', result.bulan_periode)
-            this.forminput.updateFormValue('nama_periode', result.nama_periode)
-            this.sendReqPeriodeJurnal(result.id_periode)
+          var nama_bulan = result.bulan_periode.toString()
+          nama_bulan = this.gbl.getNamaBulan(nama_bulan)
+          if (this.forminput.getData()['bulan_periode'] !== nama_bulan) {
+            this.forminput.updateFormValue('id_periode', result.id_periode)
+            this.forminput.updateFormValue('bulan_periode', nama_bulan)
+            this.forminput.updateFormValue('tahun_periode', result.tahun_periode)
+            // this.forminput.updateFormValue('kode_cabang', this.forminput.getData()['kode_cabang'] === undefined ? "" : this.forminput.getData()['kode_cabang'])
+            // this.forminput.updateFormValue('nama_cabang', this.forminput.getData().nama_cabang === undefined ? "" : this.forminput.getData()['nama_cabang'])
+            this.sendReqPeriodeJurnal(result.id_periode/*,  this.forminput.getData()['kode_cabang'] === undefined ? "" : this.forminput.getData()['kode_cabang'] */)
           }
         }
       }
       this.dialogRef = undefined
       this.dialogType = null
+      this.ref.markForCheck()
     }
     );
   }
