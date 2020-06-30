@@ -285,7 +285,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         p['kode_perusahaan'] = this.kode_perusahaan
         p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
         p['kode_cabang'] = this.formValueLR['kode_cabang'] === "" ? undefined : this.formValueLR['kode_cabang']
-        p['id_akun'] = this.formValueLR['id_akun'] === "" ? undefined : this.formValueLR['id_akun']
         this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
