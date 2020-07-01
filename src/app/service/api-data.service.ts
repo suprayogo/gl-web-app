@@ -26,6 +26,7 @@ import { UserRequestService } from './management/user/user-request.service';
 import { ReportRequestService } from './master/report/report-request.service';
 import { KasirRequestService } from './master/kasir/kasir-request.service';
 import { PengajuanBukaPeriodeKasirRequestService } from './transaksi/pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir-request.service';
+import { UtilitasRequestService } from './master/utilitas/utilitas-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,7 @@ export class ApiDataService {
     private settingLinkReq: SettingLinkRequestService,
     private reportReq: ReportRequestService,
     private kasirReq: KasirRequestService,
+    private utilitasReq: UtilitasRequestService,
 
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -89,6 +91,8 @@ export class ApiDataService {
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
     this.jurnalOtomatisReq.url = this.baseURL
+    this.utilitasReq.url = this.baseURL
+
 
     //Transaksi Services
     this.jurnalReq.url = this.baseURL
@@ -136,6 +140,8 @@ export class ApiDataService {
       return this.reportReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'kasir') {
       return this.kasirReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'utilitas') {
+      return this.utilitasReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services 

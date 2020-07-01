@@ -11,12 +11,14 @@
   
         <kt-portlet-body>
           <div class="kt-section">
-            <ngx-dropzone (change)="onFileDropped($event)" [accept]="'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
+            <ngx-dropzone (change)="onFileDropped($event)" [multiple]="false" [accept]="'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
                 <ngx-dropzone-label>Tarik atau tekan untuk mengunggah tautan.</ngx-dropzone-label>
                 <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onFileRemoved(f)">
                     <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
                 </ngx-dropzone-preview>
             </ngx-dropzone>
+
+            <button type="submit" class="btn btn-brand" style="margin-top: 15px;" (click)="importExcelFile()">Upload Data</button>
           </div>
         </kt-portlet-body>
         

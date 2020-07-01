@@ -149,6 +149,13 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     FIELD_DATA: []
   }
 
+  // INFO PERUSAHAAN
+  info_company = {
+    alamat: '',
+    kota: '',
+    telepon: ''
+  }
+
   // Input Name
   formValue = {
     id_tran: '',
@@ -766,106 +773,72 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     this.ref.markForCheck()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput.getData()
-      let p = {}
-      p['kode_perusahaan'] = this.kode_perusahaan
-      p['kode_cabang'] = this.formValue['kode_cabang']
-      p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
-      p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
-      this.request.apiData('report', 'g-data-rekapitulasi-kas', p).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            let d = data['RESULT'], res = []
-            for (var i = 0; i < d.length; i++) {
-              let t = []
+      let data = []
+      
+      for (var i = 0 ; i < this.detailData.length; i++) {
+        let t = []
+        t.push(this.formValue['no_jurnal'])
+        t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
+        t.push(this.formValue.keterangan)
+        t.push(this.formValue.nama_cabang)
+        t.push(this.detailData[i]['kode_akun'])
+        t.push(this.detailData[i]['nama_akun'])
+        t.push(this.detailData[i]['saldo_debit'])
+        t.push(this.detailData[i]['saldo_kredit'])
 
-              if (d[i]['id_tran'] !== '') {
-                t.push(d[i]['kode_cabang'])
-                t.push(d[i]['nama_cabang'])
-                t.push(d[i]['id_kasir'])
-                t.push(d[i]['nama_kasir'])
-                t.push(d[i]['no_tran'])
-                t.push(d[i]['no_jurnal'])
-                t.push(new Date(d[i]['tgl_tran']).getTime())
-                t.push(d[i]['keterangan'])
-                t.push(parseFloat(d[i]['saldo_masuk']))
-                t.push(parseFloat(d[i]['saldo_keluar']))
-                t.push(parseFloat(d[i]['saldo_akhir']))
-                t.push(parseFloat(d[i]['saldo_awal']))
+        data.push(t)
+      }
 
-                res.push(t)
-              }
+      let rp = JSON.parse(JSON.stringify(this.reportObj))
+      rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+      rp['REPORT_CODE'] = 'DOK-TRAN-JURNAL'
+      rp['REPORT_NAME'] = 'Dokumen Transaksi Jurnal Umum'
+      rp['REPORT_FORMAT_CODE'] = v['format_cetak']
+      rp['JASPER_FILE'] = 'dokTransaksiJurnal.jasper'
+      rp['REPORT_PARAMETERS'] = {
+        USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+        REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+        REPORT_COMPANY_CITY: this.info_company.kota,
+        REPORT_COMPANY_TLPN: this.info_company.telepon,
+        REPORT_PERIODE: "Periode: " +
+          this.gbl.getNamaBulan(this.periode_jurnal['bulan_periode']) + " " +
+          this.periode_jurnal['tahun_periode']
+      }
 
-            }
+      rp['FIELD_TITLE'] = [
+        "No. Transaksi",
+        "Tgl. Transaksi",
+        "Keterangan",
+        "Nama Cabang",
+        "Kode Akun",
+        "Nama Akun",
+        "Saldo Debit",
+        "Saldo Kredit"
+      ]
+      rp['FIELD_NAME'] = [
+        "noTran",
+        "tglTran",
+        "keterangan",
+        "namaCabang",
+        "kodeAkun",
+        "namaAkun",
+        "nilaiDebit",
+        "nilaiKredit"
+      ]
+      rp['FIELD_TYPE'] = [
+        "string",
+        "date",
+        "string",
+        "string",
+        "string",
+        "string",
+        "bigdecimal",
+        "bigdecimal"
+      ]
+      rp['FIELD_DATA'] = data
 
-            let rp = JSON.parse(JSON.stringify(this.reportObj))
-            rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-            rp['REPORT_CODE'] = 'RPT-REKAPITULASI-KAS'
-            rp['REPORT_NAME'] = 'Laporan Rekapitulasi Kas'
-            rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
-            rp['JASPER_FILE'] = 'rptRekapitulasiKas.jasper'
-            rp['REPORT_PARAMETERS'] = {
-              USER_NAME: "",
-              REPORT_PERIODE: "Periode: " +
-                JSON.stringify(this.formValue['periode'][0]['year']) + " " +
-                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
-                (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
-                JSON.stringify(this.formValue['periode'][1]['year']) + " " +
-                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
-                (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+      this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
 
-            }
-            rp['FIELD_TITLE'] = [
-              "Kode Cabang",
-              "Nama Cabang",
-              "Id Kasir",
-              "Nama Kasir",
-              "No. Transaksi",
-              "No. Jurnal",
-              "Tgl. Transaksi",
-              "Keterangan",
-              "Saldo Masuk",
-              "Saldo Keluar",
-              "Saldo Akhir",
-              "Saldo Awal"
-            ]
-            rp['FIELD_NAME'] = [
-              "kodeCabang",
-              "namaCabang",
-              "idKasir",
-              "namaKasir",
-              "noTran",
-              "noJurnal",
-              "tglTran",
-              "keterangan",
-              "saldoMasuk",
-              "saldoKeluar",
-              "saldoAkhir",
-              "saldoAwal"
-            ]
-            rp['FIELD_TYPE'] = [
-              "string",
-              "string",
-              "string",
-              "string",
-              "string",
-              "string",
-              "date",
-              "string",
-              "bigdecimal",
-              "bigdecimal",
-              "bigdecimal",
-              "bigdecimal"
-            ]
-            rp['FIELD_DATA'] = res
-
-            this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
-          }
-        }
-      )
     }
   }
 
@@ -874,110 +847,85 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     this.ref.markForCheck()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput.getData()
-      let p = {}
-      p['kode_perusahaan'] = this.kode_perusahaan
-      p['kode_cabang'] = this.formValue['kode_cabang']
-      p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
-      p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
-      this.request.apiData('report', 'g-data-rekapitulasi-kas', p).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            let d = data['RESULT'], res = []
-            for (var i = 0; i < d.length; i++) {
-              let t = []
+      let data = []
 
-              if (d[i]['id_tran'] !== '') {
-                t.push(d[i]['kode_cabang'])
-                t.push(d[i]['nama_cabang'])
-                t.push(d[i]['id_kasir'])
-                t.push(d[i]['nama_kasir'])
-                t.push(d[i]['no_tran'])
-                t.push(d[i]['no_jurnal'])
-                t.push(new Date(d[i]['tgl_tran']).getTime())
-                t.push(d[i]['keterangan'])
-                t.push(parseFloat(d[i]['saldo_masuk']))
-                t.push(parseFloat(d[i]['saldo_keluar']))
-                t.push(parseFloat(d[i]['saldo_akhir']))
-                t.push(parseFloat(d[i]['saldo_awal']))
+      for (var i = 0; i < this.detailData.length; i++) {
+        let t = []
+        t.push(this.formValue['no_tran'])
+        t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
+        t.push(this.formValue.keterangan)
+        t.push(this.formValue.nama_cabang)
+        t.push(this.detailData[i]['kode_akun'])
+        t.push(this.detailData[i]['nama_akun'])
+        t.push(this.detailData[i]['saldo_debit'])
+        t.push(this.detailData[i]['saldo_kredit'])
+        t.push(this.detailData[i]['keterangan_1'])
+        t.push(this.formValue.saldo_transaksi)
 
-                res.push(t)
-              }
+        data.push(t)
 
-            }
+      }
 
-            let rp = JSON.parse(JSON.stringify(this.reportObj))
-            rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-            rp['REPORT_CODE'] = 'RPT-REKAPITULASI-KAS'
-            rp['REPORT_NAME'] = 'Laporan Rekapitulasi Kas'
-            rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
-            rp['JASPER_FILE'] = 'rptRekapitulasiKas.jasper'
-            rp['REPORT_PARAMETERS'] = {
-              USER_NAME: "",
-              REPORT_PERIODE: "Periode: " +
-                JSON.stringify(this.formValue['periode'][0]['year']) + " " +
-                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
-                (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
-                JSON.stringify(this.formValue['periode'][1]['year']) + " " +
-                this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
-                (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+      let rp = JSON.parse(JSON.stringify(this.reportObj))
+      let rt = (this.formValue.tipe_transaksi === '0' ? 'PEMASUKKAN' : 'PENGELUARAN') + " " + (this.formValue.tipe_laporan === 'k' ? 'KAS' : this.formValue.tipe_laporan === 'b' ? 'BANK' : this.formValue.tipe_laporan === 'g' ? 'GIRO' : 'KAS KECIL')
+      rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+      rp['REPORT_CODE'] = 'DOK-JURNAL-TRANSAKSI'
+      rp['REPORT_NAME'] = rt
+      rp['REPORT_FORMAT_CODE'] = v['format_cetak']
+      rp['JASPER_FILE'] = 'dokTransaksiJurnalTransaksi.jasper'
+      rp['REPORT_PARAMETERS'] = {
+        USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+        REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+        REPORT_COMPANY_CITY: this.info_company.kota,
+        REPORT_COMPANY_TLPN: this.info_company.telepon,
+        REPORT_PERIODE: "Periode: " +
+        this.gbl.getNamaBulan(this.periode_jurnal['bulan_periode']) + " " +
+        this.periode_jurnal['tahun_periode']
+      }
+      rp['FIELD_TITLE'] = [
+        "No. Transaksi",
+        "Tgl. Transaksi",
+        "Keterangan",
+        "Nama Cabang",
+        "Kode Akun",
+        "Nama Akun",
+        "Saldo Debit",
+        "Saldo Kredit",
+        "Keterangan Akun",
+        "Saldo Transaksi"
+      ]
+      rp['FIELD_NAME'] = [
+        "noTran",
+        "tglTran",
+        "keterangan",
+        "namaCabang",
+        "kodeAkun",
+        "namaAkun",
+        "nilaiDebit",
+        "nilaiKredit",
+        "keteranganAkun",
+        "saldoTransaksi"
+      ]
+      rp['FIELD_TYPE'] = [
+        "string",
+        "date",
+        "string",
+        "string",
+        "string",
+        "string",
+        "bigdecimal",
+        "bigdecimal",
+        "string",
+        "bigdecimal"
+      ]
+      rp['FIELD_DATA'] = data
 
-            }
-            rp['FIELD_TITLE'] = [
-              "Kode Cabang",
-              "Nama Cabang",
-              "Id Kasir",
-              "Nama Kasir",
-              "No. Transaksi",
-              "No. Jurnal",
-              "Tgl. Transaksi",
-              "Keterangan",
-              "Saldo Masuk",
-              "Saldo Keluar",
-              "Saldo Akhir",
-              "Saldo Awal"
-            ]
-            rp['FIELD_NAME'] = [
-              "kodeCabang",
-              "namaCabang",
-              "idKasir",
-              "namaKasir",
-              "noTran",
-              "noJurnal",
-              "tglTran",
-              "keterangan",
-              "saldoMasuk",
-              "saldoKeluar",
-              "saldoAkhir",
-              "saldoAwal"
-            ]
-            rp['FIELD_TYPE'] = [
-              "string",
-              "string",
-              "string",
-              "string",
-              "string",
-              "string",
-              "date",
-              "string",
-              "bigdecimal",
-              "bigdecimal",
-              "bigdecimal",
-              "bigdecimal"
-            ]
-            rp['FIELD_DATA'] = res
-
-            this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
-          }
-        }
-      )
+      this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
     }
   }
 
   sendGetPrintDoc(p, type) {
+    this.dialog.closeAll()
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -1364,6 +1312,26 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && !this.requestMade) {
       this.requestMade = true
+      this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            for (var i = 0; i < data['RESULT'].length; i++) {
+              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
+                this.info_company.alamat = data['RESULT'][i]['nilai1']
+              }
+              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
+                this.info_company.kota = data['RESULT'][i]['nilai1']
+              }
+              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
+                this.info_company.telepon = data['RESULT'][i]['nilai1']
+              }
+            }
+          } else {
+            this.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+          }
+        }
+      )
+
       this.request.apiData('cabang', 'g-cabang-akses').subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
