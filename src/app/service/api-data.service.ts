@@ -17,6 +17,7 @@ import { JenisTransaksiRequestService } from './master/jenis-transaksi/jenis-tra
 import { SettingLaporanRequestService } from './master/setting-laporan/setting-laporan-request.service';
 import { JurnalOtomatisRequestService } from './master/jurnal-otomatis/jurnal-otomatis-request.service';
 import { SettingLinkRequestService } from './master/setting-link/setting-link-request.service';
+import { WorklistRequestService } from './master/worklist/worklist-request.service';
 
 //Transaksi Services
 import { JurnalRequestService } from './transaksi/jurnal/jurnal-request.service';
@@ -57,6 +58,7 @@ export class ApiDataService {
     private settingLinkReq: SettingLinkRequestService,
     private reportReq: ReportRequestService,
     private kasirReq: KasirRequestService,
+    private worklistReq: WorklistRequestService,
 
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -85,6 +87,7 @@ export class ApiDataService {
     this.settingLinkReq.url = this.baseURL
     this.reportReq.url = this.baseURL
     this.kasirReq.url = this.baseURL
+    this.worklistReq.url = this.baseURL
 
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
@@ -136,6 +139,8 @@ export class ApiDataService {
       return this.reportReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'kasir') {
       return this.kasirReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'worklist') {
+      return this.worklistReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services 

@@ -265,7 +265,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.nama_tombol = 'Tarik Data'
-    this.gbl.need(true, false)
+    this.gbl.need(true, true)
     this.reqActivePeriod()
   }
 

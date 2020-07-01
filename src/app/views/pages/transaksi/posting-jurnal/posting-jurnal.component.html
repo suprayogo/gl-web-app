@@ -93,6 +93,34 @@
 
                 </mat-tab>
                 <!-- End of tab browse-->
+                <!-- Start of tab browse-->
+                <mat-tab label="">
+
+                    <!-- Tab Label -->
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Tutup Periode Sementara</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section" style="min-height: 200px;" *ngIf="loadTabTPS">
+                            <kt-loading></kt-loading>
+                        </div>
+                        <div class="kt-section" style="min-height: 200px;" *ngIf="!loadTabTPS">
+                            <kt-forminput #TPS [inputLayout]="inputLayoutTPS" [formValue]="formValueTPS"
+                                [namaTombol]="nama_tombolTPS" [buttonLayout]="buttonLayout"
+                                [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                                [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                                (onSubmit)="openCDialog('tutup_periode_sementara')" [onUpdate]="onUpdate"
+                                [enableDelete]="enableDelete" (deleteData)="openCDialog()"
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                [noCancel]="noCancel">
+                            </kt-forminput>
+                        </div>
+                    </kt-portlet-body>
+
+                </mat-tab>
+                <!-- End of tab browse-->
+
 
             </mat-tab-group>
             <!-- End of Tabs -->

@@ -56,7 +56,9 @@ export class InputdialogComponent implements OnInit {
   isDetail: boolean = false;
   editable: boolean = false;
   buttonName: any;
+  buttonName2: any;
   noButtonSave: boolean;
+  button2: boolean;
   title = false;
 
   //Detail loading variable
@@ -80,7 +82,9 @@ export class InputdialogComponent implements OnInit {
     this.jurnalData = this.parameter.jurnalData
     this.noEditJurnal = this.parameter.noEditJurnal
     this.buttonName = this.parameter.buttonName === undefined ? "Simpan" : this.parameter.buttonName
+    this.buttonName2 = this.parameter.buttonName2 === undefined ? "Simpan" : this.parameter.buttonName2
     this.noButtonSave = this.parameter.noButtonSave
+    this.button2 = this.parameter.button2
     this.formValue = this.parameter.formValue
     this.inputLayout = this.parameter.inputLayout
     this.buttonLayout = this.parameter.buttonLayout
@@ -126,6 +130,10 @@ export class InputdialogComponent implements OnInit {
   onDelete() {
     this.parameter.deleteData()
   }
+
+  /* rejectList() {
+    this.paramater.rejectData()
+  } */
 
   closeDialog(t?){
     if(this.comparison == true){

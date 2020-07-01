@@ -18,15 +18,15 @@ import { Router } from '@angular/router';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Jurnal Transaksi'
+  beforeCodeTitle: 'Jurnal Transaksi Periode Sementara'
 }
 
 @Component({
-  selector: 'kt-jurnal-transaksi',
-  templateUrl: './jurnal-transaksi.component.html',
-  styleUrls: ['./jurnal-transaksi.component.scss', '../transaksi.style.scss']
+  selector: 'kt-jurnal-transaksi-periode-sementara',
+  templateUrl: './jurnal-transaksi-periode-sementara.component.html',
+  styleUrls: ['./jurnal-transaksi-periode-sementara.component.scss', '../transaksi.style.scss']
 })
-export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
+export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -453,6 +453,35 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: false,
       disabled: true,
+      update: {
+        disabled: true
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tgl. Transaksi',
+      id: 'tgl-tran',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'tgl_tran',
+      valueOf: 'tgl_tran',
+      required: false,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => null
+      },
       update: {
         disabled: true
       }

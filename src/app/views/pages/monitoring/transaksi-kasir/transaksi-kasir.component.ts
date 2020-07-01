@@ -388,7 +388,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     // AKSES PERIODE
     // this.akses_periode
 
-    if (this.kode_perusahaan !== "" && this.access_period.id_periode !== "") {
+    if (this.kode_perusahaan !== "") {
       this.madeRequest()
     }
   }
@@ -497,8 +497,6 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
-    this.detailJurnalLoad = true
-    this.ref.markForCheck()
     this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -518,10 +516,11 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
             res.push(t)
           }
           this.detailData = res
+          this.formInputCheckChangesJurnal()
+          this.ref.markForCheck()
           this.inputDialog()
         } else {
           this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
-          this.detailJurnalLoad = false
           this.ref.markForCheck()
         }
       }
@@ -602,8 +601,6 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
 
   inputDialog() {
     this.gbl.topPage()
-    this.ref.markForCheck()
-    this.formInputCheckChangesJurnal()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -617,7 +614,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
         detailJurnal: true,
-        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false,
+        detailLoad: this.detailJurnalLoad,
         jurnalData: this.detailData,
         jurnalDataAkun: [],
         noEditJurnal: true,

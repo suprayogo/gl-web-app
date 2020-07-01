@@ -12,19 +12,19 @@ export class PengajuanBukaPeriodeKasirRequestService {
 
   validate(data, httpBody, options, formData?: Object) {
     if (data === 'g-pengajuan-buka') {
-      httpBody.respondCode = 'GET-PENGAJUAN-BUKA-PERIODE-KASIR'
+      httpBody.respondCode = 'GET-DATA-PENGAJUAN-BUKA-PERIODE-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
      } else if (data === 'g-detail-pengajuan-buka') {
-      httpBody.respondCode = 'GET-DETAIL-PENGAJUAN-BUKA-PERIODE-KASIR'
+      httpBody.respondCode = 'GET-DATA-DETAIL-PENGAJUAN-BUKA-PERIODE-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'i-pengajuan-buka') {
-      httpBody.respondCode = 'SET-PENGAJUAN-BUKA-PERIODE-KASIR'
+      httpBody.respondCode = 'SET-DATA-PENGAJUAN-BUKA-PERIODE-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'u-pengajuan-buka') {
-      httpBody.respondCode = 'UPT-PENGAJUAN-BUKA-PERIODE-KASIR'
+      httpBody.respondCode = 'UPT-DATA-PENGAJUAN-BUKA-PERIODE-KASIR'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }
