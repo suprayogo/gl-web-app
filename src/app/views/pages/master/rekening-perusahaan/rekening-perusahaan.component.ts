@@ -316,7 +316,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false)
+    this.gbl.need(true, true)
     this.reqKodePerusahaan()
     this.madeRequest()
   }

@@ -259,7 +259,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.nama_tombol = 'Lihat Laporan'
-    this.gbl.need(true, false)
+    this.gbl.need(true, true)
     this.madeRequest()
   }
 

@@ -30,6 +30,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild('TP', { static: false }) forminputTP;
+  @ViewChild('TPS', { static: false }) forminputTPS;
   @ViewChild('jbp', { static: false }) djbp;
   @ViewChild('rp', { static: false }) drp;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
@@ -46,6 +47,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   nama_tombolPJ: any;
   nama_tombolUP: any;
   nama_tombolTP: any;
+  nama_tombolTPS: any;
   onSub: boolean = false;
   detailLoad: boolean = false;
   enableDetail: boolean = false;
@@ -54,6 +56,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   editable: boolean = false;
   selectedTab: number = 0;
   loadTab: boolean = false;
+  loadTabTPS: boolean = false;
   onUpdate: boolean = false;
   enableDelete: boolean = false;
   browseNeedUpdate: boolean = true;
@@ -163,6 +166,29 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       }
     }
   ]
+
+  // CDialog Tutup Periode
+  c_buttonLayoutTPS = [
+    {
+      btnLabel: 'Tutup Periode Sementara',
+      btnClass: 'btn btn-primary',
+      btnClick: (e) => {
+        this.onSubmitTPS(e)
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tutup',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+
   c_labelLayoutTP = [
     {
       content: 'Yakin akan menutup periode ?',
@@ -174,7 +200,21 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  c_labelLayoutTPS = [
+    {
+      content: 'Yakin akan menutup periode sementara ?',
+      style: {
+        'color': 'red',
+        'font-size': '18px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
+
+
+
   c_inputLayoutTP = []
+  c_inputLayoutTPS = []
 
   // Input Name
   formDetail = {
@@ -342,6 +382,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     bulan_periode: '',
   }
 
+  // Input Name TUTUP PERIODE
+  formValueTPS = {
+    id_periode: '',
+    tahun_periode: '',
+    bulan_periode: '',
+  }
+
   // Layout Form POSTING JURNAL
   inputLayout = [
     {
@@ -408,6 +455,34 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  // Layout Form TUTUP PERIODE
+  inputLayoutTPS = [
+    {
+      formWidth: 'col-5',
+      label: 'Tahun',
+      id: 'tahun-periode',
+      type: 'input',
+      valueOf: 'tahun_periode',
+      required: false,
+      readOnly: true,
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Bulan',
+      id: 'bulan-periode',
+      type: 'input',
+      valueOf: 'bulan_periode',
+      required: false,
+      readOnly: true,
+      update: {
+        disabled: false
+      }
+    }
+  ]
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -420,7 +495,8 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.nama_tombolPJ = 'Posting'
     this.nama_tombolUP = 'Unposting'
     this.nama_tombolTP = 'Tutup Periode'
-    this.gbl.need(true, false)
+    this.nama_tombolTPS = 'Tutup Periode Sementara'
+    this.gbl.need(true, true)
     this.reqKodePerusahaan()
     // this.reqActivePeriod()
     // this.madeRequest()
@@ -458,6 +534,8 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
         if (this.selectedTab == 1 && this.browseNeedUpdate && this.kode_perusahaan !== "") {
           this.tabTP()
+        } else if (this.selectedTab == 2 && this.browseNeedUpdate && this.kode_perusahaan !== "") {
+          this.tabTPS()
         }
       }
     )
@@ -525,6 +603,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.loading = false
     setTimeout(() => {
       this.tabTP()
+      this.tabTPS()
     }, 1000)
     this.ref.markForCheck()
     this.sendRequestRiwayat()
@@ -608,6 +687,45 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     }
   }
 
+  tabTPS() {
+    this.loadTabTPS = true
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
+      this.formValueTPS = {
+        id_periode: this.periode_aktif.id_periode,
+        bulan_periode: this.periode_aktif.nama_bulan_periode,
+        tahun_periode: this.periode_aktif.tahun_periode
+      }
+      this.c_inputLayoutTPS = [
+        {
+          formWidth: 'col-5',
+          label: 'Tahun',
+          id: 'tahun-periode',
+          type: 'input',
+          valueOf: this.formValueTPS.tahun_periode,
+          required: false,
+          readOnly: true,
+          update: {
+            disabled: false
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Bulan',
+          id: 'bulan-periode',
+          type: 'input',
+          valueOf: this.formValueTPS.bulan_periode,
+          required: false,
+          readOnly: true,
+          update: {
+            disabled: false
+          }
+        }
+      ]
+      this.loadTabTPS = false
+      this.ref.markForCheck()
+    }
+  }
+
   openCDialog(type) { // Confirmation Dialog
     this.gbl.topPage()
     if (this.onSub === false) {
@@ -623,15 +741,18 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           buttonLayout:
             type === "posting_jurnal" ? this.c_buttonLayoutPJ :
               type === "tutup_periode" ? this.c_buttonLayoutTP :
-                {},
+                type === "tutup_periode_sementara" ? this.c_buttonLayoutTPS :
+                  {},
           labelLayout:
             type === "posting_jurnal" ? this.c_labelLayoutPJ :
               type === "tutup_periode" ? this.c_labelLayoutTP :
-                {},
+                type === "tutup_periode_sementara" ? this.c_labelLayoutTPS :
+                  {},
           inputLayout:
             type === "posting_jurnal" ? this.c_inputLayoutPJ :
               type === "tutup_periode" ? this.c_inputLayoutTP :
-                {},
+                type === "tutup_periode_sementara" ? this.c_inputLayoutTPS :
+                  {},
         },
         disableClose: true
       })
@@ -688,6 +809,12 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       this.djbp == undefined ? null : this.djbp.reset()
       this.drp == undefined ? null : this.drp.reset()
       this.tabTP()
+      this.formInputCheckChanges()
+    } else if (this.selectedTab == 2) {
+      this.resetForm()
+      this.djbp == undefined ? null : this.djbp.reset()
+      this.drp == undefined ? null : this.drp.reset()
+      this.tabTPS()
       this.formInputCheckChanges()
     }
 
@@ -783,7 +910,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
         detailJurnal: true,
-        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false ,
+        detailLoad: this.detailData === [] ? this.detailJurnalLoad : false,
         jurnalData: this.detailData,
         jurnalDataAkun: [],
         noEditJurnal: true,
@@ -936,6 +1063,39 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     )
   }
 
+  //Form submit
+  onSubmitTPS(inputForm: NgForm) {
+    this.dialog.closeAll()
+    this.gbl.topPage()
+    this.loading = true;
+    this.ref.markForCheck()
+    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValueTPS)
+    this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode-sementara', endRes).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          window.parent.postMessage({
+            'type': 'UPDATE-PERIODE'
+          }, "*")
+          this.resetForm()
+          this.browseNeedUpdate = true
+          this.loadTabTPS = true
+          this.ref.markForCheck()
+          this.openSnackBar("PERIODE TELAH DITUTUP SEMENTARA", 'success')
+          this.reqActivePeriod()
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.openSnackBar('GAGAL MELAKUKAN TUTUP PERIODE SEMENTARA', 'fail')
+        }
+      },
+      error => {
+        this.loading = false;
+        this.ref.markForCheck()
+        this.openSnackBar('GAGAL MELAKUKAN PROSES.')
+      }
+    )
+  }
+
   // Form Submit
   onSubmitUP(inputForm: NgForm) {
     this.dialog.closeAll()
@@ -1032,6 +1192,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
       this.forminputTP === undefined ? null : this.forminputTP.checkChanges()
+      this.forminputTPS === undefined ? null : this.forminputTPS.checkChanges()
       // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 10)
   }

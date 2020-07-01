@@ -61,6 +61,7 @@ import { PengaturanSaldoKasirComponent } from './pengaturan-saldo-kasir/pengatur
 import { KasirComponent } from './kasir/kasir.component';
 import { TemplateTransaksiComponent } from './template-transaksi/template-transaksi.component';
 import { PengajuanBukaPeriodeKasirComponent } from './pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir.component';
+import { WorklistComponent } from './worklist/worklist.component';
 
 
 const routes: Routes = [
@@ -115,6 +116,10 @@ const routes: Routes = [
 	{
 		path: 'pengajuan-buka-periode-kasir',
 		component: PengajuanBukaPeriodeKasirComponent,
+	},
+	{
+		path: 'worklist',
+		component: WorklistComponent,
 	}
 ];
 
@@ -189,6 +194,7 @@ const routes: Routes = [
 		KasirComponent,
 		TemplateTransaksiComponent,
 		PengajuanBukaPeriodeKasirComponent,
+		WorklistComponent,
 	]
 })
 export class MasterModule {}

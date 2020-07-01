@@ -15,15 +15,15 @@ import { ConfirmationdialogComponent } from '../../components/confirmationdialog
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Transaksi Jurnal'
+  beforeCodeTitle: 'Worklist'
 }
 
 @Component({
-  selector: 'kt-transaksi-jurnal',
-  templateUrl: './transaksi-jurnal.component.html',
-  styleUrls: ['./transaksi-jurnal.component.scss', '../monitoring.style.scss']
+  selector: 'kt-worklist',
+  templateUrl: './worklist.component.html',
+  styleUrls: ['./worklist.component.scss', '../master.style.scss']
 })
-export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
+export class WorklistComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -33,7 +33,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   noSaveButton: boolean = true;
   noCancel: boolean = true;
   loading: boolean = true;
-  tableLoad: boolean = true;
   content: any;
   detailLoad: boolean = false;
   detailJurnalLoad: boolean = false;
@@ -56,71 +55,30 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   subsAP: any;
   access_period: any;
 
-  // INPUT VALUE
-  formValue = {
-    id_periode: '',
-    bulan_periode: '',
-    tahun_periode: ''
-  }
-
   // INPUT VALUE DETAIL
   formDetail = {
+    nama_cabang: '',
     id_tran: '',
     no_tran: '',
     tgl_tran: '',
-    nama_cabang: '',
     nama_divisi: '',
     nama_departemen: '',
     keterangan: '',
   }
 
-  inputPeriodeDisplayColumns = [
-    {
-      label: 'Bulan Periode',
-      value: 'bulan_periode'
-    },
-    {
-      label: 'Tahun Periode',
-      value: 'tahun_periode'
-    }
-  ]
-  inputPeriodeInterface = {
-    id_periode: 'string',
-    bulan_periode: 'string',
-    tahun_periode: 'string'
-  }
-  inputPeriodeData = []
-  inputPeriodeDataRules = []
-
   detailData = []
 
-  inputLayout = [
+  detailInputLayout = [
     {
       formWidth: 'col-5',
-      label: 'Periode',
-      id: 'periode',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'periode',
-      valueOf: 'bulan_periode',
-      required: false,
+      label: 'Cabang',
+      id: 'nama-cabang',
+      type: 'input',
+      valueOf: 'nama_cabang',
+      required: true,
       readOnly: true,
-      inputInfo: {
-        id: 'tahun_periode',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'tahun_periode'
-      },
-      update: {
-        disabled: false
-      }
+      disabled: true
     },
-  ]
-
-  detailInputLayout = [
     {
       formWidth: 'col-5',
       label: 'No. Transaksi',
@@ -135,19 +93,9 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     {
       formWidth: 'col-5',
       label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
+      id: 'tgl-tran',
       type: 'input',
       valueOf: 'tgl_tran',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Cabang',
-      id: 'nama-cabang',
-      type: 'input',
-      valueOf: 'nama_cabang',
       required: true,
       readOnly: true,
       disabled: true
@@ -167,54 +115,24 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'No. Transaksi',
-      value: 'no_tran'
-    },
-    {
-      label: 'Tgl. Transaksi',
-      value: 'tgl_tran',
+      label: 'Tanggal',
+      value: 'tanggal',
       date: true
     },
     {
-      label: 'Cabang',
-      value: 'nama_cabang'
+      label: 'Nama Approval',
+      value: 'nama_wl'
     },
     {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
-    },
-    {
-      label: 'Keterangan',
+      label: 'Deskripsi',
       value: 'keterangan'
     },
     {
-      label: 'Diinput oleh',
-      value: 'nama_input_by',
-    },
-    {
-      label: 'Diinput tanggal',
-      value: 'input_dt',
-    },
-    {
-      label: 'Diupdate oleh',
-      value: 'nama_update_by'
-    },
-    {
-      label: 'Diupdate tanggal',
-      value: 'update_dt',
+      label: 'Dari User',
+      value: 'dari_user_name'
     }
   ];
   browseInterface = {
-    no_tran: 'string',
-    tgl_tran: 'string',
-    nama_cabang: 'string',
-    nama_divisi: 'string',
-    nama_departemen: 'string',
-    keterangan: 'string',
     //STATIC
     input_by: 'string',
     input_dt: 'string',
@@ -302,40 +220,20 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
 
   madeRequest() {
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('worklist', 'g-worklist', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.inputPeriodeData = data['RESULT']
+            this.browseData = data['RESULT']
             this.loading = false
-            this.tableLoad = false
             this.ref.markForCheck()
           } else {
             this.openSnackBar('Gagal mendapatkan data periode. Mohon coba lagi nanti.', 'fail')
             this.loading = false
-            this.tableLoad = false
             this.ref.markForCheck()
           }
         }
       )
     }
-  }
-
-  // REQUEST DATA FROM API (to : L.O.V or Table)
-  sendReqPeriodeJurnal(id_periode) {
-    this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.browseData = data['RESULT']
-          this.tableLoad = false
-          this.ref.markForCheck()
-        } else {
-          this.openSnackBar('Gagal mendapatkan data. Mohon coba lagi nanti.', 'fail')
-          this.tableLoad = false
-          this.ref.markForCheck()
-        }
-      }
-    )
   }
 
   getDetail() {
@@ -371,54 +269,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     )
   }
 
-  openDialog(type) {
-    this.dialogType = JSON.parse(JSON.stringify(type))
-    const dialogRef = this.dialog.open(DialogComponent, {
-      width: '50vw',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      data: {
-        type: type,
-        tableInterface:
-          type === "periode" ? this.inputPeriodeInterface :
-            {},
-        displayedColumns:
-          type === "periode" ? this.inputPeriodeDisplayColumns :
-            [],
-        tableData:
-          type === "periode" ? this.inputPeriodeData :
-            [],
-        tableRules:
-          type === "periode" ? this.inputPeriodeDataRules :
-            [],
-        formValue: this.formValue
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (type === "periode") {
-          var nama_bulan = result.bulan_periode.toString()
-          nama_bulan = this.gbl.getNamaBulan(nama_bulan)
-          if (this.forminput.getData()['bulan_periode'] !== nama_bulan) {
-            this.forminput.updateFormValue('id_periode', result.id_periode)
-            this.forminput.updateFormValue('bulan_periode', nama_bulan)
-            this.forminput.updateFormValue('tahun_periode', result.tahun_periode)
-            // this.forminput.updateFormValue('kode_cabang', this.forminput.getData()['kode_cabang'] === undefined ? "" : this.forminput.getData()['kode_cabang'])
-            // this.forminput.updateFormValue('nama_cabang', this.forminput.getData().nama_cabang === undefined ? "" : this.forminput.getData()['nama_cabang'])
-            this.sendReqPeriodeJurnal(result.id_periode/*,  this.forminput.getData()['kode_cabang'] === undefined ? "" : this.forminput.getData()['kode_cabang'] */)
-          }
-        }
-      }
-      this.dialogRef = undefined
-      this.dialogType = null
-      this.ref.markForCheck()
-    }
-    );
-  }
-
   inputDialog() {
     this.gbl.topPage()
     const dialogRef = this.dialog.open(InputdialogComponent, {
@@ -429,16 +279,19 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       backdropClass: 'bg-dialog',
       position: { top: '50px' },
       data: {
+        buttonName: 'Terima',
+        buttonName2: 'Tolak',
         width: '90vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
-        detailJurnal: true,
+        detailJurnal: false,
         detailLoad: this.detailJurnalLoad,
         jurnalData: this.detailData,
         jurnalDataAkun: [],
         noEditJurnal: true,
-        noButtonSave: true,
+        noButtonSave: false,
+        button2: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
         openDialog: (t) => null,
@@ -476,7 +329,8 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan'],
     }
-    this.getDetail()
+    this.inputDialog()
+    // this.getDetail()
   }
 
   openSnackBar(message, type?: any) {
@@ -512,3 +366,4 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   }
 
 }
+

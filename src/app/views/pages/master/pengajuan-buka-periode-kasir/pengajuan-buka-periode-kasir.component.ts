@@ -379,7 +379,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false) // <-- Need Perusahaan, Periode
+    this.gbl.need(true, true) // <-- Need Perusahaan, Periode
     this.madeRequest()
     this.reqKodePerusahaan()
   }

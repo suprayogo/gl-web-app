@@ -108,7 +108,7 @@ export class PengaturanSaldoKasirComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, false)
+    this.gbl.need(true, true)
     this.sub_perusahaan = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
