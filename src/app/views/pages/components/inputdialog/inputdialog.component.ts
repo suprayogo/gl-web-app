@@ -28,6 +28,7 @@ export class InputdialogComponent implements OnInit {
   openDialog: any;
   onSubmit: any;
   deleteData: any;
+  rejectData: any;
   customBtn: string = "";
   listAvailable: boolean = false;
   listForm: Object = {}
@@ -93,6 +94,7 @@ export class InputdialogComponent implements OnInit {
     this.openDialog = this.parameter.openDialog
     this.onSubmit = this.parameter.onSubmit
     this.deleteData = () => this.onDelete()
+    this.rejectData = () => this.rejectList()
     this.customBtn = this.parameter.customBtn
     this.listAvailable = this.parameter.listAvailable
     this.listForm = this.parameter.listForm
@@ -131,9 +133,9 @@ export class InputdialogComponent implements OnInit {
     this.parameter.deleteData()
   }
 
-  /* rejectList() {
-    this.paramater.rejectData()
-  } */
+  rejectList() {
+    this.parameter.rejectData()
+  }
 
   closeDialog(t?){
     if(this.comparison == true){

@@ -38,6 +38,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
   detailJurnalLoad: boolean = false;
   enableDetail: boolean = false;
   editable: boolean = false;
+  accReqData: boolean = false;
   selectedTab: number = 0;
   onUpdate: boolean = false;
   enableDelete: boolean = true;
@@ -57,13 +58,13 @@ export class WorklistComponent implements OnInit, AfterViewInit {
 
   // INPUT VALUE DETAIL
   formDetail = {
+    id: '',
     nama_cabang: '',
     id_tran: '',
     no_tran: '',
     tgl_tran: '',
-    nama_divisi: '',
-    nama_departemen: '',
     keterangan: '',
+    catatan_wl: ''
   }
 
   detailData = []
@@ -102,14 +103,24 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Keterangan',
+      label: 'Deskripsi',
       id: 'keterangan',
       type: 'input',
       valueOf: 'keterangan',
       required: false,
       readOnly: true,
       disabled: true
-    }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Catatan',
+      id: 'catatan-wl',
+      type: 'input',
+      valueOf: 'catatan_wl',
+      required: false,
+      readOnly: false,
+      disabled: false
+    },
   ]
 
   // TAB MENU BROWSE 
@@ -141,6 +152,23 @@ export class WorklistComponent implements OnInit, AfterViewInit {
   }
   browseData = []
   browseDataRules = []
+
+  selectableDisplayColumns = [
+    {
+      label: 'Tanggal Periode',
+      value: 'tgl_periode',
+      date: true
+    }
+  ];
+  selectableInterface = {
+    //STATIC
+    input_by: 'string',
+    input_dt: 'string',
+    update_by: 'string',
+    update_dt: 'string'
+  }
+  selectableData = []
+  selectableDataRules = []
 
   constructor(
     public dialog: MatDialog,
@@ -237,43 +265,64 @@ export class WorklistComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
-    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
+    this.request.apiData('pengajuan', 'g-pengajuan-buka', { kode_perusahaan: this.kode_perusahaan, no_tran: this.formDetail.no_tran }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
           for (var i = 0; i < resp.length; i++) {
             let t = {
-              id_akun: resp[i]['id_akun'],
-              kode_akun: resp[i]['kode_akun'],
-              nama_akun: resp[i]['nama_akun'],
-              keterangan_akun: resp[i]['keterangan_akun'],
-              kode_divisi: resp[i]['kode_divisi'],
-              nama_divisi: resp[i]['nama_divisi'],
-              kode_departemen: resp[i]['kode_departemen'],
-              nama_departemen: resp[i]['nama_departemen'],
-              keterangan: resp[i]['keterangan'],
-              saldo_debit: parseFloat(resp[i]['nilai_debit']),
-              saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
+              id_tran: resp[i]['id_tran'],
+              nama_cabang: resp[i]['nama_cabang'],
+              tgl_tran: resp[i]['tgl_tran'],
             }
             res.push(t)
           }
-          this.detailData = res
-          this.formInputCheckChangesJurnal()
+          this.formDetail.id_tran = res[0].id_tran
+          this.formDetail.nama_cabang = res[0].nama_cabang
+          this.formDetail.tgl_tran = res[0].tgl_tran
+          this.accReqData = true
           this.ref.markForCheck()
-          this.inputDialog()
+          this.getDetailTglPeriode()
         } else {
           this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
           this.ref.markForCheck()
         }
       }
     )
+    
+  }
+
+  getDetailTglPeriode(){
+    if (this.formDetail.id_tran !== '' && this.accReqData === true) {
+      this.request.apiData('pengajuan', 'g-detail-pengajuan-buka', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
+            for (var i = 0; i < resp.length; i++) {
+              let t = {
+                id_periode: resp[i]['id_periode'],
+                tgl_periode: resp[i]['tgl_periode'],
+                aktif: resp[i]['aktif']
+              }
+              res.push(t)
+            }
+            this.selectableData = res
+            this.ref.markForCheck()
+            this.inputDialog()
+          } else {
+            this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
+          }
+        }
+      )
+    }
   }
 
   inputDialog() {
     this.gbl.topPage()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
-      height: 'auto',
+      height: '70vh',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
@@ -285,19 +334,23 @@ export class WorklistComponent implements OnInit, AfterViewInit {
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
-        detailJurnal: false,
-        detailLoad: this.detailJurnalLoad,
-        jurnalData: this.detailData,
+        selectableDatatable: true,
+        lowLoader: false,
+        selectableDisplayColumns: this.selectableDisplayColumns,
+        selectableInterface: this.selectableInterface,
+        selectableData: this.selectableData,
+        selectableDataRules: this.selectableDataRules,
         jurnalDataAkun: [],
         noEditJurnal: true,
-        noButtonSave: false,
+        noButton: true,
         button2: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
         openDialog: (t) => null,
         resetForm: () => null,
-        // onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
-        deleteData: () => null
+        onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
+        deleteData: () => null,
+        rejectData: () => this.reject(this.formDetail)
       },
       disableClose: true
     });
@@ -308,6 +361,59 @@ export class WorklistComponent implements OnInit, AfterViewInit {
       },
       error => null,
     );
+  }
+
+  submitDetailData(formDetail){
+    this.dialog.closeAll()
+    this.loading = true
+    console.log('b')
+    let endRes = Object.assign(
+      {
+        kode_perusahaan: this.kode_perusahaan
+      },
+      formDetail
+    )
+    this.request.apiData('worklist', this.onUpdate ? '' : 'u-worklist', endRes).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.browseNeedUpdate = true
+          this.ref.markForCheck()
+          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL APPROVE")
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.gbl.openSnackBar(data['RESULT'], 'fail')
+        }
+      },
+      error => {
+        this.loading = false;
+        this.ref.markForCheck()
+        this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
+      }
+    )
+  }
+
+  reject(formDetail){
+    this.dialog.closeAll()
+    this.loading = true
+    this.request.apiData('worklist', this.onUpdate ? '' : 'u-worklist', formDetail).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.browseNeedUpdate = true
+          this.ref.markForCheck()
+          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL REJECT")
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.gbl.openSnackBar(data['RESULT'], 'fail')
+        }
+      },
+      error => {
+        this.loading = false;
+        this.ref.markForCheck()
+        this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
+      }
+    )
   }
 
   refreshBrowse(message) {
@@ -321,16 +427,15 @@ export class WorklistComponent implements OnInit, AfterViewInit {
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
     this.formDetail = {
+      id: x['id'],
       id_tran: x['id_tran'],
       no_tran: x['no_tran'],
       tgl_tran: x['tgl_tran'],
       nama_cabang: x['nama_cabang'],
-      nama_divisi: x['nama_divisi'],
-      nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan'],
+      catatan_wl: x['catatan_wl']
     }
-    this.inputDialog()
-    // this.getDetail()
+    this.getDetail()
   }
 
   openSnackBar(message, type?: any) {

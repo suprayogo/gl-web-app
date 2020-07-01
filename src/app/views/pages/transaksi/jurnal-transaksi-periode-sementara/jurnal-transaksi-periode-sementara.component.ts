@@ -452,7 +452,10 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
         ind: 'kode_cabang',
         data: [],
         valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: () => null
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.browseNeedUpdate = true
+        }
       },
       update: {
         disabled: true
@@ -495,7 +498,16 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       browseType: 'tgl_periode',
       valueOf: 'tgl_tran',
       required: false,
-      readOnly: false,
+      readOnly: true,
+      blurOption: {
+        ind: 'tgl_periode',
+        data: [],
+        valueOf: ['tgl_tran'],
+        onFound: () => {
+          this.formValue.tgl_tran = this.forminput.getData()['tgl_tran']
+          this.browseNeedUpdate = true
+        }
+      },
       update: {
         disabled: true
       }
@@ -1128,8 +1140,8 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       no_jurnal: '',
       no_tran: '',
       tgl_tran: '',
-      kode_cabang: this.formValue.kode_cabang,
-      nama_cabang: this.formValue.nama_cabang,
+      kode_cabang: '',
+      nama_cabang: '',
       id_jenis_transaksi: '',
       kode_jenis_transaksi: '',
       nilai_jenis_transaksi: '',
@@ -1169,6 +1181,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       }
     ]
     this.id_periode = ""
+    this.disableSubmit = true
     this.disablePrintButton = true
     this.disablePrintButton2 = true
     this.formInputCheckChanges()
@@ -1262,21 +1275,23 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-            let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['buka_kembali'] === '1')[0]
+            this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+            // let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['buka_kembali'] === '1')[0]
             this.inputTanggalData = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['buka_kembali'] === '1')
+            this.updateInputdata(this.daftar_periode_kasir, 'tgl_periode')
             // if (dt.getFullYear() == this.periode_jurnal['tahun_periode'] && (dt.getMonth() + 1) == this.periode_jurnal['bulan_periode']) {
-            this.periode_kasir = {
-              id_periode: lp['id_periode'],
-              tgl_periode: lp['tgl_periode']
-            }
-            this.browseNeedUpdate = true
-            this.disableSubmit = false
+            // this.periode_kasir = {
+            //   id_periode: lp['id_periode'],
+            //   tgl_periode: lp['tgl_periode']
+            // }
+            // this.browseNeedUpdate = true
             this.ref.markForCheck()
             // }
           }
         } else if (type === "tgl_periode") {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('tgl_tran', result.tgl_periode)
+            this.formValue.tgl_tran = this.forminput.getData()['tgl_tran']
             this.browseNeedUpdate = true
             this.disableSubmit = false
             this.ref.markForCheck()
@@ -1624,11 +1639,10 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
   }
 
   refreshBrowse(message) {
-    if (this.periode_kasir['tgl_periode'] !== '') {
-      this.formValue.tgl_tran = this.forminput.getData()['tgl_tran']
+    if (this.formValue.kode_cabang !== '') {
       if (this.formValue.tgl_tran !== '') {
         this.tableLoad = true
-        let tga = this.periode_kasir['tgl_periode'], tgk = new Date(this.periode_kasir['tgl_periode'])
+        // let tga = this.periode_kasir['tgl_periode'], tgk = new Date(this.periode_kasir['tgl_periode'])
         this.request.apiData(
           'jurnal',
           'g-jurnal-transaksi',
@@ -1640,7 +1654,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
           data => {
             if (data['STATUS'] === 'Y') {
               if (message !== '') {
-                this.browseData = data['RESULT']
+                this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
                 this.loading = false
                 this.tableLoad = false
                 this.browseNeedUpdate = false
@@ -1648,7 +1662,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
                 this.openSnackBar(message, 'success')
                 this.onUpdate = false
               } else {
-                this.browseData = data['RESULT']
+                this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
                 this.loading = false
                 this.tableLoad = false
                 this.browseNeedUpdate = false

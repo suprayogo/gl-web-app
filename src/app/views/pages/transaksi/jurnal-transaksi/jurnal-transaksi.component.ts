@@ -432,7 +432,10 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         ind: 'kode_cabang',
         data: [],
         valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: () => null
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.browseNeedUpdate = true
+        }
       },
       update: {
         disabled: true
@@ -677,7 +680,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     }
     this.id_periode = x['id_periode']
     this.onUpdate = true;
-    if(this.onUpdate === true){
+    if (this.onUpdate === true) {
       this.disablePrintButton = false
       this.disablePrintButton2 = false
     }
@@ -774,8 +777,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     if (this.forminput !== undefined) {
       this.formValue = this.forminput.getData()
       let data = []
-      
-      for (var i = 0 ; i < this.detailData.length; i++) {
+
+      for (var i = 0; i < this.detailData.length; i++) {
         let t = []
         t.push(this.formValue['no_jurnal'])
         t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
@@ -879,8 +882,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         REPORT_COMPANY_CITY: this.info_company.kota,
         REPORT_COMPANY_TLPN: this.info_company.telepon,
         REPORT_PERIODE: "Periode: " +
-        this.gbl.getNamaBulan(this.periode_jurnal['bulan_periode']) + " " +
-        this.periode_jurnal['tahun_periode']
+          this.gbl.getNamaBulan(this.periode_jurnal['bulan_periode']) + " " +
+          this.periode_jurnal['tahun_periode']
       }
       rp['FIELD_TITLE'] = [
         "No. Transaksi",
@@ -1033,8 +1036,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       no_jurnal: '',
       no_tran: '',
       tgl_tran: '',
-      kode_cabang: this.formValue.kode_cabang,
-      nama_cabang: this.formValue.nama_cabang,
+      kode_cabang: '',
+      nama_cabang: '',
       id_jenis_transaksi: '',
       kode_jenis_transaksi: '',
       nilai_jenis_transaksi: '',
@@ -1074,6 +1077,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       }
     ]
     this.id_periode = ""
+    this.disableSubmit = true
     this.disablePrintButton = true
     this.disablePrintButton2 = true
     this.formInputCheckChanges()
@@ -1082,7 +1086,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
   resetDetailForm() {
     this.formDetail = {
-     format_cetak: 'pdf'
+      format_cetak: 'pdf'
     }
   }
 
@@ -1163,6 +1167,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
             let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['aktif'] === '1')[0]
             let dt = new Date(lp['tgl_periode'])
             if (dt.getFullYear() == this.periode_jurnal['tahun_periode'] && (dt.getMonth() + 1) == this.periode_jurnal['bulan_periode']) {
@@ -1583,13 +1588,13 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         {
           kode_perusahaan: this.kode_perusahaan,
           tgl_periode_awal: tga,
-          tgl_periode_akhir: (JSON.stringify(tgk.getFullYear()) + "-" + (JSON.stringify(tgk.getMonth() + 1).length > 1 ? JSON.stringify(tgk.getMonth() + 1) : '0' + JSON.stringify(tgk.getMonth() + 1))  + "-" + JSON.stringify(tgk.getDate() + this.dayLimit))
+          tgl_periode_akhir: (JSON.stringify(tgk.getFullYear()) + "-" + (JSON.stringify(tgk.getMonth() + 1).length > 1 ? JSON.stringify(tgk.getMonth() + 1) : '0' + JSON.stringify(tgk.getMonth() + 1)) + "-" + JSON.stringify(tgk.getDate() + this.dayLimit))
         }
       ).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             if (message !== '') {
-              this.browseData = data['RESULT']
+              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
               this.loading = false
               this.tableLoad = false
               this.browseNeedUpdate = false
@@ -1597,7 +1602,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
               this.openSnackBar(message, 'success')
               this.onUpdate = false
             } else {
-              this.browseData = data['RESULT']
+              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
               this.loading = false
               this.tableLoad = false
               this.browseNeedUpdate = false

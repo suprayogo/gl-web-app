@@ -877,7 +877,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
           this.resetForm()
           this.browseNeedUpdate = true
           this.ref.markForCheck()
-          console.log(this.formValue.batal_status)
           this.refreshBrowse(this.onUpdate ? this.setBatal ? "BERHASIL DIBATALKAN" : "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
         } else {
           this.loading = false;
