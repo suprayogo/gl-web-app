@@ -288,10 +288,10 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
-        if (this.formValueNR['format_laporan'] === 'pdf') {
+        if (this.formValueAK['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
-          if (this.formValueNR['format_laporan'] === 'xlsx') {
+          if (this.formValueAK['format_laporan'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
             setTimeout(() => {
               let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
