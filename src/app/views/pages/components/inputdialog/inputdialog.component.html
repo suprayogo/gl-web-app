@@ -144,12 +144,11 @@
           <kt-datatable-ag-grid [tableColumn]="selectableDisplayColumns" [tableData]="selectableData"
             [tableRules]="selectableDataRules" [selectable]="selectableDatatable" [selected]="selected"
             [selectIndicator]="selectIndicator" [forceWithoutButton]="noButton"
-            (selectRowEvent)="browseSelectRow($event)" *ngIf="!isDetail"></kt-datatable-ag-grid>
+            (selectRowEvent)="browseSelectRow($event)" *ngIf="!isDetail" [containerHeight]=400></kt-datatable-ag-grid>
           <kt-detailinput-ag-grid [buttonLayout]="detailButtonLayout" [tableColumn]="selectableDisplayColumns"
             [tableData]="selected" [tableRules]="selectableDataRules" [editable]="editable"
             (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
             (selectRowEvent)="editDetailData($event)" *ngIf="isDetail"></kt-detailinput-ag-grid>
-          <hr>
         </div>
 
         <div class="kt-section" *ngIf="detailLoad && detailJurnal">
