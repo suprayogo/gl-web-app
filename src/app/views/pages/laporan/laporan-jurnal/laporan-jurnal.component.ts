@@ -326,11 +326,19 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         if (this.formValueJL['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
-          this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
-          setTimeout(() => {
-            let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-            sbmBtn.click();
-          }, 100)
+          if (this.formValueJL['format_laporan'] === 'xlsx') {
+            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
+            setTimeout(() => {
+              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+              sbmBtn.click();
+            }, 100)
+          } else {
+            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
+            setTimeout(() => {
+              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+              sbmBtn.click();
+            }, 100)
+          }
         }
         this.loading = false
         this.ref.markForCheck()
@@ -354,7 +362,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 let d = data['RESULT'], res = []
                 for (var i = 0; i < d.length; i++) {
                   let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran'].split("-")
-  
+
                   if (d[i]['kode_tran'] !== "SALDO-AWAL") {
                     t.push(d[i]['no_tran'])
                     t.push(new Date(d[i]['tgl_tran']).getTime())
@@ -362,11 +370,11 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                     t.push(d[i]['nama_akun'])
                     t.push(parseFloat(d[i]['nilai_debit']))
                     t.push(parseFloat(d[i]['nilai_kredit']))
-  
+
                     res.push(t)
                   }
                 }
-  
+
                 let rp = JSON.parse(JSON.stringify(this.reportObj))
                 rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
                 rp['REPORT_CODE'] = 'RPT-JURNAL'
@@ -406,10 +414,11 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 ]
                 rp['FIELD_DATA'] = res
                 p['bulan_periode'] = +p['bulan_periode']
-  
+
                 this.sendGetReport(rp, this.formValueJL['format_laporan'])
-  
+
               } else {
+                p['bulan_periode'] = +p['bulan_periode']
                 this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
                 this.distinctPeriode()
                 this.ref.markForCheck()
@@ -419,7 +428,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         }
       }
 
-      
+
     }
   }
 
@@ -596,21 +605,26 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
-          
+
           if (type === 'pdf') {
             window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
-          }
-          
-          if (type === 'xlsx') {
-            this.keyReportFormatExcel = this.checkKeyReport + '.xls'
-            setTimeout(() => {
-              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-              sbmBtn.click();
-            }, 100)
+          } else {
+            if (type === 'xlsx') {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            } else {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xls'
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
+            }
           }
           let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
           this.checkKeyReport[rk] = data['RESULT']
-
           this.distinctPeriode()
           this.ref.markForCheck()
         } else {

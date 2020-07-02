@@ -253,8 +253,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  checkPeriodReport = ""
-  checkKeyReport = ""
+  checkKeyReport = {}
 
   constructor(
     public dialog: MatDialog,
@@ -283,35 +282,43 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   }
 
   onSubmitAK(inputForm: NgForm) {
-    this.gbl.topPage()
-    this.loading = true
-    this.ref.markForCheck()
     if (this.forminputAK !== undefined) {
       this.formValueAK = this.forminputAK.getData()
-      let p = {}
-      for (var i = 0; i < this.submitPeriodeData.length; i++) {
-        if (this.formValueAK.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueAK.tahun === this.submitPeriodeData[i]['tahun_periode']) {
-          p = this.submitPeriodeData[i]
-          break
-        }
-      }
-
-      if (p['id_periode'] !== undefined) {
-        p['kode_perusahaan'] = this.kode_perusahaan
-        if (this.formValueAK['tipe'] === "t") {
-          if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
-            return
+      this.loading = true
+      this.ref.markForCheck()
+      let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+      if (this.checkKeyReport[rk] !== undefined) {
+        if (this.formValueNR['format_laporan'] === 'pdf') {
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+        } else {
+          if (this.formValueNR['format_laporan'] === 'xlsx') {
+            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
+            setTimeout(() => {
+              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+              sbmBtn.click();
+            }, 100)
+          } else {
+            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
+            setTimeout(() => {
+              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+              sbmBtn.click();
+            }, 100)
           }
-          p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
-          p['bulan_periode'] = "12"
-          p['bulan_periode_sebelum'] = this.getBulanTertinggi(p['tahun_periode_sebelum'])
-          p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
-          p['id_akun'] = this.formValueAK['id_akun'] === "" ? undefined : this.formValueAK['id_akun']
-        } else if (this.formValueAK['tipe'] === "b") {
-          if (p['bulan_periode'] === "1") {
+        }
+        this.loading = false
+        this.ref.markForCheck()
+      } else {
+        let p = {}
+        for (var i = 0; i < this.submitPeriodeData.length; i++) {
+          if (this.formValueAK.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueAK.tahun === this.submitPeriodeData[i]['tahun_periode']) {
+            p = this.submitPeriodeData[i]
+            break
+          }
+        }
+  
+        if (p['id_periode'] !== undefined) {
+          p['kode_perusahaan'] = this.kode_perusahaan
+          if (this.formValueAK['tipe'] === "t") {
             if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
               this.loading = false
               this.ref.markForCheck()
@@ -319,138 +326,154 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               return
             }
             p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
-            p['bulan_periode_sebelum'] = JSON.stringify(this.getBulanTertinggi(p['tahun_periode_sebelum']))
-          } else {
-            if (this.getBulanTerendah(p['tahun_periode']) == parseInt(p['bulan_periode'])) {
-              this.loading = false
-              this.ref.markForCheck()
-              this.openSnackBar('Bulan periode merupakan bulan terakhir yang terdaftar.', 'info')
-              return
+            p['bulan_periode'] = "12"
+            p['bulan_periode_sebelum'] = this.getBulanTertinggi(p['tahun_periode_sebelum'])
+            p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
+            p['id_akun'] = this.formValueAK['id_akun'] === "" ? undefined : this.formValueAK['id_akun']
+          } else if (this.formValueAK['tipe'] === "b") {
+            if (p['bulan_periode'] === "1") {
+              if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
+                this.loading = false
+                this.ref.markForCheck()
+                this.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
+                return
+              }
+              p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
+              p['bulan_periode_sebelum'] = JSON.stringify(this.getBulanTertinggi(p['tahun_periode_sebelum']))
+            } else {
+              if (this.getBulanTerendah(p['tahun_periode']) == parseInt(p['bulan_periode'])) {
+                this.loading = false
+                this.ref.markForCheck()
+                this.openSnackBar('Bulan periode merupakan bulan terakhir yang terdaftar.', 'info')
+                return
+              }
+              p['bulan_periode_sebelum'] = JSON.stringify(parseInt(p['bulan_periode']) - 1)
+              p['tahun_periode_sebelum'] = p['tahun_periode']
             }
-            p['bulan_periode_sebelum'] = JSON.stringify(parseInt(p['bulan_periode']) - 1)
-            p['tahun_periode_sebelum'] = p['tahun_periode']
           }
-        }
-        p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
-        p['bulan_periode_sebelum'] = p['bulan_periode_sebelum'].length > 1 ? p['bulan_periode_sebelum'] : "0" + p['bulan_periode_sebelum']
-        this.request.apiData('report', 'g-data-arus-kas', p).subscribe(
-          data => {
-            if (data['STATUS'] === 'Y') {
-              let z = data['RESULT'], r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
-              saldoAwalKas = parseFloat(z['saldo_awal'])
-              for (var x = 0; x < r.length; x++) {
-                let d = r[x]['data']
-                for (var i = 0; i < d.length; i++) {
-                  for (var j = 0; j < d.length; j++) {
-                    if (
-                      (
-                        (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) || 
-                        (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
-                      ) &&
-                      d[i]['id_akun'] === d[j]['id_akun'] &&
-                      d[i]['group'] === d[j]['group']
-                    ) {
-                      let t = JSON.parse(JSON.stringify(d[i]))
-                      if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
-                        t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
-                      } else {
-                        t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
+          p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['bulan_periode_sebelum'] = p['bulan_periode_sebelum'].length > 1 ? p['bulan_periode_sebelum'] : "0" + p['bulan_periode_sebelum']
+          this.request.apiData('report', 'g-data-arus-kas', p).subscribe(
+            data => {
+              if (data['STATUS'] === 'Y') {
+                let z = data['RESULT'], r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
+                saldoAwalKas = parseFloat(z['saldo_awal'])
+                for (var x = 0; x < r.length; x++) {
+                  let d = r[x]['data']
+                  for (var i = 0; i < d.length; i++) {
+                    for (var j = 0; j < d.length; j++) {
+                      if (
+                        (
+                          (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) || 
+                          (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
+                        ) &&
+                        d[i]['id_akun'] === d[j]['id_akun'] &&
+                        d[i]['group'] === d[j]['group']
+                      ) {
+                        let t = JSON.parse(JSON.stringify(d[i]))
+                        if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
+                          t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
+                        } else {
+                          t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
+                        }
+                        t['class'] = r[x]['value']
+                        t['className'] = r[x]['label']
+                        nRes.push(t)
                       }
-                      t['class'] = r[x]['value']
-                      t['className'] = r[x]['label']
-                      nRes.push(t)
+                    } 
+    
+                    if (d[i]['id_akun'] === 'LBRG') {
+                      dLR = d[i]
+                      dLR['class'] = r[x]['value']
+                      dLR['className'] = r[x]['label']
                     }
-                  } 
-  
-                  if (d[i]['id_akun'] === 'LBRG') {
-                    dLR = d[i]
-                    dLR['class'] = r[x]['value']
-                    dLR['className'] = r[x]['label']
                   }
                 }
-              }
-
-              nRes.splice(0, 0, dLR)
-
-              for (var i = 0; i < nRes.length; i++) {
-                if (totalTipe[nRes[i]['class']]) {
-                  totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
-                } else {
-                  totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
+  
+                nRes.splice(0, 0, dLR)
+  
+                for (var i = 0; i < nRes.length; i++) {
+                  if (totalTipe[nRes[i]['class']]) {
+                    totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
+                  } else {
+                    totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
+                  }
                 }
-              }
-
-              for (var prop in totalTipe) {
-                if (totalTipe.hasOwnProperty(prop)) {
-                  totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
+  
+                for (var prop in totalTipe) {
+                  if (totalTipe.hasOwnProperty(prop)) {
+                    totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
+                  }
                 }
+  
+                for (var i = 0; i < nRes.length; i++) {
+                  let t = []
+  
+                  t.push(nRes[i]['class'])
+                  t.push(nRes[i]['className'])
+                  t.push(nRes[i]['kode_akun'])
+                  t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
+                  t.push(nRes[i]['saldo_akhir'])
+                  t.push(totalTipe[nRes[i]['class']])
+  
+                  res.push(t)
+                }
+  
+                let rp = JSON.parse(JSON.stringify(this.reportObj))
+                rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+                rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
+                rp['REPORT_NAME'] = 'Laporan Arus Kas'
+                rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
+                rp['JASPER_FILE'] = 'rptArusKas.jasper'
+                rp['REPORT_PARAMETERS'] = {
+                  USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+                  REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                  REPORT_COMPANY_CITY: this.info_company.kota,
+                  REPORT_COMPANY_TLPN: this.info_company.telepon,
+                  REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'],
+                  TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
+                  SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
+                  SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
+                }
+                rp['FIELD_TITLE'] = [
+                  "Tipe",
+                  "Nama Tipe",
+                  "Kode Akun",
+                  "Nama Akun",
+                  "Saldo",
+                  "Total Tipe Saldo"
+                ]
+                rp['FIELD_NAME'] = [
+                  "tipe",
+                  "namaTipe",
+                  "kodeAkun",
+                  "namaAkun",
+                  "saldo",
+                  "totalTipeSaldo"
+                ]
+                rp['FIELD_TYPE'] = [
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "bigdecimal",
+                  "bigdecimal"
+                ]
+                rp['FIELD_DATA'] = res
+                p['bulan_periode'] = +p['bulan_periode']
+  
+                this.sendGetReport(rp, this.formValueAK['format_laporan'])
+              } else {
+                p['bulan_periode'] = +p['bulan_periode']
+                this.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
+                this.distinctPeriode()
+                this.ref.markForCheck()
               }
-
-              for (var i = 0; i < nRes.length; i++) {
-                let t = []
-
-                t.push(nRes[i]['class'])
-                t.push(nRes[i]['className'])
-                t.push(nRes[i]['kode_akun'])
-                t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
-                t.push(nRes[i]['saldo_akhir'])
-                t.push(totalTipe[nRes[i]['class']])
-
-                res.push(t)
-              }
-
-              let rp = JSON.parse(JSON.stringify(this.reportObj))
-              rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
-              rp['REPORT_NAME'] = 'Laporan Arus Kas'
-              rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
-              rp['JASPER_FILE'] = 'rptArusKas.jasper'
-              rp['REPORT_PARAMETERS'] = {
-                USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                REPORT_COMPANY_CITY: this.info_company.kota,
-                REPORT_COMPANY_TLPN: this.info_company.telepon,
-                REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'],
-                TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
-                SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
-                SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
-              }
-              rp['FIELD_TITLE'] = [
-                "Tipe",
-                "Nama Tipe",
-                "Kode Akun",
-                "Nama Akun",
-                "Saldo",
-                "Total Tipe Saldo"
-              ]
-              rp['FIELD_NAME'] = [
-                "tipe",
-                "namaTipe",
-                "kodeAkun",
-                "namaAkun",
-                "saldo",
-                "totalTipeSaldo"
-              ]
-              rp['FIELD_TYPE'] = [
-                "string",
-                "string",
-                "string",
-                "string",
-                "bigdecimal",
-                "bigdecimal"
-              ]
-              rp['FIELD_DATA'] = res
-              p['bulan_periode'] = +p['bulan_periode']
-
-              this.sendGetReport(rp, this.formValueAK['format_laporan'])
-            } else {
-              this.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
-              this.distinctPeriode()
-              this.ref.markForCheck()
             }
-          }
-        )
+          )
+        }
       }
+     
     }
   }
 
@@ -605,52 +628,24 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-            } else if (this.checkPeriodReport === p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport, "_blank");
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-            }
-          } else if (type === 'xlsx') {
-            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            } else {
-              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            }
+            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
-            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              this.keyReportFormatExcel = data['RESULT'] + '.xls'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
+            if (type === 'xlsx') {
+              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
                 sbmBtn.click();
               }, 100)
             } else {
               this.keyReportFormatExcel = this.checkKeyReport + '.xls'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
                 sbmBtn.click();
               }, 100)
             }
           }
+          let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+          this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()
         } else {

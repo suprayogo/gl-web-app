@@ -58,13 +58,15 @@ export class WorklistComponent implements OnInit, AfterViewInit {
 
   // INPUT VALUE DETAIL
   formDetail = {
-    id: '',
+    id_worklist: '',
+    kode_approval: '',
     nama_cabang: '',
     id_tran: '',
     no_tran: '',
     tgl_tran: '',
     keterangan: '',
-    catatan_wl: ''
+    catatan: '',
+    user_id: '',
   }
 
   detailData = []
@@ -369,7 +371,8 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     console.log('b')
     let endRes = Object.assign(
       {
-        kode_perusahaan: this.kode_perusahaan
+        kode_perusahaan: this.kode_perusahaan,
+        status_approval: '1'
       },
       formDetail
     )
@@ -427,13 +430,15 @@ export class WorklistComponent implements OnInit, AfterViewInit {
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
     this.formDetail = {
-      id: x['id'],
+      id_worklist: x['id'],
+      kode_approval: x['kode_wl'],
       id_tran: x['id_tran'],
       no_tran: x['no_tran'],
       tgl_tran: x['tgl_tran'],
       nama_cabang: x['nama_cabang'],
       keterangan: x['keterangan'],
-      catatan_wl: x['catatan_wl']
+      catatan: x['catatan_wl'],
+      user_id: x['dari_user_id']
     }
     this.getDetail()
   }
