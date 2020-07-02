@@ -10,7 +10,7 @@
         </div>
   
         <kt-portlet-body>
-          <div class="kt-section">
+          <div class="kt-section" *ngIf="!loading">
             <ngx-dropzone (change)="onFileDropped($event)" [multiple]="false" [accept]="'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
                 <ngx-dropzone-label>Tarik atau tekan untuk mengunggah tautan.</ngx-dropzone-label>
                 <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onFileRemoved(f)">

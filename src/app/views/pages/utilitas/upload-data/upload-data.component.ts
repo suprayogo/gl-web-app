@@ -73,14 +73,39 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         "id_akun": "_$id",
         "kode_akun": "kd_perk",
         "nama_akun": "nm_perk",
-        "id_kategori_akun": "",
-        "tipe_induk": "",
-        "id_induk_akun": "",
-        "tipe_akun": "",
+        "id_kategori_akun": "_$v{kode_kategori_akun}_$p{kd_klp}",
+        "tipe_induk": "_$i{kd_gen, '', 0},{1}",
+        "id_induk_akun": "_$r{id_akun}_$p{kode_induk_akun}",
+        "kode_induk_akun": "kd_gen",
+        "tipe_akun": "tp_perk",
+        "input_by": "_$input_by"
+      },
+      store: {
+        "kode_akun": "id_akun"
+      }
+    },
+    jenis_transaksi: {
+      schema: "sch_p000",
+      table: 'mhs_jenis_transaksi',
+      column: [
+        "id_jenis_transaksi",
+        "kode_jenis_transaksi",
+        "nama_jenis_transaksi",
+        "tipe_laporan",
+        "input_by"
+      ],
+      date: [],
+      indicator: {
+        "id_jenis_transaksi": "_$id",
+        "kode_jenis_transaksi": "kd_perk",
+        "nama_jenis_transaksi": "ket",
+        "tipe_laporan": "tp_perk",
         "input_by": "_$input_by"
       }
     }
   }
+
+  data_kategori_akun = {};
 
   files: File[] = [];
 
@@ -105,7 +130,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
-    this.loading = false
+    this.sendKategoriAkun()
   }
 
   onFileDropped(event) {
@@ -113,9 +138,9 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   }
 
   onFileRemoved(event) {
-		this.files.splice(this.files.indexOf(event), 1);
+    this.files.splice(this.files.indexOf(event), 1);
   }
-  
+
   importExcelFile() {
     console.log(this.files)
     const reader = new FileReader();
@@ -134,13 +159,14 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       let fn = this.files[0]['name'].split('.'), parsedData = {}
 
       if (fn[0] === 'perkiraan_akuntansi') {
-        parsedData = this.processData(this.parseTemplate['akun'], jsonData)
+        parsedData = this.processData(this.parseTemplate['akun'], jsonData['akun'])
       } else if (fn[0] === 'perkiraan_kasir') {
-        parsedData = this.processData(this.parseTemplate['akun'], jsonData)
+        parsedData = this.processData(this.parseTemplate['jenis_transaksi'], jsonData['perk_ksr'])
       } else if (fn[0] === 'kategori_akun') {
         parsedData = this.processData(this.parseTemplate['kat_akun'], jsonData['kat_akun'])
       }
 
+      console.log(parsedData)
       this.request.apiData('utilitas', 'i-data-upload', parsedData).subscribe(
         data => {
           if (data['RESULT'] === 'Y') {
@@ -155,7 +181,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
           }
         }
       )
-      
+
     }
 
     this.loading = true
@@ -166,7 +192,9 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   }
 
   processData(template, data) {
-    let res = {}, pdt = [] // Parsed Data
+    console.clear()
+    let res = {}, pdt = [], // Parsed Data
+        sdt = {}
 
     res = JSON.parse(JSON.stringify(template))
 
@@ -185,19 +213,85 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         } else if (t[prop] === '_$input_by') {
           t[prop] = uid
         } else {
-          if (data[i][t[prop]] !== undefined) {
-            t[prop] = data[i][t[prop]]
+          if (t[prop].includes('_$v')) {
+            let v = t[prop].indexOf('_$v'), l = t[prop].indexOf('_$p'),
+              k = t[prop].substring(v, l).replace('_$v{', '').replace('}', ''),
+              p = t[prop].substring(l).replace('_$p{', '').replace('}', ''),
+              d = data[i][p] === undefined ? '' : data[i][p]
+
+              if (k === 'kode_kategori_akun') {
+                let r = this.data_kategori_akun[d] === undefined ? '' : this.data_kategori_akun[d][prop]
+                t[prop] = r
+              }
+          } else if (t[prop].includes('_$r')) {
+
+          } else if (t[prop].includes('_$i')) {
+            let s = t[prop].replace('_$i', '').replace('{', '').replace('}', '').replace(' ', '').split(','),
+                k = s[0].replace('{', '').replace('}', '').replace(' ', ''),
+                c = s[1].replace('{', '').replace('}', '').replace(' ', ''),
+                tr = s[2].replace('{', '').replace('}', '').replace(' ', ''),
+                els = s[3].replace('{', '').replace('}', '').replace(' ', '')
+            if (data[i][k] === c || data[i][k] == c) {
+              t[prop] = isNaN(parseInt(tr)) ? tr : parseInt(tr)
+            } else {
+              t[prop] = isNaN(parseInt(els)) ? els : parseInt(els)
+            }
           } else {
-            t[prop] = "#NOTFOUND"
+            if (data[i][t[prop]] !== undefined) {
+              t[prop] = data[i][t[prop]]
+            } else {
+              t[prop] = "#NOTFOUND"
+            }
           }
         }
       }
+
+      if (res['store']) {
+        for (var prop in res['store']) {
+          sdt[t[prop]] = t[res['store'][prop]]
+        }
+      }
+
       pdt.push(t)
+    }
+
+    for (var i = 0; i < pdt.length; i++) {
+      for (var prop in pdt[i]) {
+        if (isNaN(pdt[i][prop])) {
+          if (pdt[i][prop].includes('_$r')) {
+            let v = pdt[i][prop].indexOf('_$r'), l = pdt[i][prop].indexOf('_$p'),
+              k = pdt[i][prop].substring(v, l).replace('_$r{', '').replace('}', ''),
+              p = pdt[i][prop].substring(l).replace('_$p{', '').replace('}', ''),
+              d = sdt[pdt[i][p]] === undefined ? '' : sdt[pdt[i][p]]
+
+              pdt[i][prop] = d
+
+          }
+        }
+      }
     }
 
     res['data'] = pdt
 
     return res
+  }
+
+  sendKategoriAkun() {
+    this.request.apiData('kategori-akun', 'g-kategori-akun', { kode_perusahaan: 'P000' }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.loading = false
+          for (var i = 0; i < data['RESULT'].length; i++) {
+            this.data_kategori_akun[data['RESULT'][i]['kode_kategori_akun']] = data['RESULT'][i]
+          }
+          this.ref.markForCheck()
+        } else {
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar('Kategori Akun gagal didapatkan.', 'info')
+        }
+      }
+    )
   }
 
   openSnackBar(message, type?: any) {
