@@ -119,7 +119,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   detailInputLayout = [
     {
       formWidth: 'col-5',
-      label: 'No. Referensi',
+      label: 'Referensi',
       id: 'no-referensi',
       type: 'input',
       valueOf: 'no_referensi',
@@ -167,13 +167,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   // Data Hasil Tarik
   displayedColumnsTableHT = [
     {
-      label: 'Tgl. Transaksi',
-      value: 'tgl_tran',
-      // date: true
-    },
-    {
       label: 'No. Referensi',
       value: 'no_referensi'
+    },
+    {
+      label: 'Tgl. Transaksi',
+      value: 'tgl_tran',
+      date: true
     },
     {
       label: 'Cabang',
@@ -338,6 +338,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         id_periode: this.idPeriodeAktif,
         detail: this.browseDataHT
       }
+      console.log(endRes)
       this.request.apiData('jurnal-otomatis', 'i-jurnal-otomatis', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -445,14 +446,15 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             id_akun: this.browseDataHT[i]['detail'][j]['id_akun'],
             kode_akun: this.browseDataHT[i]['detail'][j]['kode_akun'],
             nama_akun: this.browseDataHT[i]['detail'][j]['nama_akun'],
-            keterangan_akun: this.browseDataHT[i]['detail'][j]['keterangan_akun'],
+            keterangan_akun: this.browseDataHT[i]['detail'][j]['keterangan'],
             kode_divisi: this.browseDataHT[i]['detail'][j]['kode_divisi'],
             nama_divisi: this.browseDataHT[i]['detail'][j]['nama_divisi'],
             kode_departemen: this.browseDataHT[i]['detail'][j]['kode_departemen'],
             nama_departemen: this.browseDataHT[i]['detail'][j]['nama_departemen'],
-            keterangan: this.browseDataHT[i]['detail'][j]['keterangan'],
-            saldo_debit: this.browseDataHT[i]['detail'][j]['debit'] ? parseFloat(this.browseDataHT[i]['detail'][j]['saldo']) : 0,
-            saldo_kredit: !this.browseDataHT[i]['detail'][j]['debit'] ? parseFloat(this.browseDataHT[i]['detail'][j]['saldo']) : 0
+            keterangan_1: this.browseDataHT[i]['detail'][j]['keterangan_1'],
+            keterangan_2: this.browseDataHT[i]['detail'][j]['keterangan_2'],
+            saldo_debit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_debit']),
+            saldo_kredit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_kredit'])
           }
           jres.push(t)
         }
@@ -545,7 +547,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.bottomPage()
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
-      let periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif()) + "-" + this.gbl.getBatasTanggal(this.gbl.getBulanPeriodeAktif())
+      let periode = this.gbl.getTahunPeriodeAktif() + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
       this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -559,7 +561,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
                   letters: false,
                   special: false
                 }))}`,
-                no_referensi: t[i]["tipe_setting"] === "2" ? t[i]['no_referensi'] : "",
+                no_referensi: t[i]['no_referensi'],
                 tgl_tran: t[i]['tgl_tran'],
                 kode_cabang: t[i]['kode_cabang'],
                 nama_cabang: t[i]['nama_cabang'],

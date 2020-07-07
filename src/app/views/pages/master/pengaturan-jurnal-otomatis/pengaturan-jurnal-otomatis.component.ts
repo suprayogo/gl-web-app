@@ -66,7 +66,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       kode_akun: '',
       nama_akun: '',
       keterangan_akun: '',
-      keterangan: '',
+      keterangan_1: '',
+      keterangan_2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     },
@@ -75,7 +76,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       kode_akun: '',
       nama_akun: '',
       keterangan_akun: '',
-      keterangan: '',
+      keterangan_1: '',
+      keterangan_2: '',
       saldo_debit: 0,
       saldo_kredit: 0
     }
@@ -394,6 +396,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+        console.log(this.formValue)
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
         let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
@@ -485,7 +488,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         kode_akun: '',
         nama_akun: '',
         keterangan_akun: '',
-        keterangan: '',
+        keterangan_1: '',
+        keterangan_2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       },
@@ -494,7 +498,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         kode_akun: '',
         nama_akun: '',
         keterangan_akun: '',
-        keterangan: '',
+        keterangan_1: '',
+        keterangan_2: '',
         saldo_debit: 0,
         saldo_kredit: 0
       }
@@ -773,7 +778,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
               nama_divisi: resp[i]['nama_divisi'],
               kode_departemen: resp[i]['kode_departemen'],
               nama_departemen: resp[i]['nama_departemen'],
-              keterangan: resp[i]['keterangan'],
+              keterangan_1: resp[i]['keterangan_1'],
+              keterangan_2: resp[i]['keterangan_2'],
               setting_debit: resp[i]['kode_debit'],
               setting_kredit: resp[i]['kode_kredit']
             }

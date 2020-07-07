@@ -564,6 +564,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
+            console.log(this.periode_aktif)
             this.formValue.id_akses_periode = this.periode_aktif['id_periode']
             // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             // this.gbl.getIdPeriodeAktif()
@@ -575,6 +576,28 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             // } else {
             //   this.disableSubmit = false
             // }
+            this.inputLayout.splice(1, 1, {
+              formWidth: 'col-5',
+              label: 'Tgl. Jurnal',
+              id: 'tgl-jurnal',
+              type: 'datepicker',
+              valueOf: 'tgl_tran',
+              required: true,
+              readOnly: false,
+              update: {
+                disabled: false
+              },
+              timepick: false,
+              enableMin: true,
+              enableMax: true,
+              minMaxDate: () => {
+                return {
+                  y: this.periode_aktif['tahun_periode'],
+                  m: this.periode_aktif['bulan_periode']
+                }
+              }
+            })
+            this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01"))
             if (this.periode_aktif.aktif !== "1") {
               this.disableSubmit = true
             } else {
