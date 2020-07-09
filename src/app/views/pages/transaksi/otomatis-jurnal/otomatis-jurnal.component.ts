@@ -552,23 +552,27 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             let t = JSON.parse(JSON.stringify(data['RESULT'])),
-              res = []
-            for (var i = 0; i < t.length; i++) {
-              let d = {
-                id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
-                  length: 8,
-                  numeric: true,
-                  letters: false,
-                  special: false
-                }))}`,
-                no_referensi: t[i]['no_referensi'],
-                tgl_tran: t[i]['tgl_tran'],
-                kode_cabang: t[i]['kode_cabang'],
-                nama_cabang: t[i]['nama_cabang'],
-                keterangan: t[i]['keterangan'],
-                detail: JSON.parse(t[i]['detail'])
+                res = []
+            if (data['RESULT'].length < 1) {
+              this.openSnackBar('Semua transaksi pada periode aktif sudah tersimpan.', 'info')
+            } else {
+              for (var i = 0; i < t.length; i++) {
+                let d = {
+                  id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
+                    length: 8,
+                    numeric: true,
+                    letters: false,
+                    special: false
+                  }))}`,
+                  no_referensi: t[i]['no_referensi'],
+                  tgl_tran: t[i]['tgl_tran'],
+                  kode_cabang: t[i]['kode_cabang'],
+                  nama_cabang: t[i]['nama_cabang'],
+                  keterangan: t[i]['keterangan'],
+                  detail: JSON.parse(t[i]['detail'])
+                }
+                res.push(d)
               }
-              res.push(d)
             }
             this.browseDataHT = res
             this.tableLoadHT = false
@@ -576,7 +580,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           } else {
             this.tableLoadHT = false
             this.ref.markForCheck()
-            this.openSnackBar('Data hasil tarik tidak ditemukan.')
+            this.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
           }
         }
       )
