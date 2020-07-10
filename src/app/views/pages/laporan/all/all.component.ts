@@ -1622,7 +1622,6 @@ export class AllComponent implements OnInit, AfterViewInit {
         }
       },
     )
-    console.log(this.bulanAK)
 	}
 
   getBulan(filterBulan, loopBulan, type) {

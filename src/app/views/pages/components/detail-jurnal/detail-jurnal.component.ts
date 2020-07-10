@@ -181,7 +181,6 @@ export class DetailJurnalComponent implements OnInit {
   checkChanges() {
     if (this.data !== undefined || this.data != null) {
       this.res_data = this.data
-      console.log(this.res_data)
       this.countDebit()
       this.countKredit()
     }

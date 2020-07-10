@@ -368,7 +368,6 @@ export class WorklistComponent implements OnInit, AfterViewInit {
   submitDetailData(formDetail){
     this.dialog.closeAll()
     this.loading = true
-    console.log('b')
     let endRes = Object.assign(
       {
         kode_perusahaan: this.kode_perusahaan,

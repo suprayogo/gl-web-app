@@ -769,7 +769,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       }
     }
     this.detailData = endRes
-    console.log(this.detailData)
     this.updateDataTglPeriode(this.detailData[0]['tgl_periode'])
   }
 

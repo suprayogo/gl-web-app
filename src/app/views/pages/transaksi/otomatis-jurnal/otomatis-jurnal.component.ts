@@ -308,7 +308,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    console.log(data)
     let x = JSON.parse(JSON.stringify(data))
     this.formDetail = {
       id: x['id'],
@@ -339,7 +338,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         id_periode: this.idPeriodeAktif,
         detail: this.browseDataHT
       }
-      console.log(endRes)
       this.request.apiData('jurnal-otomatis', 'i-jurnal-otomatis', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {

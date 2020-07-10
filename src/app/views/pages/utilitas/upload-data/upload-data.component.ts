@@ -145,7 +145,6 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   }
 
   importExcelFile() {
-    console.log(this.files)
     const reader = new FileReader();
 
     let workbook = null;
@@ -169,7 +168,6 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         parsedData = this.processData(this.parseTemplate['kat_akun'], jsonData['kat_akun'])
       }
 
-      console.log(parsedData)
       this.request.apiData('utilitas', 'i-data-upload', parsedData).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {

@@ -352,7 +352,6 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
   //Browse binding event
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
-    console.log(data)
     this.formValue = {
       id_jenis_transaksi: x['id_jenis_transaksi'],
       kode_jenis_transaksi: x['kode_jenis_transaksi'],

@@ -396,7 +396,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        console.log(this.formValue)
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
         let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
@@ -420,12 +419,14 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
           }
         )
       } else {
-        if (this.forminput.getData().nama_divisi === '') {
-          this.openSnackBar('Divisi tidak valid.', 'info')
-        } else if (this.forminput.getData().nama_departemen === '') {
-          this.openSnackBar('Departemen tidak valid.', 'info')
+        if (this.forminput.getData().kode_jurnal === '') {
+          this.openSnackBar('Kode Jurnal belum diisi.', 'info')
+        } else if (this.forminput.getData().nama_jurnal === '') {
+          this.openSnackBar('Nama Jurnal belum diisi.', 'info')
+        } else if (this.forminput.getData().kode_cabang === '') {
+          this.openSnackBar('Cabang belum diisi.', 'info')
         } else {
-          this.openSnackBar('Ada akun yang tidak memiliki sumber data atau sumber data tidak seimbang.', 'info')
+          this.openSnackBar('Data Informasi Akun belum lengkap atau sumber data tidak seimbang.', 'info')
         }
         this.gbl.topPage()
       }
@@ -440,7 +441,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     if (data != null) {
 
       for (var i = 0; i < data['detail']['data'].length; i++) {
-        if (data['detail']['data'][i]['id_akun'] === '') {
+        if (data['detail']['data'][i]['id_akun'] === '' || (data['detail']['data'][i]['nama_departemen'] === '' || undefined) || (data['detail']['data'][i]['nama_divisi'] === '' || undefined)) {
           valid = false
           break;
         }
@@ -462,8 +463,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         }
       }
 
-      if (data['nama_departemen'] === '') valid = false
-      if (data['nama_divisi'] === '') valid = false
+      // if (data['nama_departemen'] === '') valid = false
+      // if (data['nama_divisi'] === '') valid = false
     }
 
     if (!hasKredit || !hasDebit) {

@@ -345,7 +345,6 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 
   deleteDetailData(data) {
     this.dialog.closeAll()
-    console.log(data)
     for (var i = 0; i < this.detailData.length; i++) {
       if (this.detailData[i]['kode_akun'] === data['kode_akun']) {
         let x = this.detailData[i]

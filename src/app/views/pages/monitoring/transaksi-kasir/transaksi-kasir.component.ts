@@ -479,7 +479,6 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
   sendReqPeriodeJurnal(id_periode, kode_cabang) {
-    console.log(kode_cabang)
     this.tableLoad = true
     this.request.apiData('kasir', 'g-transaksi-kasir', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode, kode_cabang: kode_cabang !== "" ? kode_cabang : "" }).subscribe(
       data => {

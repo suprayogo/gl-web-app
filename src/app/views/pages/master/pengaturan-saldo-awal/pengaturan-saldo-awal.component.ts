@@ -192,6 +192,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       for (var i = 0; i < this.data_akun.length; i++) {
         if (this.data_akun[i]['edited']) {
           let t = {
+            kode_cabang: this.data_akun[i]['kode_cabang'],
             id_akun: this.data_akun[i]['id_akun'],
             saldo: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? parseFloat(this.data_akun[i]['saldo_debit']) : parseFloat(this.data_akun[i]['saldo_kredit']),
             tipe: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? 0 : 1
