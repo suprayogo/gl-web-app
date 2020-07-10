@@ -382,7 +382,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   restructureData(data) {
-    console.log(data)
     this.loading = true
     this.ref.markForCheck()
     var flags = [],
@@ -400,7 +399,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         type: 'cat'
       });
     }
-    console.log(outputCabang)
 
     for (var i = 0; i < data.length; i++) {
       if (flags[data[i]['id_kategori_akun']]) continue;
@@ -412,49 +410,14 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       });
     }
 
-    for (var i = 0; i < output.length; i++) {
-      res.push(output[i])
-      res = this.parseData(res, data, "", output[i]['id_kategori_akun'])
-      // for (var j = 0; j < data.length; j++) {
-      //   if (data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
-      //     res.push(data[j])
-      //     for (var k = 0; k < data.length; k++) {
-      //       if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
-      //         res.push(data[k])
-      //         for (var l = 0; l < data.length; l++) {
-      //           if (data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
-      //             res.push(data[l])
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-    }
-
     for (var h = 0; h < outputCabang.length; h++) {
       res.push(outputCabang[h])
       for (var i = 0; i < output.length; i++) {
         res.push(output[i])
-        for (var j = 0; j < data.length; j++) {
-          if (outputCabang[h]['kode_cabang'] === data[j]['kode_cabang'] && data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
-            console.log(data[j])
-            res.push(data[j])
-            for (var k = 0; k < data.length; k++) {
-              if (data[j]['kode_cabang'] === data[k]['kode_cabang'] && data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
-                res.push(data[k])
-                for (var l = 0; l < data.length; l++) {
-                  if (data[k]['kode_cabang'] === data[l]['kode_cabang'] && data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
-                    res.push(data[l])
-                  }
-                }
-              }
-            }
-          }
-        }
+        res = this.parseData(res, data, "", output[i]['id_kategori_akun'], outputCabang[h]['kode_cabang'])
       }
     }
-    console.log(res)
+    
     this.res_data = res
     this.countDebit()
     this.countKredit()
@@ -465,12 +428,12 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     }, 1)
   }
 
-  parseData(p, data, id_akun, id_kategori_akun) {
+  parseData(p, data, id_akun, id_kategori_akun, kode_cabang) {
     let res = p
     for (var i = 0; i < data.length; i++) {
-      if (data[i]['id_kategori_akun'] === id_kategori_akun && data[i]['id_induk_akun'] === id_akun) {
+      if (data[i]['kode_cabang'] === kode_cabang && data[i]['id_kategori_akun'] === id_kategori_akun && data[i]['id_induk_akun'] === id_akun) {
         res.push(data[i])
-        res = this.parseData(res, data, data[i]['id_akun'], data[i]['id_kategori_akun'])
+        res = this.parseData(res, data, data[i]['id_akun'], data[i]['id_kategori_akun'], data[i]['kode_cabang'])
       }
     }
 
