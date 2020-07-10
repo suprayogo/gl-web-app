@@ -34,7 +34,7 @@
                                 [ngStyle]="{'border-right': x['type'] === 'cat' || checkChild(x['id_jenis_transaksi']) ? '' : 'solid 1px lightgrey', 'padding-left': x['type'] === 'cat' ? '10px' : (checkParent(x['id_kasir']) + 10) + 'px' }">
                                 <span
                                     style="font-weight: bold;">{{ x['type'] === 'cat' ? x['nama_cabang'] : x['kode_jenis_transaksi'] }}
-                                    {{ x['type'] === 'cat' ? x['nama_kasir'] : '' }}</span>
+                                    {{ x['type'] === 'cat' ?  x['nama_kasir'] : ' - ' + x['nama_jenis_transaksi'] }}</span>
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 10px;"
                                 [ngStyle]="{'border-right': x['type'] === 'cat' ? '' : 'solid 1px lightgrey'}">

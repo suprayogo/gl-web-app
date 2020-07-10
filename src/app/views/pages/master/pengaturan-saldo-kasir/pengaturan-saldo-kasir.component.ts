@@ -91,7 +91,8 @@ export class PengaturanSaldoKasirComponent implements OnInit {
       readOnly: false,
       numberOnly: true,
       currencyOptions: {
-        precision: 2
+        precision: 2,
+        allowNegative: true
       },
       update: {
         disabled: false

@@ -495,6 +495,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   // Filter Data Periode Kasir Using Kode Cabang
   filterPeriodeKasirByCabang(kode_cabang) {
     this.loadingPeriodeKasir = true
+    this.ref.markForCheck()
+    let tgl_aktif = new Date(this.inputPeriodeKasirData.filter(x => x['aktif'] === '1' && x['kode_cabang'] === kode_cabang)[0]['tgl_periode']).getTime()
     this.inputPeriodeKasirDataFilter = this.inputPeriodeKasirData.filter(
       x =>
         x['aktif'] === '0' &&
@@ -502,7 +504,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         x['kode_cabang'] === kode_cabang &&
 
         //Filter Based on Bulan & Tahun
-        this.getPeriode(x['tgl_periode']) === this.bulanTahun
+        this.getPeriode(x['tgl_periode']) === this.bulanTahun &&
+        new Date(x['tgl_periode']).getTime() < tgl_aktif
     )
     this.loadingPeriodeKasir = false
     this.ref.markForCheck()

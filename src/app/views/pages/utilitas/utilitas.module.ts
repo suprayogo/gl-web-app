@@ -47,6 +47,7 @@ import {
   usersReducer,
   UserEffects
 } from '../../../core/auth';
+import { DEFAULT_TIMEOUT, TimeoutInterceptorService } from '../../../service/timeout-interceptor.service';
 
 // COMPONENTS
 import { UploadDataComponent } from './upload-data/upload-data.component';
@@ -94,11 +95,14 @@ const routes: Routes = [
     NgxDropzoneModule
   ],
   providers: [
-    InterceptService,
+    TimeoutInterceptorService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: InterceptService,
+      useClass: TimeoutInterceptorService,
       multi: true
+    },
+    {
+      provide: DEFAULT_TIMEOUT, useValue: 30000
     },
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,

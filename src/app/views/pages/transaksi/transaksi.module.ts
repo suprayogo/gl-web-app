@@ -46,7 +46,7 @@ import {
   usersReducer,
   UserEffects
 } from '../../../core/auth';
-
+import { TimeoutInterceptorService, DEFAULT_TIMEOUT } from '../../../service/timeout-interceptor.service';
 // COMPONENTS
 import { JurnalComponent } from './jurnal/jurnal.component';
 import { PostingJurnalComponent } from './posting-jurnal/posting-jurnal.component';
@@ -127,11 +127,14 @@ const routes: Routes = [
     MatDialogModule
   ],
   providers: [
-    InterceptService,
+    TimeoutInterceptorService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: InterceptService,
+      useClass: TimeoutInterceptorService,
       multi: true
+    },
+    {
+      provide: DEFAULT_TIMEOUT, useValue: 60000
     },
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,

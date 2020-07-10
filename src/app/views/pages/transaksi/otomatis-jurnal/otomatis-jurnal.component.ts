@@ -119,7 +119,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   detailInputLayout = [
     {
       formWidth: 'col-5',
-      label: 'No. Referensi',
+      label: 'Referensi',
       id: 'no-referensi',
       type: 'input',
       valueOf: 'no_referensi',
@@ -167,13 +167,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   // Data Hasil Tarik
   displayedColumnsTableHT = [
     {
-      label: 'Tgl. Transaksi',
-      value: 'tgl_tran',
-      // date: true
-    },
-    {
       label: 'No. Referensi',
       value: 'no_referensi'
+    },
+    {
+      label: 'Tgl. Transaksi',
+      value: 'tgl_tran',
+      date: true
     },
     {
       label: 'Cabang',
@@ -334,10 +334,12 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       this.loading = true
       this.ref.markForCheck()
       let endRes = {
+        batch: "",
         kode_perusahaan: this.kode_perusahaan,
         id_periode: this.idPeriodeAktif,
         detail: this.browseDataHT
       }
+      console.log(endRes)
       this.request.apiData('jurnal-otomatis', 'i-jurnal-otomatis', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -445,14 +447,15 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             id_akun: this.browseDataHT[i]['detail'][j]['id_akun'],
             kode_akun: this.browseDataHT[i]['detail'][j]['kode_akun'],
             nama_akun: this.browseDataHT[i]['detail'][j]['nama_akun'],
-            keterangan_akun: this.browseDataHT[i]['detail'][j]['keterangan_akun'],
+            keterangan_akun: this.browseDataHT[i]['detail'][j]['keterangan'],
             kode_divisi: this.browseDataHT[i]['detail'][j]['kode_divisi'],
             nama_divisi: this.browseDataHT[i]['detail'][j]['nama_divisi'],
             kode_departemen: this.browseDataHT[i]['detail'][j]['kode_departemen'],
             nama_departemen: this.browseDataHT[i]['detail'][j]['nama_departemen'],
-            keterangan: this.browseDataHT[i]['detail'][j]['keterangan'],
-            saldo_debit: this.browseDataHT[i]['detail'][j]['debit'] ? parseFloat(this.browseDataHT[i]['detail'][j]['saldo']) : 0,
-            saldo_kredit: !this.browseDataHT[i]['detail'][j]['debit'] ? parseFloat(this.browseDataHT[i]['detail'][j]['saldo']) : 0
+            keterangan_1: this.browseDataHT[i]['detail'][j]['keterangan_1'],
+            keterangan_2: this.browseDataHT[i]['detail'][j]['keterangan_2'],
+            saldo_debit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_debit']),
+            saldo_kredit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_kredit'])
           }
           jres.push(t)
         }
@@ -545,28 +548,32 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.bottomPage()
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
-      let periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif()) + "-" + this.gbl.getBatasTanggal(this.gbl.getBulanPeriodeAktif())
+      let periode = this.gbl.getTahunPeriodeAktif() + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
       this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             let t = JSON.parse(JSON.stringify(data['RESULT'])),
-              res = []
-            for (var i = 0; i < t.length; i++) {
-              let d = {
-                id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
-                  length: 8,
-                  numeric: true,
-                  letters: false,
-                  special: false
-                }))}`,
-                no_referensi: t[i]["tipe_setting"] === "2" ? t[i]['no_referensi'] : "",
-                tgl_tran: t[i]['tgl_tran'],
-                kode_cabang: t[i]['kode_cabang'],
-                nama_cabang: t[i]['nama_cabang'],
-                keterangan: t[i]['keterangan'],
-                detail: JSON.parse(t[i]['detail'])
+                res = []
+            if (data['RESULT'].length < 1) {
+              this.openSnackBar('Semua transaksi pada periode aktif sudah tersimpan.', 'info')
+            } else {
+              for (var i = 0; i < t.length; i++) {
+                let d = {
+                  id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
+                    length: 8,
+                    numeric: true,
+                    letters: false,
+                    special: false
+                  }))}`,
+                  no_referensi: t[i]['no_referensi'],
+                  tgl_tran: t[i]['tgl_tran'],
+                  kode_cabang: t[i]['kode_cabang'],
+                  nama_cabang: t[i]['nama_cabang'],
+                  keterangan: t[i]['keterangan'],
+                  detail: JSON.parse(t[i]['detail'])
+                }
+                res.push(d)
               }
-              res.push(d)
             }
             this.browseDataHT = res
             this.tableLoadHT = false
@@ -574,7 +581,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           } else {
             this.tableLoadHT = false
             this.ref.markForCheck()
-            this.openSnackBar('Data hasil tarik tidak ditemukan.')
+            this.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
           }
         }
       )

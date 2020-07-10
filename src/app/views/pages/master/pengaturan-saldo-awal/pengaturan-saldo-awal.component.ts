@@ -363,8 +363,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   restructureData(data) {
-    console.clear()
-    console.log(data)
     this.loading = true
     this.ref.markForCheck()
     var flags = [],
@@ -383,24 +381,23 @@ export class PengaturanSaldoAwalComponent implements OnInit {
 
     for (var i = 0; i < output.length; i++) {
       res.push(output[i])
-      for (var j = 0; j < data.length; j++) {
-        if (data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
-          res.push(data[j])
-          for (var k = 0; k < data.length; k++) {
-            if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
-              res.push(data[k])
-              for (var l = 0; l < data.length; l++) {
-                if (data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
-                  res.push(data[l])
-                }
-              }
-            }
-          }
-        }
-      }
+      res = this.parseData(res, data, "", output[i]['id_kategori_akun'])
+      // for (var j = 0; j < data.length; j++) {
+      //   if (data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
+      //     res.push(data[j])
+      //     for (var k = 0; k < data.length; k++) {
+      //       if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
+      //         res.push(data[k])
+      //         for (var l = 0; l < data.length; l++) {
+      //           if (data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
+      //             res.push(data[l])
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
     }
-
-    console.log(res)
 
     this.res_data = res
     this.countDebit()
@@ -410,6 +407,18 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     setTimeout(() => {
       this.checkHeight()
     }, 1)
+  }
+
+  parseData(p, data, id_akun, id_kategori_akun) {
+    let res = p
+    for (var i = 0; i < data.length; i++) {
+      if (data[i]['id_kategori_akun'] === id_kategori_akun && data[i]['id_induk_akun'] === id_akun) {
+        res.push(data[i])
+        res = this.parseData(res, data, data[i]['id_akun'], data[i]['id_kategori_akun'])
+      }
+    }
+
+    return res
   }
 
   checkParent(id_parent, nu?) {

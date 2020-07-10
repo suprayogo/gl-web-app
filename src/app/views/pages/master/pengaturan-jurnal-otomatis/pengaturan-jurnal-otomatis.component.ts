@@ -396,6 +396,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         this.loading = true;
         this.ref.markForCheck()
         this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+        console.log(this.formValue)
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
         let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValue)
