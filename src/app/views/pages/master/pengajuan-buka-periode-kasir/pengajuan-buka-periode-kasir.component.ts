@@ -10,13 +10,14 @@ import { RequestDataService } from '../../../../service/request-data.service';
 // Global Variable Service
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
-// Component
-import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
+// Components
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
+
+// Title Menu Variable
 const content = {
   beforeCodeTitle: 'Pengajuan Buka Periode Kasir'
 }
@@ -56,7 +57,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   subPerusahaan: any;
   kode_perusahaan: any;
 
-  // Button Variable
+  // Setting Button Variable
   buttonLayout = [
     {
       btnLabel: 'Pilih Tanggal Pengajuan',
@@ -379,7 +380,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, true) // <-- Need Perusahaan, Periode
+    this.gbl.need(true, true) // <-- Need Access Perusahaan, Periode
     this.madeRequest()
     this.reqKodePerusahaan()
   }
@@ -416,7 +417,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     )
   }
 
-  // Request Data from API
+  // Request Data For Input Form
   madeRequest() {
     // Request Data Cabang
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
@@ -621,7 +622,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
             this.detailData.push(x[i])
           }
           this.ref.markForCheck()
-          this.formInputCheckChangesDetail()
+          this.formDetailInputCheckChanges()
         }
         this.dialogRef = undefined
         this.dialogType = null
@@ -745,7 +746,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
   }
 
-  // Change Structure Detail Data
+  // Change Structure Detail Input
   restructureDetailData(data) {
     let endRes = []
     for (var i = 0; i < data.length; i++) {
@@ -821,16 +822,17 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     // this.filterPeriodeKasirByCabang(this.formValue.kode_cabang)
     this.getDetail()
     this.formInputCheckChanges()
-    this.formInputCheckChangesDetail()
+    this.formDetailInputCheckChanges()
   }
 
+  // Function : Cancel Transaksi Pengajuan
   cancelTran() {
     this.gbl.topPage()
     this.setBatal = true
-    this.save()
+    this.saveData()
   }
 
-  // Function: Button Save Input
+  // Function: Button Save
   onSubmit(inputForm: NgForm) {
     this.gbl.topPage()
     if (this.forminput !== undefined) {
@@ -838,10 +840,10 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         if (this.detailData.length <= 0) {
           this.gbl.openSnackBar('Tanggal Pengajuan Belum Diisi.', 'info')
         } else {
-          this.save()
+          this.saveData()
         }
       } else {
-        // Validate Layout Form
+        // Validate Input Form
         if (this.forminput.getData().bulan_periode === '') {
           this.gbl.openSnackBar('Periode Belum Diisi.', 'info')
         } else if (this.forminput.getData().kode_cabang === '') {
@@ -851,7 +853,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
   }
 
-  save() {
+  // Action Add New Data or Update Data
+  saveData() {
     this.loading = true;
     this.ref.markForCheck()
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
@@ -919,7 +922,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
     this.detailData = []
     this.formInputCheckChanges()
-    this.formInputCheckChangesDetail()
+    this.formDetailInputCheckChanges()
   }
 
   // Function: Button Cancel Input
@@ -942,7 +945,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   }
 
   // Check Changes Form Input Detail
-  formInputCheckChangesDetail() {
+  formDetailInputCheckChanges() {
     setTimeout(() => {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()

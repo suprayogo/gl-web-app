@@ -29,7 +29,8 @@
                         <div *ngFor="let x of res_data; let i = index"
                             style="width: 100%; height: 42px; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
                             [ngStyle]="{'background-color': x['type'] === 'cat' ? '#ecf0f1' : '', 'cursor': checkChild(x['id_jenis_transaksi']) || x['type'] === 'cat' ? 'default' : 'pointer'}"
-                            [id]="i == 0 ? 'content' : null" (click)="checkChild(x['id_jenis_transaksi']) || x['type'] === 'cat' ? null : openDialog(x)">
+                            [id]="i == 0 ? 'content' : null"
+                            (click)="checkChild(x['id_jenis_transaksi']) || x['type'] === 'cat' ? null : openDialog(x)">
                             <div style="width: 60%; padding: 10px; padding-right: 10px;"
                                 [ngStyle]="{'border-right': x['type'] === 'cat' || checkChild(x['id_jenis_transaksi']) ? '' : 'solid 1px lightgrey', 'padding-left': x['type'] === 'cat' ? '10px' : (checkParent(x['id_kasir']) + 10) + 'px' }">
                                 <span

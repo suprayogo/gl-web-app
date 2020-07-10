@@ -28,6 +28,7 @@ import { ReportRequestService } from './master/report/report-request.service';
 import { KasirRequestService } from './master/kasir/kasir-request.service';
 import { PengajuanBukaPeriodeKasirRequestService } from './transaksi/pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir-request.service';
 import { UtilitasRequestService } from './master/utilitas/utilitas-request.service';
+import { TemplateTransaksiRequestService } from './master/template-transaksi/template-transaksi-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -61,6 +62,7 @@ export class ApiDataService {
     private kasirReq: KasirRequestService,
     private utilitasReq: UtilitasRequestService,
     private worklistReq: WorklistRequestService,
+    private templateReq: TemplateTransaksiRequestService,
 
     //Transaksi Services
     private postingJurnalReq: PostingJurnalRequestService,
@@ -90,6 +92,7 @@ export class ApiDataService {
     this.reportReq.url = this.baseURL
     this.kasirReq.url = this.baseURL
     this.worklistReq.url = this.baseURL
+    this.templateReq.url = this.baseURL
 
     //Setting Services
     this.settingLaporanReq.url = this.baseURL
@@ -147,6 +150,8 @@ export class ApiDataService {
       return this.utilitasReq.validate(data, this.httpBody, this.options, formData)
     } else if (type === 'worklist') {
       return this.worklistReq.validate(data, this.httpBody, this.options, formData)
+    } else if (type === 'template') {
+      return this.templateReq.validate(data, this.httpBody, this.options, formData)
     }
 
     //Setting Services 
