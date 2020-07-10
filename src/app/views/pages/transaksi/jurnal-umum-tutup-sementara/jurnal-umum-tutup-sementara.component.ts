@@ -37,6 +37,17 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
     }
   ]
 
+  tipe_jurnal = [
+    {
+      label: 'Jurnal Umum',
+      value: '0'
+    },
+    {
+      label: 'Jurnal Penyesuaian',
+      value: '1'
+    }
+  ]
+
   // VARIABLES
   keyReportFormatExcel: any;
   loading: boolean = true;
@@ -145,7 +156,8 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
     tgl_tran: '',
     kode_cabang: '',
     nama_cabang: '',
-    keterangan: ''
+    keterangan: '',
+    jenis_jurnal: '0'
   }
 
   detailData = [
@@ -368,6 +380,20 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
   inputLayout = [
     {
       formWidth: 'col-5',
+			label: 'Jenis Jurnal',
+			id: 'jenis-jurnal',
+			type: 'combobox',
+			options: this.tipe_jurnal,
+			valueOf: 'jenis_jurnal',
+			required: true,
+			readOnly: false,
+			disabled: false,
+      update: {
+        disabled: true
+      }
+		},
+    {
+      formWidth: 'col-5',
       label: 'Periode Akses',
       id: 'periode-akses',
       type: 'combobox',
@@ -529,7 +555,7 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
             this.daftar_periode = dp
             this.formValue.id_akses_periode = this.periode_aktif['id_periode'] === undefined ? '' : this.periode_aktif['id_periode']
             if (this.daftar_periode.length < 2) {
-              this.inputLayout.splice(0, 1, {
+              this.inputLayout.splice(1, 1, {
                 formWidth: 'col-5',
                 label: 'Periode Tutup Sementara',
                 id: 'periode-akses',
@@ -542,7 +568,7 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
                 onSelectFunc: (v) => this.setPeriode(v)
               })
             } else {
-              this.inputLayout.splice(0, 1, {
+              this.inputLayout.splice(1, 1, {
                 formWidth: 'col-5',
                 label: 'Periode Tutup Sementara',
                 id: 'periode-akses',
@@ -555,7 +581,7 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
                 onSelectFunc: (v) => this.setPeriode(v)
               })
             }
-            this.inputLayout.splice(2, 1, {
+            this.inputLayout.splice(3, 1, {
               formWidth: 'col-5',
               label: 'Tgl. Jurnal',
               id: 'tgl-jurnal',
@@ -608,7 +634,8 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
       tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      keterangan: x['keterangan']
+      keterangan: x['keterangan'],
+      jenis_jurnal: x['jurnal_penyesuaian']
     }
     this.onUpdate = true;
     if (this.onUpdate === true) {
@@ -685,7 +712,6 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
     this.ref.markForCheck()
     if (this.forminput !== undefined) {
       this.formValue = this.forminput.getData()
-      console.log(this.formValue)
       let data = []
 
       for (var i = 0 ; i < this.detailData.length; i++) {
@@ -859,11 +885,12 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
     this.formValue = {
       id_tran: '',
       no_tran: '',
-      tgl_tran: JSON.stringify(this.getDateNow()),
-      id_akses_periode: '',
+      tgl_tran: this.formValue['tgl_tran'],
+      id_akses_periode: this.formValue['id_akses_periode'],
       kode_cabang: '',
       nama_cabang: '',
-      keterangan: ''
+      keterangan: '',
+      jenis_jurnal: '0'
     }
     this.detailData = [
       {
@@ -1280,7 +1307,7 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
     for (var i = 0; i < this.periode_akses.length; i++) {
       if (v === this.periode_akses[i]['id_periode']) {
         this.periode_aktif = this.periode_akses[i]
-        this.inputLayout.splice(2, 1, {
+        this.inputLayout.splice(3, 1, {
           formWidth: 'col-5',
           label: 'Tgl. Jurnal',
           id: 'tgl-jurnal',

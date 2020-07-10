@@ -38,7 +38,8 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
 
   parseTemplate = {
     kat_akun: {
-      schema: "sch_p000",
+      batch: "",
+      schema: "sch_p001",
       table: 'mhs_kategori_akun',
       column: [
         "id_kategori_akun",
@@ -56,7 +57,8 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       }
     },
     akun: {
-      schema: "sch_p000",
+      batch: "",
+      schema: "sch_p001",
       table: 'mhs_akun',
       column: [
         "id_akun",
@@ -85,7 +87,8 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       }
     },
     jenis_transaksi: {
-      schema: "sch_p000",
+      batch: "",
+      schema: "sch_p001",
       table: 'mhs_jenis_transaksi',
       column: [
         "id_jenis_transaksi",
@@ -118,7 +121,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(false, false)
+    this.gbl.need(true, false)
     this.madeRequest()
   }
 
@@ -169,7 +172,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       console.log(parsedData)
       this.request.apiData('utilitas', 'i-data-upload', parsedData).subscribe(
         data => {
-          if (data['RESULT'] === 'Y') {
+          if (data['STATUS'] === 'Y') {
             this.loading = false
             this.files.splice(0, this.files.length)
             this.ref.markForCheck()
@@ -179,6 +182,11 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
             this.ref.markForCheck()
             this.openSnackBar('Data gagal diupload.', 'fail')
           }
+        },
+        error => {
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar('Request Gagal.', 'fail')
         }
       )
 
@@ -277,7 +285,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   }
 
   sendKategoriAkun() {
-    this.request.apiData('kategori-akun', 'g-kategori-akun', { kode_perusahaan: 'P000' }).subscribe(
+    this.request.apiData('kategori-akun', 'g-kategori-akun', { kode_perusahaan: 'P001' }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.loading = false

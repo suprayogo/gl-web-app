@@ -334,6 +334,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       this.loading = true
       this.ref.markForCheck()
       let endRes = {
+        batch: "",
         kode_perusahaan: this.kode_perusahaan,
         id_periode: this.idPeriodeAktif,
         detail: this.browseDataHT

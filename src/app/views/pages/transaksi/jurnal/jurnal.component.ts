@@ -31,6 +31,17 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
+  tipe_jurnal = [
+    {
+      label: 'Jurnal Umum',
+      value: '0'
+    },
+    {
+      label: 'Jurnal Penyesuaian',
+      value: '1'
+    }
+  ]
+
   // VARIABLES
   keyReportFormatExcel: any;
   loading: boolean = true;
@@ -143,7 +154,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     tgl_tran: JSON.stringify(this.getDateNow()),
     kode_cabang: '',
     nama_cabang: '',
-    keterangan: ''
+    keterangan: '',
+    jenis_jurnal: '0'
   }
 
   detailData = [
@@ -366,6 +378,20 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   inputLayout = [
     {
       formWidth: 'col-5',
+			label: 'Jenis Jurnal',
+			id: 'jenis-jurnal',
+			type: 'combobox',
+			options: this.tipe_jurnal,
+			valueOf: 'jenis_jurnal',
+			required: true,
+			readOnly: false,
+      disabled: false,
+      update: {
+        disabled: true
+      }
+		},
+    {
+      formWidth: 'col-5',
       label: 'No. Jurnal',
       id: 'nomor-jurnal',
       type: 'input',
@@ -564,7 +590,6 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            console.log(this.periode_aktif)
             this.formValue.id_akses_periode = this.periode_aktif['id_periode']
             // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             // this.gbl.getIdPeriodeAktif()
@@ -576,7 +601,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             // } else {
             //   this.disableSubmit = false
             // }
-            this.inputLayout.splice(1, 1, {
+            this.inputLayout.splice(2, 1, {
               formWidth: 'col-5',
               label: 'Tgl. Jurnal',
               id: 'tgl-jurnal',
@@ -635,7 +660,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       tgl_tran: JSON.stringify(t_tran.getTime()),
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      keterangan: x['keterangan']
+      keterangan: x['keterangan'],
+      jenis_jurnal: x['jurnal_penyesuaian']
     }
     this.onUpdate = true;
     if(this.onUpdate === true){
@@ -885,12 +911,34 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     this.formValue = {
       id_tran: '',
       no_tran: '',
-      tgl_tran: JSON.stringify(this.getDateNow()),
-      id_akses_periode: '',
+      tgl_tran: this.formValue['tgl_tran'],
+      id_akses_periode: this.formValue['id_akses_periode'],
       kode_cabang: '',
       nama_cabang: '',
-      keterangan: ''
+      keterangan: '',
+      jenis_jurnal: '0'
     }
+    this.inputLayout.splice(2, 1, {
+      formWidth: 'col-5',
+      label: 'Tgl. Jurnal',
+      id: 'tgl-jurnal',
+      type: 'datepicker',
+      valueOf: 'tgl_tran',
+      required: true,
+      readOnly: false,
+      update: {
+        disabled: false
+      },
+      timepick: false,
+      enableMin: true,
+      enableMax: true,
+      minMaxDate: () => {
+        return {
+          y: this.periode_aktif['tahun_periode'],
+          m: this.periode_aktif['bulan_periode']
+        }
+      }
+    })
     this.detailData = [
       {
         seq: '',
