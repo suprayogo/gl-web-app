@@ -33,15 +33,30 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   total_kredit = 0
 
   formDetail = {
-    id_akun:  '', 
+    kode_cabang: '',
+    nama_cabang: '',
+    id_akun: '',
     kode_akun: '',
-    nama_akun : '',
+    nama_akun: '',
     nama_tipe_akun: '',
     saldo_debit: 0,
     saldo_kredit: 0
   }
 
   detailInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'nama-cabang',
+      type: 'input',
+      valueOf: 'nama_cabang',
+      required: false,
+      readOnly: false,
+      disabled: true,
+      update: {
+        disabled: false
+      }
+    },
     {
       formWidth: 'col-5',
       label: 'Kode Akun',
@@ -184,9 +199,9 @@ export class PengaturanSaldoAwalComponent implements OnInit {
           res.push(t)
         }
       }
-  
+
       this.request.apiData('akun', 'i-saldo-awal-akun', { kode_perusahaan: this.kode_perusahaan, detail: res }).subscribe(
-        data =>  {
+        data => {
           if (data['STATUS'] === 'Y') {
             this.data_akun = []
             this.res_data = []
@@ -222,9 +237,11 @@ export class PengaturanSaldoAwalComponent implements OnInit {
 
   resetDetailForm() {
     this.formDetail = {
-      id_akun:  '', 
+      kode_cabang: '',
+      nama_cabang: '',
+      id_akun: '',
       kode_akun: '',
-      nama_akun : '',
+      nama_akun: '',
       nama_tipe_akun: '',
       saldo_debit: 0,
       saldo_kredit: 0
@@ -242,6 +259,8 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     this.gbl.topPage()
     let x = JSON.parse(JSON.stringify(v))
     this.formDetail = {
+      kode_cabang: x['kode_cabang'],
+      nama_cabang: x['nama_cabang'],
       id_akun: x['id_akun'],
       kode_akun: x['kode_akun'],
       nama_akun: x['nama_akun'],
@@ -279,7 +298,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
 
   submitDetailData(v) {
     for (var i = 0; i < this.data_akun.length; i++) {
-      if (this.data_akun[i]['id_akun'] === v['id_akun']) {
+      if (this.data_akun[i]['kode_cabang'] === v['kode_cabang'] && this.data_akun[i]['id_akun'] === v['id_akun']) {
         let t = JSON.parse(JSON.stringify(this.data_akun[i]))
         t['saldo_debit'] = v['saldo_debit']
         t['saldo_kredit'] = v['saldo_kredit']
@@ -290,12 +309,12 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     }
     this.dialog.closeAll()
     this.restructureData(this.data_akun)
-  } 
+  }
 
   madeRequest() {
     this.loading = true
     this.ref.markForCheck()
-    this.request.apiData('akun', 'g-saldo-awal-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('akun', 'g-saldo-awal-akun-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
@@ -363,13 +382,25 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   }
 
   restructureData(data) {
-    console.clear()
     console.log(data)
     this.loading = true
     this.ref.markForCheck()
     var flags = [],
+      outputCabang = [],
       output = [],
       res = [];
+
+    // Looping Data Cabang
+    for (var i = 0; i < data.length; i++) {
+      if (flags[data[i]['kode_cabang']]) continue;
+      flags[data[i]['kode_cabang']] = true;
+      outputCabang.push({
+        kode_cabang: data[i]['kode_cabang'],
+        nama_cabang: data[i]['nama_cabang'],
+        type: 'cat'
+      });
+    }
+    console.log(outputCabang)
 
     for (var i = 0; i < data.length; i++) {
       if (flags[data[i]['id_kategori_akun']]) continue;
@@ -381,17 +412,21 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       });
     }
 
-    for (var i = 0; i < output.length; i++) {
-      res.push(output[i])
-      for (var j = 0; j < data.length; j++) {
-        if (data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
-          res.push(data[j])
-          for (var k = 0; k < data.length; k++) {
-            if (data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
-              res.push(data[k])
-              for (var l = 0; l < data.length; l++) {
-                if (data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
-                  res.push(data[l])
+    for (var h = 0; h < outputCabang.length; h++) {
+      res.push(outputCabang[h])
+      for (var i = 0; i < output.length; i++) {
+        res.push(output[i])
+        for (var j = 0; j < data.length; j++) {
+          if (outputCabang[h]['kode_cabang'] === data[j]['kode_cabang'] && data[j]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_induk_akun'] === "") {
+            console.log(data[j])
+            res.push(data[j])
+            for (var k = 0; k < data.length; k++) {
+              if (data[j]['kode_cabang'] === data[k]['kode_cabang'] && data[k]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[j]['id_akun'] === data[k]['id_induk_akun']) {
+                res.push(data[k])
+                for (var l = 0; l < data.length; l++) {
+                  if (data[k]['kode_cabang'] === data[l]['kode_cabang'] && data[l]['id_kategori_akun'] === output[i]['id_kategori_akun'] && data[k]['id_akun'] === data[l]['id_induk_akun']) {
+                    res.push(data[l])
+                  }
                 }
               }
             }
@@ -399,9 +434,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         }
       }
     }
-
     console.log(res)
-
     this.res_data = res
     this.countDebit()
     this.countKredit()
@@ -430,7 +463,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     } else {
       return mul
     }
-    
+
   }
 
   checkChild(id) {

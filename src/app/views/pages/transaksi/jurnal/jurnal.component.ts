@@ -564,7 +564,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
-            this.formValue.id_akses_periode = this.periode_aktif['id_periode']
+            // this.formValue.id_akses_periode = this.periode_aktif['id_periode']
             // this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             // this.gbl.getIdPeriodeAktif()
             // this.gbl.getTahunPeriodeAktif()
@@ -646,7 +646,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
         }))}` : this.formValue.id_tran
         this.detailData = this.formValue['detail']['data']
         this.formValue['detail'] = this.detailData
-        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.formValue['id_akses_periode'] }, this.formValue)
+        let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }, this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -669,15 +669,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       } else {
         if (this.forminput.getData().kode_cabang === '') {
           this.openSnackBar('Cabang tidak valid.', 'info')
-        } else if (this.forminput.getData().kode_divisi === '') {
-          this.openSnackBar('Divisi tidak valid.', 'info')
-        } else if (this.forminput.getData().kode_departemen === '') {
-          this.openSnackBar('Departemen tidak valid.', 'info')
         } else {
           if (this.onUpdate && !this.enableEdit) {
             this.openSnackBar('Tidak dapat diedit lagi.', 'info')
           } else {
-            this.openSnackBar('Ada akun yang tidak valid atau saldo debit dan kredit tidak seimbang.', 'info')
+            this.openSnackBar('Data Informasi Akun belum lengkap atau Saldo Debit & Kredit belum balance.', 'info')
           }
         }
       }
@@ -838,14 +834,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       }
 
       for (var i = 0; i < data['detail']['data'].length; i++) {
-        if (data['detail']['data'][i]['id_akun'] === '') {
+        if (data['detail']['data'][i]['id_akun'] === '' || data['detail']['data'][i]['nama_departemen'] === '' || data['detail']['data'][i]['nama_divisi'] === '') {
           valid = false
           break;
         }
       }
-
-      if (data['nama_departemen'] === '') valid = false
-      if (data['nama_divisi'] === '') valid = false
     }
 
     if (this.onUpdate) {
@@ -1207,7 +1200,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.formValue.id_akses_periode }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif['id_periode'] }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {

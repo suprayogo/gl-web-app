@@ -188,6 +188,10 @@ export class ForminputComponent implements OnInit {
     this.detailjurnal === undefined ? null : this.detailjurnal.checkChanges()
   }
 
+  checkChangesDetailTemplate() {
+    this.detailjurnal === undefined ? null : this.detailjurnal.checkChangesTemplate()
+  }
+
   //Date picker function
   getDateFormat(data) {
     let pdata = data === '' ? null : parseInt(data)

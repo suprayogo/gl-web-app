@@ -119,8 +119,8 @@ export class DetailJurnalComponent implements OnInit {
       saldo_kredit: 0,
       setting_debit: '',
       setting_kredit: '',
-      percent_debit: 0,
-      percent_kredit: 0
+      bobot_debit: 0,
+      bobot_kredit: 0
     },
     {
       id_akun: '',
@@ -136,8 +136,8 @@ export class DetailJurnalComponent implements OnInit {
       saldo_kredit: 0,
       setting_debit: '',
       setting_kredit: '',
-      percent_debit: 0,
-      percent_kredit: 0
+      bobot_debit: 0,
+      bobot_kredit: 0
     }
   ];
   total_debit = 0
@@ -168,6 +168,8 @@ export class DetailJurnalComponent implements OnInit {
     }
     this.countDebit()
     this.countKredit()
+    this.countPercentDebit()
+    this.countPercentKredit()
 
     if (this.dataSetting !== undefined && this.dataSetting != null) {
       this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
@@ -179,8 +181,17 @@ export class DetailJurnalComponent implements OnInit {
   checkChanges() {
     if (this.data !== undefined || this.data != null) {
       this.res_data = this.data
+      console.log(this.res_data)
       this.countDebit()
       this.countKredit()
+    }
+  }
+
+  checkChangesTemplate() {
+    if (this.data !== undefined || this.data != null) {
+      this.res_data = this.data
+      this.countPercentDebit()
+      this.countPercentKredit()
     }
   }
 
@@ -390,23 +401,6 @@ export class DetailJurnalComponent implements OnInit {
     this.ref.markForCheck()
   }
 
-  countDebitPercent(ind?) {
-    let sum = 0
-    for (var i = 0; i < this.res_data.length; i++) {
-      sum = sum + parseFloat(JSON.stringify(this.res_data[i]['percent_debit']))
-    }
-
-    this.total_debit = sum
-    if (ind !== undefined) {
-
-      if (parseFloat(JSON.stringify(this.res_data[ind]['percent_debit'])) > 0) {
-        this.res_data[ind]['precent_kredit'] = 0
-        this.countKreditPercent(ind)
-      }
-    }
-    this.ref.markForCheck()
-  }
-
   countKredit(ind?) {
     let sum = 0
     for (var i = 0; i < this.res_data.length; i++) {
@@ -423,21 +417,52 @@ export class DetailJurnalComponent implements OnInit {
     this.ref.markForCheck()
   }
 
-  countKreditPercent(ind?) {
+  countPercentDebit(ind?) {
     let sum = 0
     for (var i = 0; i < this.res_data.length; i++) {
-      sum = sum + parseFloat(JSON.stringify(this.res_data[i]['percent_kredit']))
+      sum = sum + parseFloat(JSON.stringify(this.res_data[i]['bobot_debit']))
     }
 
-    this.total_kredit = sum
+    this.total_debit = sum
+
     if (ind !== undefined) {
-      if (parseFloat(JSON.stringify(this.res_data[ind]['percent_kredit'])) > 0) {
-        this.res_data[ind]['percent_debit'] = 0
-        this.countDebitPercent(ind)
+      if (parseFloat(JSON.stringify(this.res_data[ind]['bobot_debit'])) > 0) {
+        if (this.total_debit > 100) {
+          this.openSnackBar('Maksimal Total Bobot Debit adalah 100%', 'info')
+          this.res_data[ind]['bobot_debit'] = 0
+          this.countPercentDebit(ind)
+        }
+        
+        this.res_data[ind]['bobot_kredit'] = 0
+        this.countPercentKredit(ind)
       }
     }
     this.ref.markForCheck()
   }
+
+  countPercentKredit(ind?) {
+    let sum = 0
+    for (var i = 0; i < this.res_data.length; i++) {
+      sum = sum + parseFloat(JSON.stringify(this.res_data[i]['bobot_kredit']))
+    }
+
+    this.total_kredit = sum
+    if (ind !== undefined) {
+      if (parseFloat(JSON.stringify(this.res_data[ind]['bobot_kredit'])) > 0) {
+
+        if (this.total_kredit > 100) {
+          this.openSnackBar('Maksimal Total Bobot Kredit adalah 100%', 'info')
+          this.res_data[ind]['bobot_kredit'] = 0
+          this.countPercentKredit(ind)
+        }
+
+        this.res_data[ind]['bobot_debit'] = 0
+        this.countPercentDebit(ind)
+      }
+    }
+    this.ref.markForCheck()
+  }
+
 
   addRow() {
     let r = {
@@ -455,8 +480,8 @@ export class DetailJurnalComponent implements OnInit {
       saldo_kredit: 0,
       setting_debit: '',
       setting_kredit: '',
-      percent_debit: 0,
-      percent_kredit: 0
+      bobot_debit: 0,
+      bobot_kredit: 0
     }
     this.res_data.push(r)
   }
@@ -466,6 +491,8 @@ export class DetailJurnalComponent implements OnInit {
       this.res_data.splice(this.res_data.length - 1, 1)
       this.countDebit()
       this.countKredit()
+      this.countPercentDebit()
+      this.countPercentKredit()
     }
   }
 
@@ -476,7 +503,8 @@ export class DetailJurnalComponent implements OnInit {
 
   getData() {
     let res = {
-      valid: (this.total_debit == this.total_kredit) && (this.total_debit != 0 && this.total_kredit !== 0) ? true : false,
+      valid: (this.total_debit == this.total_kredit) && (this.total_debit != 0 && this.total_kredit != 0) ? true : false,
+      validBobot: (this.total_debit == this.total_kredit) && (this.total_debit != 0 && this.total_kredit != 0 && this.total_debit == 100 && this.total_kredit == 100) ? true : false,
       data: this.res_data
     }
     return res
