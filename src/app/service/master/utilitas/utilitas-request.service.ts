@@ -23,6 +23,14 @@ export class UtilitasRequestService {
       }
       opt.headers.set('timeout', `${300000}`)
       return this.get(httpBody, opt)
+    } else if (data === 'i-data-upload-batch') {
+      httpBody.respondCode = 'SET-DATA-UPLOAD-BATCH'
+      httpBody.requestParam = JSON.stringify(formData)
+      let opt = {
+        headers: this.httpHeader.getHeader()
+      }
+      opt.headers.set('timeout', `${300000}`)
+      return this.get(httpBody, opt)
     }
   }
 

@@ -176,6 +176,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
 
   detailData = [
     {
+      seq: '',
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
@@ -190,6 +191,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       saldo_kredit: 0
     },
     {
+      seq: '',
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
@@ -1036,8 +1038,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       no_jurnal: '',
       no_tran: '',
       tgl_tran: '',
-      kode_cabang: '',
-      nama_cabang: '',
+      kode_cabang: this.formValue['kode_cabang'],
+      nama_cabang: this.formValue['nama_cabang'],
       id_jenis_transaksi: '',
       kode_jenis_transaksi: '',
       nilai_jenis_transaksi: '',
@@ -1048,6 +1050,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     }
     this.detailData = [
       {
+        seq: '',
         id_akun: '',
         kode_akun: '',
         nama_akun: '',
@@ -1062,6 +1065,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         saldo_kredit: 0
       },
       {
+        seq: '',
         id_akun: '',
         kode_akun: '',
         nama_akun: '',
@@ -1505,7 +1509,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           let res = []
           for (var i = 0; i < data['RESULT'].length; i++) {
             let t = {
-              label: data['RESULT'][i]['no_rekening'] + " - " + data['RESULT'][i]['atas_nama'],
+              label: data['RESULT'][i]['no_rekening'] + " - " + data['RESULT'][i]['nama_bank'] + " (" + data['RESULT'][i]['atas_nama'] + ")",
               value: data['RESULT'][i]['no_rekening']
             }
             res.push(t)
@@ -1550,6 +1554,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
           for (var i = 0; i < resp.length; i++) {
             let t = {
+              seq: resp[i]['seq'],
               id_akun: resp[i]['id_akun'],
               kode_akun: resp[i]['kode_akun'],
               nama_akun: resp[i]['nama_akun'],

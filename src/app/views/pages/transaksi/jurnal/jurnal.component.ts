@@ -258,19 +258,11 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       value: 'nama_cabang'
     },
     {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
-    },
-    {
       label: 'Keterangan',
       value: 'keterangan'
     },
     {
-      label: 'Status',
+      label: 'Batal Status',
       value: 'batal_status_sub'
     },
     {
@@ -307,8 +299,8 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     {
       target: 'batal_status',
       replacement: {
-        't': 'Batal',
-        'f': ''
+        'true': 'Batal',
+        'false': ''
       },
       redefined: 'batal_status_sub'
     }

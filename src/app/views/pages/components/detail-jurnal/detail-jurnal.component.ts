@@ -389,7 +389,7 @@ export class DetailJurnalComponent implements OnInit {
       sum = sum + parseFloat(JSON.stringify(this.res_data[i]['saldo_debit']))
     }
 
-    this.total_debit = sum
+    this.total_debit = parseFloat(sum.toFixed(5))
     if (ind !== undefined) {
 
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0) {
@@ -406,7 +406,7 @@ export class DetailJurnalComponent implements OnInit {
       sum = sum + parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit']))
     }
 
-    this.total_kredit = sum
+    this.total_kredit = parseFloat(sum.toFixed(5))
     if (ind !== undefined) {
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0) {
         this.res_data[ind]['saldo_debit'] = 0
@@ -488,10 +488,12 @@ export class DetailJurnalComponent implements OnInit {
   deleteRow() {
     if (this.res_data.length > 2) {
       this.res_data.splice(this.res_data.length - 1, 1)
-      this.countDebit()
-      this.countKredit()
-      this.countPercentDebit()
-      this.countPercentKredit()
+      setTimeout(() => {
+        this.countDebit()
+        this.countKredit()
+        this.countPercentDebit()
+        this.countPercentKredit()
+      }, 100)
     }
   }
 
