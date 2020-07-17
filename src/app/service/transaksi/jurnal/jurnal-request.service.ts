@@ -47,6 +47,10 @@ export class JurnalRequestService {
       httpBody.respondCode = 'CNL-DATA-JURNAL-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-riwayat-ubah-jurnal') {
+      httpBody.respondCode = 'GET-DATA-RIWAYAT-PERUBAHAN-JURNAL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

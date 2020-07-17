@@ -153,7 +153,7 @@
 
   <div *ngIf="!detailLoad && detailJurnal" style="margin-bottom: 15px;">
     <kt-detail-jurnal [dataAkun]="jurnalDataAkun" [dataDivisi]="jurnalDataDivisi" [dataSetting]="jurnalDataSetting"
-      [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis" [templateTransaksi]="templateTransaksi"></kt-detail-jurnal>
+      [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis" [templateTransaksi]="templateTransaksi" [noEdit]="noEditJurnal"></kt-detail-jurnal>
   </div>
 
   <div class="kt-form__actions" *ngIf="!noButton">

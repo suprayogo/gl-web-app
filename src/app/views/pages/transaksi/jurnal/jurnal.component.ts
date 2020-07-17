@@ -192,12 +192,14 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   ]
 
   formDetail = {
-   format_cetak: 'pdf'
+    format_cetak: 'pdf'
   }
+
+  reportDetail = []
 
   detailInputLayout = [
     {
-      
+
       formWidth: 'col-5',
       label: 'Format Cetak',
       id: 'format-cetak',
@@ -378,18 +380,18 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   inputLayout = [
     {
       formWidth: 'col-5',
-			label: 'Jenis Jurnal',
-			id: 'jenis-jurnal',
-			type: 'combobox',
-			options: this.tipe_jurnal,
-			valueOf: 'jenis_jurnal',
-			required: true,
-			readOnly: false,
+      label: 'Jenis Jurnal',
+      id: 'jenis-jurnal',
+      type: 'combobox',
+      options: this.tipe_jurnal,
+      valueOf: 'jenis_jurnal',
+      required: true,
+      readOnly: false,
       disabled: false,
       update: {
         disabled: true
       }
-		},
+    },
     {
       formWidth: 'col-5',
       label: 'No. Jurnal',
@@ -527,8 +529,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  checkPeriodReport = ""
-  checkKeyReport = ""
+  checkKeyReport = {}
 
   constructor(
     public dialog: MatDialog,
@@ -664,7 +665,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       jenis_jurnal: x['jurnal_penyesuaian']
     }
     this.onUpdate = true;
-    if(this.onUpdate === true){
+    if (this.onUpdate === true) {
       this.disablePrintButton = false
     }
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
@@ -729,76 +730,93 @@ export class JurnalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  printDoc(v){
-    this.loading = true
-    this.ref.markForCheck()
+  printDoc(v) {
     if (this.forminput !== undefined) {
-      this.formValue = this.forminput.getData()
-      let data = []
+      this.loading = true
+      this.ref.markForCheck()
+      let rk = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
+      if (this.checkKeyReport[rk] !== undefined) {
+        if (this.formDetail['format_cetak'] === 'pdf') {
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+        } else {
+          if (this.formDetail['format_cetak'] === 'xlsx') {
+            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
+          } else {
+            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
+          }
+          setTimeout(() => {
+            let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+            sbmBtn.click();
+          }, 100)
+        }
+        this.loading = false
+        this.ref.markForCheck()
+      } else {
+        let data = []
+        for (var i = 0; i < this.reportDetail.length; i++) {
+          let t = []
+          t.push(this.formValue['no_tran'])
+          t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
+          t.push(this.formValue.keterangan)
+          t.push(this.formValue.nama_cabang)
+          t.push(this.reportDetail[i]['kode_akun'])
+          t.push(this.reportDetail[i]['nama_akun'])
+          t.push(this.reportDetail[i]['saldo_debit'])
+          t.push(this.reportDetail[i]['saldo_kredit'])
 
-      for (var i = 0 ; i < this.detailData.length; i++) {
-        let t = []
-        t.push(this.formValue['no_tran'])
-        t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
-        t.push(this.formValue.keterangan)
-        t.push(this.formValue.nama_cabang)
-        t.push(this.detailData[i]['kode_akun'])
-        t.push(this.detailData[i]['nama_akun'])
-        t.push(this.detailData[i]['saldo_debit'])
-        t.push(this.detailData[i]['saldo_kredit'])
+          data.push(t)
+        }
 
-        data.push(t)
+        let rp = JSON.parse(JSON.stringify(this.reportObj))
+        rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+        rp['REPORT_CODE'] = 'DOK-TRAN-JURNAL'
+        rp['REPORT_NAME'] = 'Dokumen Transaksi Jurnal Umum'
+        rp['REPORT_FORMAT_CODE'] = v['format_cetak']
+        rp['JASPER_FILE'] = 'dokTransaksiJurnal.jasper'
+        rp['REPORT_PARAMETERS'] = {
+          USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+          REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+          REPORT_COMPANY_CITY: this.info_company.kota,
+          REPORT_COMPANY_TLPN: this.info_company.telepon,
+          REPORT_PERIODE: "Periode: " +
+            this.gbl.getNamaBulan(this.periode_aktif['bulan_periode']) + " " +
+            this.periode_aktif['tahun_periode']
+        }
+
+        rp['FIELD_TITLE'] = [
+          "No. Transaksi",
+          "Tgl. Transaksi",
+          "Keterangan",
+          "Nama Cabang",
+          "Kode Akun",
+          "Nama Akun",
+          "Saldo Debit",
+          "Saldo Kredit"
+        ]
+        rp['FIELD_NAME'] = [
+          "noTran",
+          "tglTran",
+          "keterangan",
+          "namaCabang",
+          "kodeAkun",
+          "namaAkun",
+          "nilaiDebit",
+          "nilaiKredit"
+        ]
+        rp['FIELD_TYPE'] = [
+          "string",
+          "date",
+          "string",
+          "string",
+          "string",
+          "string",
+          "bigdecimal",
+          "bigdecimal"
+        ]
+        rp['FIELD_DATA'] = data
+
+        this.sendGetPrintDoc(rp, v['format_cetak'])
       }
-
-      let rp = JSON.parse(JSON.stringify(this.reportObj))
-      rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-      rp['REPORT_CODE'] = 'DOK-TRAN-JURNAL'
-      rp['REPORT_NAME'] = 'Dokumen Transaksi Jurnal Umum'
-      rp['REPORT_FORMAT_CODE'] = v['format_cetak']
-      rp['JASPER_FILE'] = 'dokTransaksiJurnal.jasper'
-      rp['REPORT_PARAMETERS'] = {
-        USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-        REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-        REPORT_COMPANY_CITY: this.info_company.kota,
-        REPORT_COMPANY_TLPN: this.info_company.telepon,
-        REPORT_PERIODE: "Periode: " +
-          this.gbl.getNamaBulan(this.periode_aktif['bulan_periode']) + " " +
-          this.periode_aktif['tahun_periode']
-      }
-
-      rp['FIELD_TITLE'] = [
-        "No. Transaksi",
-        "Tgl. Transaksi",
-        "Keterangan",
-        "Nama Cabang",
-        "Kode Akun",
-        "Nama Akun",
-        "Saldo Debit",
-        "Saldo Kredit"
-      ]
-      rp['FIELD_NAME'] = [
-        "noTran",
-        "tglTran",
-        "keterangan",
-        "namaCabang",
-        "kodeAkun",
-        "namaAkun",
-        "nilaiDebit",
-        "nilaiKredit"
-      ]
-      rp['FIELD_TYPE'] = [
-        "string",
-        "date",
-        "string",
-        "string",
-        "string",
-        "string",
-        "bigdecimal",
-        "bigdecimal"
-      ]
-      rp['FIELD_DATA'] = data
-      
-      this.sendGetPrintDoc(rp, v['format_cetak'])
     } else {
       this.loading = false
       this.ref.markForCheck()
@@ -812,52 +830,20 @@ export class JurnalComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-            } else {
-              window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport, "_blank");
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-            }
-          } else if (type === 'xlsx') {
-            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            } else {
-              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            }
+            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
-            if (this.checkPeriodReport !== p['REPORT_PARAMETERS']['REPORT_PERIODE']) {
-              this.keyReportFormatExcel = data['RESULT'] + '.xls'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
+            if (type === 'xlsx') {
+              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
             } else {
-              this.keyReportFormatExcel = this.checkKeyReport + '.xls'
-              this.checkPeriodReport = p['REPORT_PARAMETERS']['REPORT_PERIODE']
-              this.checkKeyReport = data['RESULT']
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
+              this.keyReportFormatExcel = data['RESULT'] + '.xls'
             }
+            setTimeout(() => {
+              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+              sbmBtn.click();
+            }, 100)
           }
+          let rk = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
+          this.checkKeyReport[rk] = data['RESULT']
           this.loading = false
           this.ref.markForCheck()
         } else {
@@ -971,7 +957,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
 
   resetDetailForm() {
     this.formDetail = {
-     format_cetak: 'pdf'
+      format_cetak: 'pdf'
     }
   }
 
@@ -1257,6 +1243,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             res.push(t)
           }
           this.detailData = res
+          this.reportDetail = JSON.parse(JSON.stringify(res))
           this.detailLoad = false
           this.ref.markForCheck()
           this.formInputCheckChangesJurnal()

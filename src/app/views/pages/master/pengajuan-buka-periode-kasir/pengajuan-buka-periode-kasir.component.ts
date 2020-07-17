@@ -349,8 +349,9 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       valueOf: 'tgl_tran',
       required: true,
       readOnly: false,
+      disabled: true,
       update: {
-        disabled: false
+        disabled: true
       },
       timepick: false,
       enableMin: false,
@@ -818,7 +819,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   getBackToInput() {
     this.loading = true
     this.selectedTab = 0;
-    // this.filterPeriodeKasirByCabang(this.formValue.kode_cabang)
     this.getDetail()
     this.formInputCheckChanges()
     this.formDetailInputCheckChanges()
@@ -828,7 +828,16 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   cancelTran() {
     this.gbl.topPage()
     this.setBatal = true
-    this.saveData()
+    if (this.batal_alasan !== "") {
+      this.saveData()
+    } else {
+      this.setBatal = false
+      this.gbl.openSnackBar('Alasan Batal Belum Diisi', 'info')
+      setTimeout(() => {
+        this.ref.markForCheck()
+        this.openCDialog()
+      }, 1000)
+    }
   }
 
   // Function: Button Save
@@ -857,9 +866,9 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     this.loading = true;
     this.ref.markForCheck()
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-    if(this.setBatal === true){
-    this.formValue.batal_status = "true"
-    this.formValue.batal_alasan = this.batal_alasan
+    if (this.setBatal === true) {
+      this.formValue.batal_status = "true"
+      this.formValue.batal_alasan = this.batal_alasan
     }
     this.formValue.id_tran = this.formValue.id_tran === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
       length: 8,
@@ -871,7 +880,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       {
         detail: this.detailData,
         kode_perusahaan: this.kode_perusahaan
-        
+
       },
       this.formValue
     )

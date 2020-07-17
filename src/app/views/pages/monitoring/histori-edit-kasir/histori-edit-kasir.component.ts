@@ -15,15 +15,15 @@ import { ConfirmationdialogComponent } from '../../components/confirmationdialog
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Transaksi Kasir'
+  beforeCodeTitle: 'Riwayat Perubahan Jurnal'
 }
 
 @Component({
-  selector: 'kt-transaksi-kasir',
-  templateUrl: './transaksi-kasir.component.html',
-  styleUrls: ['./transaksi-kasir.component.scss', '../monitoring.style.scss']
+  selector: 'kt-histori-edit-kasir',
+  templateUrl: './histori-edit-kasir.component.html',
+  styleUrls: ['./histori-edit-kasir.component.scss', '../monitoring.style.scss']
 })
-export class TransaksiKasirComponent implements OnInit, AfterViewInit {
+export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
@@ -64,6 +64,8 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formDetail = {
+    id_periode: '',
+    kode_cabang: '',
     nama_cabang: '',
     nama_kasir: '',
     no_jurnal: '',
@@ -362,6 +364,42 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   browseData = []
   browseDataRules = []
 
+  selectableDisplayColumns = [
+    {
+      label: 'No. Transaksi',
+      value: 'no_tran'
+    },
+    {
+      label: 'Tanggal Transaksi',
+      value: 'tgl_tran'
+    },
+    {
+      label: 'Jenis Transaksi',
+      value: 'jenis_tran'
+    },
+    {
+      label: 'Kode Jenis Transaksi',
+      value: 'kode_jenis_transaksi'
+    },
+    {
+      label: 'Nilai Jenis Transaksi',
+      value: 'nilai_jenis_transaksi'
+    },
+    {
+      label: 'Saldo Transaksi',
+      value: 'saldo_transaksi'
+    }
+  ];
+  selectableInterface = {
+    //STATIC
+    input_by: 'string',
+    input_dt: 'string',
+    update_by: 'string',
+    update_dt: 'string'
+  }
+  selectableData = []
+  selectableDataRules = []
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -480,7 +518,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   // REQUEST DATA FROM API (to : L.O.V or Table)
   sendReqPeriodeJurnal(id_periode, kode_cabang) {
     this.tableLoad = true
-    this.request.apiData('kasir', 'g-transaksi-kasir', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode}).subscribe(
+    this.request.apiData('kasir', 'g-transaksi-kasir', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (kode_cabang === "") {
@@ -501,34 +539,39 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
-    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
+    this.request.apiData('jurnal', 'g-riwayat-ubah-jurnal', { 
+      kode_perusahaan: this.kode_perusahaan, 
+      id_periode: this.formDetail.id_periode, 
+      kode_cabang: this.formDetail.kode_cabang, 
+      no_tran: this.formDetail.no_tran }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
           for (var i = 0; i < resp.length; i++) {
             let t = {
-              id_akun: resp[i]['id_akun'],
-              kode_akun: resp[i]['kode_akun'],
-              nama_akun: resp[i]['nama_akun'],
-              keterangan_akun: resp[i]['keterangan_akun'],
-              kode_divisi: resp[i]['kode_divisi'],
-              nama_divisi: resp[i]['nama_divisi'],
-              kode_departemen: resp[i]['kode_departemen'],
-              nama_departemen: resp[i]['nama_departemen'],
-              keterangan_1: resp[i]['keterangan_1'],
-              keterangan_2: resp[i]['keterangan_2'],
-              saldo_debit: parseFloat(resp[i]['nilai_debit']),
-              saldo_kredit: parseFloat(resp[i]['nilai_kredit'])
+              no_tran: resp[i]['no_tran'],
+              tgl_tran: resp[i]['tgl_tran'],
+              jenis_tran: resp[i]['jenis_tran'],
+              kode_jenis_transaksi: resp[i]['kode_jenis_transaksi'],
+              nilai_jenis_transaksi: resp[i]['nilai_jenis_transaksi'],
+              saldo_jenis_transaksi: resp[i]['saldo_jenis_transaksi']
             }
             res.push(t)
           }
-          this.detailData = res
-          this.formInputCheckChangesJurnal()
+          this.selectableData = res
           this.ref.markForCheck()
           this.inputDialog()
         } else {
-          this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
-          this.ref.markForCheck()
+          setTimeout(() => {
+            this.gbl.openSnackBar('Riwayat Perubahan tidak ditemukan', 'info')
+            setTimeout(() => {
+              this.dialog.closeAll()
+              
+            }, 1000)
+          }, 100)
+          setTimeout(() => {
+            this.inputDialog()
+          }, 1500)
         }
       }
     )
@@ -617,21 +660,23 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       position: { top: '50px' },
       data: {
         width: '90vw',
-        formValue: this.formDetail,
-        inputLayout: this.detailInputLayout,
         buttonLayout: [],
-        detailJurnal: true,
-        detailLoad: this.detailJurnalLoad,
-        jurnalData: this.detailData,
+        selectableDatatable: true,
+        lowLoader: false,
+        selectableDisplayColumns: this.selectableDisplayColumns,
+        selectableInterface: this.selectableInterface,
+        selectableData: this.selectableData,
+        selectableDataRules: this.selectableDataRules,
         jurnalDataAkun: [],
         noEditJurnal: true,
+        noButton: true,
         noButtonSave: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
         openDialog: (t) => null,
         resetForm: () => null,
-        // onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
-        deleteData: () => null,
+        onSubmit: (x: NgForm) => null,
+        deleteData: () => null
       },
       disableClose: true
     });
@@ -655,6 +700,8 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
     this.formDetail = {
+      id_periode: x['id_periode'],
+      kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
       nama_kasir: x['nama_kasir'],
       no_jurnal: x['no_jurnal'],

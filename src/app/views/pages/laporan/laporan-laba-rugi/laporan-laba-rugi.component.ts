@@ -532,13 +532,13 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
             window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
-              this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'
+              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
                 sbmBtn.click();
               }, 100)
             } else {
-              this.keyReportFormatExcel = this.checkKeyReport + '.xls'
+              this.keyReportFormatExcel = data['RESULT'] + '.xls'
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
                 sbmBtn.click();
