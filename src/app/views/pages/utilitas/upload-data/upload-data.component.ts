@@ -112,6 +112,10 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
 
   data_akun = {};
 
+  data_bank = {};
+
+  data_rekening = {};
+
   files: File[] = [];
 
   constructor(
@@ -169,6 +173,10 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       } else if (fn[0] === 'kategori_akun') {
         parsedData = this.processData(this.parseTemplate['kat_akun'], jsonData['kat_akun'])
       } else if (fn[0] === 'transaksi_mdn') {
+        parsedData = this.processTransaction(jsonData['bb_01'])
+      } else if (fn[0] === 'transaksi_aceh') {
+        parsedData = this.processTransaction(jsonData['bb_01'])
+      } else {
         parsedData = this.processTransaction(jsonData['bb_01'])
       }
 
@@ -311,7 +319,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
     var key;
     for (key in d) {
       // if (d.hasOwnProperty(key)) size++;
-      if (key.includes("MGJ")) {
+      // if (key.includes("IMJT")) {
         let id_tran = `${MD5(Date().toLocaleString() + Date.now() + randomString({
           length: 8,
           numeric: true,
@@ -320,8 +328,8 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         }))}`,
         t = {
           "id_tran": id_tran,
-          "tgl_tran": new Date(d[key][0]['tgl_tran']).getTime(),
-          "kode_cabang": "CAB001",
+          "tgl_tran": (new Date(d[key][0]['tgl_tran']).getTime() + 25200000),
+          "kode_cabang": "CAB002",
           "keterangan": key,
           "jurnal_penyesuaian": 0,
           "input_by": "ADMIN",
@@ -357,7 +365,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
             kode_departemen: "FIN",
             nilai_debit: d[key][i]['debet'],
             nilai_kredit: d[key][i]['kredit'],
-            keterangan_1: d[key][i]['no_tran'],
+            keterangan_1: d[key][i]['ket'],
             input_by: "ADMIN",
             input_dt: Date.now()
           }
@@ -369,8 +377,67 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
 
         resData.push(t)
       }
+
+      // if (key.includes("IMJU")) {
+      //   let id_tran = `${MD5(Date().toLocaleString() + Date.now() + randomString({
+      //     length: 8,
+      //     numeric: true,
+      //     letters: false,
+      //     special: false
+      //   }))}`,
+      //   t = {
+      //     "id_tran": id_tran,
+      //     "tgl_tran": new Date(d[key][0]['tgl_tran']).getTime(),
+      //     "kode_cabang": "CAB001",
+      //     "keterangan": key,
+      //     "jurnal_penyesuaian": 0,
+      //     "input_by": "ADMIN",
+      //     "input_dt": Date.now(),
+      //     "id_periode": "db1ebd3caf033e68c22c240c2edda7c8",
+      //     "detail": {
+      //       "schema": "sch_p001",
+      //       "table": "trd_jurnal",
+      //       "column": [
+      //         "id_tran",
+      //         "id_akun",
+      //         "kode_divisi",
+      //         "kode_departemen",
+      //         "nilai_debit",
+      //         "nilai_kredit",
+      //         "keterangan_1",
+      //         "input_by",
+      //         "input_dt"
+      //       ],
+      //       "date": [
+      //         "input_dt"
+      //       ],
+      //       "data": []
+      //     }
+      //   },
+      //   td = []
+
+      //   for (var i = 0; i < d[key].length; i++) {
+      //     let tt = {
+      //       id_tran: id_tran,
+      //       id_akun: this.data_akun[d[key][i]['kd_perk']]['id_akun'],
+      //       kode_divisi: "FINMPS",
+      //       kode_departemen: "FIN",
+      //       nilai_debit: d[key][i]['debet'],
+      //       nilai_kredit: d[key][i]['kredit'],
+      //       keterangan_1: d[key][i]['ket'],
+      //       input_by: "ADMIN",
+      //       input_dt: Date.now()
+      //     }
+
+      //     td.push(tt)
+      //   }
+
+      //   t['detail']['data'] = td
+
+      //   resData.push(t)
+      // }
       
-    }
+    // }
 
     res['table'] = "trh_jurnal"
     res['column'] = [
@@ -417,7 +484,45 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
           for (var i = 0; i < data['RESULT'].length; i++) {
             this.data_akun[data['RESULT'][i]['kode_akun']] = data['RESULT'][i]
           }
+          this.sendBank()
+        } else {
+          this.loading = false
           this.ref.markForCheck()
+          this.openSnackBar('Akun gagal didapatkan.', 'info')
+        }
+      }
+    )
+  }
+
+  sendBank() {
+    this.request.apiData('bank', 'g-bank', { kode_perusahaan: 'P001' }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          for (var i = 0; i < data['RESULT'].length; i++) {
+            this.data_bank[data['RESULT'][i]['kode_bank']] = data['RESULT'][i]
+          }
+          this.sendRekening()
+        } else {
+          this.loading = false
+          this.ref.markForCheck()
+          this.openSnackBar('Akun gagal didapatkan.', 'info')
+        }
+      }
+    )
+  }
+
+  sendRekening() {
+    this.request.apiData('rekening-perusahaan', 'g-rekening-perusahaan', { kode_perusahaan: 'P001' }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.loading = false
+          for (var i = 0; i < data['RESULT'].length; i++) {
+            this.data_rekening[data['RESULT'][i]['no_rekening']] = data['RESULT'][i]
+          }
+          this.ref.markForCheck()
+
+          console.log(this.data_bank)
+          console.log(this.data_rekening)
         } else {
           this.loading = false
           this.ref.markForCheck()

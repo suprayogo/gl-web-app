@@ -29,7 +29,7 @@ export class UtilitasRequestService {
       let opt = {
         headers: this.httpHeader.getHeader()
       }
-      opt.headers.set('timeout', `${300000}`)
+      opt.headers.set('timeout', `${600000}`)
       return this.get(httpBody, opt)
     }
   }

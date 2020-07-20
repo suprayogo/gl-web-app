@@ -24,7 +24,7 @@ export class DetailJurnalComponent implements OnInit {
 
   currencyOptions = {
     align: "right",
-    allowNegative: false,
+    allowNegative: true,
     allowZero: true,
     decimal: ",",
     precision: 2,
