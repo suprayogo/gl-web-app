@@ -28,7 +28,6 @@ export class InputdialogComponent implements OnInit {
   openDialog: any;
   onSubmit: any;
   deleteData: any;
-  rejectData: any;
   customBtn: string = "";
   listAvailable: boolean = false;
   listForm: Object = {}
@@ -57,10 +56,15 @@ export class InputdialogComponent implements OnInit {
   isDetail: boolean = false;
   editable: boolean = false;
   buttonName: any;
-  buttonName2: any;
   noButtonSave: boolean;
-  button2: boolean;
   title = false;
+
+  // Worklist
+  btnWL: boolean;
+  btnReject: any;
+  btnRevision: any;
+  rejectData: any;
+  revisionData: any;
 
   //Detail loading variable
   // @Input() enableDetail: boolean;
@@ -83,9 +87,7 @@ export class InputdialogComponent implements OnInit {
     this.jurnalData = this.parameter.jurnalData
     this.noEditJurnal = this.parameter.noEditJurnal
     this.buttonName = this.parameter.buttonName === undefined ? "Simpan" : this.parameter.buttonName
-    this.buttonName2 = this.parameter.buttonName2 === undefined ? "Simpan" : this.parameter.buttonName2
     this.noButtonSave = this.parameter.noButtonSave
-    this.button2 = this.parameter.button2
     this.formValue = this.parameter.formValue
     this.inputLayout = this.parameter.inputLayout
     this.buttonLayout = this.parameter.buttonLayout
@@ -94,13 +96,20 @@ export class InputdialogComponent implements OnInit {
     this.openDialog = this.parameter.openDialog
     this.onSubmit = this.parameter.onSubmit
     this.deleteData = () => this.onDelete()
-    this.rejectData = () => this.rejectList()
     this.customBtn = this.parameter.customBtn
     this.listAvailable = this.parameter.listAvailable
     this.listForm = this.parameter.listForm
     this.lowLoading = this.parameter.lowLoader
     this.comparison = this.parameter.comparison
     this.selectableDatatable = this.parameter.selectableDatatable
+
+    // Worklist
+    this.btnWL = this.parameter.btnWL
+    this.btnReject = this.parameter.btnReject === undefined ? "Simpan" : this.parameter.btnReject
+    this.rejectData = () => this.reject()
+    this.btnRevision = this.parameter.btnRevision === undefined ? "Simpan" : this.parameter.btnRevision
+    this.revisionData = () => this.revision()
+
     if(this.comparison){
       this.compareForm = this.parameter.compareForm
       this.comparedForm = this.parameter.comparedForm
@@ -133,8 +142,12 @@ export class InputdialogComponent implements OnInit {
     this.parameter.deleteData()
   }
 
-  rejectList() {
+  reject() {
     this.parameter.rejectData()
+  }
+
+  revision() {
+    this.parameter.revisionData()
   }
 
   closeDialog(t?){

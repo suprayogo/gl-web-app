@@ -162,8 +162,10 @@
         <!-- Button -->
         <div class="m-form__actions">
           <button type="submit" class="btn btn-brand" *ngIf="!noButtonSave">{{ buttonName }}</button>
-          <button type="button" class="btn btn-brand margin-left-10" (click)="rejectList()"
-            *ngIf="!noButtonSave && button2">{{ buttonName2 }}</button>
+          <button type="button" class="btn btn-brand margin-left-10" (click)="reject()"
+            *ngIf="!noButtonSave && btnWL">{{ btnReject }}</button>
+          <button type="button" class="btn btn-brand margin-left-10" (click)="revision()"
+            *ngIf="!noButtonSave && btnWL">{{ btnRevision }}</button>
           <button type="button" class="btn btn-secondary margin-left-10" (click)="closeDialog()"
             *ngIf="!noButtonSave">Batal</button>
           <button type="button" *ngFor="let x of buttonLayout" [className]="x.btnClass"

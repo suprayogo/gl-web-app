@@ -118,7 +118,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
       label: 'Catatan',
       id: 'catatan-wl',
       type: 'input',
-      valueOf: 'catatan_wl',
+      valueOf: 'catatan',
       required: false,
       readOnly: false,
       disabled: false
@@ -184,7 +184,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     this.gbl.need(true, true)
     this.reqKodePerusahaan()
     this.reqAccessPeriod()
-    this.madeRequest()
+    this.madeRequest('')
 
   }
 
@@ -199,7 +199,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     // this.akses_periode
 
     if (this.kode_perusahaan !== "") {
-      this.madeRequest()
+      this.madeRequest('')
     }
   }
 
@@ -218,7 +218,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
 
         if (this.kode_perusahaan !== "") {
-          this.madeRequest()
+          this.madeRequest('')
         }
 
         /* if (this.selectedTab == 1 && this.browseNeedUpdate && this.kode_perusahaan !== "") {
@@ -238,7 +238,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
 
         if (this.access_period.id_periode !== "") {
-          this.madeRequest()
+          this.madeRequest('')
         }
 
         /* if (this.selectedTab == 1 && this.browseNeedUpdate && this.access_period.id_periode !== "") {
@@ -248,16 +248,24 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     )
   }
 
-  madeRequest() {
+  madeRequest(pesan) {
+    this.loading = true
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
       this.request.apiData('worklist', 'g-worklist', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.browseData = data['RESULT']
-            this.loading = false
-            this.ref.markForCheck()
+            if (pesan !== "") {
+              this.browseData = data['RESULT']
+              this.loading = false
+              this.ref.markForCheck()
+              this.gbl.openSnackBar(pesan, 'success')
+            } else {
+              this.browseData = data['RESULT']
+              this.loading = false
+              this.ref.markForCheck()
+            }
           } else {
-            this.openSnackBar('Gagal mendapatkan data periode. Mohon coba lagi nanti.', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan data periode. Mohon coba lagi nanti.', 'fail')
             this.loading = false
             this.ref.markForCheck()
           }
@@ -286,15 +294,15 @@ export class WorklistComponent implements OnInit, AfterViewInit {
           this.ref.markForCheck()
           this.getDetailTglPeriode()
         } else {
-          this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
+          this.gbl.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
           this.ref.markForCheck()
         }
       }
     )
-    
+
   }
 
-  getDetailTglPeriode(){
+  getDetailTglPeriode() {
     if (this.formDetail.id_tran !== '' && this.accReqData === true) {
       this.request.apiData('pengajuan', 'g-detail-pengajuan-buka', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
         data => {
@@ -312,7 +320,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
             this.ref.markForCheck()
             this.inputDialog()
           } else {
-            this.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan perincian transaksi. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
           }
         }
@@ -331,7 +339,6 @@ export class WorklistComponent implements OnInit, AfterViewInit {
       position: { top: '50px' },
       data: {
         buttonName: 'Terima',
-        buttonName2: 'Tolak',
         width: '90vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
@@ -345,42 +352,116 @@ export class WorklistComponent implements OnInit, AfterViewInit {
         jurnalDataAkun: [],
         noEditJurnal: true,
         noButton: true,
-        button2: true,
+        btnWL: true,
+        btnReject: 'Tolak',
+        btnRevision: 'Revisi',
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
         openDialog: (t) => null,
         resetForm: () => null,
-        onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
-        deleteData: () => null,
-        rejectData: () => this.reject(this.formDetail)
+        onSubmit: (x: NgForm) => this.approve(this.formDetail),
+        rejectData: () => this.reject(this.formDetail),
+        revisionData: () => this.revision(this.formDetail),
+        deleteData: () => null
       },
       disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(
       result => {
+        this.dialog.closeAll()
         this.datatable == undefined ? null : this.datatable.reset()
       },
       error => null,
     );
   }
 
-  submitDetailData(formDetail){
-    this.dialog.closeAll()
-    this.loading = true
-    let endRes = Object.assign(
-      {
-        kode_perusahaan: this.kode_perusahaan,
-        status_approval: '1'
-      },
-      formDetail
-    )
-    this.request.apiData('worklist', this.onUpdate ? '' : 'u-worklist', endRes).subscribe(
+  approve(formDetail) {
+    if (formDetail.catatan !== "") {
+      this.dialog.closeAll()
+      this.loading = true
+      let endRes = Object.assign(
+        {
+          kode_perusahaan: this.kode_perusahaan,
+          status_approval: '1'
+        },
+        formDetail
+      )
+      this.saveData(endRes, "DATA TELAH DI APPROVE")
+    } else {
+      setTimeout(() => {
+        this.gbl.openSnackBar('Catatan belum diisi', 'info')
+        setTimeout(() => {
+          this.dialog.closeAll()
+          
+        }, 800)
+      }, 1)
+      setTimeout(() => {
+        this.inputDialog()
+      }, 1200)
+    }
+  }
+
+
+  reject(formDetail) {
+    if (formDetail.catatan !== "") {
+      this.dialog.closeAll()
+      this.loading = true
+      let endRes = Object.assign(
+        {
+          kode_perusahaan: this.kode_perusahaan,
+          status_approval: '3'
+        },
+        formDetail
+      )
+      this.saveData(endRes, "DATA TELAH DI REJECT")
+    } else {
+      setTimeout(() => {
+        this.gbl.openSnackBar('Catatan belum diisi', 'info')
+        setTimeout(() => {
+          this.dialog.closeAll()
+          
+        }, 800)
+      }, 1)
+      setTimeout(() => {
+        this.inputDialog()
+      }, 1200)
+    }
+  }
+
+  revision(formDetail) {
+    if (formDetail.catatan !== "") {
+      this.dialog.closeAll()
+      this.loading = true
+      let endRes = Object.assign(
+        {
+          kode_perusahaan: this.kode_perusahaan,
+          status_approval: '2'
+        },
+        formDetail
+      )
+      this.saveData(endRes, "STATUS DATA : REVISI")
+    } else {
+      setTimeout(() => {
+        this.gbl.openSnackBar('Catatan belum diisi', 'info')
+        setTimeout(() => {
+          this.dialog.closeAll()
+          
+        }, 800)
+      }, 1)
+      setTimeout(() => {
+        this.inputDialog()
+      }, 1200)
+    }
+  }
+
+  saveData(endRes, pesan) {
+    this.request.apiData('worklist', 'u-worklist', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.browseNeedUpdate = true
           this.ref.markForCheck()
-          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL APPROVE")
+          this.madeRequest(pesan)
         } else {
           this.loading = false;
           this.ref.markForCheck()
@@ -395,35 +476,13 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     )
   }
 
-  reject(formDetail){
-    this.dialog.closeAll()
-    this.loading = true
-    this.request.apiData('worklist', this.onUpdate ? '' : 'u-worklist', formDetail).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.browseNeedUpdate = true
-          this.ref.markForCheck()
-          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL REJECT")
-        } else {
-          this.loading = false;
-          this.ref.markForCheck()
-          this.gbl.openSnackBar(data['RESULT'], 'fail')
-        }
-      },
-      error => {
-        this.loading = false;
-        this.ref.markForCheck()
-        this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
-      }
-    )
-  }
-
-  refreshBrowse(message) {
-    this.loading = false
-    this.ref.markForCheck()
-    this.onUpdate = false
-    this.openSnackBar(message, 'success')
-  }
+  // refreshBrowse(message) {
+  //   this.madeRequest()
+  //   this.loading = false
+  //   this.ref.markForCheck()
+  //   this.onUpdate = false
+  //   this.gbl.openSnackBar(message, 'success')
+  // }
 
   //Browse binding event
   browseSelectRow(data) {
@@ -440,24 +499,6 @@ export class WorklistComponent implements OnInit, AfterViewInit {
       user_id: x['dari_user_id']
     }
     this.getDetail()
-  }
-
-  openSnackBar(message, type?: any) {
-    const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      data: {
-        type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()
-      },
-      disableClose: true
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
-    })
   }
 
   formInputCheckChanges() {

@@ -36,6 +36,7 @@ export class ForminputComponent implements OnInit {
   @Input() jurnalData: any;
   @Input() jurnalOtomatis: boolean;
   @Input() templateTransaksi: boolean;
+  @Input() noEditJurnal: boolean;
   @Input() jurnalDataSetting: any;
   //On parent form 'update' state
   @Input() onUpdate: any;

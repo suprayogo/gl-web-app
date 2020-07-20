@@ -33,7 +33,7 @@
                                 (deleteAction)="deleteDetailData($event)" [namaTombolPrintDoc]="namaTombolPrintDoc"
                                 (prntDoc)="inputDialog('cetakJurnalUmum')" [onSubPrintDoc]="onSubPrintDoc"
                                 [namaTombolPrintDoc2]="namaTombolPrintDoc2" (prntDoc2)="inputDialog('cetakTransKasir')"
-                                [onSubPrintDoc2]="onSubPrintDoc2">
+                                [onSubPrintDoc2]="onSubPrintDoc2" [templateTransaksi]="true" [noEditJurnal]="true">
                             </kt-forminput>
                             <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
                                 method="post" target="_blank">

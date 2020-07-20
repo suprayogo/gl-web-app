@@ -53,6 +53,7 @@ import { TransaksiJurnalComponent } from './transaksi-jurnal/transaksi-jurnal.co
 import { SaldoAkunComponent } from './saldo-akun/saldo-akun.component';
 import { BukuBesarComponent } from './buku-besar/buku-besar.component';
 import { TransaksiKasirComponent } from './transaksi-kasir/transaksi-kasir.component';
+import { HistoriEditKasirComponent } from './histori-edit-kasir/histori-edit-kasir.component';
 
 
 const routes: Routes = [
@@ -67,6 +68,10 @@ const routes: Routes = [
   {
     path: 'transaksi-kasir',
     component: TransaksiKasirComponent
+  },
+  {
+    path: 'histori-edit-kasir',
+    component: HistoriEditKasirComponent
   }
 ];
 
@@ -131,7 +136,8 @@ const routes: Routes = [
     TransaksiJurnalComponent,
     SaldoAkunComponent,
     BukuBesarComponent,
-    TransaksiKasirComponent
+    TransaksiKasirComponent,
+    HistoriEditKasirComponent
   ]
 })
 export class MonitoringModule { }

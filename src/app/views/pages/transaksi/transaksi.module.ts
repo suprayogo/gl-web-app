@@ -55,6 +55,7 @@ import { JurnalTransaksiComponent } from './jurnal-transaksi/jurnal-transaksi.co
 import { TutupHarianKasirComponent } from './tutup-harian-kasir/tutup-harian-kasir.component';
 import { JurnalUmumTutupSementaraComponent } from './jurnal-umum-tutup-sementara/jurnal-umum-tutup-sementara.component';
 import { JurnalTransaksiPeriodeSementaraComponent } from './jurnal-transaksi-periode-sementara/jurnal-transaksi-periode-sementara.component';
+import { JurnalTemplateTransaksiComponent } from './jurnal-template-transaksi/jurnal-template-transaksi.component';
 
 const routes: Routes = [
   {
@@ -89,6 +90,10 @@ const routes: Routes = [
   {
     path: 'jurnal-transaksi-buka-kembali',
     component: JurnalTransaksiPeriodeSementaraComponent,
+  },
+  {
+    path: 'jurnal-template-transaksi',
+    component: JurnalTemplateTransaksiComponent,
   }
 ]
 
@@ -159,7 +164,8 @@ const routes: Routes = [
     JurnalTransaksiComponent,
     TutupHarianKasirComponent,
     JurnalUmumTutupSementaraComponent,
-    JurnalTransaksiPeriodeSementaraComponent
+    JurnalTransaksiPeriodeSementaraComponent,
+    JurnalTemplateTransaksiComponent
   ]
 })
 export class TransaksiModule { }
