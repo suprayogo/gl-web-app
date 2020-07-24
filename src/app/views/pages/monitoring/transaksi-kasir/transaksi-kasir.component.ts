@@ -77,8 +77,11 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     atas_nama: '',
     saldo_masuk: 0,
     saldo_keluar: 0,
-    nilai_saldo: 'Rp.'+0,
+    nilai_saldo: 'Rp.' + 0,
     keterangan: '',
+    tipe_laporan: '',
+    lembar_giro: '',
+    kode_template: ''
   }
 
   inputPeriodeDisplayColumns = [
@@ -229,36 +232,6 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Bank',
-      id: 'nama-bank',
-      type: 'input',
-      valueOf: 'nama_bank',
-      required: false,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'No. Rekening',
-      id: 'no-rekening',
-      type: 'input',
-      valueOf: 'no_rekening',
-      required: false,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Atas Nama',
-      id: 'atas-nama',
-      type: 'input',
-      valueOf: 'atas_nama',
-      required: false,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
       label: 'Saldo Transaksi',
       id: 'nilai-saldo',
       type: 'input',
@@ -276,7 +249,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: true,
       disabled: true
-    },
+    }
   ]
 
   // TAB MENU BROWSE 
@@ -461,7 +434,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   // REQUEST DATA FROM API (to : L.O.V or Table)
   sendReqPeriodeJurnal(id_periode, kode_cabang) {
     this.tableLoad = true
-    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode}).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.dataJurnal = data['RESULT']
@@ -494,10 +467,9 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
-    let specData = this.dataJurnal.filter(x => x['no_tran'] === this.formDetail.no_jurnal)
-    console.log()
+    let specData = this.dataJurnal.filter(x => x['no_tran'] === this.formDetail.no_jurnal)[0] || {}
 
-    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: specData[0].id_tran }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: specData.id_tran }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
@@ -520,6 +492,127 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
           }
           this.detailData = res
           this.formInputCheckChangesJurnal()
+          if (this.formDetail.tipe_laporan === 'b') {
+            this.detailInputLayout.splice(5, 0,
+              {
+                formWidth: 'col-5',
+                label: 'Bank',
+                id: 'nama-bank',
+                type: 'input',
+                valueOf: 'nama_bank',
+                required: false,
+                readOnly: true,
+                disabled: true
+              },
+              {
+                formWidth: 'col-5',
+                label: 'No. Rekening',
+                id: 'no-rekening',
+                type: 'input',
+                valueOf: 'no_rekening',
+                required: false,
+                readOnly: true,
+                disabled: true
+              },
+              {
+                formWidth: 'col-5',
+                label: 'Atas Nama',
+                id: 'atas-nama',
+                type: 'input',
+                valueOf: 'atas_nama',
+                required: false,
+                readOnly: true,
+                disabled: true
+              }
+            )
+          } else if (this.formDetail.tipe_laporan === 'g') {
+            this.detailInputLayout.splice(5, 0,
+              {
+                formWidth: 'col-5',
+                label: 'Bank',
+                id: 'nama-bank',
+                type: 'input',
+                valueOf: 'nama_bank',
+                required: false,
+                readOnly: true,
+                disabled: true
+              },
+              {
+                formWidth: 'col-5',
+                label: 'No. Rekening',
+                id: 'no-rekening',
+                type: 'input',
+                valueOf: 'no_rekening',
+                required: false,
+                readOnly: true,
+                disabled: true
+              },
+              {
+                formWidth: 'col-5',
+                label: 'Atas Nama',
+                id: 'atas-nama',
+                type: 'input',
+                valueOf: 'atas_nama',
+                required: false,
+                readOnly: true,
+                disabled: true
+              },
+              {
+                formWidth: 'col-5',
+                label: 'Lembar Giro',
+                id: 'lembar-giro',
+                type: 'input',
+                valueOf: 'lembar_giro',
+                required: false,
+                readOnly: true,
+                disabled: true
+              },
+            )
+          }
+          if (this.formDetail.kode_template !== undefined && this.formDetail.kode_template !== null && this.formDetail.kode_template !== '') {
+            if (this.formDetail.tipe_laporan === 'b') {
+              this.detailInputLayout.splice(10, 0,
+                {
+                  formWidth: 'col-5',
+                  label: 'Kode Template',
+                  id: 'kode-template',
+                  type: 'input',
+                  valueOf: 'kode_template',
+                  required: false,
+                  readOnly: true,
+                  disabled: true
+                }
+              )
+            } else if (this.formDetail.tipe_laporan === 'g') {
+              this.detailInputLayout.splice(11, 0,
+                {
+                  formWidth: 'col-5',
+                  label: 'Kode Template',
+                  id: 'kode-template',
+                  type: 'input',
+                  valueOf: 'kode_template',
+                  required: false,
+                  readOnly: true,
+                  disabled: true
+                }
+              )
+            }else{
+              this.detailInputLayout.splice(7, 0,
+                {
+                  formWidth: 'col-5',
+                  label: 'Kode Template',
+                  id: 'kode-template',
+                  type: 'input',
+                  valueOf: 'kode_template',
+                  required: false,
+                  readOnly: true,
+                  disabled: true
+                }
+              )
+            }
+          }else{
+
+          }
           this.ref.markForCheck()
           this.inputDialog()
         } else {
@@ -635,6 +728,80 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(
       result => {
         this.datatable == undefined ? null : this.datatable.reset()
+        this.detailInputLayout = [
+          {
+            formWidth: 'col-5',
+            label: 'Cabang',
+            id: 'nama-cabang',
+            type: 'input',
+            valueOf: 'nama_cabang',
+            required: true,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'No. Jurnal',
+            id: 'no-jurnal',
+            type: 'input',
+            valueOf: 'no_jurnal',
+            required: true,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'No. Transaksi',
+            id: 'no-tran',
+            type: 'input',
+            valueOf: 'no_tran',
+            required: true,
+            readOnly: true,
+            disabled: true,
+            inputPipe: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Tgl. Transaksi',
+            id: 'tgl-tran',
+            type: 'input',
+            valueOf: 'tgl_tran',
+            required: true,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Jenis Transaksi',
+            id: 'nama-jenis-transaksi',
+            type: 'input',
+            valueOf: 'nama_jenis_transaksi',
+            required: true,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Saldo Transaksi',
+            id: 'nilai-saldo',
+            type: 'input',
+            valueOf: 'nilai_saldo',
+            required: false,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Keterangan',
+            id: 'keterangan',
+            type: 'input',
+            valueOf: 'keterangan',
+            required: false,
+            readOnly: true,
+            disabled: true
+          }
+        ]
+
       },
       error => null,
     );
@@ -663,8 +830,11 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       atas_nama: x['atas_nama'],
       saldo_masuk: x['saldo_masuk'],
       saldo_keluar: x['saldo_keluar'],
-      nilai_saldo: 'Rp. '+ x['nilai_saldo'],
-      keterangan: x['keterangan']
+      nilai_saldo: 'Rp. ' + parseFloat(x['nilai_saldo']),
+      keterangan: x['keterangan'],
+      tipe_laporan: x['tipe_laporan'],
+      lembar_giro: x['lembar_giro'],
+      kode_template: x['kode_template']
     }
     this.getDetail()
   }
