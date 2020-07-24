@@ -166,13 +166,30 @@ export class DetailJurnalComponent implements OnInit {
     if (this.data !== undefined || this.data != null) {
       this.res_data = this.data
     }
-    this.countDebit()
-    this.countKredit()
-    this.countPercentDebit()
-    this.countPercentKredit()
+    if (this.templateTransaksi) {
+      this.countPercentDebit()
+      this.countPercentKredit()
+    } else {
+      this.countDebit()
+      this.countKredit()
+    }
 
     if (this.dataSetting !== undefined && this.dataSetting != null) {
       this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
+    }
+
+    if ((this.res_data[0]['setting_debit'] !== '' && this.res_data[0]['setting_debit'] !== undefined) ||
+      (this.res_data[0]['setting_kredit'] !== '' && this.res_data[0]['setting_kredit'] !== undefined)
+    ) {
+      for (var i = 0; i < this.data_setting.length; i++) {
+        if (
+          (this.data_setting[i]['kode_setting'] === this.res_data[0]['setting_debit']) ||
+          (this.data_setting[i]['kode_setting'] === this.res_data[0]['setting_kredit'])
+        ) {
+          this.tipe_setting = this.data_setting[i]['tipe_setting']
+          break;
+        }
+      }
     }
 
     this.data_divisi = this.dataDivisi
@@ -329,6 +346,7 @@ export class DetailJurnalComponent implements OnInit {
       } else if (type === "kode_divisi") {
         this.res_data[ind]['kode_divisi'] = fres[0]['kode_divisi']
         this.res_data[ind]['nama_divisi'] = fres[0]['nama_divisi']
+        this.loadingDepartemen = true
       } else if (type === "kode_departemen") {
         this.res_data[ind]['kode_departemen'] = fres[0]['kode_departemen']
         this.res_data[ind]['nama_departemen'] = fres[0]['nama_departemen']
@@ -431,7 +449,7 @@ export class DetailJurnalComponent implements OnInit {
           this.res_data[ind]['bobot_debit'] = 0
           this.countPercentDebit(ind)
         }
-        
+
         this.res_data[ind]['bobot_kredit'] = 0
         this.countPercentKredit(ind)
       }

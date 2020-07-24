@@ -68,8 +68,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       keterangan_akun: '',
       keterangan_1: '',
       keterangan_2: '',
-      saldo_debit: 0,
-      saldo_kredit: 0
+      setting_debit: '',
+      setting_kredit: ''
     },
     {
       id_akun: '',
@@ -78,8 +78,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       keterangan_akun: '',
       keterangan_1: '',
       keterangan_2: '',
-      saldo_debit: 0,
-      saldo_kredit: 0
+      setting_debit: '',
+      setting_kredit: ''
     }
   ]
 
@@ -266,7 +266,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       readOnly: false,
       disabled: false,
       update: {
-        disabled: true
+        disabled: false
       }
     },
     {
@@ -491,8 +491,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         keterangan_akun: '',
         keterangan_1: '',
         keterangan_2: '',
-        saldo_debit: 0,
-        saldo_kredit: 0
+        setting_debit: '',
+        setting_kredit: ''
       },
       {
         id_akun: '',
@@ -501,8 +501,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         keterangan_akun: '',
         keterangan_1: '',
         keterangan_2: '',
-        saldo_debit: 0,
-        saldo_kredit: 0
+        setting_debit: '',
+        setting_kredit: ''
       }
     ]
     this.formInputCheckChanges()

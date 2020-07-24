@@ -176,6 +176,10 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         parsedData = this.processTransaction(jsonData['bb_01'])
       } else if (fn[0] === 'transaksi_aceh') {
         parsedData = this.processTransaction(jsonData['bb_01'])
+      } else if (fn[0] === 'transaksi_siantar') {
+        parsedData = this.processTransaction(jsonData['bb_01'])
+      } else if (fn[0] === 'transaksi_palembang') {
+        parsedData = this.processTransaction(jsonData['bb_01'])
       } else {
         parsedData = this.processTransaction(jsonData['bb_01'])
       }
@@ -329,7 +333,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         t = {
           "id_tran": id_tran,
           "tgl_tran": (new Date(d[key][0]['tgl_tran']).getTime() + 25200000),
-          "kode_cabang": "CAB002",
+          "kode_cabang": "CAB004",
           "keterangan": key,
           "jurnal_penyesuaian": 0,
           "input_by": "ADMIN",
@@ -520,9 +524,6 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
             this.data_rekening[data['RESULT'][i]['no_rekening']] = data['RESULT'][i]
           }
           this.ref.markForCheck()
-
-          console.log(this.data_bank)
-          console.log(this.data_rekening)
         } else {
           this.loading = false
           this.ref.markForCheck()

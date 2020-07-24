@@ -15,6 +15,7 @@ import { ForminputComponent } from '../../components/forminput/forminput.compone
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
+import { isInteger } from 'lodash';
 
 const content = {
   beforeCodeTitle: 'Otomatis Jurnal'
@@ -108,6 +109,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   // Input Name
   formDetail = {
     id: '',
+    nama_setting: '',
     no_referensi: '',
     tgl_tran: '',
     nama_cabang: '',
@@ -117,6 +119,17 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   detailData = []
 
   detailInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Jenis Jurnal',
+      id: 'jenis-jurnal',
+      type: 'input',
+      valueOf: 'nama_setting',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: false
+    },
     {
       formWidth: 'col-5',
       label: 'Referensi',
@@ -166,6 +179,10 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   // Data Hasil Tarik
   displayedColumnsTableHT = [
+    {
+      label: 'Jenis Jurnal',
+      value: 'nama_setting'
+    },
     {
       label: 'No. Referensi',
       value: 'no_referensi'
@@ -311,6 +328,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     let x = JSON.parse(JSON.stringify(data))
     this.formDetail = {
       id: x['id'],
+      nama_setting: x['nama_setting'],      
       no_referensi: x['no_referensi'],
       tgl_tran: x['tgl_tran'],
       nama_cabang: x['nama_cabang'],
@@ -546,7 +564,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.bottomPage()
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
-      let periode = this.gbl.getTahunPeriodeAktif() + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
+      let periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
       this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -556,6 +574,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               this.openSnackBar('Semua transaksi pada periode aktif sudah tersimpan.', 'info')
             } else {
               for (var i = 0; i < t.length; i++) {
+                let dt
+                if (isInteger(t[i]['tgl_tran'])) {
+                  let tdt = new Date(t[i]['tgl_tran'])
+                  dt = tdt.getFullYear() + "-" + (JSON.stringify(tdt.getMonth() + 1).length < 2 ? ("0" + (JSON.stringify(tdt.getMonth() + 1))) : JSON.stringify(tdt.getMonth() + 1)) + "-" + (JSON.stringify(tdt.getDate()).length < 2 ? ("0" + (JSON.stringify(tdt.getDate()))) : JSON.stringify(tdt.getDate()))
+                } else {
+                  dt = t[i]['tgl_tran']
+                }
                 let d = {
                   id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
                     length: 8,
@@ -563,8 +588,11 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
                     letters: false,
                     special: false
                   }))}`,
+                  kode_setting: t[i]['kode_setting'],
+                  nama_setting: t[i]['nama_setting'],
+                  keterangan_setting: t[i]['keterangan_setting'],
                   no_referensi: t[i]['no_referensi'],
-                  tgl_tran: t[i]['tgl_tran'],
+                  tgl_tran: dt,
                   kode_cabang: t[i]['kode_cabang'],
                   nama_cabang: t[i]['nama_cabang'],
                   keterangan: t[i]['keterangan'],

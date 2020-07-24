@@ -610,7 +610,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
             window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
-              console.log(this.checkKeyReport)
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
@@ -626,7 +625,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
           }
           let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
           this.checkKeyReport[rk] = data['RESULT']
-          console.log(this.checkKeyReport)
           this.distinctPeriode()
           this.ref.markForCheck()
         } else {
