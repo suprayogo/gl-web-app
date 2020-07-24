@@ -180,14 +180,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       value: 'nama_cabang'
     },
     {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
-    },
-    {
       label: 'Keterangan',
       value: 'keterangan'
     },
@@ -209,12 +201,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     }
   ];
   browseInterface = {
-    no_tran: 'string',
-    tgl_tran: 'string',
-    nama_cabang: 'string',
-    nama_divisi: 'string',
-    nama_departemen: 'string',
-    keterangan: 'string',
     //STATIC
     input_by: 'string',
     input_dt: 'string',

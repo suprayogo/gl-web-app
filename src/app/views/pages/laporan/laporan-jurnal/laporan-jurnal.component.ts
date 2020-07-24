@@ -713,14 +713,14 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueJL = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
-      id_akun: '',
-      kode_akun: '',
-      nama_akun: '',
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
+      format_laporan: this.formValueJL.format_laporan,
+      kode_cabang: this.formValueJL.kode_cabang,
+      nama_cabang: this.formValueJL.nama_cabang,
+      id_akun: this.formValueJL.id_akun,
+      kode_akun: this.formValueJL.kode_akun,
+      nama_akun: this.formValueJL.nama_akun,
+      tahun: this.formValueJL.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueJL.tahun,
+      bulan: this.formValueJL.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueJL.bulan
     }
 
     this.initBulan = tmp

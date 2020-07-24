@@ -35,6 +35,7 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
   loading: boolean = true;
   tableLoad: boolean = true;
   content: any;
+  checkDetail: any;
   detailLoad: boolean = false;
   detailJurnalLoad: boolean = false;
   enableDetail: boolean = false;
@@ -303,6 +304,10 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
+      label: 'Jenis Transaksi',
+      value: 'jenis_tran_sub'
+    },
+    {
       label: 'No. Transaksi',
       value: 'no_tran'
     },
@@ -312,16 +317,16 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
       date: true
     },
     {
-      label: 'Kode Perusahaan',
-      value: 'kode_perusahaan'
-    },
-    {
       label: 'Nama Cabang',
       value: 'nama_cabang'
     },
     {
       label: 'Keterangan',
       value: 'keterangan'
+    },
+    {
+      label: 'Tipe Transaksi',
+      value: 'tipe_transaksi_sub'
     },
     {
       label: 'Nama Jenis Transaksi',
@@ -349,12 +354,6 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
     }
   ];
   browseInterface = {
-    no_tran: 'string',
-    tgl_tran: 'string',
-    nama_cabang: 'string',
-    nama_divisi: 'string',
-    nama_departemen: 'string',
-    keterangan: 'string',
     //STATIC
     input_by: 'string',
     input_dt: 'string',
@@ -362,7 +361,24 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
     update_dt: 'string'
   }
   browseData = []
-  browseDataRules = []
+  browseDataRules = [
+    {
+      target: 'jenis_tran',
+      replacement: {
+        'JT': 'Jurnal Transaksi',
+        'JU': 'Jurnal Umum'
+      },
+      redefined: 'jenis_tran_sub'
+    },
+    {
+      target: 'tipe_transaksi',
+      replacement: {
+        '0': 'Masuk',
+        '1': 'Keluar'
+      },
+      redefined: 'tipe_transaksi_sub'
+    }
+  ]
 
   selectableDisplayColumns = [
     {
@@ -371,19 +387,12 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Tanggal Transaksi',
-      value: 'tgl_tran'
+      value: 'tgl_tran',
+      date: 'true'
     },
     {
-      label: 'Jenis Transaksi',
-      value: 'jenis_tran'
-    },
-    {
-      label: 'Kode Jenis Transaksi',
-      value: 'kode_jenis_transaksi'
-    },
-    {
-      label: 'Nilai Jenis Transaksi',
-      value: 'nilai_jenis_transaksi'
+      label: 'Tipe Transaksi',
+      value: 'tipe_transaksi_sub'
     },
     {
       label: 'Saldo Transaksi',
@@ -398,7 +407,16 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
     update_dt: 'string'
   }
   selectableData = []
-  selectableDataRules = []
+  selectableDataRules = [
+    {
+      target: 'tipe_transaksi',
+      replacement: {
+        '0': 'Masuk',
+        '1': 'Keluar'
+      },
+      redefined: 'tipe_transaksi_sub'
+    }
+  ]
 
   constructor(
     public dialog: MatDialog,
@@ -518,13 +536,22 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
   // REQUEST DATA FROM API (to : L.O.V or Table)
   sendReqPeriodeJurnal(id_periode, kode_cabang) {
     this.tableLoad = true
-    this.request.apiData('kasir', 'g-transaksi-kasir', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
+    this.request.apiData('jurnal', 'g-riwayat-ubah-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
+          this.checkDetail = data['RESULT']
+          var a = JSON.parse(JSON.stringify(data['RESULT']))
+          var flags = [], output = [], l = a.length, i;
+          for (i = 0; i < l; i++) {
+            if (flags[a[i].no_tran]) continue;
+            flags[a[i].no_tran] = true;
+            output.push(a[i]);
+          }
+          // this.a = JSON.parse(JSON.stringify())
           if (kode_cabang === "") {
-            this.browseData = data['RESULT']
+            this.browseData = output
           } else {
-            this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === kode_cabang)
+            this.browseData = output.filter(x => x['kode_cabang'] === kode_cabang)
           }
 
           this.tableLoad = false
@@ -539,42 +566,19 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
-    this.request.apiData('jurnal', 'g-riwayat-ubah-jurnal', { 
-      kode_perusahaan: this.kode_perusahaan, 
-      id_periode: this.formDetail.id_periode, 
-      kode_cabang: this.formDetail.kode_cabang, 
-      no_tran: this.formDetail.no_tran }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
-          for (var i = 0; i < resp.length; i++) {
-            let t = {
-              no_tran: resp[i]['no_tran'],
-              tgl_tran: resp[i]['tgl_tran'],
-              jenis_tran: resp[i]['jenis_tran'],
-              kode_jenis_transaksi: resp[i]['kode_jenis_transaksi'],
-              nilai_jenis_transaksi: resp[i]['nilai_jenis_transaksi'],
-              saldo_jenis_transaksi: resp[i]['saldo_jenis_transaksi']
-            }
-            res.push(t)
-          }
-          this.selectableData = res
-          this.ref.markForCheck()
-          this.inputDialog()
-        } else {
-          setTimeout(() => {
-            this.gbl.openSnackBar('Riwayat Perubahan tidak ditemukan', 'info')
-            setTimeout(() => {
-              this.dialog.closeAll()
-              
-            }, 1000)
-          }, 100)
-          setTimeout(() => {
-            this.inputDialog()
-          }, 1500)
-        }
+    let res = [], resp = JSON.parse(JSON.stringify(this.checkDetail))
+    for (var i = 0; i < resp.length; i++) {
+      let t = {
+        no_tran: resp[i]['no_tran'],
+        tgl_tran: resp[i]['tgl_tran'],
+        tipe_transaksi: resp[i]['tipe_transaksi'],
+        saldo_transaksi: resp[i]['saldo_transaksi']
       }
-    )
+      res.push(t)
+    }
+    this.selectableData = res
+    this.ref.markForCheck()
+    this.inputDialog()
   }
 
   openDialog(type) {

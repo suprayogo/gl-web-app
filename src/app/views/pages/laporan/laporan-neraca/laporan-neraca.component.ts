@@ -726,11 +726,11 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueNR = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
+      format_laporan: this.formValueNR.format_laporan,
+      kode_cabang: this.formValueNR.kode_cabang,
+      nama_cabang: this.formValueNR.nama_cabang,
+      tahun: this.formValueNR.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueNR.tahun,
+      bulan: this.formValueNR.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueNR.bulan
     }
     this.initBulan = tmp
     this.bulanNR = tmp[this.formValueNR.tahun]

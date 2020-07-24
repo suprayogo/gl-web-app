@@ -304,6 +304,7 @@ export class SaldoAkunComponent implements OnInit {
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
+          console.log(this.data_akun)
           this.restructureData(data['RESULT'])
         } else {
           this.loading = false
