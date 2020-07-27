@@ -10,7 +10,7 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section" style="display:flex; flex-direction: row; height:320px;" *ngIf="!loading">
+                <div class="kt-section" style="display:flex; flex-direction: row; height:380px;" *ngIf="!loading">
                     <div style="width: 50%;">
                         <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [namaTombol]="nama_tombol"
                             [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
@@ -29,7 +29,7 @@
                     <div *ngIf="!tableLoadRT && !loading" style="width: 50%;">
                         <h2>Riwayat Tarik Data Jurnal</h2>
                         <kt-datatable-ag-grid #rt [tableColumn]="displayedColumnsTableRT" [tableData]="browseDataRT"
-                            [tableRules]="browseDataRulesRT" [containerHeight]=300>
+                            [tableRules]="browseDataRulesRT" [containerHeight]=340>
                         </kt-datatable-ag-grid>
                     </div>
                 </div>

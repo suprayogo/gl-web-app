@@ -326,12 +326,8 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       value: 'keterangan'
     },
     {
-      label: 'Nama Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Nama Departemen',
-      value: 'nama_departemen'
+      label: 'Cabang',
+      value: 'nama_cabang'
     },
     {
       label: 'Diinput oleh',

@@ -181,35 +181,35 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       readOnly: false,
       disabled: false,
     },
-    // {
-    //   formWidth: 'col-5',
-    //   label: 'Cabang',
-    //   id: 'kode-cabang',
-    //   type: 'inputgroup',
-    //   click: (type) => this.openDialog(type),
-    //   btnLabel: '',
-    //   btnIcon: 'flaticon-search',
-    //   browseType: 'kode_cabang',
-    //   valueOf: 'kode_cabang',
-    //   required: true,
-    //   readOnly: false,
-    //   inputInfo: {
-    //     id: 'nama-cabang',
-    //     disabled: false,
-    //     readOnly: true,
-    //     required: false,
-    //     valueOf: 'nama_cabang'
-    //   },
-    //   blurOption: {
-    //     ind: 'kode_cabang',
-    //     data: [],
-    //     valueOf: ['kode_cabang', 'nama_cabang'],
-    //     onFound: () => null
-    //   },
-    //   update: {
-    //     disabled: true
-    //   }
-    // },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
+    },
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -642,7 +642,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
-    this.inputLayoutLR.splice(0, 3,
+    this.inputLayoutLR.splice(0, 4,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -655,35 +655,35 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         readOnly: false,
         disabled: false,
       },
-      // {
-      //   formWidth: 'col-5',
-      //   label: 'Cabang',
-      //   id: 'kode-cabang',
-      //   type: 'inputgroup',
-      //   click: (type) => this.openDialog(type),
-      //   btnLabel: '',
-      //   btnIcon: 'flaticon-search',
-      //   browseType: 'kode_cabang',
-      //   valueOf: 'kode_cabang',
-      //   required: true,
-      //   readOnly: false,
-      //   inputInfo: {
-      //     id: 'nama-cabang',
-      //     disabled: false,
-      //     readOnly: true,
-      //     required: false,
-      //     valueOf: 'nama_cabang'
-      //   },
-      //   blurOption: {
-      //     ind: 'kode_cabang',
-      //     data: [],
-      //     valueOf: ['kode_cabang', 'nama_cabang'],
-      //     onFound: () => null
-      //   },
-      //   update: {
-      //     disabled: true
-      //   }
-      // },
+      {
+        formWidth: 'col-5',
+        label: 'Cabang',
+        id: 'kode-cabang',
+        type: 'inputgroup',
+        click: (type) => this.openDialog(type),
+        btnLabel: '',
+        btnIcon: 'flaticon-search',
+        browseType: 'kode_cabang',
+        valueOf: 'kode_cabang',
+        required: true,
+        readOnly: false,
+        inputInfo: {
+          id: 'nama-cabang',
+          disabled: false,
+          readOnly: true,
+          required: false,
+          valueOf: 'nama_cabang'
+        },
+        blurOption: {
+          ind: 'kode_cabang',
+          data: [],
+          valueOf: ['kode_cabang', 'nama_cabang'],
+          onFound: () => null
+        },
+        update: {
+          disabled: true
+        }
+      },
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -724,7 +724,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       bulan: ""
     }
     this.bulanLR = loopBulan[filterBulan]
-    this.inputLayoutLR.splice(2, 2,
+    this.inputLayoutLR.splice(3, 2,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',

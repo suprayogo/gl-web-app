@@ -181,35 +181,35 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
       readOnly: false,
       disabled: false,
     },
-    // {
-    //   formWidth: 'col-5',
-    //   label: 'Cabang',
-    //   id: 'kode-cabang',
-    //   type: 'inputgroup',
-    //   click: (type) => this.openDialog(type),
-    //   btnLabel: '',
-    //   btnIcon: 'flaticon-search',
-    //   browseType: 'kode_cabang',
-    //   valueOf: 'kode_cabang',
-    //   required: true,
-    //   readOnly: false,
-    //   inputInfo: {
-    //     id: 'nama-cabang',
-    //     disabled: false,
-    //     readOnly: true,
-    //     required: false,
-    //     valueOf: 'nama_cabang'
-    //   },
-    //   blurOption: {
-    //     ind: 'kode_cabang',
-    //     data: [],
-    //     valueOf: ['kode_cabang', 'nama_cabang'],
-    //     onFound: () => null
-    //   },
-    //   update: {
-    //     disabled: true
-    //   }
-    // },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
+    },
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -486,7 +486,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
     }
 
     this.bulanNR = this.initBulan[this.formValueNR['tahun']]
-    this.inputLayoutNR.splice(2, 2,
+    this.inputLayoutNR.splice(3, 2,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -734,7 +734,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
     }
     this.initBulan = tmp
     this.bulanNR = tmp[this.formValueNR.tahun]
-    this.inputLayoutNR.splice(0, 3,
+    this.inputLayoutNR.splice(0, 4,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -747,35 +747,35 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         readOnly: false,
         disabled: false,
       },
-      // {
-      //   formWidth: 'col-5',
-      //   label: 'Cabang',
-      //   id: 'kode-cabang',
-      //   type: 'inputgroup',
-      //   click: (type) => this.openDialog(type),
-      //   btnLabel: '',
-      //   btnIcon: 'flaticon-search',
-      //   browseType: 'kode_cabang',
-      //   valueOf: 'kode_cabang',
-      //   required: true,
-      //   readOnly: false,
-      //   inputInfo: {
-      //     id: 'nama-cabang',
-      //     disabled: false,
-      //     readOnly: true,
-      //     required: false,
-      //     valueOf: 'nama_cabang'
-      //   },
-      //   blurOption: {
-      //     ind: 'kode_cabang',
-      //     data: [],
-      //     valueOf: ['kode_cabang', 'nama_cabang'],
-      //     onFound: () => null
-      //   },
-      //   update: {
-      //     disabled: true
-      //   }
-      // },
+      {
+        formWidth: 'col-5',
+        label: 'Cabang',
+        id: 'kode-cabang',
+        type: 'inputgroup',
+        click: (type) => this.openDialog(type),
+        btnLabel: '',
+        btnIcon: 'flaticon-search',
+        browseType: 'kode_cabang',
+        valueOf: 'kode_cabang',
+        required: true,
+        readOnly: false,
+        inputInfo: {
+          id: 'nama-cabang',
+          disabled: false,
+          readOnly: true,
+          required: false,
+          valueOf: 'nama_cabang'
+        },
+        blurOption: {
+          ind: 'kode_cabang',
+          data: [],
+          valueOf: ['kode_cabang', 'nama_cabang'],
+          onFound: () => null
+        },
+        update: {
+          disabled: true
+        }
+      },
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',

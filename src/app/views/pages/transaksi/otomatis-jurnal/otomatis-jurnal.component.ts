@@ -34,6 +34,17 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   @ViewChild('ht', { static: false }) ht;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
+  tipe_laporan = [
+    {
+      label: 'Ya',
+      value: '1'
+    },
+    {
+      label: 'Tidak',
+      value: '0'
+    }
+  ]
+
   // VARIABLES
   loading: boolean = true;
   detailJurnalLoad: boolean = false;
@@ -229,7 +240,10 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   formValue = {
     tgl_tarik: '',
     bulan_periode: '',
-    tahun_periode: ''
+    tahun_periode: '',
+    rekap_harian: '1',
+    rekap_bulanan: '1',
+    rekap_transaksi: '1'
   }
 
   // Layout Form
@@ -269,7 +283,43 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       update: {
         disabled: false
       }
-    }
+    },
+    {
+      labelWidth: 'col-4',
+      formWidth: 'col-7',
+      label: 'Rekap Harian',
+      id: 'rekap-harian',
+      type: 'combobox',
+      options: this.tipe_laporan,
+      valueOf: 'rekap_harian',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      labelWidth: 'col-4',
+      formWidth: 'col-7',
+      label: 'Rekap Bulanan',
+      id: 'rekap-bulanan',
+      type: 'combobox',
+      options: this.tipe_laporan,
+      valueOf: 'rekap_bulanan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      labelWidth: 'col-4',
+      formWidth: 'col-7',
+      label: 'Rekap Transaksi',
+      id: 'rekap-transaksi',
+      type: 'combobox',
+      options: this.tipe_laporan,
+      valueOf: 'rekap_transaksi',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
   ]
 
   constructor(
@@ -522,7 +572,10 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.formValue = {
       tgl_tarik: '',
       bulan_periode: this.nama_bulan_aktif,
-      tahun_periode: this.tahunPeriodeAktif
+      tahun_periode: this.tahunPeriodeAktif,
+      rekap_harian: this.formValue.rekap_harian,
+      rekap_bulanan: this.formValue.rekap_bulanan,
+      rekap_transaksi: this.formValue.rekap_transaksi
     }
     this.loading = false
     this.sendRequestRiwayat()
@@ -564,8 +617,19 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.bottomPage()
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
+      this.formValue = this.forminput.getData()
       let periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
-      this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode }).subscribe(
+      let tipe_setting = []
+      if (this.formValue.rekap_transaksi === '1') {
+        tipe_setting.push('2')
+      }
+      if (this.formValue.rekap_harian === '1') {
+        tipe_setting.push('1')
+      }
+      if (this.formValue.rekap_bulanan === '1') {
+        tipe_setting.push('0')
+      }
+      this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode, tipe_setting: tipe_setting }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             let t = JSON.parse(JSON.stringify(data['RESULT'])),
