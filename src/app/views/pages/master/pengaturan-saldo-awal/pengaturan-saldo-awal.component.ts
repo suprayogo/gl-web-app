@@ -401,6 +401,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       });
     }
 
+    // Looping Kategori Akun
     for (var i = 0; i < data.length; i++) {
       if (flags[data[i]['id_kategori_akun']]) continue;
       flags[data[i]['id_kategori_akun']] = true;
@@ -411,6 +412,11 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       });
     }
 
+    // Sort A-Z/0-1 Kode Akun
+    for (var z = 0; z < data.length; z++) {
+      data.sort((a: any, b: any) => a.kode_akun - b.kode_akun);
+    }
+
     for (var h = 0; h < outputCabang.length; h++) {
       res.push(outputCabang[h])
       for (var i = 0; i < output.length; i++) {
@@ -418,7 +424,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         res = this.parseData(res, data, "", output[i]['id_kategori_akun'], outputCabang[h]['kode_cabang'])
       }
     }
-    
+
     this.res_data = res
     this.countDebit()
     this.countKredit()
