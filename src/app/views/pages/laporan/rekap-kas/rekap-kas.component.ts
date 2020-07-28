@@ -541,7 +541,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
               return {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
-                day: dt.getDate()
+                day: 1
               }
             },
             maxDate: () => {
@@ -549,7 +549,16 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
               return {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
-                day: dt.getDate()
+                day: (dt.getMonth() + 1) == 2 ? 29 :
+                (
+                  (dt.getMonth() + 1) == 1 ||
+                  (dt.getMonth() + 1) == 3 ||
+                  (dt.getMonth() + 1) == 5 ||
+                  (dt.getMonth() + 1) == 7 ||
+                  (dt.getMonth() + 1) == 8 ||
+                  (dt.getMonth() + 1) == 10 ||
+                  (dt.getMonth() + 1) == 12
+                ) ? 31 : 30
               }
             }
           })

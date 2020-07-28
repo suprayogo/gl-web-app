@@ -249,7 +249,7 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  checkKeyReport = ""
+  checkKeyReport = {}
 
   constructor(
     public dialog: MatDialog,
@@ -314,7 +314,7 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
         p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
         p['kode_cabang'] = this.formValue['kode_cabang'] === "" ? undefined : this.formValue['kode_cabang']
         p['id_akun'] = this.formValue['id_akun'] === "" ? undefined : this.formValue['id_akun']
-        this.request.apiData('report', 'g-data-rekapitulasi-bank', p).subscribe(
+        this.request.apiData('report', 'g-data-rekapitulasi-giro', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               let d = data['RESULT'], res = []
@@ -337,6 +337,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                   t.push(parseFloat(d[i]['saldo_keluar']))
                   t.push(parseFloat(d[i]['saldo_akhir']))
                   t.push(parseFloat(d[i]['saldo_awal']))
+                  t.push(parseFloat(d[i]['lbr_giro'] == null || d[i]['lbr_giro'] === "" ? "0" : d[i]['lbr_giro']))
+                  // t.push(parseFloat(d[i]['saldo_awal']))
 
                   res.push(t)
                 }
@@ -347,7 +349,7 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
               rp['REPORT_CODE'] = 'RPT-REKAPITULASI-GIRO'
               rp['REPORT_NAME'] = 'Laporan Rekapitulasi Giro'
               rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
-              rp['JASPER_FILE'] = 'rptRekapitulasiBank.jasper'
+              rp['JASPER_FILE'] = 'rptRekapitulasiGiro.jasper'
               rp['REPORT_PARAMETERS'] = {
                 USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
                 REPORT_COMPANY_ADDRESS: this.info_company.alamat,
@@ -378,7 +380,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                 "Saldo Masuk",
                 "Saldo Keluar",
                 "Saldo Akhir",
-                "Saldo Awal"
+                "Saldo Awal",
+                "Lembar Giro"
               ]
               rp['FIELD_NAME'] = [
                 "kodeCabang",
@@ -396,7 +399,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                 "saldoMasuk",
                 "saldoKeluar",
                 "saldoAkhir",
-                "saldoAwal"
+                "saldoAwal",
+                "lbrGiro"
               ]
               rp['FIELD_TYPE'] = [
                 "string",
@@ -411,6 +415,7 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                 "string",
                 "date",
                 "string",
+                "bigdecimal",
                 "bigdecimal",
                 "bigdecimal",
                 "bigdecimal",
@@ -558,7 +563,7 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
               return {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
-                day: dt.getDate()
+                day: 1
               }
             },
             maxDate: () => {
@@ -566,7 +571,16 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
               return {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
-                day: dt.getDate()
+                day: (dt.getMonth() + 1) == 2 ? 29 :
+                (
+                  (dt.getMonth() + 1) == 1 ||
+                  (dt.getMonth() + 1) == 3 ||
+                  (dt.getMonth() + 1) == 5 ||
+                  (dt.getMonth() + 1) == 7 ||
+                  (dt.getMonth() + 1) == 8 ||
+                  (dt.getMonth() + 1) == 10 ||
+                  (dt.getMonth() + 1) == 12
+                ) ? 31 : 30
               }
             }
           })

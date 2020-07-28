@@ -576,7 +576,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       disabled: false,
       hiddenOn: {
         valueOf: 'tipe_laporan',
-        matchValue: ["k", "p", ""]
+        matchValue: ["k", "p", "g", ""]
       },
       update: {
         disabled: true
@@ -1532,7 +1532,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
             disabled: false,
             hiddenOn: {
               valueOf: 'tipe_laporan',
-              matchValue: ["k", "p", ""]
+              matchValue: ["k", "p", "g", ""]
             },
             update: {
               disabled: true

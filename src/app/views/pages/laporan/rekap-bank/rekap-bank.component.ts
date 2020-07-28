@@ -377,7 +377,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmitJL(inputForm: NgForm) {
-    if (this.formValue.kode_cabang !== "") {
+    // if (this.formValue.kode_cabang !== "") {
       if (this.forminput !== undefined) {
         this.loading = true
         this.ref.markForCheck()
@@ -419,10 +419,22 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
           this.request.apiData('report', 'g-data-rekapitulasi-bank', p).subscribe(
             data => {
               if (data['STATUS'] === 'Y') {
-                let d = data['RESULT'], res = []
+                let d = data['RESULT'], res = [], tdt = "", tbk = ""
                 for (var i = 0; i < d.length; i++) {
                   let t = []
                   if (d[i]['id_tran'] !== '') {
+                    let saldo_awal = d[i]['saldo_awal']
+                    if (tdt === "" && tbk === "") {
+                      tdt = d[i]['tgl_tran']
+                      tbk = d[i]['kode_bank']
+                    } else {
+                      if (tdt !== d[i]['tgl_tran'] && tbk === d[i]['kode_bank']) {
+                        tdt = d[i]['tgl_tran']
+                        saldo_awal = d[i - 1]['saldo_akhir']
+                      } else {
+                        tbk = d[i]['kode_bank']
+                      }
+                    }
                     t.push(d[i]['kode_cabang'])
                     t.push(d[i]['nama_cabang'])
                     t.push(d[i]['id_kasir'])
@@ -438,7 +450,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
                     t.push(parseFloat(d[i]['saldo_masuk']))
                     t.push(parseFloat(d[i]['saldo_keluar']))
                     t.push(parseFloat(d[i]['saldo_akhir']))
-                    t.push(parseFloat(d[i]['saldo_awal']))
+                    t.push(parseFloat(saldo_awal))
 
                     res.push(t)
                   }
@@ -530,9 +542,9 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
           )
         }
       }
-    } else {
-      this.gbl.openSnackBar("Kode Cabang Belum Diisi", "info")
-    }
+    // } else {
+    //   this.gbl.openSnackBar("Kode Cabang Belum Diisi", "info")
+    // }
   }
 
   openDialog(type) {
@@ -749,7 +761,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
               return {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
-                day: dt.getDate()
+                day: 1
               }
             },
             maxDate: () => {
@@ -757,7 +769,16 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
               return {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
-                day: dt.getDate()
+                day: (dt.getMonth() + 1) == 2 ? 29 :
+                (
+                  (dt.getMonth() + 1) == 1 ||
+                  (dt.getMonth() + 1) == 3 ||
+                  (dt.getMonth() + 1) == 5 ||
+                  (dt.getMonth() + 1) == 7 ||
+                  (dt.getMonth() + 1) == 8 ||
+                  (dt.getMonth() + 1) == 10 ||
+                  (dt.getMonth() + 1) == 12
+                ) ? 31 : 30
               }
             }
           })

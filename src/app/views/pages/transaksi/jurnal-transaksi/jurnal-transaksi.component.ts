@@ -539,7 +539,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       disabled: false,
       hiddenOn: {
         valueOf: 'tipe_laporan',
-        matchValue: ["k", "p", ""]
+        matchValue: ["k", "p", "g", ""]
       },
       update: {
         disabled: true
@@ -1552,7 +1552,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             disabled: false,
             hiddenOn: {
               valueOf: 'tipe_laporan',
-              matchValue: ["k", "p", ""]
+              matchValue: ["k", "p", "g", ""]
             },
             update: {
               disabled: true
