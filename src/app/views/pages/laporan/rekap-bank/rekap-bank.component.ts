@@ -57,6 +57,8 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
   // VARIABLES
   keyReportFormatExcel: any;
   nama_tombol: any;
+  tempKodeBank: any;
+  loadingRekening: boolean = true;
   onSub: boolean = false;
   loading: boolean = true;
   loadingJL: boolean = false;
@@ -142,6 +144,9 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
     format_laporan: 'pdf',
     kode_cabang: '',
     nama_cabang: '',
+    kode_bank: '',
+    nama_bank: '',
+    no_rekening: '',
     periode: [
       {
         year: new Date(Date.now()).getFullYear(),
@@ -172,6 +177,46 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
   }
   inputCabangData = []
   inputCabangDataRules = []
+
+  inputBankDisplayColumns = [
+    {
+      label: 'Kode Bank',
+      value: 'kode_bank'
+    },
+    {
+      label: 'Nama Bank',
+      value: 'nama_bank'
+    }
+  ]
+  inputBankInterface = {
+    kode_bank: 'string',
+    nama_bank: 'string'
+  }
+  inputBankData = []
+  inputBankDataRules = []
+
+  inputRekeningDisplayColumns = [
+    {
+      label: 'No Rekening',
+      value: 'no_rekening'
+    },
+    {
+      label: 'Atas Nama',
+      value: 'atas_nama'
+    },
+    {
+      label: 'Nama Kantor Cabang',
+      value: 'nama_kantor_cabang'
+    }
+  ]
+  inputRekeningInterface = {
+    no_rekening: 'string',
+    atas_nama: 'string',
+    nama_kantor_cabang: 'string',
+  }
+  inputRekeningData = []
+  inputRekeningDataFilter = []
+  inputRekeningDataRules = []
 
   // Layout Form
   inputLayout = [
@@ -211,6 +256,59 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         data: [],
         valueOf: ['kode_cabang', 'nama_cabang'],
         onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Bank',
+      id: 'kode-bank',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_bank',
+      valueOf: 'kode_bank',
+      required: false,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-bank',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_bank'
+      },
+      blurOption: {
+        ind: 'kode_bank',
+        data: [],
+        valueOf: ['kode_bank', 'nama_bank'],
+        onFound: () => null
+      },
+      update: {
+        disabled: true
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Rekening',
+      id: 'no-rekening',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'no_rekening',
+      valueOf: 'no_rekening',
+      required: false,
+      readOnly: false,
+      blurOption: {
+        ind: 'no_rekening',
+        data: [],
+        valueOf: ['no_rekening'],
+        onFound: () => {
+          this.formValue.no_rekening = this.forminput.getData()['no_rekening']
+        }
       },
       update: {
         disabled: true
@@ -279,161 +377,183 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmitJL(inputForm: NgForm) {
-    this.loading = true
-    this.ref.markForCheck()
-    if (this.forminput !== undefined) {
-      this.formValue = this.forminput.getData()
-      this.loading = true
-      this.ref.markForCheck()
-      let tgl_periode_awal = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])),
-        tgl_periode_akhir = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day'])),
-        rk = tgl_periode_awal + tgl_periode_akhir + this.formValue['kode_cabang'] + this.formValue['format_laporan'];
-      if (this.checkKeyReport[rk] !== undefined) {
-        if (this.formValue['format_laporan'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
-        } else {
-          if (this.formValue['format_laporan'] === 'xlsx') {
-            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
-            setTimeout(() => {
-              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-              sbmBtn.click();
-            }, 100)
-          } else {
-            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
-            setTimeout(() => {
-              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-              sbmBtn.click();
-            }, 100)
-          }
-        }
-        this.loading = false
+    if (this.formValue.kode_cabang !== "") {
+      if (this.forminput !== undefined) {
+        this.loading = true
         this.ref.markForCheck()
-      } else {
-        let p = {}
-        p['kode_perusahaan'] = this.kode_perusahaan
-        p['kode_cabang'] = this.formValue['kode_cabang']
-        p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
-        p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
-        p['kode_cabang'] = this.formValue['kode_cabang'] === "" ? undefined : this.formValue['kode_cabang']
-        p['id_akun'] = this.formValue['id_akun'] === "" ? undefined : this.formValue['id_akun']
-        this.request.apiData('report', 'g-data-rekapitulasi-bank', p).subscribe(
-          data => {
-            if (data['STATUS'] === 'Y') {
-              let d = data['RESULT'], res = []
-              for (var i = 0; i < d.length; i++) {
-                let t = []
-                if (d[i]['id_tran'] !== '') {
-                  t.push(d[i]['kode_cabang'])
-                  t.push(d[i]['nama_cabang'])
-                  t.push(d[i]['id_kasir'])
-                  t.push(d[i]['nama_kasir'])
-                  t.push(d[i]['kode_bank'])
-                  t.push(d[i]['nama_bank'])
-                  t.push(d[i]['no_rekening'])
-                  t.push(d[i]['atas_nama'])
-                  t.push(d[i]['no_tran'])
-                  t.push(d[i]['no_jurnal'])
-                  t.push(new Date(d[i]['tgl_tran']).getTime())
-                  t.push(d[i]['keterangan'])
-                  t.push(parseFloat(d[i]['saldo_masuk']))
-                  t.push(parseFloat(d[i]['saldo_keluar']))
-                  t.push(parseFloat(d[i]['saldo_akhir']))
-                  t.push(parseFloat(d[i]['saldo_awal']))
-
-                  res.push(t)
-                }
-              }
-
-              let rp = JSON.parse(JSON.stringify(this.reportObj))
-              rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              rp['REPORT_CODE'] = 'RPT-REKAPITULASI-BANK'
-              rp['REPORT_NAME'] = 'Laporan Rekapitulasi Bank'
-              rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
-              rp['JASPER_FILE'] = 'rptRekapitulasiBank.jasper'
-              rp['REPORT_PARAMETERS'] = {
-                USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                REPORT_COMPANY_CITY: this.info_company.kota,
-                REPORT_COMPANY_TLPN: this.info_company.telepon,
-                REPORT_PERIODE: "Periode: " +
-                  JSON.stringify(this.formValue['periode'][0]['year']) + " " +
-                  this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
-                  (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
-                  JSON.stringify(this.formValue['periode'][1]['year']) + " " +
-                  this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
-                  (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
-
-              }
-              rp['FIELD_TITLE'] = [
-                "Kode Cabang",
-                "Nama Cabang",
-                "Id Kasir",
-                "Nama Kasir",
-                "Kode Bank",
-                "Nama Bank",
-                "No. Rekening",
-                "Atas Nama",
-                "No. Transaksi",
-                "No. Jurnal",
-                "Tgl Transaksi",
-                "Keterangan",
-                "Saldo Masuk",
-                "Saldo Keluar",
-                "Saldo Akhir",
-                "Saldo Awal"
-              ]
-              rp['FIELD_NAME'] = [
-                "kodeCabang",
-                "namaCabang",
-                "idKasir",
-                "namaKasir",
-                "kodeBank",
-                "namaBank",
-                "noRekening",
-                "atasNama",
-                "noTran",
-                "noJurnal",
-                "tglTran",
-                "keterangan",
-                "saldoMasuk",
-                "saldoKeluar",
-                "saldoAkhir",
-                "saldoAwal"
-              ]
-              rp['FIELD_TYPE'] = [
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "string",
-                "date",
-                "string",
-                "bigdecimal",
-                "bigdecimal",
-                "bigdecimal",
-                "bigdecimal"
-              ]
-              rp['FIELD_DATA'] = res
-
-              this.sendGetReport(rp, this.formValue['format_laporan'])
+        this.formValue = this.forminput.getData()
+        let tgl_periode_awal = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])),
+          tgl_periode_akhir = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day'])),
+          rk = tgl_periode_awal + tgl_periode_akhir + this.formValue['kode_cabang'] + this.formValue['format_laporan'] + this.formValue['kode_bank'] + this.formValue['no_rekening'];
+        if (this.checkKeyReport[rk] !== undefined) {
+          if (this.formValue['format_laporan'] === 'pdf') {
+            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          } else {
+            if (this.formValue['format_laporan'] === 'xlsx') {
+              this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
             } else {
-              this.loading = false
-              this.ref.markForCheck()
-              this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
+              this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
+              setTimeout(() => {
+                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                sbmBtn.click();
+              }, 100)
             }
           }
-        )
-      }
-    }
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          let p = {}
+          p['kode_perusahaan'] = this.kode_perusahaan
+          p['kode_cabang'] = this.formValue['kode_cabang']
+          p['kode_bank'] = this.formValue['kode_bank']
+          p['nama_bank'] = this.formValue['nama_bank']
+          p['no_rekening'] = this.formValue['no_rekening']
+          p['tgl_periode_awal'] = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day']))
+          p['tgl_periode_akhir'] = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+          p['kode_cabang'] = this.formValue['kode_cabang'] === "" ? undefined : this.formValue['kode_cabang']
+          p['id_akun'] = this.formValue['id_akun'] === "" ? undefined : this.formValue['id_akun']
+          this.request.apiData('report', 'g-data-rekapitulasi-bank', p).subscribe(
+            data => {
+              if (data['STATUS'] === 'Y') {
+                let d = data['RESULT'], res = []
+                for (var i = 0; i < d.length; i++) {
+                  let t = []
+                  if (d[i]['id_tran'] !== '') {
+                    t.push(d[i]['kode_cabang'])
+                    t.push(d[i]['nama_cabang'])
+                    t.push(d[i]['id_kasir'])
+                    t.push(d[i]['nama_kasir'])
+                    t.push(d[i]['kode_bank'])
+                    t.push(d[i]['nama_bank'])
+                    t.push(d[i]['no_rekening'])
+                    t.push(d[i]['atas_nama'])
+                    t.push(d[i]['no_tran'])
+                    t.push(d[i]['no_jurnal'])
+                    t.push(new Date(d[i]['tgl_tran']).getTime())
+                    t.push(d[i]['keterangan'])
+                    t.push(parseFloat(d[i]['saldo_masuk']))
+                    t.push(parseFloat(d[i]['saldo_keluar']))
+                    t.push(parseFloat(d[i]['saldo_akhir']))
+                    t.push(parseFloat(d[i]['saldo_awal']))
 
+                    res.push(t)
+                  }
+                }
+
+                let rp = JSON.parse(JSON.stringify(this.reportObj))
+                rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+                rp['REPORT_CODE'] = 'RPT-REKAPITULASI-BANK'
+                rp['REPORT_NAME'] = 'Laporan Rekapitulasi Bank'
+                rp['REPORT_FORMAT_CODE'] = this.formValue['format_laporan']
+                rp['JASPER_FILE'] = 'rptRekapitulasiBank.jasper'
+                rp['REPORT_PARAMETERS'] = {
+                  USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+                  REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                  REPORT_COMPANY_CITY: this.info_company.kota,
+                  REPORT_COMPANY_TLPN: this.info_company.telepon,
+                  REPORT_PERIODE: "Periode: " +
+                    JSON.stringify(this.formValue['periode'][0]['year']) + " " +
+                    this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][0]['month']))) + " " +
+                    (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])) + " - " +
+                    JSON.stringify(this.formValue['periode'][1]['year']) + " " +
+                    this.gbl.getNamaBulan((JSON.stringify(this.formValue['periode'][1]['month']))) + " " +
+                    (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day']))
+
+                }
+                rp['FIELD_TITLE'] = [
+                  "Kode Cabang",
+                  "Nama Cabang",
+                  "Id Kasir",
+                  "Nama Kasir",
+                  "Kode Bank",
+                  "Nama Bank",
+                  "No. Rekening",
+                  "Atas Nama",
+                  "No. Transaksi",
+                  "No. Jurnal",
+                  "Tgl Transaksi",
+                  "Keterangan",
+                  "Saldo Masuk",
+                  "Saldo Keluar",
+                  "Saldo Akhir",
+                  "Saldo Awal"
+                ]
+                rp['FIELD_NAME'] = [
+                  "kodeCabang",
+                  "namaCabang",
+                  "idKasir",
+                  "namaKasir",
+                  "kodeBank",
+                  "namaBank",
+                  "noRekening",
+                  "atasNama",
+                  "noTran",
+                  "noJurnal",
+                  "tglTran",
+                  "keterangan",
+                  "saldoMasuk",
+                  "saldoKeluar",
+                  "saldoAkhir",
+                  "saldoAwal"
+                ]
+                rp['FIELD_TYPE'] = [
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
+                  "date",
+                  "string",
+                  "bigdecimal",
+                  "bigdecimal",
+                  "bigdecimal",
+                  "bigdecimal"
+                ]
+                rp['FIELD_DATA'] = res
+
+                this.sendGetReport(rp, this.formValue['format_laporan'])
+              } else {
+                this.loading = false
+                this.ref.markForCheck()
+                this.openSnackBar('Gagal mendapatkan data laporan rekapitulasi bank.', 'fail')
+              }
+            }
+          )
+        }
+      }
+    } else {
+      this.gbl.openSnackBar("Kode Cabang Belum Diisi", "info")
+    }
   }
 
   openDialog(type) {
+    if (type === 'no_rekening') {
+      if (this.forminput.getData()['kode_cabang'] === "" && this.forminput.getData()['kode_bank'] === "") {
+        this.gbl.openSnackBar('Pilih Cabang dan Bank dahulu.', 'info', () => {
+          setTimeout(() => {
+            this.openDialog('kode_cabang')
+          }, 250)
+        })
+        return
+      } else if (this.forminput.getData()['kode_bank'] === "") {
+        this.gbl.openSnackBar('Pilih bank dahulu.', 'info', () => {
+          setTimeout(() => {
+            this.openDialog('kode_bank')
+          }, 250)
+        })
+        return
+      }
+    }
+
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '90vw',
@@ -445,17 +565,26 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         type: type,
         tableInterface:
           type === "kode_cabang" ? this.inputCabangInterface :
-            {},
+            type === "kode_bank" ? this.inputBankInterface :
+              type === "no_rekening" ? this.inputRekeningInterface :
+                {},
         displayedColumns:
           type === "kode_cabang" ? this.inputCabangDisplayColumns :
-            [],
+            type === "kode_bank" ? this.inputBankDisplayColumns :
+              type === "no_rekening" ? this.inputRekeningDisplayColumns :
+                [],
         tableData:
           type === "kode_cabang" ? this.inputCabangData :
-            [],
+            type === "kode_bank" ? this.inputBankData :
+              type === "no_rekening" ? this.inputRekeningDataFilter :
+                [],
         tableRules:
           type === "kode_cabang" ? this.inputCabangDataRules :
-            [],
-        formValue: this.formValue
+            type === "kode_bank" ? this.inputBankDataRules :
+              type === "no_rekening" ? this.inputRekeningDataRules :
+                [],
+        formValue: this.formValue,
+        loadingData: type === "no_rekening" ? this.loadingRekening : null
       }
     });
 
@@ -469,15 +598,47 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
               this.formValue.nama_cabang = result.nama_cabang
               this.loading = true
               this.sendRequestPeriodeKasir(result.kode_cabang)
-            } else {
-              this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
-              this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+              this.filterRekening(this.formValue.kode_cabang, this.formValue.kode_bank)
             }
+          }
+        } else if (type === "kode_bank") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_bank', result.kode_bank)
+            this.forminput.updateFormValue('nama_bank', result.nama_bank)
+            this.formValue.kode_bank = result.kode_bank
+            this.formValue.nama_bank = result.nama_bank
+            if (this.tempKodeBank !== result.kode_bank) {
+              this.forminput.updateFormValue('no_rekening', '')
+            }
+
+            this.filterRekening(this.formValue.kode_cabang, result.kode_bank)
+          }
+        } else if (type === "no_rekening") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('no_rekening', result.no_rekening)
+            this.formValue.no_rekening = result.no_rekening
           }
         }
         this.ref.markForCheck();
       }
     });
+  }
+
+  // Function : Filter Data Menu
+  filterRekening(kode_cabang, kode_bank) {
+    this.loadingRekening = true
+    this.tempKodeBank = kode_bank
+    this.inputRekeningDataFilter = this.inputRekeningData.filter(x => x['kode_cabang'] === kode_cabang && x['kode_bank'] === kode_bank)
+    this.ref.markForCheck()
+    if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
+      if (this.dialogType === "no_rekening") {
+        this.dialog.closeAll()
+        this.openDialog('no_rekening')
+      }
+    }
+    this.gbl.updateInputdata(this.inputRekeningDataFilter, 'no_rekening', this.inputLayout)
+    this.loadingRekening = false
+    this.ref.markForCheck()
   }
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
@@ -507,11 +668,39 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
-            this.loading = false
+            this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
             this.ref.markForCheck()
           } else {
             this.loading = false
             this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
+          }
+        }
+      )
+
+      this.request.apiData('bank', 'g-bank', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputBankData = data['RESULT']
+            this.gbl.updateInputdata(data['RESULT'], 'kode_bank', this.inputLayout)
+            this.ref.markForCheck()
+          } else {
+            this.loading = false
+            this.openSnackBar('Gagal mendapatkan daftar bank. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
+          }
+        }
+      )
+
+      this.request.apiData('rekening-perusahaan', 'g-rekening-perusahaan', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputRekeningData = data['RESULT']
+            this.loading = false
+            this.ref.markForCheck()
+          } else {
+            this.loading = false
+            this.openSnackBar('Gagal mendapatkan daftar rekening perusahaan. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
           }
         }
@@ -541,7 +730,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
               perMax = periode[i]['tgl_periode']
             }
           }
-          this.inputLayout.splice(2, 1, {
+          this.inputLayout.splice(4, 3, {
             formWidth: 'col-5',
             label: 'Periode',
             id: 'periode',
@@ -613,7 +802,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
           }
           let tgl_periode_awal = JSON.stringify(this.formValue['periode'][0]['year']) + "-" + (JSON.stringify(this.formValue['periode'][0]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['month']) : "0" + JSON.stringify(this.formValue['periode'][0]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][0]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][0]['day']) : "0" + JSON.stringify(this.formValue['periode'][0]['day'])),
             tgl_periode_akhir = JSON.stringify(this.formValue['periode'][1]['year']) + "-" + (JSON.stringify(this.formValue['periode'][1]['month']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['month']) : "0" + JSON.stringify(this.formValue['periode'][1]['month'])) + "-" + (JSON.stringify(this.formValue['periode'][1]['day']).length > 1 ? JSON.stringify(this.formValue['periode'][1]['day']) : "0" + JSON.stringify(this.formValue['periode'][1]['day'])),
-            rk = tgl_periode_awal + tgl_periode_akhir + this.formValue['kode_cabang'] + this.formValue['format_laporan'];
+            rk = tgl_periode_awal + tgl_periode_akhir + this.formValue['kode_cabang'] + this.formValue['format_laporan'] + this.formValue['kode_bank'] + this.formValue['no_rekening'];
           this.checkKeyReport[rk] = data['RESULT']
           this.loading = false
           this.ref.markForCheck()

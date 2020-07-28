@@ -39,9 +39,9 @@ export class SaldoAkunComponent implements OnInit {
   total_kredit = 0
 
   formDetail = {
-    id_akun:  '', 
+    id_akun: '',
     kode_akun: '',
-    nama_akun : '',
+    nama_akun: '',
     nama_tipe_akun: '',
     saldo_debit: 0,
     saldo_kredit: 0
@@ -191,9 +191,9 @@ export class SaldoAkunComponent implements OnInit {
           res.push(t)
         }
       }
-  
+
       this.request.apiData('akun', 'i-saldo-awal-akun', { kode_perusahaan: this.kode_perusahaan, detail: res }).subscribe(
-        data =>  {
+        data => {
           if (data['STATUS'] === 'Y') {
             this.data_akun = []
             this.res_data = []
@@ -229,9 +229,9 @@ export class SaldoAkunComponent implements OnInit {
 
   resetDetailForm() {
     this.formDetail = {
-      id_akun:  '', 
+      id_akun: '',
       kode_akun: '',
-      nama_akun : '',
+      nama_akun: '',
       nama_tipe_akun: '',
       saldo_debit: 0,
       saldo_kredit: 0
@@ -295,7 +295,7 @@ export class SaldoAkunComponent implements OnInit {
     }
     this.dialog.closeAll()
     this.restructureData(this.data_akun)
-  } 
+  }
 
   madeRequest() {
     this.loading = true
@@ -304,6 +304,7 @@ export class SaldoAkunComponent implements OnInit {
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
+          console.log(this.data_akun)
           this.restructureData(data['RESULT'])
         } else {
           this.loading = false
@@ -392,6 +393,10 @@ export class SaldoAkunComponent implements OnInit {
     //     }
     //   }
     // }
+    // Sort A-Z/0-1 Kode Akun
+    for (var z = 0; z < data.length; z++) {
+      data.sort((a: any, b: any) => a.kode_akun - b.kode_akun);
+    }
 
     for (var i = 0; i < output.length; i++) {
       res.push(output[i])
@@ -453,7 +458,7 @@ export class SaldoAkunComponent implements OnInit {
     } else {
       return mul
     }
-    
+
   }
 
   checkChild(id) {

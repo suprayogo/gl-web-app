@@ -724,14 +724,14 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueBB = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
-      id_akun: '',
-      kode_akun: '',
-      nama_akun: '',
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
+      format_laporan: this.formValueBB.format_laporan,
+      kode_cabang: this.formValueBB.kode_cabang,
+      nama_cabang: this.formValueBB.nama_cabang,
+      id_akun: this.formValueBB.id_akun,
+      kode_akun: this.formValueBB.kode_akun,
+      nama_akun: this.formValueBB.nama_akun,
+      tahun: this.formValueBB.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueBB.tahun,
+      bulan: this.formValueBB.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueBB.bulan
     }
     this.initBulan = tmp
     this.bulanBB = tmp[this.formValueBB.tahun]

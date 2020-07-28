@@ -710,14 +710,14 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueNS = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
-      id_akun: '',
-      kode_akun: '',
-      nama_akun: '',
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
+      format_laporan: this.formValueNS.format_laporan,
+      kode_cabang: this.formValueNS.kode_cabang,
+      nama_cabang: this.formValueNS.nama_cabang,
+      id_akun: this.formValueNS.id_akun,
+      kode_akun: this.formValueNS.kode_akun,
+      nama_akun: this.formValueNS.nama_akun,
+      tahun: this.formValueNS.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueNS.tahun,
+      bulan: this.formValueNS.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueNS.bulan
     }
     this.initBulan = tmp
     this.bulanNS = tmp[this.formValueNS.tahun]

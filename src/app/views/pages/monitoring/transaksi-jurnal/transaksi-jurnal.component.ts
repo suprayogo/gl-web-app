@@ -35,6 +35,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   loading: boolean = true;
   tableLoad: boolean = true;
   content: any;
+  dataTransaksi: any;
   detailLoad: boolean = false;
   detailJurnalLoad: boolean = false;
   enableDetail: boolean = false;
@@ -72,6 +73,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     nama_divisi: '',
     nama_departemen: '',
     keterangan: '',
+    no_jurnal: '',
   }
 
   inputPeriodeDisplayColumns = [
@@ -180,14 +182,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       value: 'nama_cabang'
     },
     {
-      label: 'Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Departemen',
-      value: 'nama_departemen'
-    },
-    {
       label: 'Keterangan',
       value: 'keterangan'
     },
@@ -209,12 +203,6 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     }
   ];
   browseInterface = {
-    no_tran: 'string',
-    tgl_tran: 'string',
-    nama_cabang: 'string',
-    nama_divisi: 'string',
-    nama_departemen: 'string',
-    keterangan: 'string',
     //STATIC
     input_by: 'string',
     input_dt: 'string',
@@ -323,12 +311,24 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
   // REQUEST DATA FROM API (to : L.O.V or Table)
   sendReqPeriodeJurnal(id_periode) {
     this.tableLoad = true
+    this.request.apiData('kasir', 'g-transaksi-kasir', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.dataTransaksi = data['RESULT']
+        } else {
+          this.openSnackBar('Gagal mendapatkan data. Mohon coba lagi nanti.', 'fail')
+          this.ref.markForCheck()
+        }
+      }
+    )
+
+   
     this.request.apiData('jurnal', 'g-jurnal', { kode_perusahaan: this.kode_perusahaan, id_periode: id_periode }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.browseData = data['RESULT']
-          this.tableLoad = false
           this.ref.markForCheck()
+          this.tableLoad = false
         } else {
           this.openSnackBar('Gagal mendapatkan data. Mohon coba lagi nanti.', 'fail')
           this.tableLoad = false
@@ -452,6 +452,49 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(
       result => {
         this.datatable == undefined ? null : this.datatable.reset()
+        this.detailInputLayout = [
+          {
+            formWidth: 'col-5',
+            label: 'No. Transaksi',
+            id: 'no-tran',
+            type: 'input',
+            valueOf: 'no_tran',
+            required: true,
+            readOnly: true,
+            disabled: true,
+            inputPipe: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Tgl. Transaksi',
+            id: 'tgl-transaksi',
+            type: 'input',
+            valueOf: 'tgl_tran',
+            required: true,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Cabang',
+            id: 'nama-cabang',
+            type: 'input',
+            valueOf: 'nama_cabang',
+            required: true,
+            readOnly: true,
+            disabled: true
+          },
+          {
+            formWidth: 'col-5',
+            label: 'Keterangan',
+            id: 'keterangan',
+            type: 'input',
+            valueOf: 'keterangan',
+            required: false,
+            readOnly: true,
+            disabled: true
+          }
+        ]
       },
       error => null,
     );
@@ -475,6 +518,23 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       nama_divisi: x['nama_divisi'],
       nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan'],
+      no_jurnal: '',
+    }
+    let specData = this.dataTransaksi.filter(x => x['no_jurnal'] === this.formDetail.no_tran)[0] || {}
+    this.formDetail.no_jurnal = specData.no_tran
+    if(this.formDetail.no_jurnal !== '' && this.formDetail.no_jurnal !== null && this.formDetail.no_jurnal !== undefined){
+      this.detailInputLayout.splice(4, 0,
+        {
+          formWidth: 'col-5',
+          label: 'No. Referensi Jurnal',
+          id: 'no-jurnal',
+          type: 'input',
+          valueOf: 'no_jurnal',
+          required: false,
+          readOnly: true,
+          disabled: true
+        }
+      )
     }
     this.getDetail()
   }

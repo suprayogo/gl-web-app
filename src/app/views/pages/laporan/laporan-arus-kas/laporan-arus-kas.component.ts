@@ -733,12 +733,12 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueAK = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
-      tipe: this.formValueAK['tipe'],
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
+      format_laporan: this.formValueAK.format_laporan,
+      kode_cabang: this.formValueAK.kode_cabang,
+      nama_cabang: this.formValueAK.nama_cabang,
+      tipe: this.formValueAK.tipe,
+      tahun: this.formValueAK.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueAK.tahun,
+      bulan: this.formValueAK.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.bulan
     }
     this.initBulan = tmp
     this.bulanAK = tmp[this.formValueAK.tahun]

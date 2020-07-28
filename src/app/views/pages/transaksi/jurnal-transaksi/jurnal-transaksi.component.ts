@@ -168,10 +168,12 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
     id_jenis_transaksi: '',
     kode_jenis_transaksi: '',
     nilai_jenis_transaksi: '',
+    lembar_giro: 0,
     tipe_transaksi: '0',
     saldo_transaksi: 0,
     keterangan: '',
-    tipe_laporan: ''
+    tipe_laporan: '',
+    kode_template: ''
   }
 
   detailData = [
@@ -438,7 +440,8 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         valueOf: ['kode_cabang', 'nama_cabang'],
         onFound: () => {
           this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-          this.browseNeedUpdate = true
+          this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+          this.filterDataByCabang()
         }
       },
       update: {
@@ -676,16 +679,21 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       id_jenis_transaksi: x['id_jenis_transaksi'],
       kode_jenis_transaksi: x['kode_jenis_transaksi'],
       nilai_jenis_transaksi: x['nilai_jenis_transaksi'],
+      lembar_giro: x['lembar_giro'],
       tipe_transaksi: x['tipe_transaksi'],
       saldo_transaksi: parseFloat(x['saldo_transaksi']),
       keterangan: x['keterangan'],
-      tipe_laporan: x['tipe_laporan']
+      tipe_laporan: x['tipe_laporan'],
+      kode_template: x['kode_template']
     }
     this.id_periode = x['id_periode']
     this.onUpdate = true;
-    if (this.onUpdate === true) {
+    if (this.onUpdate == true) {
       this.disablePrintButton = false
       this.disablePrintButton2 = false
+    }
+    if (this.formValue.kode_cabang !== "") {
+      this.disableSubmit = false
     }
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
     this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
@@ -1047,15 +1055,17 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       no_jurnal: '',
       no_tran: '',
       tgl_tran: '',
-      kode_cabang: this.formValue['kode_cabang'],
-      nama_cabang: this.formValue['nama_cabang'],
+      kode_cabang: this.formValue.kode_cabang,
+      nama_cabang: this.formValue.nama_cabang,
       id_jenis_transaksi: '',
       kode_jenis_transaksi: '',
       nilai_jenis_transaksi: '',
+      lembar_giro: 0,
       tipe_transaksi: '0',
       saldo_transaksi: 0,
       keterangan: '',
-      tipe_laporan: ''
+      tipe_laporan: '',
+      kode_template: ''
     }
     this.detailData = [
       {
@@ -1181,59 +1191,64 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-            let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === result.kode_cabang && x['aktif'] === '1')[0]
-            let dt = new Date(lp['tgl_periode'])
-            if (dt.getFullYear() == this.periode_jurnal['tahun_periode'] && (dt.getMonth() + 1) == this.periode_jurnal['bulan_periode']) {
-              this.periode_kasir = {
-                id_periode: lp['id_periode'],
-                tgl_periode: lp['tgl_periode']
-              }
-              this.inputLayout.splice(3, 1, {
-                formWidth: 'col-5',
-                label: 'Tgl. Transaksi',
-                id: 'tgl-transaksi',
-                type: 'datepicker',
-                valueOf: 'tgl_tran',
-                required: true,
-                readOnly: false,
-                update: {
-                  disabled: true
-                },
-                timepick: false,
-                enableMin: true,
-                enableMax: true,
-                disabled: false,
-                minDate: () => {
-                  let dt = new Date(this.periode_kasir['tgl_periode'])
-                  return {
-                    year: dt.getFullYear(),
-                    month: dt.getMonth() + 1,
-                    day: dt.getDate()
-                  }
-                },
-                maxDate: () => {
-                  let dt = new Date(this.periode_kasir['tgl_periode'])
-                  return {
-                    year: dt.getFullYear(),
-                    month: dt.getMonth() + 1,
-                    day: dt.getDate() + this.dayLimit
-                  }
-                },
-                toolTip: 'Tgl. jurnal akan sama dengan tgl. transaksi'
-              })
-              this.browseNeedUpdate = true
-              this.disableSubmit = false
-              this.ref.markForCheck()
-            } else {
-              this.disableSubmit = true
-              this.ref.markForCheck()
-              this.openSnackBar('Tanggal periode jurnal dan transaksi tidak sesuai.', 'info')
-            }
+            this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+            this.filterDataByCabang()
           }
         }
         this.ref.markForCheck();
       }
     });
+  }
+
+  filterDataByCabang() {
+    let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === this.formValue.kode_cabang && x['aktif'] === '1')[0]
+    let dt = new Date(lp['tgl_periode'])
+    if (dt.getFullYear() == this.periode_jurnal['tahun_periode'] && (dt.getMonth() + 1) == this.periode_jurnal['bulan_periode']) {
+      this.periode_kasir = {
+        id_periode: lp['id_periode'],
+        tgl_periode: lp['tgl_periode']
+      }
+      this.inputLayout.splice(3, 1, {
+        formWidth: 'col-5',
+        label: 'Tgl. Transaksi',
+        id: 'tgl-transaksi',
+        type: 'datepicker',
+        valueOf: 'tgl_tran',
+        required: true,
+        readOnly: false,
+        update: {
+          disabled: true
+        },
+        timepick: false,
+        enableMin: true,
+        enableMax: true,
+        disabled: false,
+        minDate: () => {
+          let dt = new Date(this.periode_kasir['tgl_periode'])
+          return {
+            year: dt.getFullYear(),
+            month: dt.getMonth() + 1,
+            day: dt.getDate()
+          }
+        },
+        maxDate: () => {
+          let dt = new Date(this.periode_kasir['tgl_periode'])
+          return {
+            year: dt.getFullYear(),
+            month: dt.getMonth() + 1,
+            day: dt.getDate() + this.dayLimit
+          }
+        },
+        toolTip: 'Tgl. jurnal akan sama dengan tgl. transaksi'
+      })
+      this.browseNeedUpdate = true
+      this.disableSubmit = false
+      this.ref.markForCheck()
+    } else {
+      this.disableSubmit = true
+      this.ref.markForCheck()
+      this.openSnackBar('Tanggal periode jurnal dan transaksi tidak sesuai.', 'info')
+    }
   }
 
   inputDialog(type) {
@@ -1609,7 +1624,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             if (message !== '') {
-              this.browseData = data['RESULT']
+              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
               this.loading = false
               this.tableLoad = false
               this.browseNeedUpdate = false
@@ -1617,7 +1632,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
               this.openSnackBar(message, 'success')
               this.onUpdate = false
             } else {
-              this.browseData = data['RESULT']
+              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
               this.loading = false
               this.tableLoad = false
               this.browseNeedUpdate = false

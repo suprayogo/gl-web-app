@@ -634,11 +634,11 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
     this.tahun = outputTahun
     this.formValueLR = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
-      tahun: this.activePeriod['tahun_periode'] === undefined ? "" : this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode'] === undefined ? "" : this.activePeriod['bulan_periode']
+      format_laporan: this.formValueLR.format_laporan,
+      kode_cabang: this.formValueLR.kode_cabang,
+      nama_cabang: this.formValueLR.nama_cabang,
+      tahun: this.formValueLR.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueLR.tahun,
+      bulan: this.formValueLR.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueLR.bulan
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
