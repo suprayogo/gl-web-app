@@ -346,7 +346,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
           if (this.formValueJL.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.submitPeriodeData[i]['tahun_periode']) {
-            p = this.submitPeriodeData[i]
+            p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
           }
         }

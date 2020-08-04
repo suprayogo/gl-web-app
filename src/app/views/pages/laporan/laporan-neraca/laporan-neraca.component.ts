@@ -296,7 +296,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
           if (this.formValueNR.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueNR.tahun === this.submitPeriodeData[i]['tahun_periode']) {
-            p = this.submitPeriodeData[i]
+            p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
           }
         }

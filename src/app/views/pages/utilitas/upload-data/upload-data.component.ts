@@ -39,7 +39,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   parseTemplate = {
     kat_akun: {
       batch: "",
-      schema: "sch_p001",
+      schema: "sch_p002",
       table: 'mhs_kategori_akun',
       column: [
         "id_kategori_akun",
@@ -58,7 +58,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
     },
     akun: {
       batch: "",
-      schema: "sch_p001",
+      schema: "sch_p002",
       table: 'mhs_akun',
       column: [
         "id_akun",
@@ -88,7 +88,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
     },
     jenis_transaksi: {
       batch: "",
-      schema: "sch_p001",
+      schema: "sch_p002",
       table: 'mhs_jenis_transaksi',
       column: [
         "id_jenis_transaksi",
@@ -173,13 +173,13 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       } else if (fn[0] === 'kategori_akun') {
         parsedData = this.processData(this.parseTemplate['kat_akun'], jsonData['kat_akun'])
       } else if (fn[0] === 'transaksi_mdn') {
-        parsedData = this.processTransaction(jsonData['bb_01'])
+        parsedData = this.processTransaction(jsonData['bb_02'])
       } else if (fn[0] === 'transaksi_aceh') {
-        parsedData = this.processTransaction(jsonData['bb_01'])
+        parsedData = this.processTransaction(jsonData['bb_02'])
       } else if (fn[0] === 'transaksi_siantar') {
-        parsedData = this.processTransaction(jsonData['bb_01'])
+        parsedData = this.processTransaction(jsonData['bb_02'])
       } else if (fn[0] === 'transaksi_palembang') {
-        parsedData = this.processTransaction(jsonData['bb_01'])
+        parsedData = this.processTransaction(jsonData['bb_02'])
       } else {
         parsedData = this.processTransaction(jsonData['bb_01'])
       }
@@ -301,7 +301,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   processTransaction(data) {
     console.clear()
     let res = {
-      schema: "sch_p001",
+      schema: "sch_p002",
       table: '',
       column: [],
       date: [],
@@ -333,14 +333,14 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         t = {
           "id_tran": id_tran,
           "tgl_tran": (new Date(d[key][0]['tgl_tran']).getTime() + 25200000),
-          "kode_cabang": "CAB004",
+          "kode_cabang": "C001",
           "keterangan": key,
           "jurnal_penyesuaian": 0,
-          "input_by": "ADMIN",
+          "input_by": "ADMINSSI",
           "input_dt": Date.now(),
-          "id_periode": "db1ebd3caf033e68c22c240c2edda7c8",
+          "id_periode": "3f80f5c8f1bfba00bc2e7ab357280d0b",
           "detail": {
-            "schema": "sch_p001",
+            "schema": "sch_p002",
             "table": "trd_jurnal",
             "column": [
               "id_tran",
