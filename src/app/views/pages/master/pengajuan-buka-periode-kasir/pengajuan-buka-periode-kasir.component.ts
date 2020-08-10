@@ -336,6 +336,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       valueOf: 'no_tran',
       required: false,
       readOnly: true,
+      disabled: true,
       update: {
         disabled: true
       },

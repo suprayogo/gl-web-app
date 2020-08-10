@@ -1232,11 +1232,24 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
           }
         },
         maxDate: () => {
-          let dt = new Date(this.periode_kasir['tgl_periode'])
+          let dt = new Date(this.periode_kasir['tgl_periode']),
+          maxDt = (dt.getMonth() + 1) == 2 ? 29 :
+          (
+            (dt.getMonth() + 1) == 1 ||
+            (dt.getMonth() + 1) == 3 ||
+            (dt.getMonth() + 1) == 5 ||
+            (dt.getMonth() + 1) == 7 ||
+            (dt.getMonth() + 1) == 8 ||
+            (dt.getMonth() + 1) == 10 ||
+            (dt.getMonth() + 1) == 12
+          ) ? 31 : 30,
+          exceedDt = (dt.getDate() + this.dayLimit) > maxDt ? true : false,
+          mt = exceedDt == true ? dt.getMonth() + 2 : dt.getMonth() + 1,
+          aDt = exceedDt == true ? ((dt.getDate() + this.dayLimit) - maxDt) : dt.getDate() + this.dayLimit 
           return {
             year: dt.getFullYear(),
-            month: dt.getMonth() + 1,
-            day: dt.getDate() + this.dayLimit
+            month: mt,
+            day: aDt
           }
         },
         toolTip: 'Tgl. jurnal akan sama dengan tgl. transaksi'

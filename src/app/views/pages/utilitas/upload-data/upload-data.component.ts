@@ -365,7 +365,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
           let tt = {
             id_tran: id_tran,
             id_akun: this.data_akun[d[key][i]['kd_perk']]['id_akun'],
-            kode_divisi: "FINMPS",
+            kode_divisi: "FINSSI",
             kode_departemen: "FIN",
             nilai_debit: d[key][i]['debet'],
             nilai_kredit: d[key][i]['kredit'],

@@ -233,35 +233,35 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         disabled: true
       }
     },
-    {
-      formWidth: 'col-5',
-      label: 'Akun',
-      id: 'kode-akun',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_akun',
-      valueOf: 'kode_akun',
-      required: true,
-      readOnly: false,
-      inputInfo: {
-        id: 'nama-akun',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_akun'
-      },
-      blurOption: {
-        ind: 'kode_akun',
-        data: [],
-        valueOf: ['kode_akun', 'nama_akun'],
-        onFound: () => null
-      },
-      update: {
-        disabled: true
-      }
-    },
+    // {
+    //   formWidth: 'col-5',
+    //   label: 'Akun',
+    //   id: 'kode-akun',
+    //   type: 'inputgroup',
+    //   click: (type) => this.openDialog(type),
+    //   btnLabel: '',
+    //   btnIcon: 'flaticon-search',
+    //   browseType: 'kode_akun',
+    //   valueOf: 'kode_akun',
+    //   required: true,
+    //   readOnly: false,
+    //   inputInfo: {
+    //     id: 'nama-akun',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'nama_akun'
+    //   },
+    //   blurOption: {
+    //     ind: 'kode_akun',
+    //     data: [],
+    //     valueOf: ['kode_akun', 'nama_akun'],
+    //     onFound: () => null
+    //   },
+    //   update: {
+    //     disabled: true
+    //   }
+    // },
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -763,35 +763,35 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
           disabled: true
         }
       },
-      {
-        formWidth: 'col-5',
-        label: 'Akun',
-        id: 'kode-akun',
-        type: 'inputgroup',
-        click: (type) => this.openDialog(type),
-        btnLabel: '',
-        btnIcon: 'flaticon-search',
-        browseType: 'kode_akun',
-        valueOf: 'kode_akun',
-        required: true,
-        readOnly: false,
-        inputInfo: {
-          id: 'nama-akun',
-          disabled: false,
-          readOnly: true,
-          required: false,
-          valueOf: 'nama_akun'
-        },
-        blurOption: {
-          ind: 'kode_akun',
-          data: [],
-          valueOf: ['kode_akun', 'nama_akun'],
-          onFound: () => null
-        },
-        update: {
-          disabled: true
-        }
-      },
+      // {
+      //   formWidth: 'col-5',
+      //   label: 'Akun',
+      //   id: 'kode-akun',
+      //   type: 'inputgroup',
+      //   click: (type) => this.openDialog(type),
+      //   btnLabel: '',
+      //   btnIcon: 'flaticon-search',
+      //   browseType: 'kode_akun',
+      //   valueOf: 'kode_akun',
+      //   required: true,
+      //   readOnly: false,
+      //   inputInfo: {
+      //     id: 'nama-akun',
+      //     disabled: false,
+      //     readOnly: true,
+      //     required: false,
+      //     valueOf: 'nama_akun'
+      //   },
+      //   blurOption: {
+      //     ind: 'kode_akun',
+      //     data: [],
+      //     valueOf: ['kode_akun', 'nama_akun'],
+      //     onFound: () => null
+      //   },
+      //   update: {
+      //     disabled: true
+      //   }
+      // },
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',

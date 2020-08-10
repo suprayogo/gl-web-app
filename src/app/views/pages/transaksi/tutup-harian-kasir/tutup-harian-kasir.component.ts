@@ -11,7 +11,6 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 // COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
-import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
@@ -28,11 +27,24 @@ const content = {
 export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
-  @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('TP', { static: false }) forminputTP;
-  @ViewChild('jbp', { static: false }) djbp;
-  @ViewChild('rp', { static: false }) drp;
+  @ViewChild('THK', { static: false }) forminputTHK;
+  @ViewChild('THBK', { static: false }) forminputTHBK;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
+
+  tipe_tutup = [
+    {
+      label: 'Tutup Harian Kasir Aktif',
+      value: '0'
+    },
+    {
+      label: 'Tutup Harian Kasir Buka Kembali',
+      value: '1'
+    }
+  ];
+
+  tgl_perlu_tutup = [
+
+  ];
 
   // VARIABLES
   loading: boolean = true;
@@ -122,6 +134,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   formValue = {
     kode_cabang: '',
     nama_cabang: '',
+    tipe_tutup: '0',
     tgl_terakhir_tutup: '',
     set_tgl_tutup: '',
     jarak_tgl_periode: 0
@@ -302,6 +315,33 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
+      label: 'Tipe Tutup',
+      id: 'tipe-tupup',
+      type: 'combobox',
+      options: this.tipe_tutup,
+      valueOf: 'tipe_tutup',
+      required: true,
+      readOnly: false,
+      disabled: false,
+      onSelectFunc: (v) => { this.setTipeTutup(v) } 
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tgl. Tutup',
+      id: 'tgl-tutup',
+      type: 'combobox',
+      options: this.tgl_perlu_tutup,
+      valueOf: 'tgl_tutup',
+      required: true,
+      readOnly: false,
+      disabled: false,
+      hiddenOn: {
+        valueOf: 'tipe_tutup',
+        matchValue: "0"
+      }
+    },
+    {
+      formWidth: 'col-5',
       label: 'Tgl. Terakhir Tutup',
       id: 'tgl-terakhir-tutup',
       type: 'datepicker',
@@ -316,6 +356,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       timepick: false,
       enableMin: false,
       enableMax: false,
+      hiddenOn: {
+        valueOf: 'tipe_tutup',
+        matchValue: "1"
+      }
     },
     {
       formWidth: 'col-5',
@@ -350,6 +394,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
           month: dt.getMonth() + 1,
           day: dt.getDate()
         }
+      },
+      hiddenOn: {
+        valueOf: 'tipe_tutup',
+        matchValue: "1"
       }
     },
     {
@@ -364,6 +412,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       disabled: true,
       update: {
         disabled: false
+      },
+      hiddenOn: {
+        valueOf: 'tipe_tutup',
+        matchValue: "1"
       }
     }
   ]
@@ -432,7 +484,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
             this.daftar_periode_kasir = data['RESULT']
             if (skip) {
               this.loading = false
-              this.updateForm(this.formValue.kode_cabang, this.formValue.nama_cabang)
+              this.updateForm(this.formValue.kode_cabang, this.formValue.nama_cabang, this.formValue.tipe_tutup)
               this.ref.markForCheck()
             } else {
               this.madeRequest()
@@ -480,62 +532,115 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateForm(kode_cabang, nama_cabang) {
+  updateForm(kode_cabang, nama_cabang, tipe_tutup = "0") {
     if (kode_cabang === '' || nama_cabang === '') return
-    let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1')[0]
-    let tgp = new Date(lp['tgl_periode']).getTime()
-    this.tgl_terakhir_tutup = tgp - 86400000 // <-- (2020-05-01) CONTOH Tanggal Terakhir Tutup Kasir After Get Kode Cabang
-
-    this.periode_kasir = {
-      id_periode: lp['id_periode'],
-      tgl_periode: lp['tgl_periode']
-    }
-    this.inputLayout.splice(2, 1, {
-      formWidth: 'col-5',
-      label: 'Atur Tgl. Tutup',
-      id: 'set-tgl-tutup',
-      type: 'datepicker',
-      valueOf: 'set_tgl_tutup',
-      required: true,
-      readOnly: false,
-      onSelectFunc: (v) => {
-        this.getHari(v)
-      },
-      update: {
-        disabled: true
-      },
-      timepick: false,
-      enableMin: true,
-      enableMax: true,
-      disabled: false,
-      minDate: () => {
-        let dt = new Date(this.periode_kasir['tgl_periode'])
-        return {
-          year: dt.getFullYear(),
-          month: dt.getMonth() + 1,
-          day: dt.getDate()
-        }
-      },
-      maxDate: () => {
-        let dt = new Date(this.periode_kasir['tgl_periode'])
-        return {
-          year: dt.getFullYear(),
-          month: dt.getMonth() + 1,
-          day: dt.getDate() + this.dayLimit
-        }
+    
+    if (tipe_tutup === "0") {
+      let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1' && x['buka_kembali'] === "0")[0]
+      let tgp = new Date(lp['tgl_periode']).getTime()
+      this.tgl_terakhir_tutup = tgp - 86400000 // <-- (2020-05-01) CONTOH Tanggal Terakhir Tutup Kasir After Get Kode Cabang
+  
+      this.periode_kasir = {
+        id_periode: lp['id_periode'],
+        tgl_periode: lp['tgl_periode']
       }
-    })
+      this.inputLayout.splice(4, 1, {
+        formWidth: 'col-5',
+        label: 'Atur Tgl. Tutup',
+        id: 'set-tgl-tutup',
+        type: 'datepicker',
+        valueOf: 'set_tgl_tutup',
+        required: true,
+        readOnly: false,
+        onSelectFunc: (v) => {
+          this.getHari(v)
+        },
+        update: {
+          disabled: true
+        },
+        timepick: false,
+        enableMin: true,
+        enableMax: true,
+        disabled: false,
+        minDate: () => {
+          let dt = new Date(this.periode_kasir['tgl_periode'])
+          return {
+            year: dt.getFullYear(),
+            month: dt.getMonth() + 1,
+            day: dt.getDate()
+          }
+        },
+        maxDate: () => {
+          let dt = new Date(this.periode_kasir['tgl_periode']),
+          maxDt = (dt.getMonth() + 1) == 2 ? 29 :
+            (
+              (dt.getMonth() + 1) == 1 ||
+              (dt.getMonth() + 1) == 3 ||
+              (dt.getMonth() + 1) == 5 ||
+              (dt.getMonth() + 1) == 7 ||
+              (dt.getMonth() + 1) == 8 ||
+              (dt.getMonth() + 1) == 10 ||
+              (dt.getMonth() + 1) == 12
+            ) ? 31 : 30,
+            exceedDt = (dt.getDate() + this.dayLimit) > maxDt ? true : false,
+            mt = exceedDt == true ? dt.getMonth() + 2 : dt.getMonth() + 1,
+            aDt = exceedDt == true ? ((dt.getDate() + this.dayLimit) - maxDt) : dt.getDate() + this.dayLimit 
+          return {
+            year: dt.getFullYear(),
+            month: mt,
+            day: aDt
+          }
+        },
+        hiddenOn: {
+          valueOf: 'tipe_tutup',
+          matchValue: "1"
+        }
+      })
+  
+      
+    } else {
+      let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1' && x['buka_kembali'] === "1")
+      let res = []
+      for (var i = 0; i < lp.length; i++) {
+        res.push({
+          label: lp[i]['tgl_periode'],
+          value: lp[i]['id_periode']
+        })
+      }
+
+      this.tgl_perlu_tutup = res
+
+      this.inputLayout.splice(2, 1,
+        {
+          formWidth: 'col-5',
+          label: 'Tgl. Tutup',
+          id: 'tgl-tutup',
+          type: 'combobox',
+          options: this.tgl_perlu_tutup,
+          valueOf: 'set_tgl_tutup',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          hiddenOn: {
+            valueOf: 'tipe_tutup',
+            matchValue: "0"
+          }
+        }
+      )
+    }
 
     // Set New Value
     this.formValue = {
       kode_cabang: kode_cabang,
       nama_cabang: nama_cabang,
+      tipe_tutup: tipe_tutup,
       tgl_terakhir_tutup: this.tgl_terakhir_tutup,
       set_tgl_tutup: '',
       jarak_tgl_periode: 0
     }
     this.formInputCheckChanges()
     this.ref.markForCheck()
+    
   }
 
   getHari(set_tgl_tutup) {
@@ -548,28 +653,18 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     this.formValue = {
       kode_cabang: this.formValue['kode_cabang'],
       nama_cabang: this.formValue['nama_cabang'],
+      tipe_tutup: this.formValue['tipe_tutup'],
       tgl_terakhir_tutup: this.formValue['tgl_terakhir_tutup'],
       set_tgl_tutup: set_tgl_tutup,
       jarak_tgl_periode: this.jarak_antar_tgl
     }
-    this.inputLayout.splice(3, 3,
-      {
-        formWidth: 'col-5',
-        label: 'Jumlah Hari Ditutup',
-        id: 'sisa-hari-tutup',
-        type: 'input',
-        valueOf: 'jarak_tgl_periode',
-        required: false,
-        readOnly: true,
-        numberOnly: false,
-        disabled: true,
-        update: {
-          disabled: false
-        }
-      }
-    )
     this.formInputCheckChanges()
     this.ref.markForCheck()
+  }
+
+  setTipeTutup(tp) {
+    let fv = this.forminputTHK.getData()
+    this.updateForm(fv['kode_cabang'], fv['nama_cabang'], tp)
   }
 
   sendRequestRiwayatTutup(kc) {
@@ -622,10 +717,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (type === "kode_cabang") {
-          if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
-            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-            this.updateForm(result.kode_cabang, result.nama_cabang)
+          if (this.forminputTHK !== undefined) {
+            this.forminputTHK.updateFormValue('kode_cabang', result.kode_cabang)
+            this.forminputTHK.updateFormValue('nama_cabang', result.nama_cabang)
+            this.updateForm(result.kode_cabang, result.nama_cabang, this.forminputTHK.getData()['tipe_tutup'])
           }
         }
         this.ref.markForCheck();
@@ -671,11 +766,6 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   //Tab change event
   onTabSelect(event: MatTabChangeEvent) {
     this.selectedTab = event.index
-
-    if (this.selectedTab == 0) {
-      this.djbp == undefined ? null : this.djbp.checkColumnFit()
-      this.drp == undefined ? null : this.drp.checkColumnFit()
-    }
   }
 
   refreshTab(message) {
@@ -746,7 +836,6 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   openDialog() {
     this.gbl.topPage()
     this.ref.markForCheck()
-    this.formInputCheckChangesJurnal()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -797,7 +886,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     let u_id = localStorage.getItem('user_id')
     this.loading = true;
     this.ref.markForCheck()
-    this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+    this.formValue = this.forminputTHK === undefined ? this.formValue : this.forminputTHK.getData()
     let endRes = Object.assign(
       {
         user_id: u_id,
@@ -830,6 +919,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     this.formValue = {
       kode_cabang: this.formValue.kode_cabang,
       nama_cabang: this.formValue.nama_cabang,
+      tipe_tutup: this.formValue.tipe_tutup,
       tgl_terakhir_tutup: this.formValue.tgl_terakhir_tutup,
       set_tgl_tutup: '',
       jarak_tgl_periode: 0
@@ -842,13 +932,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   onCancel() {
     if (!this.onUpdate) {
       this.resetForm()
-      this.drp == undefined ? null : this.drp.reset()
     } else {
       this.onUpdate = false;
       this.onSub = false;
       this.resetForm()
-      this.djbp == undefined ? null : this.djbp.reset()
-      this.drp == undefined ? null : this.drp.reset()
     }
   }
 
@@ -876,17 +963,9 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   formInputCheckChanges() {
     setTimeout(() => {
       this.ref.markForCheck()
-      this.forminput === undefined ? null : this.forminput.checkChanges()
-      this.forminputTP === undefined ? null : this.forminputTP.checkChanges()
-      // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
+      this.forminputTHK === undefined ? null : this.forminputTHK.checkChanges()
+      // this.forminputTHK === undefined ? null : this.forminputTHK.checkChangesDetailInput()
     }, 10)
-  }
-
-  formInputCheckChangesJurnal() {
-    setTimeout(() => {
-      this.ref.markForCheck()
-      this.forminput === undefined ? null : this.forminput.checkChangesDetailJurnal()
-    }, 1)
   }
 
   //Date Functions
