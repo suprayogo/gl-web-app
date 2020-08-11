@@ -57,8 +57,6 @@ import {NoticeComponent} from './content/general/notice/notice.component';
 import {PortletModule} from './content/general/portlet/portlet.module';
 // Errpr
 import {ErrorComponent} from './content/general/error/error.component';
-// Extra module
-import {WidgetModule} from './content/widgets/widget.module';
 // SVG inline
 import {InlineSVGModule} from 'ng-inline-svg';
 
@@ -87,7 +85,6 @@ import {InlineSVGModule} from 'ng-inline-svg';
 		ErrorComponent,
 	],
 	exports: [
-		WidgetModule,
 		PortletModule,
 
 		ScrollTopComponent,
@@ -121,7 +118,6 @@ import {InlineSVGModule} from 'ng-inline-svg';
 		InlineSVGModule,
 		CoreModule,
 		PortletModule,
-		WidgetModule,
 
 		// angular material modules
 		MatButtonModule,

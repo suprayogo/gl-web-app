@@ -13,7 +13,6 @@ import {
 	OffcanvasDirective,
 	SafePipe,
 	ScrollTopDirective,
-	SparklineChartDirective,
 	StickyDirective,
 	TabClickEventDirective,
 	TimeElapsedPipe,
@@ -30,7 +29,6 @@ import {
 		ToggleDirective,
 		MenuDirective,
 		TabClickEventDirective,
-		SparklineChartDirective,
 		ContentAnimateDirective,
 		StickyDirective,
 		// pipes
@@ -48,7 +46,6 @@ import {
 		ToggleDirective,
 		MenuDirective,
 		TabClickEventDirective,
-		SparklineChartDirective,
 		ContentAnimateDirective,
 		StickyDirective,
 		// pipes

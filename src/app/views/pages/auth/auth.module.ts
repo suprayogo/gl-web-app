@@ -18,7 +18,6 @@ import { AuthComponent } from './auth.component';
 import { LoginComponent } from './login/login.component';
 import { AuthNoticeComponent } from './auth-notice/auth-notice.component';
 // Auth
-import { AuthEffects, AuthGuard, authReducer, AuthService } from '../../../core/auth';
 import { SharedModule } from '../shared.module';
 
 const routes: Routes = [
@@ -52,8 +51,6 @@ const routes: Routes = [
 		MatFormFieldModule,
 		MatCheckboxModule,
 		TranslateModule.forChild(),
-		StoreModule.forFeature('auth', authReducer),
-		EffectsModule.forFeature([AuthEffects]),
 		SharedModule
 	],
 	providers: [
@@ -78,10 +75,7 @@ export class AuthModule {
 	static forRoot(): ModuleWithProviders {
 		return {
 			ngModule: AuthModule,
-			providers: [
-				AuthService,
-				AuthGuard
-			]
+			providers: []
 		};
 	}
 }

@@ -42,10 +42,6 @@ import {
 	MatSnackBarModule,
 	MatTooltipModule
 } from '@angular/material';
-import {
-	usersReducer,
-	UserEffects
-} from '../../../core/auth';
 
 // COMPONENTS
 import { BankComponent } from './bank/bank.component';
@@ -130,8 +126,6 @@ const routes: Routes = [
 		PartialsModule,
 		SharedModule,
 		RouterModule.forChild(routes),
-		StoreModule.forFeature('users', usersReducer),
-        EffectsModule.forFeature([UserEffects]),
 		FormsModule,
 		ReactiveFormsModule,
 		TranslateModule.forChild(),

@@ -2,8 +2,6 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 // Layout
 import { LayoutConfigService, SplashScreenService, TranslationService } from '../../../core/_base/layout';
-// Auth
-import { AuthNoticeService } from '../../../core/auth';
 
 @Component({
 	selector: 'kt-auth',
@@ -30,7 +28,6 @@ export class AuthComponent implements OnInit {
 		private el: ElementRef,
 		private render: Renderer2,
 		private layoutConfigService: LayoutConfigService,
-		public authNoticeService: AuthNoticeService,
 		private translationService: TranslationService,
 		private splashScreenService: SplashScreenService) {
 	}

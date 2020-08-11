@@ -43,10 +43,6 @@ import {
   MatSnackBarModule,
   MatTooltipModule
 } from '@angular/material';
-import {
-  usersReducer,
-  UserEffects
-} from '../../../core/auth';
 import { DEFAULT_TIMEOUT, TimeoutInterceptorService } from '../../../service/timeout-interceptor.service';
 
 // COMPONENTS
@@ -66,8 +62,6 @@ const routes: Routes = [
     PartialsModule,
     SharedModule,
     RouterModule.forChild(routes),
-    StoreModule.forFeature('users', usersReducer),
-    EffectsModule.forFeature([UserEffects]),
     FormsModule,
     ReactiveFormsModule,
     TranslateModule.forChild(),
