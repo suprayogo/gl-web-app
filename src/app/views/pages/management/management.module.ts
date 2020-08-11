@@ -13,7 +13,7 @@ import { PartialsModule } from '../../partials/partials.module';
 //Shared
 import { SharedModule } from '../shared.module';
 // Services
-import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsService} from '../../../core/_base/crud';
+import { TypesUtilsService, LayoutUtilsService} from '../../../core/_base/crud';
 // Shared
 import { ActionNotificationComponent } from '../../partials/content/crud';
 
@@ -85,12 +85,6 @@ const routes: Routes = [
 		MatDialogModule
 	],
 	providers: [
-		InterceptService,
-		{
-        	provide: HTTP_INTERCEPTORS,
-       	 	useClass: InterceptService,
-			multi: true
-		},
 		{
 			provide: MAT_DIALOG_DEFAULT_OPTIONS,
 			useValue: {
@@ -100,7 +94,6 @@ const routes: Routes = [
 				width: '900px'
 			}
 		},
-		HttpUtilsService,
 		TypesUtilsService,
 		LayoutUtilsService
 	],

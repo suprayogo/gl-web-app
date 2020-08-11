@@ -46,7 +46,7 @@ import {
 // Auth
 import { AuthModule } from './views/pages/auth/auth.module';
 // CRUD
-import { HttpUtilsService, LayoutUtilsService, TypesUtilsService } from './core/_base/crud';
+import { LayoutUtilsService, TypesUtilsService } from './core/_base/crud';
 // Config
 import { LayoutConfig } from './core/_config/layout.config';
 // Highlight JS
@@ -133,7 +133,6 @@ export function hljsLanguages(): HighlightLanguage[] {
 		SubheaderService,
 		MenuHorizontalService,
 		MenuAsideService,
-		HttpUtilsService,
 		TypesUtilsService,
 		LayoutUtilsService,
 	],
