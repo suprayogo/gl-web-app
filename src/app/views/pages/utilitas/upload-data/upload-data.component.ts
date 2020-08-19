@@ -181,7 +181,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       } else if (fn[0] === 'transaksi_palembang') {
         parsedData = this.processTransaction(jsonData['bb_02'])
       } else {
-        parsedData = this.processTransaction(jsonData['bb_01'])
+        parsedData = this.processTransaction(jsonData['bb_02'])
       }
 
       this.request.apiData('utilitas', 'i-data-upload-batch', parsedData).subscribe(
@@ -301,7 +301,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
   processTransaction(data) {
     console.clear()
     let res = {
-      schema: "sch_p002",
+      schema: "sch_p001",
       table: '',
       column: [],
       date: [],
@@ -333,14 +333,14 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         t = {
           "id_tran": id_tran,
           "tgl_tran": (new Date(d[key][0]['tgl_tran']).getTime() + 25200000),
-          "kode_cabang": "C001",
+          "kode_cabang": "M001",
           "keterangan": key,
           "jurnal_penyesuaian": 0,
-          "input_by": "ADMINSSI",
+          "input_by": "ADMIN",
           "input_dt": Date.now(),
-          "id_periode": "3f80f5c8f1bfba00bc2e7ab357280d0b",
+          "id_periode": "8ec655caa489a73c9fc4ec335b4fc7af",
           "detail": {
-            "schema": "sch_p002",
+            "schema": "sch_p001",
             "table": "trd_jurnal",
             "column": [
               "id_tran",
@@ -365,7 +365,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
           let tt = {
             id_tran: id_tran,
             id_akun: this.data_akun[d[key][i]['kd_perk']]['id_akun'],
-            kode_divisi: "FINSSI",
+            kode_divisi: "FINMPS",
             kode_departemen: "FIN",
             nilai_debit: d[key][i]['debet'],
             nilai_kredit: d[key][i]['kredit'],

@@ -423,6 +423,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
                 for (var i = 0; i < d.length; i++) {
                   let t = []
                   if (d[i]['id_tran'] !== '') {
+                    console.log('called')
                     let saldo_awal = d[i]['saldo_awal']
                     if (tdt === "" && tbk === "") {
                       tdt = d[i]['tgl_tran']
@@ -455,6 +456,8 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
                     res.push(t)
                   }
                 }
+
+                console.log(res)
 
                 let rp = JSON.parse(JSON.stringify(this.reportObj))
                 rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()

@@ -55,6 +55,7 @@ import { RekapKasComponent } from './rekap-kas/rekap-kas.component';
 import { RekapGiroComponent } from './rekap-giro/rekap-giro.component';
 import { RekapBankComponent } from './rekap-bank/rekap-bank.component';
 import { RekapPettyCashComponent } from './rekap-petty-cash/rekap-petty-cash.component';
+import { LaporanListComponent } from './laporan-list/laporan-list.component';
 
 const routes: Routes = [
   {
@@ -153,6 +154,7 @@ const routes: Routes = [
   ],
   declarations: [
     AllComponent,
+    LaporanListComponent,
     LaporanJurnalComponent,
     LaporanBukuBesarComponent,
     LaporanNeracaSaldoComponent,
