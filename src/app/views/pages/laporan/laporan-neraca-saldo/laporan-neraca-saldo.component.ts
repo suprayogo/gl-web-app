@@ -378,7 +378,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
                 let rp = JSON.parse(JSON.stringify(this.reportObj))
                 rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-                rp['REPORT_CODE'] = 'RPT-BUKU-BESAR'
+                rp['REPORT_CODE'] = 'RPT-NERACA-SALDO'
                 rp['REPORT_NAME'] = 'Laporan Neraca Saldo'
                 rp['REPORT_FORMAT_CODE'] = this.formValueNS['format_laporan']
                 rp['JASPER_FILE'] = 'rptNeracaSaldo.jasper'
