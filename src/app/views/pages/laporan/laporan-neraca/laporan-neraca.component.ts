@@ -320,22 +320,23 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
                     saldo_lr = saldo_lr - parseFloat(ld[i]['saldo'])
                   }
                 }
-                d.push({
-                  tahun: nd.length > 0 ? nd[0]['tahun'] : "",
-                  bulan: nd.length > 0 ? nd[0]['bulan'] : "",
-                  group_besar: "ke",
-                  nama_group_besar: "Kewajiban & Ekuitas",
-                  group: "EKUITAS",
-                  nama_group: "Ekuitas",
-                  id_akun: "",
-                  kode_akun: "LBRG",
-                  nama_akun: "Laba Rugi",
-                  tipe_akun: "0",
-                  id_kategori_akun: "lbrg",
-                  nama_kategori_akun: "Laba Rugi",
-                  saldo_akhir: JSON.stringify(saldo_lr)
-                })
+                
                 d = d.concat(nd)
+                // d.push({
+                //   tahun: nd.length > 0 ? nd[0]['tahun'] : "",
+                //   bulan: nd.length > 0 ? nd[0]['bulan'] : "",
+                //   group_besar: "ke",
+                //   nama_group_besar: "Kewajiban & Ekuitas",
+                //   group: "EKUITAS",
+                //   nama_group: "Ekuitas",
+                //   id_akun: "",
+                //   kode_akun: "LBRG",
+                //   nama_akun: "Laba Rugi",
+                //   tipe_akun: "0",
+                //   id_kategori_akun: "lbrg",
+                //   nama_kategori_akun: "Laba Rugi",
+                //   saldo_akhir: JSON.stringify(saldo_lr)
+                // })
                 for (var i = 0; i < d.length; i++) {
                   if (totalTipe[d[i]['group']]) {
                     totalTipe[d[i]['group']] = totalTipe[d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
@@ -360,6 +361,25 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
                   }
 
                   if (d[i]['group'] === "KEWAJIBAN" || d[i]['group'] === "EKUITAS") {
+                    if (d[i - 1]['group'] === 'KEWAJIBAN' && d[i]['group'] === 'EKUITAS') {
+                      d.splice(i, 0, {
+                        tahun: nd.length > 0 ? nd[0]['tahun'] : "",
+                        bulan: nd.length > 0 ? nd[0]['bulan'] : "",
+                        group_besar: "ke",
+                        nama_group_besar: "Kewajiban & Ekuitas",
+                        group: "EKUITAS",
+                        nama_group: "Ekuitas",
+                        id_akun: "",
+                        kode_akun: "LBRG",
+                        nama_akun: "Laba Rugi",
+                        tipe_akun: "0",
+                        id_kategori_akun: "lbrg",
+                        nama_kategori_akun: "Laba Rugi",
+                        saldo_akhir: JSON.stringify(saldo_lr)
+                      })
+                      totalKategori["lbrg-EKUITAS"] = parseFloat(JSON.stringify(saldo_lr))
+                    }
+
                     if (d[i]['group'] === "KEWAJIBAN") {
                       d[i]['nama_group'] = "Kewajiban"
                     } else if (d[i]['group'] === "EKUITAS") {
@@ -390,17 +410,18 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
 
                   res.push(t)
                 }
-                res.sort(function (a, b) {
-                  if (a[0] < b[0] || a[2] < b[2]) {
-                    return -1;
-                  }
 
-                  if (a[0] > b[0] || a[2] > b[2]) {
-                    return 1;
-                  }
+                // res.sort(function (a, b) {
+                //   if (a[0] < b[0] || a[2] < b[2]) {
+                //     return -1;
+                //   }
 
-                  return 0;
-                })
+                //   if (a[0] > b[0] || a[2] > b[2]) {
+                //     return 1;
+                //   }
+
+                //   return 0;
+                // })
 
                 let rp = JSON.parse(JSON.stringify(this.reportObj))
                 rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()

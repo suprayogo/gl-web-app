@@ -30,6 +30,32 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   @ViewChild(ForminputComponent, { static: false }) forminput;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
+  tipe_jurnal = [
+    {
+      label: 'Transaksi Jurnal Umum',
+      value: '0'
+    },
+    {
+      label: 'Transaksi Kasir',
+      value: '1'
+    }
+  ]
+
+  jenis_transaksi = []
+
+  bank = []
+
+  tipe_transaksi = [
+    {
+      label: 'Masuk',
+      value: '0'
+    },
+    {
+      label: 'Keluar',
+      value: '1'
+    }
+  ];
+
   // VARIABLES
   loading: boolean = true;
   loadingDepartemen: boolean = true;
@@ -58,6 +84,11 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     nama_jurnal: '',
     kode_cabang: '',
     nama_cabang: '',
+    jenis_transaksi: '0',
+    id_jenis_transaksi: '',
+    kode_jenis_transaksi: '',
+    nilai_jenis_transaksi: '',
+    tipe_laporan: '',
     keterangan: ''
   }
   detailData = [
@@ -117,6 +148,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   // TAB MENU BROWSE 
   displayedColumnsTable = [
+    {
+      label: 'Jenis Transaksi',
+      value: 'nama_pengaturan_transaksi'
+    },
     {
       label: 'Kode Jurnal',
       value: 'kode_jurnal'
@@ -239,6 +274,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   inputCabangDataRules = []
   inputAkunData = []
   inputSettingData = []
+  inputJenisTransaksiData = []
+  inputRekeningPerusahaanData = []
 
   // Layout Form
   inputLayout = [
@@ -270,6 +307,18 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       }
     },
     {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Jenis Transaksi',
+      id: 'jenis-transaksi',
+      type: 'combobox',
+      options: this.tipe_jurnal,
+      valueOf: 'jenis_transaksi',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
       formWidth: 'col-5',
       label: 'Cabang',
       id: 'kode-cabang',
@@ -296,6 +345,66 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       },
       update: {
         disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Jenis Transaksi',
+      id: 'jenis-transaksi',
+      type: 'combobox',
+      options: this.jenis_transaksi,
+      valueOf: 'id_jenis_transaksi',
+      onSelectFunc: (v) => {
+        let d = this.inputJenisTransaksiData.filter(x => x['id_jenis_transaksi'] === v)
+        if (d.length > 0) {
+          this.forminput.updateFormValue('kode_jenis_transaksi', d[0]['kode_jenis_transaksi'])
+        }
+      },
+      required: true,
+      readOnly: false,
+      disabled: false,
+      update: {
+        disabled: true
+      },
+      hiddenOn: {
+        valueOf: 'jenis_transaksi',
+        matchValue: "0"
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Rekening Perusahaan',
+      id: 'rekening-perusahaan',
+      type: 'combobox',
+      options: this.bank,
+      valueOf: 'nilai_jenis_transaksi',
+      required: true,
+      readOnly: false,
+      disabled: false,
+      hiddenOn: {
+        valueOf: 'tipe_laporan',
+        matchValue: ["k", "p", "g", ""]
+      },
+      update: {
+        disabled: true
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe Transaksi',
+      id: 'tipe-transaksi',
+      type: 'combobox',
+      options: this.tipe_transaksi,
+      valueOf: 'tipe_transaksi',
+      required: true,
+      readOnly: false,
+      disabled: false,
+      update: {
+        disabled: false
+      },
+      hiddenOn: {
+        valueOf: 'jenis_transaksi',
+        matchValue: '0'
       }
     },
     {
@@ -374,6 +483,11 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       nama_jurnal: x['nama_jurnal'],
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
+      jenis_transaksi: x['jenis_transaksi'],
+      id_jenis_transaksi: x['id_jenis_transaksi'],
+      kode_jenis_transaksi: x['kode_jenis_transaksi'],
+      nilai_jenis_transaksi: x['nilai_jenis_transasksi'],
+      tipe_laporan: '',
       keterangan: x['keterangan']
     }
     this.onUpdate = true;
@@ -481,6 +595,11 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       nama_jurnal: '',
       kode_cabang: '',
       nama_cabang: '',
+      jenis_transaksi: '0',
+      id_jenis_transaksi: '',
+      kode_jenis_transaksi: '',
+      nilai_jenis_transaksi: '',
+      tipe_laporan: '',
       keterangan: ''
     }
     this.detailData = [
@@ -751,10 +870,107 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputSettingData = data['RESULT']
+          this.sendRequestJenisTransaksi()
+        } else {
+          this.openSnackBar('Gagal mendapatkan daftar setting tarik data', 'fail')
+          this.loading = false
+          this.ref.markForCheck()
+        }
+      }
+    )
+  }
+
+  sendRequestJenisTransaksi() {
+    this.request.apiData('jenis-transaksi', 'g-jenis-transaksi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let res = []
+          for (var i = 0; i < data['RESULT'].length; i++) {
+            let t = {
+              label: data['RESULT'][i]['kode_jenis_transaksi'] + " - " + data['RESULT'][i]['nama_jenis_transaksi'],
+              value: data['RESULT'][i]['id_jenis_transaksi']
+            }
+            res.push(t)
+          }
+          this.jenis_transaksi = res
+          this.inputJenisTransaksiData = data['RESULT']
+          this.inputLayout.splice(4, 1, {
+            formWidth: 'col-5',
+            label: 'Jenis Transaksi',
+            id: 'jenis-transaksi',
+            type: 'combobox',
+            options: this.jenis_transaksi,
+            valueOf: 'id_jenis_transaksi',
+            onSelectFunc: (v) => {
+              let d = this.inputJenisTransaksiData.filter(x => x['id_jenis_transaksi'] === v)
+              if (d.length > 0) {
+                this.forminput.updateFormValue('kode_jenis_transaksi', d[0]['kode_jenis_transaksi'])
+                this.forminput.updateFormValue('tipe_laporan', d[0]['tipe_laporan'])
+              }
+            },
+            required: true,
+            readOnly: false,
+            disabled: false,
+            update: {
+              disabled: true
+            },
+            hiddenOn: {
+              valueOf: 'jenis_transaksi',
+              matchValue: '0'
+            }
+          })
+          this.sendRequestRekeningPerusahaan()
+        } else {
+          this.openSnackBar('Gagal mendapatkan daftar jenis transaksi. Mohon coba lagi nanti.', 'fail')
+          this.loading = false
+          this.ref.markForCheck()
+        }
+      }
+    )
+  }
+
+  sendRequestRekeningPerusahaan() {
+    this.request.apiData('rekening-perusahaan', 'g-rekening-perusahaan', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let res = []
+          res.push(
+            {
+              label: '',
+              value: ''
+            }
+          )
+          for (var i = 0; i < data['RESULT'].length; i++) {
+            let t = {
+              label: data['RESULT'][i]['no_rekening'] + " - " + data['RESULT'][i]['nama_bank'] + " (" + data['RESULT'][i]['atas_nama'] + ")",
+              value: data['RESULT'][i]['no_rekening']
+            }
+            res.push(t)
+          }
+          this.bank = res
+          this.inputRekeningPerusahaanData = data['RESULT']
+          this.inputLayout.splice(5, 1, {
+            formWidth: 'col-5',
+            label: 'Rekening Perusahaan',
+            id: 'rekening-perusahaan',
+            type: 'combobox',
+            options: this.bank,
+            valueOf: 'nilai_jenis_transaksi',
+            required: true,
+            readOnly: false,
+            disabled: false,
+            hiddenOn: {
+              valueOf: 'tipe_laporan',
+              matchValue: ["k", "p", "g", ""]
+            },
+            update: {
+              disabled: true
+            }
+          })
           this.loading = false
           this.ref.markForCheck()
         } else {
-          this.openSnackBar('Gagal mendapatkan daftar setting tarik data', 'fail')
+          this.openSnackBar('Gagal mendapatkan daftar rekening perusahaan. Mohon coba lagi nanti.', 'fail')
           this.loading = false
           this.ref.markForCheck()
         }
