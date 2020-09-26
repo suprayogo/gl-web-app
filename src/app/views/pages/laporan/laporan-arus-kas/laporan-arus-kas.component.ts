@@ -56,6 +56,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  metode_laporan = [
+    {
+      label: 'Langsung',
+      value: '1'
+    },
+    {
+      label: 'Tidak Langsung',
+      value: '0'
+    }
+  ]
+
   // VARIABLES
   keyReportFormatExcel: any;
   nama_tombol: any;
@@ -143,6 +154,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   // Input Name
   formValueAK = {
     format_laporan: 'pdf',
+    metode_laporan: '1',
     kode_cabang: '',
     nama_cabang: '',
     tipe: 't',
@@ -177,6 +189,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       type: 'combobox',
       options: this.format_laporan,
       valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Metode Laporan',
+      id: 'metode-laporan',
+      type: 'combobox',
+      options: this.metode_laporan,
+      valueOf: 'metode_laporan',
       required: true,
       readOnly: false,
       disabled: false,
@@ -310,7 +333,10 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       } else {
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
-          if (this.formValueAK.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueAK.tahun === this.submitPeriodeData[i]['tahun_periode']) {
+          if (
+            (typeof this.formValueAK.bulan === "number" ? JSON.stringify(this.formValueAK.bulan) : this.formValueAK.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
+            (typeof this.formValueAK.tahun === "number" ? JSON.stringify(this.formValueAK.tahun) : this.formValueAK.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
+          ) {
             p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
           }
@@ -481,6 +507,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   resetFormAK() {
     this.formValueAK = {
       format_laporan: 'pdf',
+      metode_laporan: this.formValueAK['metode_laporan'],
       kode_cabang: '',
       nama_cabang: '',
       tipe: 't',
@@ -734,6 +761,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     this.tahun = outputTahun
     this.formValueAK = {
       format_laporan: this.formValueAK.format_laporan,
+      metode_laporan: this.formValueAK.metode_laporan,
       kode_cabang: this.formValueAK.kode_cabang,
       nama_cabang: this.formValueAK.nama_cabang,
       tipe: this.formValueAK.tipe,
@@ -781,6 +809,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   getBulan(filterBulan, loopBulan, type) {
     this.formValueAK = {
       format_laporan: this.formValueAK['format_laporan'],
+      metode_laporan: this.formValueAK['metode_laporan'],
       kode_cabang: this.formValueAK['kode_cabang'],
       nama_cabang: this.formValueAK['nama_cabang'],
       tipe: this.formValueAK['tipe'],

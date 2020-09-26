@@ -125,11 +125,19 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     tgl_tran: '',
     nama_cabang: '',
     keterangan: '',
+    jenis_transaksi: '0',
+    id_jenis_transaksi: '',
+    nama_jenis_transaksi: '',
+    nilai_jenis_transaksi: '',
+    tipe_transaksi: '',
+    saldo_transaksi: 0,
+    tipe_laporan: '',
+    lmbr_giro: 1
   }
 
   detailData = []
 
-  detailInputLayout = [
+  umumInputLayout = [
     {
       formWidth: 'col-5',
       label: 'Jenis Jurnal',
@@ -188,6 +196,110 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  kasirInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Jenis Jurnal',
+      id: 'jenis-jurnal',
+      type: 'input',
+      valueOf: 'nama_setting',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: false
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Referensi',
+      id: 'no-referensi',
+      type: 'input',
+      valueOf: 'no_referensi',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: true,
+      hiddenOn: {
+        valueOf: 'no_referensi',
+        matchValue: ""
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tgl. Transaksi',
+      id: 'tgl-transaksi',
+      type: 'input',
+      valueOf: 'tgl_tran',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'nama-cabang',
+      type: 'input',
+      valueOf: 'nama_cabang',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Jenis Transaksi',
+      id: 'jenis-transaksi',
+      type: 'inputgroup',
+      valueOf: 'nama_jenis_transaksi',
+      required: false,
+      readOnly: true,
+      disabled: true,
+      inputInfo: {
+        id: 'tipe-jenis-transaksi',
+        disabled: true,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_tipe_transaksi'
+      },
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Nilai Jenis Transaksi',
+      id: 'nilai-jenis-transaksi',
+      type: 'input',
+      valueOf: 'nilai_jenis_transaksi',
+      required: false,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Nilai Transaksi',
+      id: 'nilai-transaksi',
+      type: 'input',
+      valueOf: 'saldo_transaksi',
+      currency: true,
+      required: false,
+      disabled: true,
+      readOnly: true,
+      leftAddon: 'Rp.',
+      currencyOptions: {
+        precision: 2
+      },
+      update: {
+        disabled: false
+      }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Keterangan',
+      id: 'keterangan',
+      type: 'input',
+      valueOf: 'keterangan',
+      required: false,
+      readOnly: true,
+      disabled: true
+    }
+  ]
+
   // Data Hasil Tarik
   displayedColumnsTableHT = [
     {
@@ -215,6 +327,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   browseInterfaceHT = {}
   browseDataHT = []
   browseDataRulesHT = []
+  jenisTransaksiData = {}
 
   // Data Riwayat Tarik
   displayedColumnsTableRT = [
@@ -383,6 +496,14 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       tgl_tran: x['tgl_tran'],
       nama_cabang: x['nama_cabang'],
       keterangan: x['keterangan'],
+      jenis_transaksi: x['jenis_transaksi'],
+      id_jenis_transaksi: x['id_jenis_transaksi'],
+      nama_jenis_transaksi: this.jenisTransaksiData[x['id_jenis_transaksi']] === undefined ? '' : this.jenisTransaksiData[x['id_jenis_transaksi']]['nama_jenis_transaksi'],
+      nilai_jenis_transaksi: x['nilai_jenis_transaksi'],
+      tipe_transaksi: x['tipe_transaksi'],
+      saldo_transaksi: x['saldo_transaksi'],
+      tipe_laporan: this.jenisTransaksiData[x['id_jenis_transaksi']] === undefined ? '' : this.jenisTransaksiData[x['id_jenis_transaksi']]['tipe_laporan'],
+      lmbr_giro: x['lmbr_giro'] === undefined ? 1 : x['lmbr_giro']
     }
     this.openDialog()
   }
@@ -531,6 +652,23 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     this.ref.markForCheck()
     this.formInputCheckChangesJurnal()
+    let kil = JSON.parse(JSON.stringify(this.kasirInputLayout))
+    if (this.formDetail['jenis_transaksi'] === '1' && this.formDetail['tipe_laporan'] === 'g') {
+      kil.splice(5, 0, {
+        formWidth: 'col-5',
+        label: 'Lembar Giro',
+        id: 'lembar-giro',
+        type: 'input',
+        valueOf: 'lmbr_giro',
+        currency: true,
+        required: false,
+        disabled: true,
+        readOnly: true,
+        update: {
+          disabled: false
+        }
+      })
+    }
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -541,7 +679,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       data: {
         width: '90vw',
         formValue: this.formDetail,
-        inputLayout: this.detailInputLayout,
+        inputLayout: this.formDetail['jenis_transaksi'] === '0' ? this.umumInputLayout : kil,
         buttonLayout: [],
         detailJurnal: true,
         detailLoad: false,
@@ -578,7 +716,33 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       rekap_transaksi: this.formValue.rekap_transaksi
     }
     this.loading = false
-    this.sendRequestRiwayat()
+    this.sendRequestJenisTransaksi()
+  }
+
+  sendRequestJenisTransaksi() {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
+      this.request.apiData('jenis-transaksi', 'g-jenis-transaksi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            let res = {}
+            for (var i = 0; i < data['RESULT'].length; i++) {
+              res[data['RESULT'][i]['id_jenis_transaksi']] = data['RESULT'][i]
+            }
+            this.jenisTransaksiData = res
+
+            this.sendRequestRiwayat()
+          } else {
+            this.loading = false
+            this.ref.markForCheck()
+            this.openSnackBar('Gagal mendapatkan data.', 'fail')
+          }
+        }
+      )
+    } else {
+      this.loading = false
+      this.ref.markForCheck()
+      this.openSnackBar('Gagal mendapatkan data.', 'fail')
+    }
   }
 
   sendRequestRiwayat() {

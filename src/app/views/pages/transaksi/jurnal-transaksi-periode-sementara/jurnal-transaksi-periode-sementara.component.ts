@@ -576,7 +576,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       disabled: false,
       hiddenOn: {
         valueOf: 'tipe_laporan',
-        matchValue: ["k", "p", "g", ""]
+        matchValue: ["k", "p", ""]
       },
       update: {
         disabled: true

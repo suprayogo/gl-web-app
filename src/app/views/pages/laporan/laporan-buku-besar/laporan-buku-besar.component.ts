@@ -346,7 +346,9 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       } else {
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
-          if (this.formValueBB.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueBB.tahun === this.submitPeriodeData[i]['tahun_periode']) {
+          if (
+            (typeof this.formValueBB.bulan === "number" ? JSON.stringify(this.formValueBB.bulan) : this.formValueBB.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
+            (typeof this.formValueBB.tahun === "number" ? JSON.stringify(this.formValueBB.tahun) : this.formValueBB.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
             p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
           }
@@ -355,6 +357,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         if (p['id_periode'] !== undefined) {
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
           p['kode_cabang'] = this.formValueBB['kode_cabang'] === "" ? undefined : this.formValueBB['kode_cabang']
           p['id_akun'] = this.formValueBB['id_akun'] === "" ? undefined : this.formValueBB['id_akun']
           this.request.apiData('report', 'g-data-buku-besar', p).subscribe(

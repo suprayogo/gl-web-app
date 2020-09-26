@@ -539,7 +539,7 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
       disabled: false,
       hiddenOn: {
         valueOf: 'tipe_laporan',
-        matchValue: ["k", "p", "g", ""]
+        matchValue: ["k", "p", ""]
       },
       update: {
         disabled: true

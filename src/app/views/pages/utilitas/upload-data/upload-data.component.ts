@@ -173,7 +173,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
       } else if (fn[0] === 'kategori_akun') {
         parsedData = this.processData(this.parseTemplate['kat_akun'], jsonData['kat_akun'])
       } else if (fn[0] === 'transaksi_mdn') {
-        parsedData = this.processTransaction(jsonData['bb_02'])
+        parsedData = this.processTransaction(jsonData['bb_01'])
       } else if (fn[0] === 'transaksi_aceh') {
         parsedData = this.processTransaction(jsonData['bb_02'])
       } else if (fn[0] === 'transaksi_siantar') {
@@ -338,7 +338,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
           "jurnal_penyesuaian": 0,
           "input_by": "ADMIN",
           "input_dt": Date.now(),
-          "id_periode": "8ec655caa489a73c9fc4ec335b4fc7af",
+          "id_periode": "8780d19644db060a78d9b80beca13ec3",
           "detail": {
             "schema": "sch_p001",
             "table": "trd_jurnal",
@@ -364,7 +364,7 @@ export class UploadDataComponent implements OnInit, AfterViewInit {
         for (var i = 0; i < d[key].length; i++) {
           let tt = {
             id_tran: id_tran,
-            id_akun: this.data_akun[d[key][i]['kd_perk']]['id_akun'],
+            id_akun: this.data_akun[d[key][i]['kd_perk_baru']]['id_akun'],
             kode_divisi: "FINMPS",
             kode_departemen: "FIN",
             nilai_debit: d[key][i]['debet'],

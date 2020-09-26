@@ -347,7 +347,9 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       } else {
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
-          if (this.formValueNS.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueNS.tahun === this.submitPeriodeData[i]['tahun_periode']) {
+          if (
+            (typeof this.formValueNS.bulan === "number" ? JSON.stringify(this.formValueNS.bulan) : this.formValueNS.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
+            (typeof this.formValueNS.tahun === "number" ? JSON.stringify(this.formValueNS.tahun) : this.formValueNS.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
             p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
           }
@@ -356,6 +358,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         if (p['id_periode'] !== undefined) {
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
           p['kode_cabang'] = this.formValueNS['kode_cabang'] === "" ? undefined : this.formValueNS['kode_cabang']
           p['id_akun'] = this.formValueNS['id_akun'] === "" ? undefined : this.formValueNS['id_akun']
           this.request.apiData('report', 'g-data-neraca-saldo', p).subscribe(

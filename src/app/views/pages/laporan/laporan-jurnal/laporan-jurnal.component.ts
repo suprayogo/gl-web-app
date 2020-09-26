@@ -343,9 +343,13 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         this.loading = false
         this.ref.markForCheck()
       } else {
+        console.log(JSON.stringify(this.formValueJL.bulan))
+        console.log(JSON.stringify(this.submitPeriodeData[0]['bulan_periode']))
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
-          if (this.formValueJL.bulan === this.submitPeriodeData[i]['bulan_periode'] && this.formValueJL.tahun === this.submitPeriodeData[i]['tahun_periode']) {
+          if (
+            (typeof this.formValueJL.bulan === "number" ? JSON.stringify(this.formValueJL.bulan) : this.formValueJL.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
+            (typeof this.formValueJL.tahun === "number" ? JSON.stringify(this.formValueJL.tahun) : this.formValueJL.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
             p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
           }
@@ -354,6 +358,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         if (p['id_periode'] !== undefined) {
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
           p['kode_cabang'] = this.formValueJL['kode_cabang'] === "" ? undefined : this.formValueJL['kode_cabang']
           p['id_akun'] = this.formValueJL['id_akun'] === "" ? undefined : this.formValueJL['id_akun']
           this.request.apiData('report', 'g-data-jurnal', p).subscribe(
