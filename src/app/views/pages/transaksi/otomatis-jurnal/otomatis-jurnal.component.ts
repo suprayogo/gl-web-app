@@ -679,7 +679,8 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       data: {
         width: '90vw',
         formValue: this.formDetail,
-        inputLayout: this.formDetail['jenis_transaksi'] === '0' ? this.umumInputLayout : kil,
+        // inputLayout: this.formDetail['jenis_transaksi'] === '0' ? this.umumInputLayout : kil,
+        inputLayout: this.umumInputLayout,
         buttonLayout: [],
         detailJurnal: true,
         detailLoad: false,
@@ -837,6 +838,11 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.ref.markForCheck()
             this.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
           }
+        },
+        err => {
+          this.tableLoadHT = false
+          this.ref.markForCheck()
+          this.openSnackBar('Gagal mendapatkan hasil tarik data.', 'fail')
         }
       )
     }

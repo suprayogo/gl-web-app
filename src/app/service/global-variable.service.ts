@@ -8,9 +8,11 @@ import { MatDialog } from '@angular/material';
 })
 export class GlobalVariableService {
 
-  //Access Key
+  // Access Key
   access_key = "bcad52ed12a9176fdc653ca776293fc8";
-  //Token
+  // REPORT URL
+  report_url = "http://deva.darkotech.id:8702"
+  // Token
   token: string = "";
   user_id: string = "";
   user_name: string = "";

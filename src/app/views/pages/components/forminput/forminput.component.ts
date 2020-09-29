@@ -20,6 +20,8 @@ export class ForminputComponent implements OnInit {
   @Input() formValue: any;
   @Input() buttonLayout: any;
   @Input() noButton: boolean;
+  @Input() rightLayout: boolean;
+  @Input() rightInputLayout: any;
   //Detail table variable
   @Input() tableColumn: any;
   @Input() tableData: any;

@@ -93,7 +93,7 @@ const routes: Routes = [
       multi: true
     },
     {
-      provide: DEFAULT_TIMEOUT, useValue: 30000
+      provide: DEFAULT_TIMEOUT, useValue: 120000
     },
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
