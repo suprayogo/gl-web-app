@@ -27,6 +27,7 @@ export class ForminputComponent implements OnInit {
   @Input() tableData: any;
   @Input() tableRules: any;
   @Input() editable: any;
+  @Input() containerHeight: any;
   //Detail loading variable
   @Input() detailLoad: boolean;
   // Enable detail input ag grid
@@ -40,6 +41,7 @@ export class ForminputComponent implements OnInit {
   @Input() templateTransaksi: boolean;
   @Input() noEditJurnal: boolean;
   @Input() jurnalDataSetting: any;
+  @Input() tipeJurnal: any;
   //On parent form 'update' state
   @Input() onUpdate: any;
   //Show delete button on parent in 'update' state
@@ -53,12 +55,13 @@ export class ForminputComponent implements OnInit {
   @Input() onSub: any;
   @Input() noSaveButton: any;
   @Input() onSubPrintDoc: any;
-  
+
   @Input() onSubPrintDoc2: any;
   @Input() namaTombol: any;
   @Input() namaTombol2: any;
   @Input() namaTombolPrintDoc: any;
   @Input() namaTombolPrintDoc2: any;
+
 
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
@@ -158,12 +161,12 @@ export class ForminputComponent implements OnInit {
     this.cnlData.emit()
   }
 
-  printDoc(){
-    this.prntDoc.emit()
+  printDoc(form) {
+    this.prntDoc.emit(form)
   }
 
-  printDoc2(){
-    this.prntDoc2.emit()
+  printDoc2(form) {
+    this.prntDoc2.emit(form)
   }
 
   editDetailData(data) {
@@ -188,7 +191,10 @@ export class ForminputComponent implements OnInit {
   }
 
   checkChangesDetailJurnal() {
-    this.detailjurnal === undefined ? null : this.detailjurnal.checkChanges()
+    setTimeout(() => {
+      this.ref.markForCheck()
+      this.detailjurnal === undefined ? null : this.detailjurnal.checkChanges()
+    }, 1);
   }
 
   checkChangesDetailTemplate() {
@@ -295,10 +301,10 @@ export class ForminputComponent implements OnInit {
 
   }
 
-  getdisableCustomDate(d?: any){
+  getdisableCustomDate(d?: any) {
     let pdata = Date.now()
     let date = pdata == null ? null : new Date(pdata)
-    
+
   }
 
   //End of datepicker function

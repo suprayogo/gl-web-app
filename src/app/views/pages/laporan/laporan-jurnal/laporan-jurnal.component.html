@@ -12,9 +12,9 @@
             <kt-portlet-body>
                 <div class="kt-section" *ngIf="!loading">
                     <div *ngIf="!loadingJL">
-                        <kt-forminput #jl [inputLayout]="inputLayoutJL" [formValue]="formValueJL"
+                        <kt-forminput [inputLayout]="inputLayoutJL" [formValue]="formValueJL"
                             [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
-                            [tableRules]="detailRules" (onSubmit)="onSubmitJL($event)" (onCancel)="onCancel('jl')"
+                            [tableRules]="detailRules" (onSubmit)="onSubmitJL($event)" (onCancel)="onCancel()"
                             [onSub]="onSub">
                         </kt-forminput>
                         <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"

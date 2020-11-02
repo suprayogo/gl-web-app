@@ -57,7 +57,7 @@ export class HtmlClassService {
 		this.initAside();
 
 		// init footer
-		this.initFooter();
+		// this.initFooter();
 
 		this.initSkins();
 
@@ -183,12 +183,12 @@ export class HtmlClassService {
 	/**
 	 * Init Footer
 	 */
-	private initFooter() {
-		// Fixed header
-		if (objectPath.get(this.config, 'footer.self.fixed')) {
-			document.body.classList.add('kt-footer--fixed');
-		}
-	}
+	// private initFooter() {
+	// 	// Fixed header
+	// 	if (objectPath.get(this.config, 'footer.self.fixed')) {
+	// 		document.body.classList.add('kt-footer--fixed');
+	// 	}
+	// }
 
 	/**
 	 * Set the body class name based on page skin options

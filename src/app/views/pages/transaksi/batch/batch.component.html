@@ -25,13 +25,15 @@
                             <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                                 [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
                                 [enableCancel]="enableCancel" [disableSubmit]="disableSubmit"
-                                [disablePrintButton]="disablePrintButton" [detailJurnal]="enableDetail"
-                                [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
+                                [disablePrintButton]="disablePrintButton" [disablePrintButton2]="disablePrintButton2"
+                                [detailJurnal]="enableDetail" [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
                                 [jurnalDataDivisi]="inputDivisiData" [jurnalData]="detailData"
                                 (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (cnlData)="openCDialog()"
                                 (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                                [namaTombolPrintDoc]="namaTombolPrintDoc" (prntDoc)="inputDialog()"
-                                [onSubPrintDoc]="onSubPrintDoc" [rightLayout]="true" [rightInputLayout]="rightInputLayout">
+                                [namaTombolPrintDoc]="namaTombolPrintDoc" (prntDoc)="onSubmit($event, 'umum')"
+                                [onSubPrintDoc]="onSubPrintDoc" [namaTombolPrintDoc2]="namaTombolPrintDoc2"
+                                (prntDoc2)="onSubmit($event, 'kasir')" [onSubPrintDoc2]="onSubPrintDoc2"
+                                [rightLayout]="true" [rightInputLayout]="rightInputLayout" [tipeJurnal]="formValue">
                             </kt-forminput>
                             <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
                                 method="post" target="_blank">
@@ -59,7 +61,7 @@
 
                         <div *ngIf="!tableLoad">
                             <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
-                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)">
+                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)" [containerHeight]=400>
                             </kt-datatable-ag-grid>
                         </div>
                     </kt-portlet-body>

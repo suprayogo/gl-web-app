@@ -22,7 +22,7 @@ const content = {
 @Component({
   selector: 'kt-tutup-harian-kasir',
   templateUrl: './tutup-harian-kasir.component.html',
-  styleUrls: ['./tutup-harian-kasir.component.scss', '../transaksi.style.scss']
+  styleUrls: ['./tutup-harian-kasir.component.scss']
 })
 export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
 

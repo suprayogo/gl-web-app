@@ -56,7 +56,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
   enableCancel: boolean = true;
   enableEdit: boolean = false;
   enableDelete: boolean = false;
-  disableSubmit: boolean = false;
+  disableSubmit: boolean = true;
   disablePrintButton: boolean = true;
   browseNeedUpdate: boolean = true;
   subscription: any;
@@ -594,6 +594,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
             // } else {
             //   this.disableSubmit = false
             // }
+            this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01"))
             this.inputLayout.splice(2, 1, {
               formWidth: 'col-5',
               label: 'Tgl. Jurnal',
@@ -615,7 +616,7 @@ export class JurnalComponent implements OnInit, AfterViewInit {
                 }
               }
             })
-            this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01"))
+          
             if (this.periode_aktif.aktif !== "1") {
               this.disableSubmit = true
             } else {

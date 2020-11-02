@@ -24,7 +24,7 @@
           <div style="flex: 0 0 calc(100% - 35%); max-width: calc(100% - 35%);">
             <!-- FOR COMBOBOX -->
             <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input"
-              [value]="formValue[x.valueOf]" (change)="x.change($event)" [disabled]="onUpdate && x.update.disabled">
+              [value]="formValue[x.valueOf]" (change)="selection($event, x.valueOf, x.onSelectFunc)" [disabled]="onUpdate && x.update.disabled">
               <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
             </select>
             <!-- FOR INPUT GROUP -->

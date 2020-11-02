@@ -39,3 +39,44 @@
 }
 
 
+// ----------------------------------------------------------------------||-------------------------------------------------------------------- //
+.btn-input-group {
+	padding: 6px 4.5px 6px 10px;
+}
+
+.btn-datepicker-single {
+	padding: 6px 3px 6px 10px;
+}
+
+.btn-datepicker-range {
+	padding: 6px 3px 6px 10px;
+}
+
+// :host /deep/ ngb-datepicker {
+// 	left: 20px !important;
+// }
+
+//
+:host {
+    // CSS Jarak antar Input Field
+    /deep/ .form-group {
+        margin-bottom: 0.3rem;
+    }
+
+    // CSS Ukuran Input Field Box
+    /deep/ .form-control {
+		height: calc(1.15em + 1.3rem + 2px);
+		padding: 0.3rem 1rem;
+	}
+	
+	// CSS 
+	/deep/ .input-group-text {
+		padding: 0.5rem 1rem;
+	}
+
+	// /deep/ .input-group-append {
+	// 	max-height: 33px !important;
+	// }
+}
+
+

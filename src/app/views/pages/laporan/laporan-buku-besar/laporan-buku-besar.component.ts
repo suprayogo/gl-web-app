@@ -7,7 +7,6 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
 // COMPONENTS
-import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
@@ -25,8 +24,6 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('bb', { static: false }) forminputBB;
-
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
   tipe = [
@@ -42,17 +39,17 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
   format_laporan = [
     {
-      label: 'PDF - Portable Document Format',
-      value: 'pdf'
-    },
-    {
       label: 'XLSX - Microsoft Excel 2007/2010',
       value: 'xlsx'
     },
     {
       label: 'XLS - Microsoft Excel 97/2000/XP/2003',
       value: 'xls'
-    }
+    },
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
   ]
 
   // VARIABLES
@@ -73,6 +70,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   search: string;
   dialogRef: any;
   dialogType: string = null;
+  cabang_utama: any;
 
   // REPORT
   reportObj = {
@@ -142,14 +140,15 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   // Input Name
   formValueBB = {
     // periode: JSON.stringify(this.getDateNow()),
-    format_laporan: 'pdf',
+    format_laporan: 'xlsx',
     id_akun: '',
     kode_akun: '',
     nama_akun: '',
     kode_cabang: '',
     nama_cabang: '',
     tahun: '',
-    bulan: ''
+    bulan: '',
+    periode_berjarak: ''
   }
 
   // Set Field Data Cabang
@@ -268,14 +267,13 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       id: 'tahun-periode',
       type: 'combobox',
       options: this.tahun,
-      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'bb'),
+      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, ''),
       valueOf: 'tahun',
       required: true,
       readOnly: false,
       disabled: false,
     },
     {
-      // labelWidth: 'col-4',
       formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
@@ -285,6 +283,16 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+      onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+      // Combobox Options
+      opt_input: true,
+      opt_label: 'Periode Berjarak',
+      opt_id: 'periode-berjarak',
+      opt_type: 'opt_combobox',
+      opt_options: this.bulanBB,
+      opt_valueOf: 'periode_berjarak',
+      onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
     }
   ]
 
@@ -318,11 +326,11 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmitBB(inputForm: NgForm) {
-    if (this.forminputBB !== undefined) {
-      this.formValueBB = this.forminputBB.getData()
+    if (this.forminput !== undefined) {
+      this.formValueBB = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueBB['tahun'] + this.formValueBB['bulan'] + this.formValueBB['kode_cabang'] + this.formValueBB['kode_akun'] + this.formValueBB['format_laporan']
+      let rk = this.formValueBB['tahun'] + this.formValueBB['bulan'] + this.formValueBB['periode_berjarak'] + this.formValueBB['kode_cabang'] + this.formValueBB['kode_akun'] + this.formValueBB['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueBB['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -347,7 +355,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
           if (
-            (typeof this.formValueBB.bulan === "number" ? JSON.stringify(this.formValueBB.bulan) : this.formValueBB.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
+            (typeof this.formValueBB.bulan === "number" ? JSON.stringify(this.formValueBB.bulan) : this.formValueBB.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
             (typeof this.formValueBB.tahun === "number" ? JSON.stringify(this.formValueBB.tahun) : this.formValueBB.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
             p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
@@ -357,6 +365,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         if (p['id_periode'] !== undefined) {
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['periode_berjarak'] = +this.formValueBB.periode_berjarak.length > 1 ? this.formValueBB.periode_berjarak : "0" + this.formValueBB.periode_berjarak
           p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
           p['kode_cabang'] = this.formValueBB['kode_cabang'] === "" ? undefined : this.formValueBB['kode_cabang']
           p['id_akun'] = this.formValueBB['id_akun'] === "" ? undefined : this.formValueBB['id_akun']
@@ -390,6 +399,17 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   res.push(t)
                 }
 
+
+                // Check range or not
+                let repPeriod;
+
+                if (p['bulan_periode'] === p['periode_berjarak']) {
+                  repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                } else {
+                  repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
+                }
+
+                // Set Report
                 let rp = JSON.parse(JSON.stringify(this.reportObj))
                 rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
                 rp['REPORT_CODE'] = 'RPT-BUKU-BESAR'
@@ -401,7 +421,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
                   REPORT_COMPANY_CITY: this.info_company.kota,
                   REPORT_COMPANY_TLPN: this.info_company.telepon,
-                  REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                  REPORT_PERIODE: repPeriod
                 }
                 rp['FIELD_TITLE'] = [
                   "Kode Akun",
@@ -435,11 +455,13 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                 ]
                 rp['FIELD_DATA'] = res
                 p['bulan_periode'] = +p['bulan_periode']
+                p['periode_berjarak'] = +p['periode_berjarak']
 
                 this.sendGetReport(rp, this.formValueBB['format_laporan'])
               } else {
                 p['bulan_periode'] = +p['bulan_periode']
-                this.openSnackBar('Gagal mendapatkan data buku besar.', 'fail')
+                p['periode_berjarak'] = +p['periode_berjarak']
+                this.gbl.openSnackBar('Gagal mendapatkan data buku besar.', 'fail')
                 this.distinctPeriode()
                 this.ref.markForCheck()
               }
@@ -454,20 +476,20 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   resetFormBB() {
     this.gbl.topPage()
     this.formValueBB = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
+      format_laporan: 'xlsx',
+      kode_cabang: this.cabang_utama.kode_cabang,
+      nama_cabang: this.cabang_utama.nama_cabang,
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
       tahun: this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode']
+      bulan: this.activePeriod['bulan_periode'],
+      periode_berjarak: this.activePeriod['bulan_periode']
     }
 
     this.bulanBB = this.initBulan[this.formValueBB['tahun']]
     this.inputLayoutBB.splice(4, 4,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -477,6 +499,16 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanBB,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       }
     )
 
@@ -489,7 +521,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     }, 1000)
   }
 
-  onCancel(type) {
+  onCancel() {
     this.resetFormBB()
   }
 
@@ -560,31 +592,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
               }
             }
           } else {
-            this.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
-          }
-        }
-      )
-
-      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.inputCabangData = data['RESULT']
-            this.ref.markForCheck()
-          } else {
-            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
-            this.ref.markForCheck()
-          }
-        }
-      )
-
-      this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.inputAkunData = data['RESULT']
-            this.ref.markForCheck()
-          } else {
-            this.openSnackBar('Gagal mendapatkan daftar akun. Mohon coba lagi nanti.', 'fail')
-            this.ref.markForCheck()
+            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }
         }
       )
@@ -595,15 +603,38 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
             this.inputPeriodeData = data['RESULT']
             this.submitPeriodeData = Array.from(data['RESULT'])
             if (this.inputPeriodeData.length > 0) {
-              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
-              this.distinctPeriode()
+              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {} 
             }
-            this.loading = false
             this.ref.markForCheck()
           } else {
             this.loading = false
             this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
+          }
+        }
+      )
+
+      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputCabangData = data['RESULT']
+            this.ref.markForCheck()
+          } else {
+            this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
+          }
+        }
+      )
+
+      this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputAkunData = data['RESULT']
+            this.ref.markForCheck()
+            this.distinctPeriode()
+          } else {
+            this.gbl.openSnackBar('Gagal mendapatkan daftar akun. Mohon coba lagi nanti.', 'fail')
+            this.ref.markForCheck()
           }
         }
       )
@@ -614,7 +645,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
     this.loading = false
     this.ref.markForCheck()
     this.onUpdate = false
-    this.openSnackBar(message, 'success')
+    this.gbl.openSnackBar(message, 'success')
   }
 
   sendGetReport(p, type) {
@@ -638,38 +669,18 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
               }, 100)
             }
           }
-          let rk = this.formValueBB['tahun'] + this.formValueBB['bulan'] + this.formValueBB['kode_cabang'] + this.formValueBB['kode_akun'] + this.formValueBB['format_laporan']
+          let rk = this.formValueBB['tahun'] + this.formValueBB['bulan'] + this.formValueBB['periode_berjarak'] + this.formValueBB['kode_cabang'] + this.formValueBB['kode_akun'] + this.formValueBB['format_laporan']
           this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()
         } else {
           this.gbl.topPage()
-          this.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
+          this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
           this.distinctPeriode()
           this.ref.markForCheck()
         }
       }
     )
-  }
-
-  openSnackBar(message, type?: any) {
-    const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '120px' },
-      data: {
-        type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()
-      },
-      disableClose: true
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
-    })
   }
 
   formInputCheckChanges() {
@@ -694,7 +705,13 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   }
 
   distinctPeriode() {
-    let x = []
+
+    // Variable
+    let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData)),
+      x = [];
+
+    // Cabang Utama User
+    this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
 
     var flags = [],
       outputTahun = [];
@@ -725,16 +742,19 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
     }
 
+    // Tahun Data
     this.tahun = outputTahun
+
     this.formValueBB = {
       format_laporan: this.formValueBB.format_laporan,
-      kode_cabang: this.formValueBB.kode_cabang,
-      nama_cabang: this.formValueBB.nama_cabang,
+      kode_cabang: this.cabang_utama.kode_cabang,
+      nama_cabang: this.cabang_utama.nama_cabang,
       id_akun: this.formValueBB.id_akun,
       kode_akun: this.formValueBB.kode_akun,
       nama_akun: this.formValueBB.nama_akun,
       tahun: this.formValueBB.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueBB.tahun,
-      bulan: this.formValueBB.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueBB.bulan
+      bulan: this.formValueBB.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueBB.bulan,
+      periode_berjarak: this.formValueBB.periode_berjarak === "" ? this.activePeriod['bulan_periode'] : this.formValueBB.periode_berjarak
     }
     this.initBulan = tmp
     this.bulanBB = tmp[this.formValueBB.tahun]
@@ -816,14 +836,13 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         id: 'tahun-periode',
         type: 'combobox',
         options: this.tahun,
-        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp, 'bb'),
+        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp),
         valueOf: 'tahun',
         required: true,
         readOnly: false,
         disabled: false,
       },
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -833,14 +852,30 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanBB,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       },
     )
+
     if (this.loading === true) {
+      //Check On Blur Data
+      this.ref.markForCheck()
+      this.gbl.updateInputdata(this.inputCabangData, 'kode_cabang', this.inputLayoutBB)
+      this.gbl.updateInputdata(this.inputAkunData, 'kode_akun', this.inputLayoutBB)
+
       this.loading = false
     }
   }
 
-  getBulan(filterBulan, loopBulan, type) {
+  getBulan(filterBulan, loopBulan) {
     this.formValueBB = {
       format_laporan: this.formValueBB['format_laporan'],
       kode_cabang: this.formValueBB['kode_cabang'],
@@ -849,12 +884,12 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       kode_akun: this.formValueBB['kode_akun'],
       nama_akun: this.formValueBB['nama_akun'],
       tahun: filterBulan,
-      bulan: ""
+      bulan: "",
+      periode_berjarak: ""
     }
     this.bulanBB = loopBulan[filterBulan]
     this.inputLayoutBB.splice(4, 4,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -864,11 +899,89 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanBB,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       }
     )
     setTimeout(() => {
       this.ref.markForCheck()
       // this.forminputBB.checkChanges()
     }, 1)
+  }
+
+  checkRangeFirstPeriod(data) {
+    if (+data > +this.forminput.getData()['periode_berjarak']) {
+      this.gbl.openSnackBar('Atur batas atas periode lebih besar dari batas bawah periode !', 'info')
+      this.formValueBB.periode_berjarak = this.forminput.getData()['bulan']
+      this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
+
+      this.inputLayoutBB.splice(4, 4,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan Periode',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.bulanBB,
+          valueOf: 'bulan',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+          // Combobox Options
+          opt_input: true,
+          opt_label: 'Periode Berjarak',
+          opt_id: 'periode-berjarak',
+          opt_type: 'opt_combobox',
+          opt_options: this.bulanBB,
+          opt_valueOf: 'periode_berjarak',
+          onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+        }
+      )
+
+      this.ref.markForCheck()
+    }
+  }
+
+  checkRangeLastPeriod(data) {
+    if (+data < +this.forminput.getData()['bulan']) {
+      this.gbl.openSnackBar('Atur batas atas periode lebih besar dari batas bawah periode !', 'info')
+      this.formValueBB.periode_berjarak = this.forminput.getData()['bulan']
+      this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
+
+      this.inputLayoutBB.splice(4, 4,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan Periode',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.bulanBB,
+          valueOf: 'bulan',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+          // Checkbox
+          opt_input: true,
+          opt_label: 'Periode Berjarak',
+          opt_id: 'periode-berjarak',
+          opt_type: 'opt_combobox',
+          opt_options: this.bulanBB,
+          opt_valueOf: 'periode_berjarak',
+          onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+        }
+      )
+
+      this.ref.markForCheck()
+    }
   }
 }

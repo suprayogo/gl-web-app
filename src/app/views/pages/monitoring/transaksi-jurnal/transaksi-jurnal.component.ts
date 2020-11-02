@@ -192,6 +192,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     {
       label: 'Diinput tanggal',
       value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -200,6 +201,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     {
       label: 'Diupdate tanggal',
       value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -427,7 +429,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '50px' },
+      position: { top: '10px' },
       data: {
         width: '90vw',
         formValue: this.formDetail,

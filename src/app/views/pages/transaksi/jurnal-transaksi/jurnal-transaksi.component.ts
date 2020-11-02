@@ -16,7 +16,6 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 import { Router } from '@angular/router';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
-import { resetFakeAsyncZone } from '@angular/core/testing';
 
 const content = {
   beforeCodeTitle: 'Jurnal Transaksi'
@@ -738,7 +737,12 @@ export class JurnalTransaksiComponent implements OnInit, AfterViewInit {
             }
           }
         }
-        let endRes = Object.assign({ id_kasir: this.id_kasir, kode_perusahaan: this.kode_perusahaan, id_periode_kasir: this.onUpdate ? this.id_periode : idp, id_periode_jurnal: this.periode_jurnal['id_periode'] }, this.formValue)
+        let endRes = Object.assign({ 
+          id_kasir: this.id_kasir, 
+          kode_perusahaan: this.kode_perusahaan, 
+          id_periode_kasir: this.onUpdate ? this.id_periode : idp, 
+          id_periode_jurnal: this.periode_jurnal['id_periode'] }, 
+          this.formValue)
         this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal-transaksi' : 'i-jurnal-transaksi', endRes).subscribe(
           data => {
             this.total_debit = 0

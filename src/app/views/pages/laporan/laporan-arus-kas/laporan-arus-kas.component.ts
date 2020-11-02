@@ -7,12 +7,9 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
 // COMPONENTS
-import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
-import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
-import { ReportdialogComponent } from '../../components/reportdialog/reportdialog.component';
 
 const content = {
   beforeCodeTitle: 'Laporan Arus Kas'
@@ -27,7 +24,6 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('ak', { static: false }) forminputAK;
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
   tipe = [
@@ -43,17 +39,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
   format_laporan = [
     {
-      label: 'PDF - Portable Document Format',
-      value: 'pdf'
-    },
-    {
       label: 'XLSX - Microsoft Excel 2007/2010',
       value: 'xlsx'
     },
     {
       label: 'XLS - Microsoft Excel 97/2000/XP/2003',
       value: 'xls'
-    }
+    },
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
   ]
 
   metode_laporan = [
@@ -85,6 +81,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   search: string;
   dialogRef: any;
   dialogType: string = null;
+  cabang_utama: any;
 
   // REPORT
   reportObj = {
@@ -153,13 +150,14 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueAK = {
-    format_laporan: 'pdf',
+    format_laporan: 'xlsx',
     metode_laporan: '1',
     kode_cabang: '',
     nama_cabang: '',
     tipe: 't',
     tahun: '',
-    bulan: ''
+    bulan: '',
+    periode_berjarak: ''
   }
 
   inputCabangDisplayColumns = [
@@ -252,14 +250,13 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       id: 'tahun-periode',
       type: 'combobox',
       options: this.tahun,
-      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'ak'),
+      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, ''),
       valueOf: 'tahun',
       required: true,
       readOnly: false,
       disabled: false,
     },
     {
-      // labelWidth: 'col-4',
       formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
@@ -269,10 +266,20 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+      onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
       hiddenOn: {
         valueOf: 'tipe',
         matchValue: "t"
-      }
+      },
+
+      // Combobox Options
+      opt_input: true,
+      opt_label: 'Periode Berjarak',
+      opt_id: 'periode-berjarak',
+      opt_type: 'opt_combobox',
+      opt_options: this.bulanAK,
+      opt_valueOf: 'periode_berjarak',
+      onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
     }
   ]
 
@@ -305,11 +312,11 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   }
 
   onSubmitAK(inputForm: NgForm) {
-    if (this.forminputAK !== undefined) {
-      this.formValueAK = this.forminputAK.getData()
+    if (this.forminput !== undefined) {
+      this.formValueAK = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+      let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueAK['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -348,7 +355,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
             if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
               this.loading = false
               this.ref.markForCheck()
-              this.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
+              this.gbl.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
               return
             }
             p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
@@ -361,7 +368,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
                 this.loading = false
                 this.ref.markForCheck()
-                this.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
+                this.gbl.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
                 return
               }
               p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
@@ -370,7 +377,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               if (this.getBulanTerendah(p['tahun_periode']) == parseInt(p['bulan_periode']) && this.formValueAK.metode_laporan === '0') {
                 this.loading = false
                 this.ref.markForCheck()
-                this.openSnackBar('Bulan periode merupakan bulan terakhir yang terdaftar.', 'info')
+                this.gbl.openSnackBar('Bulan periode merupakan bulan terakhir yang terdaftar.', 'info')
                 return
               }
               p['bulan_periode_sebelum'] = JSON.stringify(parseInt(p['bulan_periode']) - 1)
@@ -380,6 +387,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
           p['nama_perusahaan'] = this.gbl.getNamaPerusahaan()
           p['report_format_code'] = this.formValueAK.format_laporan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['periode_berjarak'] = +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak
           p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
           p['bulan_periode_sebelum'] = p['bulan_periode_sebelum'].length > 1 ? p['bulan_periode_sebelum'] : "0" + p['bulan_periode_sebelum']
           this.request.apiData('report', this.formValueAK.metode_laporan === '1' ? 'g-data-arus-kas-langsung' : 'g-data-arus-kas', p).subscribe(
@@ -403,7 +411,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                       }, 100)
                     }
                   }
-                  let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+                  let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
                   this.checkKeyReport[rk] = data['RESULT']
                   this.distinctPeriode()
                   this.ref.markForCheck()
@@ -471,6 +479,16 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                     res.push(t)
                   }
 
+                  // Check range or not
+                  let repPeriod;
+
+                  if (p['bulan_periode'] === p['periode_berjarak']) {
+                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                  } else {
+                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
+                  }
+
+                  // Set Report
                   let rp = JSON.parse(JSON.stringify(this.reportObj))
                   rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
                   rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
@@ -482,7 +500,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                     REPORT_COMPANY_ADDRESS: this.info_company.alamat,
                     REPORT_COMPANY_CITY: this.info_company.kota,
                     REPORT_COMPANY_TLPN: this.info_company.telepon,
-                    REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'],
+                    REPORT_PERIODE: repPeriod,
                     TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
                     SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
                     SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
@@ -518,7 +536,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                 }
               } else {
                 p['bulan_periode'] = +p['bulan_periode']
-                this.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
+                this.gbl.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
                 this.distinctPeriode()
                 this.ref.markForCheck()
               }
@@ -533,19 +551,19 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetFormAK() {
     this.formValueAK = {
-      format_laporan: 'pdf',
+      format_laporan: 'xlsx',
       metode_laporan: this.formValueAK['metode_laporan'],
-      kode_cabang: '',
-      nama_cabang: '',
+      kode_cabang: this.cabang_utama.kode_cabang,
+      nama_cabang: this.cabang_utama.nama_cabang,
       tipe: 't',
       tahun: this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode']
+      bulan: this.activePeriod['bulan_periode'],
+      periode_berjarak: this.activePeriod['bulan_periode']
     }
 
     this.bulanAK = this.initBulan[this.formValueAK['tahun']]
     this.inputLayoutAK.splice(5, 4,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -555,11 +573,22 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
         hiddenOn: {
           valueOf: 'tipe',
           matchValue: "t"
-        }
+        },
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanAK,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       }
+
     )
 
     this.loadingAK = true
@@ -571,7 +600,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     }, 1000)
   }
 
-  onCancel(type) {
+  onCancel() {
     this.resetFormAK()
   }
 
@@ -632,7 +661,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               }
             }
           } else {
-            this.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }
         }
       )
@@ -643,7 +672,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
             this.inputCabangData = data['RESULT']
             this.ref.markForCheck()
           } else {
-            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
           }
         }
@@ -656,14 +685,14 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
             this.submitPeriodeData = Array.from(data['RESULT'])
             if (this.inputPeriodeData.length > 0) {
               this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
-              this.distinctPeriode()
+
             }
-            this.loading = false
+            this.distinctPeriode()
             this.ref.markForCheck()
           } else {
             this.loading = false
             this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
           }
         }
       )
@@ -674,7 +703,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     this.loading = false
     this.ref.markForCheck()
     this.onUpdate = false
-    this.openSnackBar(message, 'success')
+    this.gbl.openSnackBar(message, 'success')
   }
 
   sendGetReport(p, type) {
@@ -698,38 +727,18 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               }, 100)
             }
           }
-          let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+          let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
           this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()
         } else {
           this.gbl.topPage()
-          this.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
+          this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
           this.distinctPeriode()
           this.ref.markForCheck()
         }
       }
     )
-  }
-
-  openSnackBar(message, type?: any) {
-    const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '120px' },
-      data: {
-        type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()
-      },
-      disableClose: true
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
-    })
   }
 
   formInputCheckChanges() {
@@ -754,7 +763,12 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   }
 
   distinctPeriode() {
-    let x = []
+    // Variable
+    let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData)),
+      x = [];
+
+    // Cabang Utama User
+    this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
 
     var flags = [],
       outputTahun = [];
@@ -785,15 +799,18 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
     }
 
+    // Tahun Data
     this.tahun = outputTahun
+
     this.formValueAK = {
       format_laporan: this.formValueAK.format_laporan,
       metode_laporan: this.formValueAK.metode_laporan,
-      kode_cabang: this.formValueAK.kode_cabang,
-      nama_cabang: this.formValueAK.nama_cabang,
+      kode_cabang: this.cabang_utama.kode_cabang,
+      nama_cabang: this.cabang_utama.nama_cabang,
       tipe: this.formValueAK.tipe,
       tahun: this.formValueAK.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueAK.tahun,
-      bulan: this.formValueAK.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.bulan
+      bulan: this.formValueAK.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.bulan,
+      periode_berjarak: this.formValueAK.periode_berjarak === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.periode_berjarak
     }
     this.initBulan = tmp
     this.bulanAK = tmp[this.formValueAK.tahun]
@@ -805,14 +822,13 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         id: 'tahun-periode',
         type: 'combobox',
         options: this.tahun,
-        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp, 'ak'),
+        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp),
         valueOf: 'tahun',
         required: true,
         readOnly: false,
         disabled: false,
       },
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -822,18 +838,33 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
         hiddenOn: {
           valueOf: 'tipe',
           matchValue: "t"
-        }
-      },
+        },
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanAK,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+      }
     )
     if (this.loading === true) {
+      //Check On Blur Data
+      this.ref.markForCheck()
+      this.gbl.updateInputdata(this.inputCabangData, 'kode_cabang', this.inputLayoutAK)
+      // this.gbl.updateInputdata(this.inputAkunData, 'kode_akun', this.inputLayoutAK)
+
       this.loading = false
     }
   }
 
-  getBulan(filterBulan, loopBulan, type) {
+  getBulan(filterBulan, loopBulan) {
     this.formValueAK = {
       format_laporan: this.formValueAK['format_laporan'],
       metode_laporan: this.formValueAK['metode_laporan'],
@@ -841,12 +872,12 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       nama_cabang: this.formValueAK['nama_cabang'],
       tipe: this.formValueAK['tipe'],
       tahun: filterBulan,
-      bulan: ""
+      bulan: "",
+      periode_berjarak: ""
     }
     this.bulanAK = loopBulan[filterBulan]
     this.inputLayoutAK.splice(5, 4,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -856,16 +887,102 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
         hiddenOn: {
           valueOf: 'tipe',
           matchValue: "t"
-        }
+        },
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanAK,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       }
     )
     setTimeout(() => {
       this.ref.markForCheck()
       // this.forminputAK.checkChanges()
     }, 1)
+  }
+
+  checkRangeFirstPeriod(data) {
+    if (+data > +this.forminput.getData()['periode_berjarak']) {
+      this.gbl.openSnackBar('Atur batas atas periode lebih besar dari batas bawah periode !', 'info')
+      this.formValueAK.periode_berjarak = this.forminput.getData()['bulan']
+      this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
+
+      this.inputLayoutAK.splice(5, 4,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan Periode',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.bulanAK,
+          valueOf: 'bulan',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+          hiddenOn: {
+            valueOf: 'tipe',
+            matchValue: "t"
+          },
+
+          // Combobox Options
+          opt_input: true,
+          opt_label: 'Periode Berjarak',
+          opt_id: 'periode-berjarak',
+          opt_type: 'opt_combobox',
+          opt_options: this.bulanAK,
+          opt_valueOf: 'periode_berjarak',
+          onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+        }
+      )
+
+      this.ref.markForCheck()
+    }
+  }
+
+  checkRangeLastPeriod(data) {
+    if (+data < +this.forminput.getData()['bulan']) {
+      this.gbl.openSnackBar('Atur batas atas periode lebih besar dari batas bawah periode !', 'info')
+      this.formValueAK.periode_berjarak = this.forminput.getData()['bulan']
+      this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
+
+      this.inputLayoutAK.splice(5, 4,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan Periode',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.bulanAK,
+          valueOf: 'bulan',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+          hiddenOn: {
+            valueOf: 'tipe',
+            matchValue: "t"
+          },
+
+          // Combobox Options
+          opt_input: true,
+          opt_label: 'Periode Berjarak',
+          opt_id: 'periode-berjarak',
+          opt_type: 'opt_combobox',
+          opt_options: this.bulanAK,
+          opt_valueOf: 'periode_berjarak',
+          onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+        }
+      )
+
+      this.ref.markForCheck()
+    }
   }
 
   getTahunTerendah() {

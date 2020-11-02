@@ -24,7 +24,7 @@ import { CoreModule } from '../../core/core.module';
 import { HeaderComponent } from './header/header.component';
 import { SubheaderComponent } from './subheader/subheader.component';
 import { AsideLeftComponent } from './aside/aside-left.component';
-import { FooterComponent } from './footer/footer.component';
+// import { FooterComponent } from './footer/footer.component';
 import { BrandComponent } from './brand/brand.component';
 import { TopbarComponent } from './header/topbar/topbar.component';
 import { MenuHorizontalComponent } from './header/menu-horizontal/menu-horizontal.component';
@@ -39,7 +39,7 @@ import { SharedModule } from '../pages/shared.module';
 @NgModule({
 	declarations: [
 		BaseComponent,
-		FooterComponent,
+		// FooterComponent,
 
 		// headers
 		HeaderComponent,
@@ -62,7 +62,7 @@ import { SharedModule } from '../pages/shared.module';
 	],
 	exports: [
 		BaseComponent,
-		FooterComponent,
+		// FooterComponent,
 
 		// headers
 		HeaderComponent,

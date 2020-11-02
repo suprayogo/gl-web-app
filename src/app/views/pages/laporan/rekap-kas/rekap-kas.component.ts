@@ -38,16 +38,16 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
 
   format_laporan = [
     {
-      label: 'PDF - Portable Document Format',
-      value: 'pdf'
-    },
-    {
       label: 'XLSX - Microsoft Excel 2007/2010',
       value: 'xlsx'
     },
     {
       label: 'XLS - Microsoft Excel 97/2000/XP/2003',
       value: 'xls'
+    },
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
     }
   ]
 
@@ -69,6 +69,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
   search: string;
   dialogRef: any;
   dialogType: string = null;
+  cabang_utama: any;
 
   // REPORT
   reportObj = {
@@ -136,7 +137,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValue = {
-    format_laporan: 'pdf',
+    format_laporan: 'xlsx',
     kode_cabang: '',
     nama_cabang: '',
     periode: [
@@ -488,6 +489,15 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
+            this.gbl.updateInputdata(this.inputCabangData, 'kode_cabang', this.inputLayout)
+            // Variable
+            let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData))
+
+            // Cabang Utama User
+            this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
+            this.formValue.kode_cabang = this.cabang_utama.kode_cabang
+            this.formValue.nama_cabang = this.cabang_utama.nama_cabang
+
             this.loading = false
             this.ref.markForCheck()
           } else {
@@ -550,15 +560,15 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
                 year: dt.getFullYear(),
                 month: dt.getMonth() + 1,
                 day: (dt.getMonth() + 1) == 2 ? 29 :
-                (
-                  (dt.getMonth() + 1) == 1 ||
-                  (dt.getMonth() + 1) == 3 ||
-                  (dt.getMonth() + 1) == 5 ||
-                  (dt.getMonth() + 1) == 7 ||
-                  (dt.getMonth() + 1) == 8 ||
-                  (dt.getMonth() + 1) == 10 ||
-                  (dt.getMonth() + 1) == 12
-                ) ? 31 : 30
+                  (
+                    (dt.getMonth() + 1) == 1 ||
+                    (dt.getMonth() + 1) == 3 ||
+                    (dt.getMonth() + 1) == 5 ||
+                    (dt.getMonth() + 1) == 7 ||
+                    (dt.getMonth() + 1) == 8 ||
+                    (dt.getMonth() + 1) == 10 ||
+                    (dt.getMonth() + 1) == 12
+                  ) ? 31 : 30
               }
             }
           })

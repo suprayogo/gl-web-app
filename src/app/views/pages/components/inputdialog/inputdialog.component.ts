@@ -329,4 +329,12 @@ export class InputdialogComponent implements OnInit {
   resetValue(t, v) {
     this.formValue[t] = v
   }
+
+  //Selection event
+	selection(data, type, func?) {
+    this.formValue[type] = data.target.value
+    if (func !== undefined) {
+      func(data.target.value)
+    }
+  }
 }

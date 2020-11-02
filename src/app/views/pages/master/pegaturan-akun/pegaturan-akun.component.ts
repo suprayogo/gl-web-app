@@ -22,7 +22,7 @@ const content = {
 @Component({
   selector: 'kt-pegaturan-akun',
   templateUrl: './pegaturan-akun.component.html',
-  styleUrls: ['./pegaturan-akun.component.scss', '../master.style.scss']
+  styleUrls: ['./pegaturan-akun.component.scss']
 })
 export class PegaturanAkunComponent implements OnInit, AfterViewInit {
 

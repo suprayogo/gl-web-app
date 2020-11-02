@@ -1,5 +1,7 @@
 <form #inputForm=ngForm (ngSubmit)="formSubmit(inputForm)">
   <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+
+    <!-- -----------------------------------------------LAYOUT LEFT SIDE :: BEGIN-------------------------------------------------------- -->
     <div [ngStyle]="{'width': rightLayout ? '47.5%' : '100%'}">
       <div class="form-group m-form__group row" *ngFor="let x of inputLayout; let i = index" [hidden]="x.hiddenOn ?       
               (
@@ -12,12 +14,33 @@
         <label class="col-form-label" [ngClass]="[ x.labelWidth ? x.labelWidth : 'col-2' ]">{{ x.label }}</label>
 
         <div class="{{ x.formWidth }}">
-          <!-- FOR COMBOBOX -->
-          <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input"
-            [value]="cFormValue[x.valueOf]" (change)="selection($event, x.valueOf, x.onSelectFunc)"
-            [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
-            <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
-          </select>
+          <div style="display:flex;">
+            <div [ngStyle]="{'width' : x.type === 'combobox' && x.opt_input == true ? '47.5%' : '100%'}">
+              <!-- FOR COMBOBOX -->
+              <select *ngIf="x.type === 'combobox'" id="{{ x.id }}" class="form-control m-input"
+                [value]="cFormValue[x.valueOf]" (change)="selection($event, x.valueOf, x.onSelectFunc)"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+                <option *ngFor="let opt of x.options" value="{{ opt.value }}">{{ opt.label }}</option>
+              </select>
+            </div>
+            <div
+              [ngStyle]="{'width' : x.type === 'combobox' && x.opt_input == true ? '5%' : '0%', 'margin-right' : x.type === 'combobox' && x.opt_input == true ? '4px' : '0px', 'margin-left' : x.type === 'combobox' && x.opt_input == true ? '-3px' : '0px'}">
+              <label *ngIf="x.opt_type === 'opt_combobox'" class="col-1 col-form-label"> - </label>
+            </div>
+            <div [ngStyle]="{'width' : x.opt_type === 'opt_combobox' ? '47.5%' : '0%'}">
+              <!-- <div class="input-group input-check">
+                <input class="form-check m-input" *ngIf="x.opt_type === 'checkbox'" type="checkbox" id="{{ x.opt_id }}"
+                  [value]="cFormValue[x.opt_valueOf]" [checked]="cFormValue[x.opt_valueOf]">
+                <label *ngIf="x.opt_type === 'checkbox'" style="margin-top: -3px; margin-left: 5px;">{{ x.opt_label }}</label>
+              </div> -->
+              <!-- FOR COMBOBOX OPTION-->
+              <select *ngIf="x.opt_type === 'opt_combobox'" id="{{ x.opt_id }}" class="form-control m-input"
+                [value]="cFormValue[x.opt_valueOf]" (change)="selection($event, x.opt_valueOf, x.onSelectFuncOpt)"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+                <option *ngFor="let opt of x.opt_options" value="{{ opt.value }}">{{ opt.label }}</option>
+              </select>
+            </div>
+          </div>
 
           <!-- DYNAMIC COMBOBOX -->
           <select *ngIf="x.type === 'comboboxcustom'" id="{{ x.id }}" class="form-control m-input"
@@ -36,8 +59,8 @@
               style="text-transform: uppercase"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
             <div class="input-group-append">
-              <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary"
-                style="padding-right: 8px;" (click)="x.click(x.browseType)"
+              <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                (click)="x.click(x.browseType)"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
                   *ngIf="x.btnIcon" style="color: white" class="flaticon"
                   [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
@@ -81,11 +104,10 @@
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null"
                 [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null">
               <div class="input-group-append">
-                <button tabindex="-1" class="btn btn-primary"
+                <button tabindex="-1" class="btn btn-primary btn-datepicker-single"
                   (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
                   type="button"
-                  [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-                  style="padding-right: 6px;">
+                  [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
                   <i class="la la-calendar" style="color: white;"></i>
                 </button>
               </div>
@@ -118,31 +140,28 @@
 
             <input #dpFromDate class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate" (focus)="dpr.toggle()"
               [value]="formatter.format(fromDate)" (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
-            <div class="input-group-append">
-              <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
-                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-                style="padding-right: 6px;">
+            <div class="input-group-append" style="height: 34px;">
+              <button tabindex="-1" class="btn btn-primary btn-datepicker-range" (click)="dpr.toggle()" type="button"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
                 <i class="la la-calendar" style="color: white;"></i>
               </button>
             </div>
-            <label class="col-1 col-form-label"> - </label>
+            <label class="col-1 col-form-label" style="margin-left: 8px;"> - </label>
             <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" (focus)="dpr.toggle()"
               [value]="formatter.format(toDate)" (input)="toDate = validateInput(toDate, dpToDate.value)">
-            <div class="input-group-append">
-              <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
-                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-                style="padding-right: 6px;">
+            <div class="input-group-append" style="height: 34px;">
+              <button tabindex="-1" class="btn btn-primary btn-datepicker-range" (click)="dpr.toggle()" type="button"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
                 <i class="la la-calendar" style="color: white;"></i>
               </button>
             </div>
-
           </div>
-
-
         </div>
       </div>
     </div>
+    <!-- -----------------------------------------------LAYOUT LEFT SIDE :: END----------------------------------------------------------- -->
 
+    <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: BEGIN-------------------------------------------------------- -->
     <div *ngIf="rightLayout" style="width: 47.5%;">
       <div class="form-group m-form__group row" *ngFor="let x of rightInputLayout; let i = index" [hidden]="x.hiddenOn ?       
               (
@@ -179,8 +198,8 @@
               style="text-transform: uppercase"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
             <div class="input-group-append">
-              <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary"
-                style="padding-right: 8px;" (click)="x.click(x.browseType)"
+              <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                (click)="x.click(x.browseType)"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
                   *ngIf="x.btnIcon" style="color: white" class="flaticon"
                   [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
@@ -224,11 +243,10 @@
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null"
                 [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null">
               <div class="input-group-append">
-                <button tabindex="-1" class="btn btn-primary"
+                <button tabindex="-1" class="btn btn-primary btn-datepicker-single"
                   (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
                   type="button"
-                  [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-                  style="padding-right: 6px;">
+                  [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
                   <i class="la la-calendar" style="color: white;"></i>
                 </button>
               </div>
@@ -262,30 +280,26 @@
             <input #dpFromDate class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate" (focus)="dpr.toggle()"
               [value]="formatter.format(fromDate)" (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
             <div class="input-group-append">
-              <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
-                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-                style="padding-right: 6px;">
+              <button tabindex="-1" class="btn btn-primary btn-datepicker-range" (click)="dpr.toggle()" type="button"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
                 <i class="la la-calendar" style="color: white;"></i>
               </button>
             </div>
-            <label class="col-1 col-form-label"> - </label>
+            <label class="col-1 col-form-label" style="margin-left: 4px;"> - </label>
             <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" (focus)="dpr.toggle()"
               [value]="formatter.format(toDate)" (input)="toDate = validateInput(toDate, dpToDate.value)">
             <div class="input-group-append">
-              <button tabindex="-1" class="btn btn-primary" (click)="dpr.toggle()" type="button"
-                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-                style="padding-right: 6px;">
+              <button tabindex="-1" class="btn btn-primary btn-datepicker-range" (click)="dpr.toggle()" type="button"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
                 <i class="la la-calendar" style="color: white;"></i>
               </button>
             </div>
-
           </div>
-
-
         </div>
       </div>
     </div>
   </div>
+  <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: END----------------------------------------------------------- -->
 
   <div class="kt-section" *ngIf="detailLoad && enableDetail">
     <kt-loading></kt-loading>
@@ -294,7 +308,7 @@
   <div *ngIf="!detailLoad && enableDetail">
     <kt-detailinput-ag-grid [buttonLayout]="buttonLayout" [tableColumn]="tableColumn" [tableData]="tableData"
       [tableRules]="tableRules" [editable]="editable" (editAction)="editDetailData($event)"
-      (deleteAction)="delDetailData($event)"></kt-detailinput-ag-grid>
+      (deleteAction)="delDetailData($event)" [containerHeight]="containerHeight"></kt-detailinput-ag-grid>
   </div>
 
   <div class="kt-section" *ngIf="detailLoad && detailJurnal">
@@ -304,22 +318,22 @@
   <div *ngIf="!detailLoad && detailJurnal" style="margin-bottom: 15px;">
     <kt-detail-jurnal [dataAkun]="jurnalDataAkun" [dataDivisi]="jurnalDataDivisi" [dataSetting]="jurnalDataSetting"
       [data]="jurnalData" [jurnalOtomatis]="jurnalOtomatis" [templateTransaksi]="templateTransaksi"
-      [noEdit]="noEditJurnal"></kt-detail-jurnal>
+      [noEdit]="noEditJurnal" [tipe]="tipeJurnal"></kt-detail-jurnal>
   </div>
 
   <div class="kt-form__actions" *ngIf="!noButton">
     <button type="submit" class="btn btn-brand" *ngIf="!onSub && !noSaveButton"
       [disabled]="disableSubmit ? true : false">{{ button_name }}</button>
     <button type="submit" class="btn btn-brand" *ngIf="onSub">{{ button_name2 }}</button>
+    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc(inputForm)" *ngIf="onSubPrintDoc"
+      [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
+    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2(inputForm)" *ngIf="onSubPrintDoc2"
+      [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
+      <button type="button" class="btn btn-danger kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
+      *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" *ngIf="!noCancel" style="margin-left: 10px;"
       (click)="onReset()">Batal</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="delData()"
       *ngIf="onUpdate && enableDelete">Hapus</button>
-    <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
-      *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
-    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc()" *ngIf="onSubPrintDoc"
-      [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
-    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2()" *ngIf="onSubPrintDoc2"
-      [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
   </div>
 </form>

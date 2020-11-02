@@ -7,7 +7,6 @@ import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
 
 // COMPONENTS
-import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
@@ -25,8 +24,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('jl', { static: false }) forminputJL;
-
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
   tipe = [
@@ -42,16 +39,16 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
   format_laporan = [
     {
-      label: 'PDF - Portable Document Format',
-      value: 'pdf'
-    },
-    {
       label: 'XLSX - Microsoft Excel 2007/2010',
       value: 'xlsx'
     },
     {
       label: 'XLS - Microsoft Excel 97/2000/XP/2003',
       value: 'xls'
+    },
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
     }
   ]
 
@@ -73,6 +70,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   search: string;
   dialogRef: any;
   dialogType: string = null;
+  cabang_utama: any;
 
   // REPORT
   reportObj = {
@@ -141,14 +139,15 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueJL = {
-    format_laporan: 'pdf',
+    format_laporan: 'xlsx',
     id_akun: '',
     kode_akun: '',
     nama_akun: '',
     kode_cabang: '',
     nama_cabang: '',
     tahun: '',
-    bulan: ''
+    bulan: '',
+    periode_berjarak: ''
   }
 
   // Set Field Data Cabang
@@ -191,7 +190,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   // Layout Form
   inputLayoutJL = [
     {
-      // labelWidth: 'col-4',
       formWidth: 'col-5',
       label: 'Format Laporan',
       id: 'format-laporan',
@@ -261,20 +259,18 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
       }
     },
     {
-      // labelWidth: 'col-4',
       formWidth: 'col-5',
       label: 'Tahun Periode',
       id: 'tahun-periode',
       type: 'combobox',
       options: this.tahun,
-      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, '', 'jl'),
+      onSelectFunc: (filterBulan) => this.getBulan(filterBulan, ''),
       valueOf: 'tahun',
       required: true,
       readOnly: false,
       disabled: false,
     },
     {
-      // labelWidth: 'col-4',
       formWidth: 'col-5',
       label: 'Bulan Periode',
       id: 'bulan-periode',
@@ -284,6 +280,16 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+      onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+      // Combobox Options
+      opt_input: true,
+      opt_label: 'Periode Berjarak',
+      opt_id: 'periode-berjarak',
+      opt_type: 'opt_combobox',
+      opt_options: this.bulanJL,
+      opt_valueOf: 'periode_berjarak',
+      onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
     }
   ]
 
@@ -317,11 +323,11 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmitJL(inputForm: NgForm) {
-    if (this.forminputJL !== undefined) {
-      this.formValueJL = this.forminputJL.getData()
+    if (this.forminput !== undefined) {
+      this.formValueJL = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
+      let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['periode_berjarak'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueJL['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -343,12 +349,10 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         this.loading = false
         this.ref.markForCheck()
       } else {
-        console.log(JSON.stringify(this.formValueJL.bulan))
-        console.log(JSON.stringify(this.submitPeriodeData[0]['bulan_periode']))
         let p = {}
         for (var i = 0; i < this.submitPeriodeData.length; i++) {
           if (
-            (typeof this.formValueJL.bulan === "number" ? JSON.stringify(this.formValueJL.bulan) : this.formValueJL.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
+            (typeof this.formValueJL.bulan === "number" ? JSON.stringify(this.formValueJL.bulan) : this.formValueJL.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
             (typeof this.formValueJL.tahun === "number" ? JSON.stringify(this.formValueJL.tahun) : this.formValueJL.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
             p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
             break
@@ -358,6 +362,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         if (p['id_periode'] !== undefined) {
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
+          p['periode_berjarak'] = +this.formValueJL.periode_berjarak.length > 1 ? this.formValueJL.periode_berjarak : "0" + this.formValueJL.periode_berjarak
           p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
           p['kode_cabang'] = this.formValueJL['kode_cabang'] === "" ? undefined : this.formValueJL['kode_cabang']
           p['id_akun'] = this.formValueJL['id_akun'] === "" ? undefined : this.formValueJL['id_akun']
@@ -380,6 +385,16 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                   }
                 }
 
+                // Check range or not
+                let repPeriod;
+
+                if (p['bulan_periode'] === p['periode_berjarak']) {
+                  repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                } else {
+                  repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
+                }
+
+                // Set Report
                 let rp = JSON.parse(JSON.stringify(this.reportObj))
                 rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
                 rp['REPORT_CODE'] = 'RPT-JURNAL'
@@ -391,7 +406,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
                   REPORT_COMPANY_CITY: this.info_company.kota,
                   REPORT_COMPANY_TLPN: this.info_company.telepon,
-                  REPORT_PERIODE: "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                  REPORT_PERIODE: repPeriod
                 }
                 rp['FIELD_TITLE'] = [
                   "No. Transaksi",
@@ -419,12 +434,14 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 ]
                 rp['FIELD_DATA'] = res
                 p['bulan_periode'] = +p['bulan_periode']
+                p['periode_berjarak'] = +p['periode_berjarak']
 
                 this.sendGetReport(rp, this.formValueJL['format_laporan'])
 
               } else {
                 p['bulan_periode'] = +p['bulan_periode']
-                this.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
+                p['periode_berjarak'] = +p['periode_berjarak']
+                this.gbl.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
                 this.distinctPeriode()
                 this.ref.markForCheck()
               }
@@ -441,20 +458,20 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   resetFormJL() {
     this.gbl.topPage()
     this.formValueJL = {
-      format_laporan: 'pdf',
-      kode_cabang: '',
-      nama_cabang: '',
+      format_laporan: 'xlsx',
+      kode_cabang: this.cabang_utama.kode_cabang,
+      nama_cabang: this.cabang_utama.nama_cabang,
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
       tahun: this.activePeriod['tahun_periode'],
-      bulan: this.activePeriod['bulan_periode']
+      bulan: this.activePeriod['bulan_periode'],
+      periode_berjarak: this.activePeriod['bulan_periode']
     }
 
     this.bulanJL = this.initBulan[this.formValueJL['tahun']]
     this.inputLayoutJL.splice(4, 4,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -464,6 +481,16 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanJL,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       }
     )
 
@@ -477,7 +504,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.loading = false
   }
 
-  onCancel(type) {
+  onCancel() {
     this.resetFormJL()
   }
 
@@ -548,7 +575,24 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               }
             }
           } else {
-            this.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+          }
+        }
+      )
+
+      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputPeriodeData = data['RESULT']
+            this.submitPeriodeData = Array.from(data['RESULT'])
+            if (this.inputPeriodeData.length > 0) {
+              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
+            }
+            this.ref.markForCheck()
+          } else {
+            this.loading = false
+            this.ref.markForCheck()
+            this.gbl.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
           }
         }
       )
@@ -559,7 +603,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
             this.inputCabangData = data['RESULT']
             this.ref.markForCheck()
           } else {
-            this.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
           }
         }
@@ -570,29 +614,10 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.inputAkunData = data['RESULT']
             this.ref.markForCheck()
+            this.distinctPeriode()
           } else {
-            this.openSnackBar('Gagal mendapatkan daftar akun. Mohon coba lagi nanti.', 'fail')
+            this.gbl.openSnackBar('Gagal mendapatkan daftar akun. Mohon coba lagi nanti.', 'fail')
             this.ref.markForCheck()
-          }
-        }
-      )
-
-
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.inputPeriodeData = data['RESULT']
-            this.submitPeriodeData = Array.from(data['RESULT'])
-            if (this.inputPeriodeData.length > 0) {
-              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
-              this.distinctPeriode()
-            }
-            this.loading = false
-            this.ref.markForCheck()
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan periode. Mohon coba lagi nanti', 'fail')
           }
         }
       )
@@ -603,7 +628,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.loading = false
     this.ref.markForCheck()
     this.onUpdate = false
-    this.openSnackBar(message, 'success')
+    this.gbl.openSnackBar(message, 'success')
   }
 
   sendGetReport(p, type) {
@@ -628,38 +653,18 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               }, 100)
             }
           }
-          let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
+          let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['periode_berjarak'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
           this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()
         } else {
           this.gbl.topPage()
-          this.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
+          this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
           this.distinctPeriode()
           this.ref.markForCheck()
         }
       }
     )
-  }
-
-  openSnackBar(message, type?: any) {
-    const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '120px' },
-      data: {
-        type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()
-      },
-      disableClose: true
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
-    })
   }
 
   formInputCheckChanges() {
@@ -684,7 +689,13 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   }
 
   distinctPeriode() {
-    let x = []
+
+    // Variable
+    let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData)),
+      x = [];
+
+    // Cabang Utama User
+    this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
 
     var flags = [],
       outputTahun = [];
@@ -714,23 +725,25 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
       }
     }
 
+    // Tahun Data
     this.tahun = outputTahun
+
     this.formValueJL = {
       format_laporan: this.formValueJL.format_laporan,
-      kode_cabang: this.formValueJL.kode_cabang,
-      nama_cabang: this.formValueJL.nama_cabang,
+      kode_cabang: this.cabang_utama.kode_cabang,
+      nama_cabang: this.cabang_utama.nama_cabang,
       id_akun: this.formValueJL.id_akun,
       kode_akun: this.formValueJL.kode_akun,
       nama_akun: this.formValueJL.nama_akun,
       tahun: this.formValueJL.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueJL.tahun,
-      bulan: this.formValueJL.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueJL.bulan
+      bulan: this.formValueJL.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueJL.bulan,
+      periode_berjarak: this.formValueJL.periode_berjarak === "" ? this.activePeriod['bulan_periode'] : this.formValueJL.periode_berjarak
     }
 
     this.initBulan = tmp
     this.bulanJL = tmp[this.formValueJL.tahun]
     this.inputLayoutJL.splice(0, 5,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Format Laporan',
         id: 'format-laporan',
@@ -800,20 +813,18 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         }
       },
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Tahun Periode',
         id: 'tahun-periode',
         type: 'combobox',
         options: this.tahun,
-        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp, "jl"),
+        onSelectFunc: (filterBulan) => this.getBulan(filterBulan, tmp),
         valueOf: 'tahun',
         required: true,
         readOnly: false,
         disabled: false,
       },
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -823,14 +834,30 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanJL,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       },
     )
+
     if (this.loading === true) {
+      //Check On Blur Data
+      this.ref.markForCheck()
+      this.gbl.updateInputdata(this.inputCabangData, 'kode_cabang', this.inputLayoutJL)
+      this.gbl.updateInputdata(this.inputAkunData, 'kode_akun', this.inputLayoutJL)
+      
       this.loading = false
     }
   }
 
-  getBulan(filterBulan, loopBulan, type) {
+  getBulan(filterBulan, loopBulan) {
     this.formValueJL = {
       format_laporan: this.formValueJL['format_laporan'],
       kode_cabang: this.formValueJL['kode_cabang'],
@@ -839,12 +866,12 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
       kode_akun: this.formValueJL['kode_akun'],
       nama_akun: this.formValueJL['nama_akun'],
       tahun: filterBulan,
-      bulan: ""
+      bulan: "",
+      periode_berjarak: ""
     }
     this.bulanJL = loopBulan[filterBulan]
     this.inputLayoutJL.splice(4, 4,
       {
-        // labelWidth: 'col-4',
         formWidth: 'col-5',
         label: 'Bulan Periode',
         id: 'bulan-periode',
@@ -854,11 +881,89 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+        // Combobox Options
+        opt_input: true,
+        opt_label: 'Periode Berjarak',
+        opt_id: 'periode-berjarak',
+        opt_type: 'opt_combobox',
+        opt_options: this.bulanJL,
+        opt_valueOf: 'periode_berjarak',
+        onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
       }
     )
     setTimeout(() => {
       this.ref.markForCheck()
       // this.forminputJL.checkChanges()
     }, 1)
+  }
+
+  checkRangeFirstPeriod(data) {
+    if (+data > +this.forminput.getData()['periode_berjarak']) {
+      this.gbl.openSnackBar('Atur batas atas periode lebih besar dari batas bawah periode !', 'info')
+      this.formValueJL.periode_berjarak = this.forminput.getData()['bulan']
+      this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
+
+      this.inputLayoutJL.splice(4, 4,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan Periode',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.bulanJL,
+          valueOf: 'bulan',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+          // Combobox Options
+          opt_input: true,
+          opt_label: 'Periode Berjarak',
+          opt_id: 'periode-berjarak',
+          opt_type: 'opt_combobox',
+          opt_options: this.bulanJL,
+          opt_valueOf: 'periode_berjarak',
+          onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+        }
+      )
+
+      this.ref.markForCheck()
+    }
+  }
+
+  checkRangeLastPeriod(data) {
+    if (+data < +this.forminput.getData()['bulan']) {
+      this.gbl.openSnackBar('Atur batas atas periode lebih besar dari batas bawah periode !', 'info')
+      this.formValueJL.periode_berjarak = this.forminput.getData()['bulan']
+      this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
+
+      this.inputLayoutJL.splice(4, 4,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan Periode',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.bulanJL,
+          valueOf: 'bulan',
+          required: true,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (data) => this.checkRangeFirstPeriod(data),
+
+          // Checkbox
+          opt_input: true,
+          opt_label: 'Periode Berjarak',
+          opt_id: 'periode-berjarak',
+          opt_type: 'opt_combobox',
+          opt_options: this.bulanJL,
+          opt_valueOf: 'periode_berjarak',
+          onSelectFuncOpt: (data) => this.checkRangeLastPeriod(data),
+        }
+      )
+
+      this.ref.markForCheck()
+    }
   }
 }

@@ -31,3 +31,29 @@ input::-webkit-calendar-picker-indicator {
 h5 {
     margin-bottom: 0 !important;
 }
+
+.btn-input-group {
+	padding: 5.9px 10px 6.2px 10px;
+}
+
+.btn-datepicker-single {
+	padding: 6px 3px 6px 10px;
+}
+
+.btn-datepicker-range {
+	padding: 6px 3px 6px 10px;
+}
+
+//
+:host {
+    // CSS Jarak antar Input Field
+    /deep/ .form-group {
+        margin-bottom: 0.3rem;
+    }
+
+    // CSS Ukuran Input Field Box
+    /deep/ .form-control {
+		height: calc(1.15em + 1.3rem + 2px);
+		padding: 0.3rem 1rem;
+    }
+}

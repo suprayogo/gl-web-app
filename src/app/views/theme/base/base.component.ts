@@ -204,7 +204,7 @@ export class BaseComponent implements OnInit, OnDestroy {
 			const elementObserver = new MutationObserver(callback);
 
 			// Options for the observer (which mutations to observe)
-			const config = { attributes: true, childList: true, subtree: true };
+			const config = { /* attributes: true, */ childList: true, subtree: true };
 			// Start observing the target node for configured mutations
 			elementObserver.observe(this.divToTrackHeightChanges.nativeElement, config);
 		});

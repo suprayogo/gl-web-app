@@ -16,6 +16,7 @@ export class DetailinputAgGridComponent implements OnInit {
   @Input() selectable: boolean;
   @Input() selected: Object[];
   @Input() selectIndicator: any;
+  @Input() containerHeight: any;
   @Input() buttonLayout: Object[];
   @Input() buttonFuncParam: any;
   @Input() editable: boolean;
@@ -29,7 +30,7 @@ export class DetailinputAgGridComponent implements OnInit {
   //Ag grid variable
   containerStyle = {
     width: '100%',
-    height: '300px'
+    height: '0px'
   }
 
   title = 'app';
@@ -65,6 +66,13 @@ export class DetailinputAgGridComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
+    if(this.containerHeight !== undefined){
+      this.containerStyle.height = this.containerHeight + 'px'
+    }else{
+      this.containerStyle.height = 300 + 'px'
+    }
+
     let colDef = [], colData =[]
 
     for(var i = 0; i < this.tableColumn.length; i++){

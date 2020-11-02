@@ -6,6 +6,7 @@ import { DialogComponent } from '../dialog/dialog.component';
 import { AlertdialogComponent } from '../alertdialog/alertdialog.component';
 import { RequestDataService } from '../../../../service/request-data.service';
 import { GlobalVariableService } from '../../../../service/global-variable.service';
+import { CurrencyMaskInputMode } from 'ngx-currency';
 
 @Component({
   selector: 'kt-detail-jurnal',
@@ -21,6 +22,7 @@ export class DetailJurnalComponent implements OnInit {
   @Input() jurnalOtomatis: boolean;
   @Input() templateTransaksi: boolean;
   @Input() noEdit: boolean;
+  @Input() tipe: any;
 
   currencyOptions = {
     align: "right",
@@ -31,8 +33,23 @@ export class DetailJurnalComponent implements OnInit {
     prefix: "",
     suffix: "",
     thousands: ".",
-    nullable: false
+    nullable: false,
+    inputMode: CurrencyMaskInputMode.NATURAL
   }
+
+  setValueNewRows = {}
+  jurnalType: any
+  transaksiJurnalType: any
+  disabled = [
+    {
+      debit: false,
+      kredit: false,
+    },
+    {
+      debit: false,
+      kredit: false,
+    }
+  ]
 
   loadingDepartemen = true;
   dialogRef: any;
@@ -193,14 +210,94 @@ export class DetailJurnalComponent implements OnInit {
     }
 
     this.data_divisi = this.dataDivisi
+    this.jurnalType = this.tipe['jenis_jurnal'] === undefined ? "0" : this.tipe['jenis_jurnal']
+    this.transaksiJurnalType = this.tipe['tipe_transaksi'] === undefined ? "0" : this.tipe['tipe_transaksi']
+    let x = []
+    if (this.jurnalType === "0" || this.jurnalType === "1") {
+      for (var i = 0; i < this.res_data.length; i++) {
+        x.push({
+          debit: false,
+          kredit: false
+        })
+      }
+      this.disabled = x
+    } else if (this.jurnalType === "2") {
+      if (this.transaksiJurnalType === "0") {
+        for (var i = 0; i < this.res_data.length; i++) {
+          x.push({
+            debit: true,
+            kredit: false
+          })
+        }
+        this.disabled = x
+        this.disabled.splice(0, 1, {
+          debit: false,
+          kredit: true
+        })
+      } else if (this.transaksiJurnalType === "1") {
+        for (var i = 0; i < this.res_data.length; i++) {
+          x.push({
+            debit: false,
+            kredit: true
+          })
+        }
+        this.disabled = x
+        this.disabled.splice(0, 1, {
+          debit: true,
+          kredit: false
+        })
+      }
+    }
   }
 
   checkChanges() {
+    this.jurnalType = this.tipe['jenis_jurnal'] === undefined ? "0" : this.tipe['jenis_jurnal']
+    this.transaksiJurnalType = this.tipe['tipe_transaksi'] === undefined ? "0" : this.tipe['tipe_transaksi']
+    let x = []
     if (this.data !== undefined || this.data != null) {
+      if (this.data[0]['kode_divisi'] === '' && this.data[1]['kode_divisi'] === '' && this.data.length == 2) {
+        this.setValueNewRows = {}
+      }
       this.res_data = this.data
+      if (this.jurnalType === "0" || this.jurnalType === "1") {
+        for (var i = 0; i < this.res_data.length; i++) {
+          x.push({
+            debit: false,
+            kredit: false
+          })
+        }
+        this.disabled = x
+      } else if (this.jurnalType === "2") {
+        if (this.transaksiJurnalType === "0") {
+          for (var i = 0; i < this.res_data.length; i++) {
+            x.push({
+              debit: true,
+              kredit: false
+            })
+          }
+          this.disabled = x
+          this.disabled.splice(0, 1, {
+            debit: false,
+            kredit: true
+          })
+        } else if (this.transaksiJurnalType === "1") {
+          for (var i = 0; i < this.res_data.length; i++) {
+            x.push({
+              debit: false,
+              kredit: true
+            })
+          }
+          this.disabled = x
+          this.disabled.splice(0, 1, {
+            debit: true,
+            kredit: false
+          })
+        }
+      }
       this.countDebit()
       this.countKredit()
     }
+    this.ref.markForCheck()
   }
 
   checkChangesTemplate() {
@@ -221,7 +318,10 @@ export class DetailJurnalComponent implements OnInit {
         })
         return
       } else {
-        if (this.loadingDepartemen) {
+        if (n === undefined) {
+          this.loadingDepartemen = true
+          this.sendRequestDepartemen(this.gbl.getKodePerusahaan(), this.res_data[ind]['kode_divisi'], ind)
+        } else if (n == false) {
           this.sendRequestDepartemen(this.gbl.getKodePerusahaan(), this.res_data[ind]['kode_divisi'], ind)
         }
       }
@@ -260,11 +360,13 @@ export class DetailJurnalComponent implements OnInit {
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (type === "kode_akun") {
+
           this.res_data[ind]['id_akun'] = result.id_akun
           this.res_data[ind]['kode_akun'] = result.kode_akun
           this.res_data[ind]['nama_akun'] = result.nama_akun
           this.res_data[ind]['keterangan_akun'] = this.res_data[ind]['nama_akun'] + " - " + this.res_data[ind]['kode_akun']
-          this.ref.markForCheck();
+          this.ref.markForCheck()
+
         } else if (type === "kode_setting") {
           if (n !== undefined) {
             if (this.tipe_setting === result.tipe_setting) {
@@ -299,14 +401,64 @@ export class DetailJurnalComponent implements OnInit {
           }
           this.ref.markForCheck();
         } else if (type === "kode_divisi") {
+
+          if (this.res_data[ind]['kode_divisi'] !== result.kode_divisi) {
+            this.res_data[ind]['kode_departemen'] = ""
+            this.res_data[ind]['nama_departemen'] = ""
+          }
+
           this.res_data[ind]['kode_divisi'] = result.kode_divisi
           this.res_data[ind]['nama_divisi'] = result.nama_divisi
-          this.sendRequestDepartemen(result['kode_perusahaan'], result['kode_divisi'], ind)
+
+          let a = this.res_data.length - 1
+          for (var i = 1; i < this.res_data.length; i++) {
+            if (this.res_data[0]['kode_divisi'] !== '' && this.res_data[i]['kode_divisi'] === '') {
+              this.res_data[i]['kode_divisi'] = this.res_data[0]['kode_divisi']
+              this.res_data[i]['nama_divisi'] = this.res_data[0]['nama_divisi']
+            } else if (this.res_data[0]['kode_divisi'] === '' && this.res_data[i]['kode_divisi'] !== '') {
+              for (var j = 0; j < a; j++) {
+                this.res_data[j]['kode_divisi'] = this.res_data[i]['kode_divisi']
+                this.res_data[j]['nama_divisi'] = this.res_data[i]['nama_divisi']
+              }
+            }
+          }
+
+          if (this.res_data[0]['kode_divisi'] !== '') {
+            this.setValueNewRows['kode_divisi'] = this.res_data[0]['kode_divisi']
+            this.setValueNewRows['nama_divisi'] = this.res_data[0]['nama_divisi']
+          } else {
+            this.setValueNewRows['kode_divisi'] = undefined
+            this.setValueNewRows['nama_divisi'] = undefined
+          }
           this.ref.markForCheck()
+
         } else if (type === "kode_departemen") {
+
           this.res_data[ind]['kode_departemen'] = result.kode_departemen
           this.res_data[ind]['nama_departemen'] = result.nama_departemen
+
+          let a = this.res_data.length - 1
+          for (var i = 1; i < this.res_data.length; i++) {
+            if (this.res_data[0]['kode_departemen'] !== '' && this.res_data[i]['kode_departemen'] === '') {
+              this.res_data[i]['kode_departemen'] = this.res_data[0]['kode_departemen']
+              this.res_data[i]['nama_departemen'] = this.res_data[0]['nama_departemen']
+            } else if (this.res_data[0]['kode_departemen'] === '' && this.res_data[i]['kode_departemen'] !== '') {
+              for (var j = 0; j < a; j++) {
+                this.res_data[j]['kode_departemen'] = this.res_data[i]['kode_departemen']
+                this.res_data[j]['nama_departemen'] = this.res_data[i]['nama_departemen']
+              }
+            }
+          }
+
+          if (this.res_data[0]['kode_departemen'] !== '') {
+            this.setValueNewRows['kode_departemen'] = this.res_data[0]['kode_departemen']
+            this.setValueNewRows['nama_departemen'] = this.res_data[0]['nama_departemen']
+          } else {
+            this.setValueNewRows['kode_departemen'] = undefined
+            this.setValueNewRows['nama_departemen'] = undefined
+          }
           this.ref.markForCheck()
+
         }
       }
       this.dialogRef = undefined;
@@ -339,17 +491,68 @@ export class DetailJurnalComponent implements OnInit {
           []
     if (fres.length > 0 && fres.length < 2) {
       if (type === "kode_akun") {
+
         this.res_data[ind]['id_akun'] = fres[0]['id_akun']
         this.res_data[ind]['kode_akun'] = fres[0]['kode_akun']
         this.res_data[ind]['nama_akun'] = fres[0]['nama_akun']
         this.res_data[ind]['keterangan_akun'] = fres[0]['nama_akun'] + " - " + fres[0]['kode_akun']
+
       } else if (type === "kode_divisi") {
+
+        if (this.res_data[ind]['kode_divisi'] !== fres[0]['kode_divisi']) {
+          this.res_data[ind]['kode_departemen'] = ""
+          this.res_data[ind]['nama_departemen'] = ""
+        }
+
         this.res_data[ind]['kode_divisi'] = fres[0]['kode_divisi']
         this.res_data[ind]['nama_divisi'] = fres[0]['nama_divisi']
-        this.loadingDepartemen = true
+
+        let a = this.res_data.length - 1
+        for (var i = 1; i < this.res_data.length; i++) {
+          if (this.res_data[0]['kode_divisi'] !== '' && this.res_data[i]['kode_divisi'] === '') {
+            this.res_data[i]['kode_divisi'] = this.res_data[0]['kode_divisi']
+            this.res_data[i]['nama_divisi'] = this.res_data[0]['nama_divisi']
+          } else if (this.res_data[0]['kode_divisi'] === '' && this.res_data[i]['kode_divisi'] !== '') {
+            for (var j = 0; j < a; j++) {
+              this.res_data[j]['kode_divisi'] = this.res_data[i]['kode_divisi']
+              this.res_data[j]['nama_divisi'] = this.res_data[i]['nama_divisi']
+            }
+          }
+        }
+
+        if (this.res_data[0]['kode_divisi'] !== '') {
+          this.setValueNewRows['kode_divisi'] = this.res_data[0]['kode_divisi']
+          this.setValueNewRows['nama_divisi'] = this.res_data[0]['nama_divisi']
+        } else {
+          this.setValueNewRows['kode_divisi'] = undefined
+          this.setValueNewRows['nama_divisi'] = undefined
+        }
+
       } else if (type === "kode_departemen") {
+
         this.res_data[ind]['kode_departemen'] = fres[0]['kode_departemen']
         this.res_data[ind]['nama_departemen'] = fres[0]['nama_departemen']
+
+        let a = this.res_data.length - 1
+        for (var i = 1; i < this.res_data.length; i++) {
+          if (this.res_data[0]['kode_departemen'] !== '' && this.res_data[i]['kode_departemen'] === '') {
+            this.res_data[i]['kode_departemen'] = this.res_data[0]['kode_departemen']
+            this.res_data[i]['nama_departemen'] = this.res_data[0]['nama_departemen']
+          } else if (this.res_data[0]['kode_departemen'] === '' && this.res_data[i]['kode_departemen'] !== '') {
+            for (var j = 0; j < a; j++) {
+              this.res_data[j]['kode_departemen'] = this.res_data[i]['kode_departemen']
+              this.res_data[j]['nama_departemen'] = this.res_data[i]['nama_departemen']
+            }
+          }
+        }
+
+        if (this.res_data[0]['kode_departemen'] !== '') {
+          this.setValueNewRows['kode_departemen'] = this.res_data[0]['kode_departemen']
+          this.setValueNewRows['nama_departemen'] = this.res_data[0]['nama_departemen']
+        } else {
+          this.setValueNewRows['kode_departemen'] = undefined
+          this.setValueNewRows['nama_departemen'] = undefined
+        }
       }
     } else {
       if (type === "kode_akun") {
@@ -401,8 +604,53 @@ export class DetailJurnalComponent implements OnInit {
     return hasChild
   }
 
+  ket(ind?, type?: any) {
+    let a = this.res_data.length - 1
+    if (ind !== undefined) {
+      if (type === '1') {
+        for (var i = 1; i < this.res_data.length; i++) {
+          if (this.res_data[ind]['keterangan_1'] !== '' && this.res_data[i]['keterangan_1'] === '') {
+            if (i == ind) {
+              // NOT SET
+            } else if (i != ind && ind != 0) {
+              // NOT SET
+            } else {
+              this.res_data[i]['keterangan_1'] = this.res_data[0]['keterangan_1']
+            }
+          } else if (this.res_data[ind]['keterangan_1'] === '' && this.res_data[i]['keterangan_1'] !== '') {
+            // NOT SET
+          }
+        }
+        if (this.res_data[0]['keterangan_1'] !== '') {
+          this.setValueNewRows['keterangan_1'] = this.res_data[a]['keterangan_1']
+        }
+      } else if (type === '2') {
+        for (var i = 1; i < this.res_data.length; i++) {
+          if (this.res_data[0]['keterangan_2'] !== '' && this.res_data[i]['keterangan_2'] === '') {
+            if (i == ind) {
+              // NOT SET
+            } else if (i != ind && ind != 0) {
+              // NOT SET
+            } else {
+              this.res_data[i]['keterangan_2'] = this.res_data[0]['keterangan_2']
+            }
+          } else if (this.res_data[ind]['keterangan_1'] === '' && this.res_data[i]['keterangan_1'] !== '') {
+            // NOT SET
+          }
+        }
+        if (this.res_data[0]['keterangan_2'] !== '') {
+          this.setValueNewRows['keterangan_2'] = this.res_data[a]['keterangan_2']
+        }
+      }
+    }
+
+    this.ref.markForCheck()
+  }
+
   countDebit(ind?) {
-    let sum = 0
+    let sum = 0,
+      a = this.res_data.length - 1
+
     for (var i = 0; i < this.res_data.length; i++) {
       sum = sum + parseFloat(JSON.stringify(this.res_data[i]['saldo_debit']))
     }
@@ -410,8 +658,38 @@ export class DetailJurnalComponent implements OnInit {
     this.total_debit = parseFloat(sum.toFixed(5))
     if (ind !== undefined) {
 
+      if (this.jurnalType === "2") {
+        // NOT SET
+      } else {
+        for (var i = 1; i < this.res_data.length; i++) {
+          if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0 && parseFloat(JSON.stringify(this.res_data[i]['saldo_debit'])) <= 0) {
+            if (i == ind) {
+              // NOT SET
+            } else if (i != ind && ind != 0) {
+              // NOT SET
+            } else {
+              this.res_data[i]['saldo_debit'] = this.res_data[0]['saldo_debit']
+            }
+          } else if (this.res_data[ind]['saldo_debit'] <= 0 && this.res_data[i]['saldo_debit'] >= 0) {
+
+          }
+        }
+      }
+
+
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0) {
         this.res_data[ind]['saldo_kredit'] = 0
+        if (this.jurnalType === "0" || this.jurnalType === "1") {
+          if (parseFloat(JSON.stringify(this.res_data[a]['saldo_debit'])) > 0) {
+            this.setValueNewRows['saldo_debit'] = this.res_data[a]['saldo_debit']
+            delete this.setValueNewRows['saldo_kredit']
+            this.countDebit()
+          } else {
+            this.setValueNewRows['saldo_kredit'] = this.res_data[a]['saldo_kredit']
+            delete this.setValueNewRows['saldo_debit']
+            this.countKredit()
+          }
+        }
         this.countKredit(ind)
       }
     }
@@ -419,15 +697,47 @@ export class DetailJurnalComponent implements OnInit {
   }
 
   countKredit(ind?) {
-    let sum = 0
+    let sum = 0,
+      a = this.res_data.length - 1
+
     for (var i = 0; i < this.res_data.length; i++) {
       sum = sum + parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit']))
     }
 
     this.total_kredit = parseFloat(sum.toFixed(5))
     if (ind !== undefined) {
+
+      if (this.jurnalType === "2") {
+        // NOT SET
+      } else {
+        for (var i = 1; i < this.res_data.length; i++) {
+          if (parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit'])) <= 0) {
+            if (i == ind) {
+              // NOT SET
+            } else if (i != ind && ind != 0) {
+              // NOT SET
+            } else {
+              this.res_data[i]['saldo_kredit'] = this.res_data[0]['saldo_kredit']
+            }
+          } else if (this.res_data[ind]['saldo_kredit'] <= 0 && this.res_data[i]['saldo_kredit'] >= 0) {
+
+          }
+        }
+      }
+
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0) {
         this.res_data[ind]['saldo_debit'] = 0
+        if (this.jurnalType === "0" || this.jurnalType === "1") {
+          if (parseFloat(JSON.stringify(this.res_data[a]['saldo_kredit'])) > 0) {
+            this.setValueNewRows['saldo_kredit'] = this.res_data[a]['saldo_kredit']
+            delete this.setValueNewRows['saldo_debit']
+            this.countKredit()
+          } else {
+            this.setValueNewRows['saldo_debit'] = this.res_data[a]['saldo_debit']
+            delete this.setValueNewRows['saldo_kredit']
+            this.countDebit()
+          }
+        }
         this.countDebit(ind)
       }
     }
@@ -482,36 +792,56 @@ export class DetailJurnalComponent implements OnInit {
 
 
   addRow() {
-    let r = {
-      id_akun: '',
-      kode_akun: '',
-      nama_akun: '',
-      kode_divisi: '',
-      nama_divisi: '',
-      kode_departemen: '',
-      nama_departemen: '',
-      keterangan_akun: '',
-      keterangan_1: '',
-      keterangan_2: '',
-      saldo_debit: 0,
-      saldo_kredit: 0,
-      setting_debit: '',
-      setting_kredit: '',
-      bobot_debit: 0,
-      bobot_kredit: 0
-    }
+    let d = {
+      debit: this.disabled[1]['debit'],
+      kredit: this.disabled[1]['kredit']
+    },
+      r = {
+        id_akun: /* this.setValueNewRows['id_akun'] === undefined ? "" : this.setValueNewRows['id_akun'] */'',
+        kode_akun: /* this.setValueNewRows['kode_akun'] === undefined ? "" : this.setValueNewRows['kode_akun'] */'',
+        nama_akun: /* this.setValueNewRows['nama_akun'] === undefined ? "" : this.setValueNewRows['nama_akun'] */'',
+        keterangan_akun: /* this.setValueNewRows['keterangan_akun'] === undefined ? "" : this.setValueNewRows['keterangan_akun'] */'',
+        kode_divisi: this.setValueNewRows['kode_divisi'] === undefined ? "" : this.setValueNewRows['kode_divisi'],
+        nama_divisi: this.setValueNewRows['nama_divisi'] === undefined ? "" : this.setValueNewRows['nama_divisi'],
+        kode_departemen: this.setValueNewRows['kode_departemen'] === undefined ? "" : this.setValueNewRows['kode_departemen'],
+        nama_departemen: this.setValueNewRows['nama_departemen'] === undefined ? "" : this.setValueNewRows['nama_departemen'],
+        keterangan_1: this.setValueNewRows['keterangan_1'] === undefined ? "" : this.setValueNewRows['keterangan_1'],
+        keterangan_2: this.setValueNewRows['keterangan_2'] === undefined ? "" : this.setValueNewRows['keterangan_2'],
+        saldo_debit: this.setValueNewRows['saldo_debit'] === undefined ? 0 : this.setValueNewRows['saldo_debit'],
+        saldo_kredit: this.setValueNewRows['saldo_kredit'] === undefined ? 0 : this.setValueNewRows['saldo_kredit'],
+        setting_debit: '',
+        setting_kredit: '',
+        bobot_debit: 0,
+        bobot_kredit: 0
+      }
     this.res_data.push(r)
+    this.disabled.push(d)
+    setTimeout(() => {
+      if (this.templateTransaksi) {
+        this.countPercentDebit()
+        this.countPercentKredit()
+      } else {
+        this.countDebit()
+        this.countKredit()
+      }
+    }, 100)
   }
 
   deleteRow() {
     if (this.res_data.length > 2) {
       this.res_data.splice(this.res_data.length - 1, 1)
       setTimeout(() => {
-        this.countDebit()
-        this.countKredit()
-        this.countPercentDebit()
-        this.countPercentKredit()
+        if (this.templateTransaksi) {
+          this.countPercentDebit()
+          this.countPercentKredit()
+        } else {
+          this.countDebit()
+          this.countKredit()
+        }
       }, 100)
+    }
+    if (this.disabled.length > 2) {
+      this.disabled.splice(this.disabled.length - 1, 1)
     }
   }
 
@@ -530,7 +860,6 @@ export class DetailJurnalComponent implements OnInit {
   }
 
   sendRequestDepartemen(kPer, kDiv, ind) {
-    this.loadingDepartemen = true
     this.request.apiData('departemen', 'g-departemen-divisi', { kode_perusahaan: kPer, kode_divisi: kDiv }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -539,7 +868,7 @@ export class DetailJurnalComponent implements OnInit {
           if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
             if (this.dialogType === "kode_departemen") {
               this.dialog.closeAll()
-              this.openDialog(ind, 'kode_departemen')
+              this.openDialog(ind, 'kode_departemen', false)
             }
           }
         } else {

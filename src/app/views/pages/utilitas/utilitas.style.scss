@@ -8,3 +8,39 @@
     //     padding-right: 2.2rem;
     // }
 }
+
+// CSS Fit to Page Content
+:host {
+
+    // CSS Content Body
+    /deep/ .kt-portlet {
+
+        margin-bottom: 0px;
+
+		.kt-portlet__head {
+			height: 30px;
+        	min-height: 30px;
+        }
+        .kt-portlet__body {
+            padding-bottom: 0px;
+            min-height: 442px;
+		}
+    }
+
+    // CSS Tab Label Menu
+    /deep/ .mat-tab-label{
+        height: 30px;
+        min-height: 30px;
+    }
+
+    // Jarak Batas Bawah dengan portlet
+    /deep/ .kt-section {
+        padding: 0;
+        margin: 0 0 1.5rem 0;
+    }
+
+    /deep/ .col-xl-12{
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+}
