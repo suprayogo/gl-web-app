@@ -2192,7 +2192,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   openDialog(type) {
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '60vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',

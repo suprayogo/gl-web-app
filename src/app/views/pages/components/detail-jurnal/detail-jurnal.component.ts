@@ -440,8 +440,12 @@ export class DetailJurnalComponent implements OnInit {
           let a = this.res_data.length - 1
           for (var i = 1; i < this.res_data.length; i++) {
             if (this.res_data[0]['kode_departemen'] !== '' && this.res_data[i]['kode_departemen'] === '') {
-              this.res_data[i]['kode_departemen'] = this.res_data[0]['kode_departemen']
-              this.res_data[i]['nama_departemen'] = this.res_data[0]['nama_departemen']
+              if (this.res_data[0]['kode_divisi'] !== this.res_data[i]['kode_divisi']) {
+
+              } else {
+                this.res_data[i]['kode_departemen'] = this.res_data[0]['kode_departemen']
+                this.res_data[i]['nama_departemen'] = this.res_data[0]['nama_departemen']
+              }
             } else if (this.res_data[0]['kode_departemen'] === '' && this.res_data[i]['kode_departemen'] !== '') {
               for (var j = 0; j < a; j++) {
                 this.res_data[j]['kode_departemen'] = this.res_data[i]['kode_departemen']
