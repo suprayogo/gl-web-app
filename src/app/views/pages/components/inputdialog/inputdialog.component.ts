@@ -45,6 +45,7 @@ export class InputdialogComponent implements OnInit {
   selectIndicator: any;
   selected: Object[] = [];
   noButton: boolean = true;
+  sizeCont: any;
   cWidth: any = null;
   uniqueId: any = null;
   uniqueForm: any = [];
@@ -123,6 +124,7 @@ export class InputdialogComponent implements OnInit {
       this.selectIndicator = this.parameter.selectIndicator
       this.selected = this.parameter.selected
       this.noButton = this.parameter.noButton
+      this.sizeCont = this.parameter.sizeCont
 
     }
     if(this.parameter.checkUponInit == true) this.initCheck()

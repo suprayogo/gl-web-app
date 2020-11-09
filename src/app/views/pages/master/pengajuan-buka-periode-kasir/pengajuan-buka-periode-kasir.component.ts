@@ -517,6 +517,12 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   // Function: Input Dialog Component
   openDialog(type) {
 
+    if (type === "id_periode") {
+      this.gbl.screenPosition(100)
+    } else {
+      this.gbl.topPage()
+    }
+
     // Condition Multi Level L.O.V
     if (type === 'kode_cabang') {
       if (this.forminput.getData()['bulan_periode'] === "") {
@@ -544,14 +550,15 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         return
       }
     }
-    this.gbl.topPage()
+
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '65vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: type === "id_periode" ? '100px' : '40px' },
       data: {
         type: type,
         tableInterface:
@@ -578,7 +585,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         selectable: type === 'id_periode' ? true : false,
         selected: this.detailData,
         selectIndicator: "id_periode",
-        loadingData: type === "id_periode" ? this.loadingPeriodeKasir : null
+        loadingData: type === "id_periode" ? this.loadingPeriodeKasir : null,
+        sizeCont: 300
       }
     });
 

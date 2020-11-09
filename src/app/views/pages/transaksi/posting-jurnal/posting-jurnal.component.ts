@@ -894,13 +894,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.formInputCheckChangesJurnal()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
-      height: 'auto',
+      height: '60vh',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '50px' },
+      position: { top: '10px' },
       data: {
-        width: '90vw',
+        width: '85vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],

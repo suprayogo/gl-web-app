@@ -51,7 +51,8 @@
 
                         <div *ngIf="!tableLoad">
                             <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
-                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)">
+                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)"
+                                [containerHeight]=400>
                             </kt-datatable-ag-grid>
                         </div>
                     </kt-portlet-body>

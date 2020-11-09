@@ -14,6 +14,6 @@
   <div style="width: 100%; height: auto;" *ngIf="loading != true">
     <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="tableData" [tableRules]="tableRules"
       [selectable]="selectable" [selected]="selected" [selectIndicator]="selectIndicator" [onDialog]="true"
-      (selectRowEvent)="dialogRowSelect($event)" (onDialogClose)="closeDialog()"></kt-datatable-ag-grid>
+      (selectRowEvent)="dialogRowSelect($event)" [containerHeight]="sizeCont" (onDialogClose)="closeDialog()"></kt-datatable-ag-grid>
   </div>
 </div>

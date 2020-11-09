@@ -309,13 +309,41 @@ export class DetailJurnalComponent implements OnInit {
   }
 
   openDialog(ind, type, n?: any) {
+    let pst,
+      pstJO,
+      pstTOP,
+      dialogPst,
+      dialogPstJO,
+      dialogTOP
+
+    if (ind == 0) {
+      pst = 237
+      pstJO = 227
+      dialogPst = 230
+      dialogPstJO = 220
+    } else if (ind == 1) {
+      pst = 252
+      pstJO = 242
+      dialogPst = 245
+      dialogPstJO = 235
+    } else {
+      pst = 252 + ((132.5 * ind) - 130)
+      pstJO = 242 + ((132.5 * ind) - 180)
+      dialogPst = 245 + ((132.5 * ind) - 110)
+      dialogPstJO = 235 + ((132.5 * ind) - 180)
+    }
+    //
+    pstTOP = this.jurnalOtomatis == false && this.templateTransaksi == false ? pst : pstJO
+    this.gbl.screenPosition(pstTOP)
+    dialogTOP = this.jurnalOtomatis == false && this.templateTransaksi == false ? dialogPst.toString() + 'px' : dialogPstJO.toString() + 'px'
+    //
     if (type === "kode_departemen") {
-      if (this.res_data[ind]['kode_divisi'] === '' || this.res_data[ind]['nama_divisi'] === '') {
+      if (this.res_data[ind]['kode_divisi'] === '' || this.res_data[ind]['nama_divisi'] === '' || this.res_data[ind]['kode_divisi'] === undefined) {
         this.openSnackBar("Pilih divisi terlebih dahulu.", 'info', () => {
           setTimeout(() => {
             this.openDialog(ind, 'kode_divisi', n)
           }, 100)
-        })
+        }, dialogTOP)
         return
       } else {
         if (n === undefined) {
@@ -329,11 +357,12 @@ export class DetailJurnalComponent implements OnInit {
 
     this.dialogType = JSON.parse(JSON.stringify(type))
     this.dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '65vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: dialogTOP },
       data: {
         type: 'induk_akun',
         tableInterface: {},
@@ -353,7 +382,8 @@ export class DetailJurnalComponent implements OnInit {
           type === "kode_setting" ? this.settingDataRules :
             [],
         formValue: {},
-        loadingData: type === "kode_departemen" ? this.loadingDepartemen : false
+        loadingData: type === "kode_departemen" ? this.loadingDepartemen : false,
+        sizeCont: 350
       }
     });
 
@@ -471,9 +501,36 @@ export class DetailJurnalComponent implements OnInit {
   }
 
   onBlur(d, ind, type?: any) {
+    let pst,
+      pstJO,
+      pstTOP,
+      dialogPst,
+      dialogPstJO,
+      dialogTOP
+
+    if (ind == 0) {
+      pst = 237
+      pstJO = 227
+      dialogPst = 230
+      dialogPstJO = 220
+    } else if (ind == 1) {
+      pst = 252
+      pstJO = 242
+      dialogPst = 245
+      dialogPstJO = 235
+    } else {
+      pst = 252 + ((132.5 * ind) - 130)
+      pstJO = 242 + ((132.5 * ind) - 180)
+      dialogPst = 245 + ((132.5 * ind) - 110)
+      dialogPstJO = 235 + ((132.5 * ind) - 180)
+    }
+    //
+    pstTOP = this.jurnalOtomatis == false && this.templateTransaksi == false  ? pst : pstJO
+    dialogTOP = this.jurnalOtomatis == false && this.templateTransaksi == false ? dialogPst.toString() + 'px' : dialogPstJO.toString() + 'px'
+    // this.gbl.screenPosition(pstTOP)
     let fres = [], v = d.target.value.toUpperCase()
     if (type === "kode_departemen" && v !== "") {
-      if (this.res_data[ind]['kode_divisi'] === '' || this.res_data[ind]['nama_divisi'] === '') {
+      if (this.res_data[ind]['kode_divisi'] === '' || this.res_data[ind]['nama_divisi'] === '' || this.res_data[ind]['kode_divisi'] === undefined) {
         this.res_data[ind]['kode_departemen'] = ""
         this.res_data[ind]['nama_departemen'] = ""
         this.ref.markForCheck()
@@ -481,7 +538,7 @@ export class DetailJurnalComponent implements OnInit {
           setTimeout(() => {
             this.openDialog(ind, 'kode_divisi')
           }, 100)
-        })
+        }, dialogTOP)
         return
       } else {
         if (this.loadingDepartemen) {
@@ -661,7 +718,6 @@ export class DetailJurnalComponent implements OnInit {
 
     this.total_debit = parseFloat(sum.toFixed(5))
     if (ind !== undefined) {
-
       if (this.jurnalType === "2") {
         // NOT SET
       } else {
@@ -670,31 +726,29 @@ export class DetailJurnalComponent implements OnInit {
             if (i == ind) {
               // NOT SET
             } else if (i != ind && ind != 0) {
-              // NOT SET
+              // NOT SET 
             } else {
-              this.res_data[i]['saldo_debit'] = this.res_data[0]['saldo_debit']
+              this.res_data[i]['saldo_debit'] = this.res_data[ind]['saldo_debit']
             }
-          } else if (this.res_data[ind]['saldo_debit'] <= 0 && this.res_data[i]['saldo_debit'] >= 0) {
-
           }
         }
       }
 
-
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0) {
         this.res_data[ind]['saldo_kredit'] = 0
-        if (this.jurnalType === "0" || this.jurnalType === "1") {
-          if (parseFloat(JSON.stringify(this.res_data[a]['saldo_debit'])) > 0) {
-            this.setValueNewRows['saldo_debit'] = this.res_data[a]['saldo_debit']
-            delete this.setValueNewRows['saldo_kredit']
-            this.countDebit()
-          } else {
-            this.setValueNewRows['saldo_kredit'] = this.res_data[a]['saldo_kredit']
-            delete this.setValueNewRows['saldo_debit']
-            this.countKredit()
-          }
-        }
         this.countKredit(ind)
+      }
+
+      if (this.jurnalType === "0" || this.jurnalType === "1") {
+        if (parseFloat(JSON.stringify(this.res_data[a]['saldo_debit'])) >= 0 && parseFloat(JSON.stringify(this.res_data[a]['saldo_kredit'])) == 0) {
+          this.setValueNewRows['saldo_debit'] = this.res_data[a]['saldo_debit']
+          delete this.setValueNewRows['saldo_kredit']
+          this.countDebit()
+        } else {
+          this.setValueNewRows['saldo_kredit'] = this.res_data[a]['saldo_kredit']
+          delete this.setValueNewRows['saldo_debit']
+          this.countKredit()
+        }
       }
     }
     this.ref.markForCheck()
@@ -715,7 +769,7 @@ export class DetailJurnalComponent implements OnInit {
         // NOT SET
       } else {
         for (var i = 1; i < this.res_data.length; i++) {
-          if (parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit'])) <= 0) {
+          if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0 && parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit'])) <= 0) {
             if (i == ind) {
               // NOT SET
             } else if (i != ind && ind != 0) {
@@ -723,26 +777,25 @@ export class DetailJurnalComponent implements OnInit {
             } else {
               this.res_data[i]['saldo_kredit'] = this.res_data[0]['saldo_kredit']
             }
-          } else if (this.res_data[ind]['saldo_kredit'] <= 0 && this.res_data[i]['saldo_kredit'] >= 0) {
-
           }
         }
       }
 
       if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0) {
         this.res_data[ind]['saldo_debit'] = 0
-        if (this.jurnalType === "0" || this.jurnalType === "1") {
-          if (parseFloat(JSON.stringify(this.res_data[a]['saldo_kredit'])) > 0) {
-            this.setValueNewRows['saldo_kredit'] = this.res_data[a]['saldo_kredit']
-            delete this.setValueNewRows['saldo_debit']
-            this.countKredit()
-          } else {
-            this.setValueNewRows['saldo_debit'] = this.res_data[a]['saldo_debit']
-            delete this.setValueNewRows['saldo_kredit']
-            this.countDebit()
-          }
-        }
         this.countDebit(ind)
+      }
+
+      if (this.jurnalType === "0" || this.jurnalType === "1") {
+        if (parseFloat(JSON.stringify(this.res_data[a]['saldo_kredit'])) > 0 && parseFloat(JSON.stringify(this.res_data[a]['saldo_debit'])) == 0) {
+          this.setValueNewRows['saldo_kredit'] = this.res_data[a]['saldo_kredit']
+          delete this.setValueNewRows['saldo_debit']
+          this.countKredit()
+        } else {
+          this.setValueNewRows['saldo_debit'] = this.res_data[a]['saldo_debit']
+          delete this.setValueNewRows['saldo_kredit']
+          this.countDebit()
+        }
       }
     }
     this.ref.markForCheck()
@@ -890,14 +943,14 @@ export class DetailJurnalComponent implements OnInit {
     )
   }
 
-  openSnackBar(message, type?: any, onCloseFunc?: any) {
+  openSnackBar(message, type?: any, onCloseFunc?: any, topSize?) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
       width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '120px' },
+      position: { top: topSize },
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase(),

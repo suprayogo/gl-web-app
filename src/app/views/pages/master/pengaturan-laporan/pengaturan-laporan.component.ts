@@ -410,13 +410,15 @@ export class PengaturanLaporanComponent implements OnInit {
 
   // Dialog
   openADialog(type) {
+    this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     this.dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '70vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: '90px' },
       data: {
         type: type,
         tableInterface:
@@ -432,7 +434,8 @@ export class PengaturanLaporanComponent implements OnInit {
           type === "kode_akun" ? [] :
             [],
         formValue: this.formAKValue,
-        loadingData: type === "kode_akun" ? this.loadingAkun : null
+        loadingData: type === "kode_akun" ? this.loadingAkun : null,
+        sizeCont: 320
       }
     });
 
@@ -453,12 +456,16 @@ export class PengaturanLaporanComponent implements OnInit {
   }
 
   openDialog(type, st, ft) {
+    let topPst = ft === 'al' || ft === 'at' || ft === 'akao' || ft === 'akai' ? '90px' : ft === 'k' || ft === 'e' || ft === 'akap' ? '540px' : '90px',
+      screenPst = ft === 'al' || ft === 'at' || ft === 'akao' || ft === 'akai' ? 90 : ft === 'k' || ft === 'e' || ft === 'akap' ? 540 : 90
+    this.gbl.screenPosition(screenPst)
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '70vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: topPst },
       data: {
         type: type,
         tableInterface: {},
@@ -476,7 +483,8 @@ export class PengaturanLaporanComponent implements OnInit {
         tableRules:
           type === "kode_akun" ? this.inputAkunTableRules :
             [],
-        formValue: {}
+        formValue: {},
+        sizeCont: 320
       }
     })
 

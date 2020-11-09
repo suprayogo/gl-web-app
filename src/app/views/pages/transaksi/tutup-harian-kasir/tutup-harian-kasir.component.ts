@@ -68,6 +68,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   browseNeedUpdate: boolean = true;
   search: string;
   dayLimit: any = 0;
+  cabang_utama: any;
 
   // Variable Temporary For Range Date
   tgl_terakhir_tutup: any;
@@ -323,7 +324,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
-      onSelectFunc: (v) => { this.setTipeTutup(v) } 
+      onSelectFunc: (v) => { this.setTipeTutup(v) }
     },
     {
       formWidth: 'col-5',
@@ -520,6 +521,12 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
+            let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData))
+            // Cabang Utama User
+            this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
+            this.formValue.kode_cabang = this.cabang_utama.kode_cabang
+            this.formValue.nama_cabang = this.cabang_utama.nama_cabang
+            // this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
             this.loading = false
             this.ref.markForCheck()
           } else {
@@ -534,12 +541,12 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
 
   updateForm(kode_cabang, nama_cabang, tipe_tutup = "0") {
     if (kode_cabang === '' || nama_cabang === '') return
-    
+
     if (tipe_tutup === "0") {
       let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1' && x['buka_kembali'] === "0")[0]
       let tgp = new Date(lp['tgl_periode']).getTime()
       this.tgl_terakhir_tutup = tgp - 86400000 // <-- (2020-05-01) CONTOH Tanggal Terakhir Tutup Kasir After Get Kode Cabang
-  
+
       this.periode_kasir = {
         id_periode: lp['id_periode'],
         tgl_periode: lp['tgl_periode']
@@ -572,19 +579,19 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         },
         maxDate: () => {
           let dt = new Date(this.periode_kasir['tgl_periode']),
-          maxDt = (dt.getMonth() + 1) == 2 ? 29 :
-            (
-              (dt.getMonth() + 1) == 1 ||
-              (dt.getMonth() + 1) == 3 ||
-              (dt.getMonth() + 1) == 5 ||
-              (dt.getMonth() + 1) == 7 ||
-              (dt.getMonth() + 1) == 8 ||
-              (dt.getMonth() + 1) == 10 ||
-              (dt.getMonth() + 1) == 12
-            ) ? 31 : 30,
+            maxDt = (dt.getMonth() + 1) == 2 ? 29 :
+              (
+                (dt.getMonth() + 1) == 1 ||
+                (dt.getMonth() + 1) == 3 ||
+                (dt.getMonth() + 1) == 5 ||
+                (dt.getMonth() + 1) == 7 ||
+                (dt.getMonth() + 1) == 8 ||
+                (dt.getMonth() + 1) == 10 ||
+                (dt.getMonth() + 1) == 12
+              ) ? 31 : 30,
             exceedDt = (dt.getDate() + this.dayLimit) > maxDt ? true : false,
             mt = exceedDt == true ? dt.getMonth() + 2 : dt.getMonth() + 1,
-            aDt = exceedDt == true ? ((dt.getDate() + this.dayLimit) - maxDt) : dt.getDate() + this.dayLimit 
+            aDt = exceedDt == true ? ((dt.getDate() + this.dayLimit) - maxDt) : dt.getDate() + this.dayLimit
           return {
             year: dt.getFullYear(),
             month: mt,
@@ -596,8 +603,8 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
           matchValue: "1"
         }
       })
-  
-      
+
+
     } else {
       let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1' && x['buka_kembali'] === "1")
       let res = []
@@ -640,7 +647,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     }
     this.formInputCheckChanges()
     this.ref.markForCheck()
-    
+
   }
 
   getHari(set_tgl_tutup) {
@@ -691,11 +698,12 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '65vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: '30px' },
       data: {
         type: type,
         tableInterface:
@@ -720,6 +728,8 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
           if (this.forminputTHK !== undefined) {
             this.forminputTHK.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminputTHK.updateFormValue('nama_cabang', result.nama_cabang)
+            this.formValue.kode_cabang = result.kode_cabang
+            this.formValue.nama_cabang = result.nama_cabang
             this.updateForm(result.kode_cabang, result.nama_cabang, this.forminputTHK.getData()['tipe_tutup'])
           }
         }

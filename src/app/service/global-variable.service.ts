@@ -67,6 +67,18 @@ export class GlobalVariableService {
     }, "*")
   }
 
+  // Screen Position
+  screenPosition(valBottom?) {
+    window.parent.postMessage({
+      'type': 'MOVE-SCREEN',
+      'res': {
+        status: true,
+        setBottom: valBottom === undefined ? 500 : valBottom
+      }
+    }, "*")
+  }
+  
+
   // NEED COMPANY AND PERIOD
   need(Company, Period, isPeriodeKasir?: boolean) {
     window.parent.postMessage({

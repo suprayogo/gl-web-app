@@ -207,11 +207,11 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     this.dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '70vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
-      position: { top: '20px' },
+      position: { top: '10px' },
       backdropClass: 'bg-dialog',
       data: {
         type: type,
@@ -231,7 +231,8 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
         containerHeight: '300',
         selected: this.detailData,
         selectIndicator: "kode_akun",
-        loadingData: type === "kode_akun" ? this.loadingAkun : null
+        loadingData: type === "kode_akun" ? this.loadingAkun : null,
+        sizeCont: 380
       }
     });
 

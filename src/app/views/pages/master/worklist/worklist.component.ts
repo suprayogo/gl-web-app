@@ -276,6 +276,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
+          console.log(resp)
           for (var i = 0; i < resp.length; i++) {
             let t = {
               id_tran: resp[i]['id_tran'],
@@ -329,14 +330,14 @@ export class WorklistComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
-      height: '70vh',
+      height: '80vh',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
       position: { top: '50px' },
       data: {
         buttonName: 'Terima',
-        width: '90vw',
+        width: '75vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -349,6 +350,7 @@ export class WorklistComponent implements OnInit, AfterViewInit {
         jurnalDataAkun: [],
         noEditJurnal: true,
         noButton: true,
+        sizeCont: 350,
         btnWL: true,
         btnReject: 'Tolak',
         btnRevision: 'Revisi',

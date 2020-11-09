@@ -132,7 +132,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
   disablePrintButton2: boolean = false; // <-- TOMBOL CETAKAN DISABLE/TIDAK
   keyReportFormatExcel: any; // <-- SET KEY UNTUK CETAKAN KE EXCEL
   checkKeyReport = {} // <-- SET KEY UNTUK REQUEST YANG SAMA
-  reportDetail = [] // <-- DATA CETAKAN
+  formReport = {} // <-- DATA HEADER CETAKAN 
+  reportDetail = [] // <-- DATA DETAIL CETAKAN 
 
   // FORMAT CETAKAN DOKUMEN
   reportObj = {
@@ -512,7 +513,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         }
       },
       update: {
-        disabled: false
+        disabled: true
       }
     },
     {
@@ -693,6 +694,47 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // TAB MENU BROWSE
   displayedColumnsTable = [];
+  displayedColumnsTableUmum = [
+    {
+      label: 'No. Jurnal',
+      value: 'no_tran'
+    },
+    {
+      label: 'Tgl. Jurnal',
+      value: 'tgl_tran',
+      date: true
+    },
+    {
+      label: 'Cabang',
+      value: 'nama_cabang'
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
+    },
+    {
+      label: 'Batal Status',
+      value: 'batal_status_sub'
+    },
+    {
+      label: 'Diinput oleh',
+      value: 'nama_input_by',
+    },
+    {
+      label: 'Diinput tanggal',
+      value: 'input_dt',
+      date: true
+    },
+    {
+      label: 'Diupdate oleh',
+      value: 'nama_update_by'
+    },
+    {
+      label: 'Diupdate tanggal',
+      value: 'update_dt',
+      date: true
+    }
+  ];
   displayedColumnsTableKasir = [
     {
       label: 'No. Transaksi',
@@ -730,48 +772,6 @@ export class BatchComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Status',
-      value: 'batal_status_sub'
-    },
-    {
-      label: 'Diinput oleh',
-      value: 'nama_input_by',
-    },
-    {
-      label: 'Diinput tanggal',
-      value: 'input_dt',
-      date: true
-    },
-    {
-      label: 'Diupdate oleh',
-      value: 'nama_update_by'
-    },
-    {
-      label: 'Diupdate tanggal',
-      value: 'update_dt',
-      date: true
-    }
-  ];
-
-  displayedColumnsTableUmum = [
-    {
-      label: 'No. Jurnal',
-      value: 'no_tran'
-    },
-    {
-      label: 'Tgl. Jurnal',
-      value: 'tgl_tran',
-      date: true
-    },
-    {
-      label: 'Cabang',
-      value: 'nama_cabang'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
-    },
-    {
-      label: 'Batal Status',
       value: 'batal_status_sub'
     },
     {
@@ -951,7 +951,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
                 this.id_kasir = t['id_kasir']
                 this.reqPeriodeKasir()
               }
-            }else{
+            } else {
               this.tipe_jurnal.splice(2, 1)
               this.reqDataAkun('umum')
             }
@@ -1233,15 +1233,21 @@ export class BatchComponent implements OnInit, AfterViewInit {
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data)),
       t_tran = new Date(x['tgl_tran'])
-    if (this.forminput.getData()['jenis_jurnal'] === "2") {
-      this.formValue = this.setFormV(x, t_tran, 'kasir')
-    } else {
-      this.formValue = this.setFormV(x, t_tran, 'umum')
-      this.id_periode = x['id_periode']
-    }
-    this.onUpdate = true;
     this.enableCancel = x['boleh_batal'] === 'Y' ? true : false
     this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
+    if (this.forminput.getData()['jenis_jurnal'] === "2") {
+      this.formValue = this.setFormV(x, t_tran, 'kasir')
+      this.id_periode = x['id_periode']
+    } else {
+      this.formValue = this.setFormV(x, t_tran, 'umum')
+      if(this.forminput.getData()['periode'] === "0"){
+        this.insertAt(this.inputLayout, 5, 1, this.setFormLayout('umum'))
+      }/* else if(this.forminput.getData()['periode'] === "1"){
+        // WAITING
+      } */
+    }
+    this.insertAt(this.inputLayout, 6, 1, this.setFormLayout('ket'))
+    this.onUpdate = true;
     this.getBackToInput();
   }
 
@@ -1286,6 +1292,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // BACK TO TAB MENU : INPUT
   getBackToInput() {
+    this.formReport = {}
+    this.reportDetail = []
     this.selectedTab = 0;
     this.getDetail()
     this.formInputCheckChanges()
@@ -1441,7 +1449,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
                 this.refreshBrowse('', this.formValue.id_tran_jt)
               } else {
                 this.refreshBrowse('')
-                this.printDoc(cetak)
+                this.printDoc2(cetak)
               }
             } else {
               this.resetForm()
@@ -1591,26 +1599,20 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   printDoc(v) {
-    let x = true
-    if (this.reportDetail.length > 0) {
-      if (JSON.stringify(this.detailData) === JSON.stringify(this.reportDetail) == false) {
-        x = false
-      }
-    }
     if (this.forminput !== undefined || this.formValue !== undefined) {
       this.ref.markForCheck()
-      let rk = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
-      if(this.enableEdit == false){
+      let ru = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
+      if (this.enableEdit == false || (this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true)) {
         this.dialog.closeAll()
       }
-      if (this.checkKeyReport[rk] !== undefined && x == true) {
+      if (this.checkKeyReport[ru] !== undefined && this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[ru], "_blank")
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
-            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
+            this.keyReportFormatExcel = this.checkKeyReport[ru] + '.xlsx'
           } else {
-            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
+            this.keyReportFormatExcel = this.checkKeyReport[ru] + '.xls'
           }
           setTimeout(() => {
             let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
@@ -1620,14 +1622,15 @@ export class BatchComponent implements OnInit, AfterViewInit {
         this.loading = false
         this.ref.markForCheck()
       } else {
+        this.formReport = JSON.parse(JSON.stringify(this.formValue))
         this.reportDetail = JSON.parse(JSON.stringify(this.detailData))
         let data = []
         for (var i = 0; i < this.reportDetail.length; i++) {
           let t = []
-          t.push(this.formValue['no_tran'])
-          t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
-          t.push(this.formValue.keterangan)
-          t.push(this.formValue.nama_cabang)
+          t.push(this.formReport['no_tran'])
+          t.push(new Date(parseInt(this.formReport['tgl_tran'])).getTime())
+          t.push(this.formReport['keterangan'])
+          t.push(this.formReport['nama_cabang'])
           t.push(this.reportDetail[i]['kode_akun'])
           t.push(this.reportDetail[i]['nama_akun'])
           t.push(this.reportDetail[i]['keterangan_1'])
@@ -1693,7 +1696,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         ]
         rp['FIELD_DATA'] = data
 
-        this.sendGetPrintDoc(rp, v['format_cetak'])
+        this.sendGetPrintDoc(rp, v['format_cetak'], 'umum')
       }
     } else {
       this.loading = false
@@ -1703,19 +1706,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   printDoc2(v) {
-    let x = true
-    if (this.reportDetail.length > 0) {
-      if (JSON.stringify(this.detailData) === JSON.stringify(this.reportDetail) == false) {
-        x = false
-      }
-    }
     if (this.forminput !== undefined || this.formValue !== undefined) {
       this.ref.markForCheck()
       let rk = this.formValue['id_tran'] + this.formValue['id_tran_jt'] + this.formValue['no_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
-      if(this.enableEdit == false){
+      if (this.enableEdit == false || (this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true)) {
         this.dialog.closeAll()
       }
-      if (this.checkKeyReport[rk] !== undefined && x == true) {
+      if (this.checkKeyReport[rk] !== undefined && this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true) {
         if (this.formDetail['format_cetak'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
@@ -1732,21 +1729,22 @@ export class BatchComponent implements OnInit, AfterViewInit {
         this.loading = false
         this.ref.markForCheck()
       } else {
+        this.formReport = JSON.parse(JSON.stringify(this.formValue))
         this.reportDetail = JSON.parse(JSON.stringify(this.detailData))
         let data = []
         for (var i = 1; i < this.reportDetail.length; i++) {
           let t = []
-          t.push(this.formValue['no_tran'])
-          t.push(new Date(parseInt(this.formValue['tgl_tran'])).getTime())
-          t.push(this.formValue.keterangan)
-          t.push(this.formValue.nama_cabang)
+          t.push(this.formReport['no_tran'])
+          t.push(new Date(parseInt(this.formReport['tgl_tran'])).getTime())
+          t.push(this.formReport['keterangan'])
+          t.push(this.formReport['nama_cabang'])
           t.push(this.reportDetail[i]['kode_akun'])
           t.push(this.reportDetail[i]['nama_akun'])
           t.push(this.reportDetail[i]['keterangan_1'])
           t.push(this.reportDetail[i]['keterangan_2'])
           t.push(this.reportDetail[i]['saldo_debit'])
           t.push(this.reportDetail[i]['saldo_kredit'])
-          t.push(this.formValue.saldo_transaksi)
+          t.push(this.formReport['saldo_transaksi'])
 
           data.push(t)
 
@@ -1805,14 +1803,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
           "string",
           "string",
           "string",
-          "string",
           "bigdecimal",
           "bigdecimal",
           "string",
           "bigdecimal"
         ]
         rp['FIELD_DATA'] = data
-        this.sendGetPrintDoc(rp, this.formDetail['format_cetak'])
+        this.sendGetPrintDoc(rp, v['format_cetak'], 'kasir')
       }
     } else {
       this.loading = false
@@ -1821,7 +1818,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendGetPrintDoc(p, type) {
+  sendGetPrintDoc(p, type, jurnal) {
     this.request.apiData('report', 'g-report', p).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -1838,8 +1835,15 @@ export class BatchComponent implements OnInit, AfterViewInit {
               sbmBtn.click();
             }, 100)
           }
-          let rk = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
-          this.checkKeyReport[rk] = data['RESULT']
+          //
+          let ru, rk
+          if (jurnal === "umum") {
+            ru = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
+            this.checkKeyReport[ru] = data['RESULT']
+          } else if (jurnal === "kasir") {
+            rk = this.formValue['id_tran'] + this.formValue['id_tran_jt'] + this.formValue['no_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
+            this.checkKeyReport[rk] = data['RESULT']
+          }
           //
           this.onUpdate = true
           this.loading = false
@@ -1990,7 +1994,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         update: {
-          disabled: false
+          disabled: this.enableEdit == true ? false : true
         },
         timepick: false,
         enableMin: true,
@@ -2040,7 +2044,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         update: {
-          disabled: false
+          disabled: true
         },
         timepick: false,
         enableMin: true,
@@ -2163,6 +2167,20 @@ export class BatchComponent implements OnInit, AfterViewInit {
         },
         onSelectFunc: (v) => this.setPeriode(v)
       }
+    } else if(type === "ket"){
+      x = {
+        labelWidth: 'col-3',
+        formWidth: 'col-9',
+        label: 'Keterangan',
+        id: 'keterangan',
+        type: 'input',
+        valueOf: 'keterangan',
+        required: false,
+        readOnly: false,
+        update: {
+          disabled: this.enableEdit == true ? false : true
+        }
+      }
     }
     return x
   }
@@ -2188,18 +2206,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
         periode: this.formValue.periode,
 
         // Validate Input Box Jurnal Transaksi
-        tipe_laporan: "",
-
-        // Validate Detail Input Jurnal Jurnal Umum
-        edit: value['boleh_edit'],
-        batal: value['boleh_batal']
+        tipe_laporan: ""
       }
     } else if (type === "kasir") {
       x = {
         // General
         id_tran: value['id_tran_jurnal'],
         no_tran: value['no_tran'],
-        id_akses_periode: value['id_periode'],
         tgl_tran: JSON.stringify(date_value.getTime()),
         kode_cabang: value['kode_cabang'],
         nama_cabang: value['nama_cabang'],
@@ -2214,32 +2227,66 @@ export class BatchComponent implements OnInit, AfterViewInit {
         id_jenis_transaksi: value['id_jenis_transaksi'],
         kode_jenis_transaksi: value['kode_jenis_transaksi'],
         nilai_jenis_transaksi: value['nilai_jenis_transaksi'],
-        lembar_giro: value['lembar_giro'],
+        lembar_giro: value['lbr_giro'],
         tipe_transaksi: value['tipe_transaksi'],
         saldo_transaksi: value['saldo_transaksi'],
         tipe_laporan: value['tipe_laporan'],
         kode_template: value['kode_template'],
 
         // Jenis Periode
-        periode: this.formValue.periode,
-
-        // Validate Detail Input Jurnal Jurnal transaksi
-        edit_kasir: value['boleh_edit'],
-        batal_kasir: value['boleh_batal']
+        periode: this.formValue.periode
       }
     }
 
     return x
   }
 
+  setStatusChange() {
+    let x = true,
+      y = true,
+      z = {},
+      statusChange
+    //
+    z = JSON.parse(JSON.stringify(this.formValue))
+    z = this.forminput === undefined ? z : this.forminput.getData()
+
+    if (this.formValue.jenis_jurnal === "2") {
+      this.formValue.tipe_transaksi = z['tipe_transaksi']
+      this.formValue.lembar_giro = z['lembar_giro']
+    } else {
+      this.formValue.tgl_tran = z['tgl_tran']
+    }
+    this.formValue.keterangan = z['keterangan']
+    this.detailData = this.forminput === undefined ? this.detailData : this.forminput.getData()['detail']['data']
+
+    if (Object.keys(this.formReport).length > 0 || this.reportDetail.length > 0) {
+      if (JSON.stringify(this.formValue) === JSON.stringify(this.formReport) == false) {
+        x = false
+      }
+
+      if (JSON.stringify(this.detailData) === JSON.stringify(this.reportDetail) == false) {
+        y = false
+      }
+    }
+
+    statusChange = {
+      header: x,
+      detail: y
+    }
+
+    return statusChange
+  }
+
   openDialog(type) {
+    this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '60vw',
+      width: '55vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: '20px' },
       data: {
         type: type,
         tableInterface:
@@ -2258,8 +2305,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
           type === "kode_cabang" ? this.inputCabangDataRules :
             type === "tgl_tran" ? this.inputTanggalDataRules :
               [],
-        formValue: this.formValue
-      }
+        formValue: this.formValue,
+        sizeCont: 380,
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -2310,8 +2358,18 @@ export class BatchComponent implements OnInit, AfterViewInit {
         onBlur: (t, v) => null,
         openDialog: (t) => null,
         resetForm: () => this.resetDetailForm(),
-        onSubmit: (x: NgForm) => type === "umum" ? this.onUpdate == true ? this.enableEdit == true ? this.saveData('umum', this.formDetail) : this.printDoc(this.formDetail) : this.saveData('umum', this.formDetail) :
-          type === "kasir" ? this.onUpdate == true ? this.enableEdit == true ? this.saveData('kasir', this.formDetail) : this.printDoc2(this.formDetail) : this.saveData('kasir', this.formDetail) :
+        onSubmit: (x: NgForm) => type === "umum" ?
+          this.onUpdate == true ?
+            this.enableEdit == true ?
+              this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true ? this.printDoc(this.formDetail) : this.saveData('umum', this.formDetail) :
+              this.printDoc(this.formDetail)
+            : this.saveData('umum', this.formDetail) :
+          type === "kasir" ?
+            this.onUpdate == true ?
+              this.enableEdit == true ?
+                this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true ? this.printDoc2(this.formDetail) : this.saveData('kasir', this.formDetail) :
+                this.printDoc2(this.formDetail)
+              : this.saveData('kasir', this.formDetail) :
             {},
         deleteData: () => null,
       },

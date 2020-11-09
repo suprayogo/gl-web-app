@@ -431,7 +431,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       backdropClass: 'bg-dialog',
       position: { top: '10px' },
       data: {
-        width: '90vw',
+        width: '85vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -543,10 +543,11 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()

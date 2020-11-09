@@ -661,9 +661,9 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '50px' },
+      position: { top: '40px' },
       data: {
-        width: '90vw',
+        width: '75vw',
         buttonLayout: [],
         selectableDatatable: true,
         lowLoader: false,
@@ -674,6 +674,7 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
         jurnalDataAkun: [],
         noEditJurnal: true,
         noButton: true,
+        sizeCont: 350,
         noButtonSave: true,
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
@@ -726,10 +727,11 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()

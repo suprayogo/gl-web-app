@@ -398,11 +398,12 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '60vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: '30px' },
       data: {
         type: type,
         tableInterface:

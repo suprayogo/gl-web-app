@@ -467,6 +467,8 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
+    console.log(this.dataJurnal)
+    console.log(this.formDetail.no_jurnal)
     let specData = this.dataJurnal.filter(x => x['no_tran'] === this.formDetail.no_jurnal)[0] || {}
 
     this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: specData.id_tran }).subscribe(
@@ -703,9 +705,9 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '50px' },
+      position: { top: '10px' },
       data: {
-        width: '90vw',
+        width: '85vw',
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -830,7 +832,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       atas_nama: x['atas_nama'],
       saldo_masuk: x['saldo_masuk'],
       saldo_keluar: x['saldo_keluar'],
-      nilai_saldo: 'Rp. ' + parseFloat(x['nilai_saldo']),
+      nilai_saldo: 'Rp. ' + parseFloat(x['saldo_transaksi']),
       keterangan: x['keterangan'],
       tipe_laporan: x['tipe_laporan'],
       lembar_giro: x['lembar_giro'],
@@ -841,10 +843,11 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
 
   openSnackBar(message, type?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: '90vw',
+      width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()

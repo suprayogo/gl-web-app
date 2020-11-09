@@ -102,7 +102,7 @@
             <!-- End: Jurnal Umum -->
 
             <!-- Begin: Template Transaksi -->
-            <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
+            <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
                 *ngIf="templateTransaksi">
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'bDebit-' + i }}"
                     (blur)="countPercentDebit(i)" (keyup.enter)="countPercentDebit(i)"
@@ -112,7 +112,7 @@
                     <span class="input-group-text" id="basic-addon-left">%</span>
                 </div>
             </div>
-            <div style="width: 20%; padding: 10px" class="input-group" *ngIf="templateTransaksi">
+            <div style="width: 19%; padding: 10px" class="input-group" *ngIf="templateTransaksi">
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'bKredit-' + i }}"
                     (blur)="countPercentKredit(i)" (keyup.enter)="countPercentKredit(i)"
                     (keyup.tab)="countPercentKredit(i)" [(ngModel)]="res_data[i]['bobot_kredit']" currencyMask
@@ -124,13 +124,13 @@
             <!-- End: Template Transaksi-->
 
             <!-- Begin: Jurnal Otomatis -->
-            <div style="width: 20%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;"
+            <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;"
                 *ngIf="jurnalOtomatis">
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
                         [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
                     <div class="input-group-append">
-                        <button tabindex="-1" type="button" class="btn btn-primary"
+                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                             (click)="openDialog(i, 'kode_setting', 'd')">
                             Pilih
                         </button>
@@ -138,12 +138,12 @@
                 </div>
                 <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
             </div>
-            <div style="width: 20%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis">
+            <div style="width: 19%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis">
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
                         [(ngModel)]="res_data[i]['setting_kredit']" placeholder="Sumber data" readonly>
                     <div class="input-group-append">
-                        <button tabindex="-1" type="button" class="btn btn-primary"
+                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                             (click)="openDialog(i, 'kode_setting', 'k')">
                             Pilih
                         </button>

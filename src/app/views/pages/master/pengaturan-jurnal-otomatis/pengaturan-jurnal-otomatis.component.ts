@@ -259,16 +259,11 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     {
       label: 'Nama Cabang',
       value: 'nama_cabang'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
     }
   ]
   inputCabangInterface = {
     kode_cabang: 'string',
-    nama_cabang: 'string',
-    keterangan: 'string'
+    nama_cabang: 'string'
   }
   inputCabangData = []
   inputCabangDataRules = []
@@ -670,6 +665,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   // Dialog
   openDialog(type) {
+    this.gbl.topPage()
     if (type === 'kode_departemen') {
       let fc = this.forminput.getData()
       if (fc['kode_divisi'] === '' || fc['nama_divisi'] === '') {
@@ -683,11 +679,12 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     }
     this.dialogType = JSON.parse(JSON.stringify(type))
     this.dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: '55vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
+      position: { top: '20px' },
       data: {
         type: type,
         tableInterface:
@@ -711,7 +708,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
               type === "kode_cabang" ? this.inputCabangDataRules :
                 [],
         formValue: this.formValue,
-        loadingData: type === "kode_departemen" ? this.loadingDepartemen : null
+        loadingData: type === "kode_departemen" ? this.loadingDepartemen : null,
+        sizeCont: 380
       }
     });
 
