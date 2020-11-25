@@ -11,7 +11,7 @@ import { DetailJurnalComponent } from '../detail-jurnal/detail-jurnal.component'
   templateUrl: './inputdialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./inputdialog.component.scss', '../datatable-ag-grid/datatable-ag-grid.component.scss'],
-  providers: [{provide: NgbTimeAdapter, useClass: TimeStringAdapter}]
+  providers: [{ provide: NgbTimeAdapter, useClass: TimeStringAdapter }]
 })
 export class InputdialogComponent implements OnInit {
 
@@ -70,11 +70,11 @@ export class InputdialogComponent implements OnInit {
   //Detail loading variable
   // @Input() enableDetail: boolean;
   detailLoad: boolean;
-  detailJurnal: boolean; 
+  detailJurnal: boolean;
   jurnalDataAkun: any;
   jurnalData: any;
   noEditJurnal: boolean;
-  
+
   constructor(
     public dialogRef: MatDialogRef<InputdialogComponent>,
     @Inject(MAT_DIALOG_DATA) public parameter: any,
@@ -82,11 +82,16 @@ export class InputdialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.detailLoad = this.parameter.detailLoad
     this.detailJurnal = this.parameter.detailJurnal
     this.jurnalDataAkun = this.parameter.jurnalDataAkun
     this.jurnalData = this.parameter.jurnalData
     this.noEditJurnal = this.parameter.noEditJurnal
+    if (this.detailJurnal == true) {
+      this.checkChangesDetailJurnal()
+    }
+
     this.buttonName = this.parameter.buttonName === undefined ? "Simpan" : this.parameter.buttonName
     this.noButtonSave = this.parameter.noButtonSave
     this.formValue = this.parameter.formValue
@@ -111,12 +116,12 @@ export class InputdialogComponent implements OnInit {
     this.btnRevision = this.parameter.btnRevision === undefined ? "Simpan" : this.parameter.btnRevision
     this.revisionData = () => this.revision()
 
-    if(this.comparison){
+    if (this.comparison) {
       this.compareForm = this.parameter.compareForm
       this.comparedForm = this.parameter.comparedForm
       this.compareLayout = this.parameter.compareLayout
       this.comparedLayout = this.parameter.comparedLayout
-    }else if(this.selectableDatatable){
+    } else if (this.selectableDatatable) {
       this.selectableDisplayColumns = this.parameter.selectableDisplayColumns
       this.selectableInterface = this.parameter.selectableInterface
       this.selectableData = this.parameter.selectableData
@@ -127,7 +132,7 @@ export class InputdialogComponent implements OnInit {
       this.sizeCont = this.parameter.sizeCont
 
     }
-    if(this.parameter.checkUponInit == true) this.initCheck()
+    if (this.parameter.checkUponInit == true) this.initCheck()
     this.cWidth = this.parameter.width === undefined ? null : this.parameter.width
     this.uniqueId = this.parameter.uniqueId === undefined ? null : this.parameter.uniqueId
     this.uniqueForm = this.parameter.uniqueForm === undefined ? [] : this.parameter.uniqueForm
@@ -152,8 +157,8 @@ export class InputdialogComponent implements OnInit {
     this.parameter.revisionData()
   }
 
-  closeDialog(t?){
-    if(this.comparison == true){
+  closeDialog(t?) {
+    if (this.comparison == true) {
       this.resetWholeCompare()
     }
     this.dialogRef.close({
@@ -162,19 +167,26 @@ export class InputdialogComponent implements OnInit {
     this.parameter.resetForm()
   }
 
-  initCheck(){
+  initCheck() {
     setTimeout(() => this.checkChanges(), 0)
   }
 
-  checkChanges(){
+  checkChanges() {
     this.ref.markForCheck()
   }
 
-  getValue(compareForm, index, valueOf){
+  checkChangesDetailJurnal() {
+    setTimeout(() => {
+      this.ref.markForCheck()
+      this.detailjurnal === undefined ? null : this.detailjurnal.checkChanges()
+    }, 1);
+  }
+
+  getValue(compareForm, index, valueOf) {
     return this.formValue[compareForm][index][valueOf]
   }
 
-  parseInteger(compareForm, index, valueOf){
+  parseInteger(compareForm, index, valueOf) {
     return parseInt(this.formValue[compareForm][index][valueOf])
   }
 
@@ -191,7 +203,7 @@ export class InputdialogComponent implements OnInit {
   }
 
   resetWholeCompare() {
-    for(var i = 0; i< this.formValue[this.compareForm].length; i++){
+    for (var i = 0; i < this.formValue[this.compareForm].length; i++) {
       this.resetCompare(i)
     }
   }
@@ -200,21 +212,21 @@ export class InputdialogComponent implements OnInit {
     this.parameter.compareReset(index)
   }
 
-  onCompareChange(comparedForm, valueOf, index, data){
+  onCompareChange(comparedForm, valueOf, index, data) {
 
     this.parameter.compareChange(comparedForm, valueOf, index, data)
 
   }
 
-  dialogRowSelect(data){
+  dialogRowSelect(data) {
     this.dialogRef.close(data)
   }
 
-  getSelected(){
-    if(this.isDetail)
-    return this.detailinput === undefined || this.detailinput == null ? null : this.detailinput.getSelected()
+  getSelected() {
+    if (this.isDetail)
+      return this.detailinput === undefined || this.detailinput == null ? null : this.detailinput.getSelected()
     else
-    return this.datatable === undefined || this.datatable == null ? null : this.datatable.getSelected()
+      return this.datatable === undefined || this.datatable == null ? null : this.datatable.getSelected()
   }
 
   //Convert NG Date picker result
@@ -251,32 +263,32 @@ export class InputdialogComponent implements OnInit {
   getDateNow() {
     let date = new Date(Date.now())
 
-    return date.getFullYear() + '-' + date.getMonth() + 1 + '-' + String(date.getDate()).padStart(2,"0")
+    return date.getFullYear() + '-' + date.getMonth() + 1 + '-' + String(date.getDate()).padStart(2, "0")
   }
 
   getTimeNow(offset?: number) {
     let pdata = Date.now()
     let date = pdata == null ? null : new Date(pdata)
-    if(!offset)
-    return date == null ? '' : `${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getHours() < 10 ? '0'+date.getMinutes() : date.getMinutes()}:00`
+    if (!offset)
+      return date == null ? '' : `${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getHours() < 10 ? '0' + date.getMinutes() : date.getMinutes()}:00`
     else
-    return date == null ? '' : `${date.getHours() + offset < 10 ? '0' + (date.getHours() + offset) : date.getHours() + offset}:${date.getHours() < 10 ? '0'+date.getMinutes() : date.getMinutes()}:00`
+      return date == null ? '' : `${date.getHours() + offset < 10 ? '0' + (date.getHours() + offset) : date.getHours() + offset}:${date.getHours() < 10 ? '0' + date.getMinutes() : date.getMinutes()}:00`
   }
 
   getMinToday(c_data?: any) {
-    if(c_data !== undefined || c_data != null){
+    if (c_data !== undefined || c_data != null) {
       let pdata = parseInt(this.formValue[c_data])
       let date = pdata == null ? null : new Date(pdata)
-  
+
       return {
         year: date.getFullYear(),
         month: date.getMonth() + 1,
         day: date.getDate()
       }
-    }else{
+    } else {
       let pdata = Date.now()
       let date = pdata == null ? null : new Date(pdata)
-  
+
       return {
         year: date.getFullYear(),
         month: date.getMonth() + 1,
@@ -287,7 +299,7 @@ export class InputdialogComponent implements OnInit {
 
   getSumOfData(value) {
     let t = 0
-    for(var k in this.listForm){
+    for (var k in this.listForm) {
       t = t + (parseInt(this.listForm[k][value]) > 0 ? parseInt(this.listForm[k][value]) : 0)
     }
     return t
@@ -297,23 +309,23 @@ export class InputdialogComponent implements OnInit {
     try {
       decimalCount = Math.abs(decimalCount);
       decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-  
+
       const negativeSign = amount < 0 ? "-" : "";
-  
+
       let i: any = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
       let j = (i.length > 3) ? i.length % 3 : 0;
-  
+
       return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
     } catch (e) {
-      
+
     }
   }
 
   // UANG JALAN UNIQUE FUNCTION
   getTotalBayarTahap() {
     let t = 0
-    if(Array.isArray(this.uniqueForm)){
-      for(var i = 0; i < this.uniqueForm.length; i++){
+    if (Array.isArray(this.uniqueForm)) {
+      for (var i = 0; i < this.uniqueForm.length; i++) {
         t = t + (parseInt(this.uniqueForm[i]['nilai_bayar']) > 0 ? parseInt(this.uniqueForm[i]['nilai_bayar']) : 0)
       }
     }
@@ -333,7 +345,7 @@ export class InputdialogComponent implements OnInit {
   }
 
   //Selection event
-	selection(data, type, func?) {
+  selection(data, type, func?) {
     this.formValue[type] = data.target.value
     if (func !== undefined) {
       func(data.target.value)

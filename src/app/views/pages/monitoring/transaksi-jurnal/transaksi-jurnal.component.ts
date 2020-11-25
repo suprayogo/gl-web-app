@@ -74,6 +74,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
     nama_departemen: '',
     keterangan: '',
     no_jurnal: '',
+    jenis_jurnal: '0'
   }
 
   inputPeriodeDisplayColumns = [
@@ -521,6 +522,7 @@ export class TransaksiJurnalComponent implements OnInit, AfterViewInit {
       nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan'],
       no_jurnal: '',
+      jenis_jurnal: '0'
     }
     let specData = this.dataTransaksi.filter(x => x['no_jurnal'] === this.formDetail.no_tran)[0] || {}
     this.formDetail.no_jurnal = specData.no_tran

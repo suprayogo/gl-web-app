@@ -121,7 +121,8 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -129,7 +130,8 @@ export class JenisTransaksiComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diupdate tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {

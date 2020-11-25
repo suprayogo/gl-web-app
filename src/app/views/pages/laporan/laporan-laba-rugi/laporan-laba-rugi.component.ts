@@ -52,6 +52,17 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     },
   ]
 
+  jenis_laporan = [
+    {
+      label: 'Rekap',
+      value: '0'
+    },
+    {
+      label: 'Perincian',
+      value: '1'
+    }
+  ]
+
   // VARIABLES
   keyReportFormatExcel: any;
   nama_tombol: any;
@@ -140,6 +151,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   // Input Name
   formValueLR = {
     format_laporan: 'xlsx',
+    jenis_laporan: '0',
     kode_cabang: '',
     nama_cabang: '',
     tahun: '',
@@ -174,6 +186,18 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       type: 'combobox',
       options: this.format_laporan,
       valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Jenis Laporan',
+      id: 'jenis-laporan',
+      type: 'combobox',
+      options: this.jenis_laporan,
+      valueOf: 'jenis_laporan',
       required: true,
       readOnly: false,
       disabled: false,
@@ -311,6 +335,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         }
 
         if (p['id_periode'] !== undefined) {
+          p['kode_report'] = this.formValueLR['format_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
           p['periode_berjarak'] = +this.formValueLR.periode_berjarak.length > 1 ? this.formValueLR.periode_berjarak : "0" + this.formValueLR.periode_berjarak
@@ -390,7 +415,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
                 p['bulan_periode'] = +p['bulan_periode']
                 p['periode_berjarak'] = +p['periode_berjarak']
 
-                this.sendGetReport(rp, this.formValueLR['format_laporan'])
+                this.sendGetReport(d, this.formValueLR['format_laporan'])
               } else {
                 p['bulan_periode'] = +p['bulan_periode']
                 p['periode_berjarak'] = +p['periode_berjarak']
@@ -410,6 +435,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   resetFormLR() {
     this.formValueLR = {
       format_laporan: 'xlsx',
+      jenis_laporan: '0',
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
       tahun: this.activePeriod['tahun_periode'],
@@ -418,7 +444,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
 
     this.bulanLR = this.initBulan[this.formValueLR['tahun']]
-    this.inputLayoutLR.splice(2, 2,
+    this.inputLayoutLR.splice(4, 2,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -654,6 +680,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     
     this.formValueLR = {
       format_laporan: this.formValueLR.format_laporan,
+      jenis_laporan: this.formValueLR.jenis_laporan,
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
       tahun: this.formValueLR.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueLR.tahun,
@@ -662,7 +689,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
-    this.inputLayoutLR.splice(0, 4,
+    this.inputLayoutLR.splice(0, 5,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -671,6 +698,18 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         type: 'combobox',
         options: this.format_laporan,
         valueOf: 'format_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      },
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Jenis Laporan',
+        id: 'jenis-laporan',
+        type: 'combobox',
+        options: this.jenis_laporan,
+        valueOf: 'jenis_laporan',
         required: true,
         readOnly: false,
         disabled: false,
@@ -752,6 +791,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   getBulan(filterBulan, loopBulan) {
     this.formValueLR = {
       format_laporan: this.formValueLR['format_laporan'],
+      jenis_laporan: this.formValueLR['jenis_laporan'],
       kode_cabang: this.formValueLR['kode_cabang'],
       nama_cabang: this.formValueLR['nama_cabang'],
       tahun: filterBulan,
@@ -759,7 +799,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       periode_berjarak: ""
     }
     this.bulanLR = loopBulan[filterBulan]
-    this.inputLayoutLR.splice(3, 2,
+    this.inputLayoutLR.splice(4, 2,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -794,7 +834,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.formValueLR.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutLR.splice(3, 2,
+      this.inputLayoutLR.splice(4, 2,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',
@@ -828,7 +868,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.formValueLR.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutLR.splice(3, 2,
+      this.inputLayoutLR.splice(4, 2,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',

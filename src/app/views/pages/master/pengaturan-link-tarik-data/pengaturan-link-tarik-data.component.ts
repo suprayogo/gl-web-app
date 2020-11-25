@@ -48,6 +48,8 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
   subscription: any;
   kode_perusahaan: any;
 
+  dialogType: any;
+
   tipe_setting: Object = [
     {
       label: 'Per Periode',
@@ -98,6 +100,10 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
       label: 'Kode Setting',
       value: 'kode_setting'
     },
@@ -131,7 +137,8 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -139,7 +146,8 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diupdate tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -169,8 +177,27 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  inputCabangDisplayColumns = [
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
+      label: 'Nama Cabang',
+      value: 'nama_cabang'
+    }
+  ]
+  inputCabangInterface = {
+    kode_cabang: 'string',
+    nama_cabang: 'string'
+  }
+  inputCabangData = []
+  inputCabangDataRules = []
+
   // Input Name
   formValue = {
+    kode_cabang: '',
+    nama_cabang: '',
     kode_setting: '',
     nama_setting: '',
     url: '',
@@ -182,6 +209,38 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
 
   // Layout Form
   inputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+        },
+      },
+      update: {
+        disabled: false
+      }
+    },
     {
       formWidth: 'col-5',
       label: 'Kode Setting',
@@ -316,7 +375,64 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
 
   // REQUEST DATA FROM API (to : L.O.V or Table)
   madeRequest() {
-    this.loading = false
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+      this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputCabangData = data['RESULT']
+            this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
+            this.loading = false
+            this.ref.markForCheck()
+          } else {
+            this.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
+            this.loading = false
+            this.ref.markForCheck()
+          }
+        }
+      )
+    }
+  }
+
+  // Dialog
+  openDialog(type) {
+    this.gbl.topPage()
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '60vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '30px' },
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_cabang" ? this.inputCabangInterface :
+            {},
+        displayedColumns:
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            [],
+        tableData:
+          type === "kode_cabang" ? this.inputCabangData :
+            [],
+        tableRules:
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            [],
+        formValue: this.formValue
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_cabang") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
   }
 
   openCDialog() { // Confirmation Dialog
@@ -401,10 +517,6 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    // let x = this.formValue
-    // x.kode_bank = data['kode_bank']
-    // x.nama_bank = data['nama_bank']
-    // x.keterangan = data['keterangan']
     this.formValue = data
     this.onUpdate = true;
     this.getBackToInput();
@@ -434,7 +546,12 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
           this.addNewData()
         }
       } else {
-        this.openSnackBar('Kode Setting Belum Diisi.', 'info')
+        if (this.forminput.getData()['kode_cabang'] === "") {
+          this.openSnackBar('Kode Cabang Belum Diisi.', 'info')
+        } else {
+          this.openSnackBar('Kode Setting Belum Diisi.', 'info')
+        }
+
       }
     }
   }
@@ -468,6 +585,8 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
+      kode_cabang: '',
+      nama_cabang: '',
       kode_setting: '',
       nama_setting: '',
       url: '',

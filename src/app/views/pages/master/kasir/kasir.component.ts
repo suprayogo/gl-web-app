@@ -138,7 +138,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -146,7 +147,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diupdate tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -211,7 +213,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
       browseType: 'user_kasir',
       valueOf: 'user_kasir',
       required: true,
-      readOnly: false,
+      readOnly: true,
       hiddenOn: false,
       inputInfo: {
         id: 'nama-user-kasir',
@@ -235,7 +237,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
       browseType: 'id_kepala_kasir',
       valueOf: 'id_kepala_kasir',
       required: true,
-      readOnly: false,
+      readOnly: true,
       hiddenOn: false,
       inputInfo: {
         id: 'nama-kepala-kasir',

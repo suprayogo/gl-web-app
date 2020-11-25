@@ -224,6 +224,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     nama_divisi: '',
     nama_departemen: '',
     keterangan: '',
+    jenis_jurnal: '0'
   }
 
   detailData = []
@@ -334,7 +335,8 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Di Update oleh',
@@ -342,7 +344,8 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Di Update tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterfaceBP = {
@@ -850,6 +853,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       nama_divisi: x['nama_divisi'],
       nama_departemen: x['nama_departemen'],
       keterangan: x['keterangan'],
+      jenis_jurnal: '0'
     }
     this.getDetail()
   }
@@ -891,7 +895,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   openDialog() {
     this.gbl.topPage()
     this.ref.markForCheck()
-    this.formInputCheckChangesJurnal()
+    // this.formInputCheckChangesJurnal()
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
       height: '60vh',

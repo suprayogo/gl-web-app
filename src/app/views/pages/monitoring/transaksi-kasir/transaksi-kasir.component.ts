@@ -81,7 +81,9 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     keterangan: '',
     tipe_laporan: '',
     lembar_giro: '',
-    kode_template: ''
+    kode_template: '',
+    jenis_jurnal: '2',
+    tipe_transaksi: '0',
   }
 
   inputPeriodeDisplayColumns = [
@@ -290,6 +292,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     {
       label: 'Diinput tanggal',
       value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -298,6 +301,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     {
       label: 'Diupdate tanggal',
       value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -467,8 +471,6 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   }
 
   getDetail() {
-    console.log(this.dataJurnal)
-    console.log(this.formDetail.no_jurnal)
     let specData = this.dataJurnal.filter(x => x['no_tran'] === this.formDetail.no_jurnal)[0] || {}
 
     this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: specData.id_tran }).subscribe(
@@ -492,7 +494,12 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
             }
             res.push(t)
           }
-          this.detailData = res
+          if (this.formDetail.tipe_transaksi === "0") {
+            this.detailData = res.filter(x => x['saldo_kredit'] > 0)
+          } else {
+            this.detailData = res.filter(x => x['saldo_debit'] > 0)
+          }
+          // this.detailData = res
           this.formInputCheckChangesJurnal()
           if (this.formDetail.tipe_laporan === 'b') {
             this.detailInputLayout.splice(5, 0,
@@ -836,7 +843,9 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       keterangan: x['keterangan'],
       tipe_laporan: x['tipe_laporan'],
       lembar_giro: x['lembar_giro'],
-      kode_template: x['kode_template']
+      kode_template: x['kode_template'],
+      jenis_jurnal: '2',
+      tipe_transaksi: x['tipe_transaksi']
     }
     this.getDetail()
   }

@@ -32,11 +32,11 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   tipe_jurnal = [
     {
-      label: 'Transaksi Jurnal Umum',
+      label: 'Jurnal Umum',
       value: '0'
     },
     {
-      label: 'Transaksi Kasir',
+      label: 'Jurnal Kasir',
       value: '1'
     }
   ]
@@ -77,6 +77,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   batal_alasan: any = "";
   dialogRef: any;
   dialogType: any;
+  statBoolean: boolean = true;
 
   // Input Name
   formValue = {
@@ -88,6 +89,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     id_jenis_transaksi: '',
     kode_jenis_transaksi: '',
     nilai_jenis_transaksi: '',
+    tipe_transaksi: '',
     tipe_laporan: '',
     keterangan: ''
   }
@@ -96,6 +98,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan_1: '',
       keterangan_2: '',
@@ -106,6 +112,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
       keterangan_akun: '',
       keterangan_1: '',
       keterangan_2: '',
@@ -149,7 +159,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   // TAB MENU BROWSE 
   displayedColumnsTable = [
     {
-      label: 'Jenis Transaksi',
+      label: 'Jenis Jurnal',
       value: 'nama_pengaturan_transaksi'
     },
     {
@@ -187,16 +197,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       date: true
     }
   ];
-  browseInterface = {
-    kode_bank: 'string',
-    nama_bank: 'string',
-    keterangan: 'string',
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    update_dt: 'string'
-  }
+  browseInterface = {}
   browseData = []
   browseDataRules = [
     {
@@ -208,49 +209,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       redefined: 'batal_status_sub'
     }
   ]
-  inputDepartemenDisplayColumns = [
-    {
-      label: 'Kode Departemen',
-      value: 'kode_departemen'
-    },
-    {
-      label: 'Nama Departemen',
-      value: 'nama_departemen'
-    },
-    {
-      label: 'Nama Induk Departemen',
-      value: 'nama_induk_departemen'
-    }
-  ]
-  inputDepartemenInterface = {
-    kode_departemen: 'string',
-    nama_departemen: 'string',
-    induk_departemen: 'string',
-    nama_induk_departemen: 'string'
-  }
-  inputDepartemenData = []
-  inputDepartemenDataRules = []
-  inputDivisiDisplayColumns = [
-    {
-      label: 'Kode Divisi',
-      value: 'kode_divisi'
-    },
-    {
-      label: 'Nama Divisi',
-      value: 'nama_divisi'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
-    }
-  ]
-  inputDivisiInterface = {
-    kode_divisi: 'string',
-    nama_divisi: 'string',
-    keterangan: 'string'
-  }
-  inputDivisiData = []
-  inputDivisiDataRules = []
+
   inputCabangDisplayColumns = [
     {
       label: 'Kode Cabang',
@@ -268,6 +227,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   inputCabangData = []
   inputCabangDataRules = []
   inputAkunData = []
+  inputDepartemenData = []
+  inputDivisiData = []
   inputSettingData = []
   inputJenisTransaksiData = []
   inputRekeningPerusahaanData = []
@@ -304,7 +265,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
-      label: 'Jenis Transaksi',
+      label: 'Jenis Jurnal',
       id: 'jenis-transaksi',
       type: 'combobox',
       options: this.tipe_jurnal,
@@ -336,7 +297,11 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         ind: 'kode_cabang',
         data: [],
         valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: null
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+          this.formInputCheckChangesJurnal()
+        }
       },
       update: {
         disabled: false
@@ -359,7 +324,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       readOnly: false,
       disabled: false,
       update: {
-        disabled: true
+        disabled: this.statBoolean
       },
       hiddenOn: {
         valueOf: 'jenis_transaksi',
@@ -482,9 +447,39 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       id_jenis_transaksi: x['id_jenis_transaksi'],
       kode_jenis_transaksi: x['kode_jenis_transaksi'],
       nilai_jenis_transaksi: x['nilai_jenis_transasksi'],
+      tipe_transaksi: x['tipe_transaksi'],
       tipe_laporan: '',
       keterangan: x['keterangan']
     }
+    if(this.formValue.jenis_transaksi === "0"){
+      this.statBoolean = false
+    }else{
+      this.statBoolean = true
+    }
+    this.inputLayout.splice(4, 1,  {
+      formWidth: 'col-5',
+      label: 'Jenis Transaksi',
+      id: 'jenis-transaksi',
+      type: 'combobox',
+      options: this.jenis_transaksi,
+      valueOf: 'id_jenis_transaksi',
+      onSelectFunc: (v) => {
+        let d = this.inputJenisTransaksiData.filter(x => x['id_jenis_transaksi'] === v)
+        if (d.length > 0) {
+          this.forminput.updateFormValue('kode_jenis_transaksi', d[0]['kode_jenis_transaksi'])
+        }
+      },
+      required: true,
+      readOnly: false,
+      disabled: false,
+      update: {
+        disabled: this.statBoolean
+      },
+      hiddenOn: {
+        valueOf: 'jenis_transaksi',
+        matchValue: "0"
+      }
+    })
     this.onUpdate = true;
     this.enableDelete = true
     this.enableCancel = false
@@ -572,8 +567,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         }
       }
 
-      // if (data['nama_departemen'] === '') valid = false
-      // if (data['nama_divisi'] === '') valid = false
     }
 
     if (!hasKredit || !hasDebit) {
@@ -595,6 +588,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       kode_jenis_transaksi: '',
       nilai_jenis_transaksi: '',
       tipe_laporan: '',
+      tipe_transaksi: '',
       keterangan: ''
     }
     this.detailData = [
@@ -602,6 +596,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         id_akun: '',
         kode_akun: '',
         nama_akun: '',
+        kode_divisi: '',
+        nama_divisi: '',
+        kode_departemen: '',
+        nama_departemen: '',
         keterangan_akun: '',
         keterangan_1: '',
         keterangan_2: '',
@@ -612,6 +610,10 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         id_akun: '',
         kode_akun: '',
         nama_akun: '',
+        kode_divisi: '',
+        nama_divisi: '',
+        kode_departemen: '',
+        nama_departemen: '',
         keterangan_akun: '',
         keterangan_1: '',
         keterangan_2: '',
@@ -665,18 +667,16 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   // Dialog
   openDialog(type) {
+    // let allDialogNeed = {
+    //   interface: this.inputCabangInterface,
+    //   display: this.inputCabangDisplayColumns,
+    //   data: this.inputCabangData,
+    //   rules: this.inputCabangDataRules,
+    //   formvalue: this.formValue,
+    //   forminput: this.forminput
+    // }
+    // this.gbl.openDialog(type, allDialogNeed)
     this.gbl.topPage()
-    if (type === 'kode_departemen') {
-      let fc = this.forminput.getData()
-      if (fc['kode_divisi'] === '' || fc['nama_divisi'] === '') {
-        this.openSnackBar('Pilih divisi terlebih dahulu.', 'info', () => {
-          setTimeout(() => {
-            this.openDialog('kode_divisi')
-          }, 500)
-        })
-        return
-      }
-    }
     this.dialogType = JSON.parse(JSON.stringify(type))
     this.dialogRef = this.dialog.open(DialogComponent, {
       width: '55vw',
@@ -688,57 +688,35 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_divisi" ? this.inputDivisiInterface :
-            type === "kode_departemen" ? this.inputDepartemenInterface :
-              type === "kode_cabang" ? this.inputCabangInterface :
-                {},
+          type === "kode_cabang" ? this.inputCabangInterface :
+            {},
         displayedColumns:
-          type === "kode_divisi" ? this.inputDivisiDisplayColumns :
-            type === "kode_departemen" ? this.inputDepartemenDisplayColumns :
-              type === "kode_cabang" ? this.inputCabangDisplayColumns :
-                [],
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            [],
         tableData:
-          type === "kode_divisi" ? this.inputDivisiData :
-            type === "kode_departemen" ? this.inputDepartemenData.filter(x => x['kode_divisi'] === (this.forminput === undefined ? null : this.forminput.getData()['kode_divisi'])) :
-              type === "kode_cabang" ? this.inputCabangData :
-                [],
+          type === "kode_cabang" ? this.inputCabangData :
+            [],
         tableRules:
-          type === "kode_divisi" ? this.inputDivisiDataRules :
-            type === "kode_departemen" ? this.inputDepartemenDataRules :
-              type === "kode_cabang" ? this.inputCabangDataRules :
-                [],
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            [],
         formValue: this.formValue,
-        loadingData: type === "kode_departemen" ? this.loadingDepartemen : null,
         sizeCont: 380
       }
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_departemen") {
-          if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('kode_departemen', result.kode_departemen)
-            this.forminput.updateFormValue('nama_departemen', result.nama_departemen)
-            this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
-            this.forminput.updateFormValue('nama_divisi', result.nama_divisi)
-          }
-        } else if (type === "kode_divisi") {
-          if (this.forminput !== undefined) {
-            let kd = this.forminput.getData()['kode_divisi']
-            this.forminput.updateFormValue('kode_divisi', result.kode_divisi)
-            this.forminput.updateFormValue('nama_divisi', result.nama_divisi)
-            if (kd !== result.kode_divisi) this.sendRequestDepartemen(result.kode_divisi)
-          }
-        } else if (type === "kode_cabang") {
+        if (type === "kode_cabang") {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.formValue.kode_cabang = result.kode_cabang
+            this.formValue.nama_cabang = result.nama_cabang
+            this.formInputCheckChangesJurnal()
           }
         }
         this.ref.markForCheck();
       }
-      this.dialogRef = undefined;
-      this.dialogType = undefined;
     });
   }
 
@@ -796,8 +774,8 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputDivisiData = data['RESULT']
-            this.updateInputdata(data['RESULT'], 'kode_divisi')
             this.sendRequestCabang()
+            this.ref.markForCheck()
           } else {
             this.openSnackBar('Gagal mendapatkan daftar divisi. Mohon coba lagi nanti.', 'fail')
             this.loading = false
@@ -808,30 +786,6 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
     }
   }
 
-  sendRequestDepartemen(kode_divisi) {
-    this.loadingDepartemen = true
-    this.request.apiData('departemen', 'g-departemen-divisi', { kode_perusahaan: this.kode_perusahaan, kode_divisi: kode_divisi }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputDepartemenData = data['RESULT']
-          this.updateInputdata(data['RESULT'], 'kode_departemen')
-          this.loadingDepartemen = false
-          this.ref.markForCheck()
-          if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
-            if (this.dialogType === "kode_departemen") {
-              this.dialog.closeAll()
-              this.openDialog('kode_departemen')
-            }
-          }
-        } else {
-          this.loadingDepartemen = false
-          this.dialog.closeAll()
-          this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
-        }
-      }
-    )
-  }
-
   sendRequestCabang() {
     this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
@@ -839,6 +793,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
           this.inputCabangData = data['RESULT']
           this.updateInputdata(data['RESULT'], 'kode_cabang')
           this.sendRequestAkun()
+          this.ref.markForCheck()
         } else {
           this.openSnackBar('Gagal mendapatkan daftar cabang.', 'fail')
           this.loading = false
@@ -854,6 +809,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
         if (data['STATUS'] === 'Y') {
           this.inputAkunData = data['RESULT']
           this.sendRequestSetting()
+          this.ref.markForCheck()
         } else {
           this.openSnackBar('Gagal mendapatkan daftar departemen. Mohon coba lagi nanti.', 'fail')
           this.loading = false
@@ -864,18 +820,21 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   }
 
   sendRequestSetting() {
-    this.request.apiData('setting-link', 'g-setting-link-tarik-data', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputSettingData = data['RESULT']
-          this.sendRequestJenisTransaksi()
-        } else {
-          this.openSnackBar('Gagal mendapatkan daftar setting tarik data', 'fail')
-          this.loading = false
-          this.ref.markForCheck()
+    if (this.inputSettingData.length < 1) {
+      this.request.apiData('setting-link', 'g-setting-link-tarik-data', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputSettingData = data['RESULT']
+            this.sendRequestJenisTransaksi()
+            this.ref.markForCheck()
+          } else {
+            this.openSnackBar('Gagal mendapatkan daftar setting tarik data', 'fail')
+            this.loading = false
+            this.ref.markForCheck()
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   sendRequestJenisTransaksi() {

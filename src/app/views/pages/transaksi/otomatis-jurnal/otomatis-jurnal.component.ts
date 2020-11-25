@@ -126,6 +126,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     nama_cabang: '',
     keterangan: '',
     jenis_transaksi: '0',
+    jenis_jurnal: '',
     id_jenis_transaksi: '',
     nama_jenis_transaksi: '',
     nilai_jenis_transaksi: '',
@@ -142,6 +143,17 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       formWidth: 'col-5',
       label: 'Jenis Jurnal',
       id: 'jenis-jurnal',
+      type: 'input',
+      valueOf: 'jenis_transaksi',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: false
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Nama Jurnal',
+      id: 'nama-jurnal',
       type: 'input',
       valueOf: 'nama_setting',
       required: true,
@@ -304,6 +316,10 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   displayedColumnsTableHT = [
     {
       label: 'Jenis Jurnal',
+      value: 'jenis_jurnal_sub'
+    },
+    {
+      label: 'Nama Jurnal',
       value: 'nama_setting'
     },
     {
@@ -326,7 +342,16 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   ];
   browseInterfaceHT = {}
   browseDataHT = []
-  browseDataRulesHT = []
+  browseDataRulesHT = [
+    {
+      target: 'jenis_jurnal',
+      replacement: {
+        '0': 'Jurnal Umum',
+        '1': 'Jurnal Kasir'
+      },
+      redefined: 'jenis_jurnal_sub'
+    }
+  ]
   jenisTransaksiData = {}
 
   // Data Riwayat Tarik
@@ -496,7 +521,8 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       tgl_tran: x['tgl_tran'],
       nama_cabang: x['nama_cabang'],
       keterangan: x['keterangan'],
-      jenis_transaksi: x['jenis_transaksi'],
+      jenis_transaksi: x['jenis_jurnal'] === '0' ? "Jurnal Umum" : "Jurnal Kasir",
+      jenis_jurnal: x['jenis_jurnal'] === '1' ? '2' : '0',
       id_jenis_transaksi: x['id_jenis_transaksi'],
       nama_jenis_transaksi: this.jenisTransaksiData[x['id_jenis_transaksi']] === undefined ? '' : this.jenisTransaksiData[x['id_jenis_transaksi']]['nama_jenis_transaksi'],
       nilai_jenis_transaksi: x['nilai_jenis_transaksi'],
@@ -626,7 +652,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   }
 
   openDialog() {
-    let jres = []
+    let jres = [], temp = []
     for (var i = 0; i < this.browseDataHT.length; i++) {
       if (this.browseDataHT[i]['id'] === this.formDetail['id']) {
         for (var j = 0; j < this.browseDataHT[i]['detail'].length; j++) {
@@ -644,12 +670,22 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             saldo_debit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_debit']),
             saldo_kredit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_kredit'])
           }
-          jres.push(t)
+          temp.push(t)
         }
         break;
       }
     }
-    this.gbl.topPage()
+    if (this.formDetail.jenis_jurnal === "2") {
+      if (this.formDetail.tipe_transaksi === "0") {
+        jres = temp.filter(x => x['saldo_kredit'] > 0)
+      } else {
+        jres = temp.filter(x => x['saldo_debit'] > 0)
+      }
+    }else{
+      jres = temp
+    }
+   
+    this.gbl.screenPosition(340)
     this.ref.markForCheck()
     this.formInputCheckChangesJurnal()
     let kil = JSON.parse(JSON.stringify(this.kasirInputLayout))
@@ -671,11 +707,11 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     }
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
-      height: 'auto',
+      height: '60vh',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '50px' },
+      position: { top: '330px' },
       data: {
         width: '90vw',
         formValue: this.formDetail,
@@ -695,7 +731,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         // onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
         deleteData: () => null,
       },
-      disableClose: true
+      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(
@@ -817,6 +853,8 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
                     letters: false,
                     special: false
                   }))}`,
+                  jenis_jurnal: t[i]['jenis_transaksi'],
+                  tipe_transaksi: t[i]['tipe_transaksi'],
                   kode_setting: t[i]['kode_setting'],
                   nama_setting: t[i]['nama_setting'],
                   keterangan_setting: t[i]['keterangan_setting'],

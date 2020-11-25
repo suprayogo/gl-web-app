@@ -93,11 +93,12 @@ export class BankComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diinput oleh',
-      value: 'input_by',
+      value: 'input_by'
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -105,7 +106,8 @@ export class BankComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diupdate tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {

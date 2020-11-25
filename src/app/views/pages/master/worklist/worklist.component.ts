@@ -276,7 +276,6 @@ export class WorklistComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
-          console.log(resp)
           for (var i = 0; i < resp.length; i++) {
             let t = {
               id_tran: resp[i]['id_tran'],

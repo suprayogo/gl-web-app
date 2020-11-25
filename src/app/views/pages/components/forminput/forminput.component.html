@@ -325,11 +325,11 @@
     <button type="submit" class="btn btn-brand" *ngIf="!onSub && !noSaveButton"
       [disabled]="disableSubmit ? true : false">{{ button_name }}</button>
     <button type="submit" class="btn btn-brand" *ngIf="onSub">{{ button_name2 }}</button>
-    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc(inputForm)" *ngIf="onSubPrintDoc"
-      [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
-    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2(inputForm)" *ngIf="onSubPrintDoc2"
-      [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
-      <button type="button" class="btn btn-danger kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
+    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc(inputForm)"
+      *ngIf="onSubPrintDoc" [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
+    <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2(inputForm)"
+      *ngIf="onSubPrintDoc2" [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
+    <button type="button" class="btn btn-danger kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
       *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" *ngIf="!noCancel" style="margin-left: 10px;"
       (click)="onReset()">Batal</button>

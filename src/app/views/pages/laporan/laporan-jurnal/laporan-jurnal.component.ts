@@ -360,6 +360,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         }
 
         if (p['id_periode'] !== undefined) {
+          p['kode_report'] = this.formValueJL['format_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
           p['periode_berjarak'] = +this.formValueJL.periode_berjarak.length > 1 ? this.formValueJL.periode_berjarak : "0" + this.formValueJL.periode_berjarak
@@ -378,6 +379,10 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                     t.push(new Date(d[i]['tgl_tran']).getTime())
                     t.push(d[i]['kode_akun'])
                     t.push(d[i]['nama_akun'])
+                    t.push(d[i]['nama_divisi'])
+                    t.push(d[i]['nama_departemen'])
+                    t.push(d[i]['keterangan_1'])
+                    t.push(d[i]['keterangan_2'])
                     t.push(parseFloat(d[i]['nilai_debit']))
                     t.push(parseFloat(d[i]['nilai_kredit']))
 
@@ -413,6 +418,10 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                   "Tgl. Transaksi",
                   "Kode Akun",
                   "Nama Akun",
+                  "Nama Divisi",
+                  "Nama Departemen",
+                  "Keterangan 1",
+                  "Keterangan 2",
                   "Nilai Debit",
                   "Nilai Kredit"
                 ]
@@ -421,12 +430,20 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                   "tglTran",
                   "kodeAkun",
                   "namaAkun",
+                  "nama_divisi",
+                  "nama_departemen",
+                  "keterangan_1",
+                  "keterangan_2",
                   "nilaiDebit",
                   "nilaiKredit"
                 ]
                 rp['FIELD_TYPE'] = [
                   "string",
                   "date",
+                  "string",
+                  "string",
+                  "string",
+                  "string",
                   "string",
                   "string",
                   "bigdecimal",
@@ -575,7 +592,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
               }
             }
           } else {
-            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'fail')
           }
         }
       )

@@ -614,7 +614,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     {
       labelWidth: 'col-3',
       formWidth: 'col-9',
-      label: 'Rekening Perusahaan',
+      label: 'Rekening',
       id: 'rekening-perusahaan',
       type: 'combobox',
       options: [],
@@ -667,7 +667,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         matchValue: ["0", "1", ""]
       },
       onSelectFunc: (v) => {
-        this.resetForm()
+        // this.resetForm()
         this.formValue.tipe_transaksi = v
         this.formInputCheckChangesJurnal()
       }
@@ -1062,19 +1062,21 @@ export class BatchComponent implements OnInit, AfterViewInit {
           for (var i = 0; i < data['RESULT'].length; i++) {
             let t = {
               label: data['RESULT'][i]['no_rekening'] + " - " + data['RESULT'][i]['nama_bank'] + " (" + data['RESULT'][i]['atas_nama'] + ")",
-              value: data['RESULT'][i]['no_rekening']
+              value: data['RESULT'][i]['no_rekening'],
+              kode_cabang: data['RESULT'][i]['kode_cabang']
             }
             res.push(t)
           }
           this.bank = res
+          let x = this.bank.filter(x => x.kode_cabang === this.formValue.kode_cabang)
           this.inputRekeningPerusahaanData = data['RESULT']
           this.rightInputLayout.splice(2, 1, {
             labelWidth: 'col-3',
             formWidth: 'col-9',
-            label: 'Rekening Perusahaan',
+            label: 'Rekening',
             id: 'rekening-perusahaan',
             type: 'combobox',
-            options: this.bank,
+            options: x,
             valueOf: 'nilai_jenis_transaksi',
             required: true,
             readOnly: false,
@@ -1240,7 +1242,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.id_periode = x['id_periode']
     } else {
       this.formValue = this.setFormV(x, t_tran, 'umum')
-      if(this.forminput.getData()['periode'] === "0"){
+      if (this.forminput.getData()['periode'] === "0") {
         this.insertAt(this.inputLayout, 5, 1, this.setFormLayout('umum'))
       }/* else if(this.forminput.getData()['periode'] === "1"){
         // WAITING
@@ -1277,7 +1279,15 @@ export class BatchComponent implements OnInit, AfterViewInit {
             }
             res.push(t)
           }
-          this.detailData = res
+          if (this.formValue.jenis_jurnal === "2") {
+            if (this.formValue.tipe_transaksi === "0") {
+              this.detailData = res.filter(x => x['saldo_kredit'] > 0)
+            } else {
+              this.detailData = res.filter(x => x['saldo_debit'] > 0)
+            }
+          } else {
+            this.detailData = res
+          }
           this.detailLoad = false
           this.ref.markForCheck()
           this.formInputCheckChangesJurnal()
@@ -1340,10 +1350,20 @@ export class BatchComponent implements OnInit, AfterViewInit {
     let data = this.forminput === undefined ? null : this.forminput.getData()
 
     if (data != null) {
-      if (data['detail'] !== undefined || data['detail'] != null) {
-        if (!data['detail']['valid']) {
-          valid = false
-        }
+      if (this.forminput !== undefined) {
+        if (this.forminput.getData()['jenis_jurnal'] === '0' || this.forminput.getData()['jenis_jurnal'] === '1')
+          if (data['detail'] !== undefined || data['detail'] != null) {
+            if (!data['detail']['valid']) {
+              valid = false
+            }
+          }
+      } else {
+        if (this.formValue.jenis_jurnal === '0' || this.formValue.jenis_jurnal === '1')
+          if (data['detail'] !== undefined || data['detail'] != null) {
+            if (!data['detail']['valid']) {
+              valid = false
+            }
+          }
       }
 
       for (var i = 0; i < data['detail']['data'].length; i++) {
@@ -1411,11 +1431,15 @@ export class BatchComponent implements OnInit, AfterViewInit {
         }
       )
     } else if (this.formValue.jenis_jurnal === "2") {
-      let total_deb = 0
+      let nilai_saldo = 0
       for (var i = 0; i < this.formValue['detail'].length; i++) {
-        total_deb = total_deb + parseFloat(this.formValue['detail'][i]['saldo_debit'])
+        if (this.formValue.tipe_transaksi === "0") {
+          nilai_saldo = nilai_saldo + parseFloat(this.formValue['detail'][i]['saldo_debit'])
+        } else {
+          nilai_saldo = nilai_saldo + parseFloat(this.formValue['detail'][i]['saldo_kredit'])
+        }
       }
-      this.formValue.saldo_transaksi = total_deb
+      this.formValue.saldo_transaksi = nilai_saldo
       this.formValue.id_tran_jt = this.formValue.id_tran_jt === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
         length: 8,
         numeric: true,
@@ -1732,7 +1756,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         this.formReport = JSON.parse(JSON.stringify(this.formValue))
         this.reportDetail = JSON.parse(JSON.stringify(this.detailData))
         let data = []
-        for (var i = 1; i < this.reportDetail.length; i++) {
+        for (var i = 0; i < this.reportDetail.length; i++) {
           let t = []
           t.push(this.formReport['no_tran'])
           t.push(new Date(parseInt(this.formReport['tgl_tran'])).getTime())
@@ -1744,6 +1768,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           t.push(this.reportDetail[i]['keterangan_2'])
           t.push(this.reportDetail[i]['saldo_debit'])
           t.push(this.reportDetail[i]['saldo_kredit'])
+          t.push(this.reportDetail[i]['keterangan_akun'])
           t.push(this.formReport['saldo_transaksi'])
 
           data.push(t)
@@ -2167,7 +2192,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         },
         onSelectFunc: (v) => this.setPeriode(v)
       }
-    } else if(type === "ket"){
+    } else if (type === "ket") {
       x = {
         labelWidth: 'col-3',
         formWidth: 'col-9',
@@ -2318,6 +2343,26 @@ export class BatchComponent implements OnInit, AfterViewInit {
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
             this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+            let x = this.bank.filter(x => x.kode_cabang === this.formValue.kode_cabang)
+            this.rightInputLayout.splice(2, 1, {
+              labelWidth: 'col-3',
+              formWidth: 'col-9',
+              label: 'Rekening',
+              id: 'rekening-perusahaan',
+              type: 'combobox',
+              options: x,
+              valueOf: 'nilai_jenis_transaksi',
+              required: true,
+              readOnly: false,
+              disabled: false,
+              hiddenOn: {
+                valueOf: 'tipe_laporan',
+                matchValue: ["k", "p", "g", ""]
+              },
+              update: {
+                disabled: true
+              }
+            })
             if (this.forminput.getData()['jenis_jurnal'] === "2") {
               if (this.forminput.getData()['periode'] === "0") {
                 this.tanggalJurnalKasir('')

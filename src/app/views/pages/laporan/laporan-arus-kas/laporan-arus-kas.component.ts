@@ -52,6 +52,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     },
   ]
 
+  jenis_laporan = [
+    {
+      label: 'Rekap',
+      value: '0'
+    },
+    {
+      label: 'Perincian',
+      value: '1'
+    }
+  ]
+
   metode_laporan = [
     {
       label: 'Langsung',
@@ -152,6 +163,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   formValueAK = {
     format_laporan: 'xlsx',
     metode_laporan: '1',
+    jenis_laporan: '0',
     kode_cabang: '',
     nama_cabang: '',
     tipe: 't',
@@ -187,6 +199,18 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       type: 'combobox',
       options: this.format_laporan,
       valueOf: 'format_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Jenis Laporan',
+      id: 'jenis-laporan',
+      type: 'combobox',
+      options: this.jenis_laporan,
+      valueOf: 'jenis_laporan',
       required: true,
       readOnly: false,
       disabled: false,
@@ -350,6 +374,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         }
 
         if (p['id_periode'] !== undefined) {
+          p['kode_report'] = this.formValueAK['format_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           if (this.formValueAK['tipe'] === "t") {
             if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
@@ -416,123 +441,124 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                   this.distinctPeriode()
                   this.ref.markForCheck()
                 } else {
-                  let z = data['RESULT'], r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
-                  saldoAwalKas = parseFloat(z['saldo_awal'])
-                  for (var x = 0; x < r.length; x++) {
-                    let d = r[x]['data']
-                    for (var i = 0; i < d.length; i++) {
-                      for (var j = 0; j < d.length; j++) {
-                        if (
-                          (
-                            (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) ||
-                            (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
-                          ) &&
-                          d[i]['id_akun'] === d[j]['id_akun'] &&
-                          d[i]['group'] === d[j]['group']
-                        ) {
-                          let t = JSON.parse(JSON.stringify(d[i]))
-                          if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
-                            t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
-                          } else {
-                            t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
-                          }
-                          t['class'] = r[x]['value']
-                          t['className'] = r[x]['label']
-                          nRes.push(t)
-                        }
-                      }
+                  let z = data['RESULT'] 
+                  // r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
+                  // saldoAwalKas = parseFloat(z['saldo_awal'])
+                  // for (var x = 0; x < r.length; x++) {
+                  //   let d = r[x]['data']
+                  //   for (var i = 0; i < d.length; i++) {
+                  //     for (var j = 0; j < d.length; j++) {
+                  //       if (
+                  //         (
+                  //           (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) ||
+                  //           (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
+                  //         ) &&
+                  //         d[i]['id_akun'] === d[j]['id_akun'] &&
+                  //         d[i]['group'] === d[j]['group']
+                  //       ) {
+                  //         let t = JSON.parse(JSON.stringify(d[i]))
+                  //         if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
+                  //           t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
+                  //         } else {
+                  //           t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
+                  //         }
+                  //         t['class'] = r[x]['value']
+                  //         t['className'] = r[x]['label']
+                  //         nRes.push(t)
+                  //       }
+                  //     }
 
-                      if (d[i]['id_akun'] === 'LBRG') {
-                        dLR = d[i]
-                        dLR['class'] = r[x]['value']
-                        dLR['className'] = r[x]['label']
-                      }
-                    }
-                  }
+                  //     if (d[i]['id_akun'] === 'LBRG') {
+                  //       dLR = d[i]
+                  //       dLR['class'] = r[x]['value']
+                  //       dLR['className'] = r[x]['label']
+                  //     }
+                  //   }
+                  // }
 
-                  nRes.splice(0, 0, dLR)
+                  // nRes.splice(0, 0, dLR)
 
-                  for (var i = 0; i < nRes.length; i++) {
-                    if (totalTipe[nRes[i]['class']]) {
-                      totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
-                    } else {
-                      totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
-                    }
-                  }
+                  // for (var i = 0; i < nRes.length; i++) {
+                  //   if (totalTipe[nRes[i]['class']]) {
+                  //     totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
+                  //   } else {
+                  //     totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
+                  //   }
+                  // }
 
-                  for (var prop in totalTipe) {
-                    if (totalTipe.hasOwnProperty(prop)) {
-                      totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
-                    }
-                  }
+                  // for (var prop in totalTipe) {
+                  //   if (totalTipe.hasOwnProperty(prop)) {
+                  //     totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
+                  //   }
+                  // }
 
-                  for (var i = 0; i < nRes.length; i++) {
-                    let t = []
+                  // for (var i = 0; i < nRes.length; i++) {
+                  //   let t = []
 
-                    t.push(nRes[i]['class'])
-                    t.push(nRes[i]['className'])
-                    t.push(nRes[i]['kode_akun'])
-                    t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
-                    t.push(nRes[i]['saldo_akhir'])
-                    t.push(totalTipe[nRes[i]['class']])
+                  //   t.push(nRes[i]['class'])
+                  //   t.push(nRes[i]['className'])
+                  //   t.push(nRes[i]['kode_akun'])
+                  //   t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
+                  //   t.push(nRes[i]['saldo_akhir'])
+                  //   t.push(totalTipe[nRes[i]['class']])
 
-                    res.push(t)
-                  }
+                  //   res.push(t)
+                  // }
 
                   // Check range or not
-                  let repPeriod;
+                  // let repPeriod;
 
-                  if (p['bulan_periode'] === p['periode_berjarak']) {
-                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-                  } else {
-                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
-                  }
+                  // if (p['bulan_periode'] === p['periode_berjarak']) {
+                  //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                  // } else {
+                  //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
+                  // }
 
                   // Set Report
-                  let rp = JSON.parse(JSON.stringify(this.reportObj))
-                  rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-                  rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
-                  rp['REPORT_NAME'] = 'Laporan Arus Kas'
-                  rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
-                  rp['JASPER_FILE'] = 'rptArusKas.jasper'
-                  rp['REPORT_PARAMETERS'] = {
-                    USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                    REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                    REPORT_COMPANY_CITY: this.info_company.kota,
-                    REPORT_COMPANY_TLPN: this.info_company.telepon,
-                    REPORT_PERIODE: repPeriod,
-                    TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
-                    SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
-                    SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
-                  }
-                  rp['FIELD_TITLE'] = [
-                    "Tipe",
-                    "Nama Tipe",
-                    "Kode Akun",
-                    "Nama Akun",
-                    "Saldo",
-                    "Total Tipe Saldo"
-                  ]
-                  rp['FIELD_NAME'] = [
-                    "tipe",
-                    "namaTipe",
-                    "kodeAkun",
-                    "namaAkun",
-                    "saldo",
-                    "totalTipeSaldo"
-                  ]
-                  rp['FIELD_TYPE'] = [
-                    "string",
-                    "string",
-                    "string",
-                    "string",
-                    "bigdecimal",
-                    "bigdecimal"
-                  ]
-                  rp['FIELD_DATA'] = res
-                  p['bulan_periode'] = +p['bulan_periode']
+                  // let rp = JSON.parse(JSON.stringify(this.reportObj))
+                  // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+                  // rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
+                  // rp['REPORT_NAME'] = 'Laporan Arus Kas'
+                  // rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
+                  // rp['JASPER_FILE'] = 'rptArusKas.jasper'
+                  // rp['REPORT_PARAMETERS'] = {
+                  //   USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+                  //   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                  //   REPORT_COMPANY_CITY: this.info_company.kota,
+                  //   REPORT_COMPANY_TLPN: this.info_company.telepon,
+                  //   REPORT_PERIODE: repPeriod,
+                  //   TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
+                  //   SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
+                  //   SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
+                  // }
+                  // rp['FIELD_TITLE'] = [
+                  //   "Tipe",
+                  //   "Nama Tipe",
+                  //   "Kode Akun",
+                  //   "Nama Akun",
+                  //   "Saldo",
+                  //   "Total Tipe Saldo"
+                  // ]
+                  // rp['FIELD_NAME'] = [
+                  //   "tipe",
+                  //   "namaTipe",
+                  //   "kodeAkun",
+                  //   "namaAkun",
+                  //   "saldo",
+                  //   "totalTipeSaldo"
+                  // ]
+                  // rp['FIELD_TYPE'] = [
+                  //   "string",
+                  //   "string",
+                  //   "string",
+                  //   "string",
+                  //   "bigdecimal",
+                  //   "bigdecimal"
+                  // ]
+                  // rp['FIELD_DATA'] = res
+                  // p['bulan_periode'] = +p['bulan_periode']
 
-                  this.sendGetReport(rp, this.formValueAK['format_laporan'])
+                  this.sendGetReport(z, this.formValueAK['format_laporan'])
                 }
               } else {
                 p['bulan_periode'] = +p['bulan_periode']
@@ -552,6 +578,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   resetFormAK() {
     this.formValueAK = {
       format_laporan: 'xlsx',
+      jenis_laporan: '0',
       metode_laporan: this.formValueAK['metode_laporan'],
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
@@ -562,7 +589,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     }
 
     this.bulanAK = this.initBulan[this.formValueAK['tahun']]
-    this.inputLayoutAK.splice(5, 4,
+    this.inputLayoutAK.splice(6, 5,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -804,6 +831,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
     this.formValueAK = {
       format_laporan: this.formValueAK.format_laporan,
+      jenis_laporan: this.formValueAK.jenis_laporan,
       metode_laporan: this.formValueAK.metode_laporan,
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
@@ -814,7 +842,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     }
     this.initBulan = tmp
     this.bulanAK = tmp[this.formValueAK.tahun]
-    this.inputLayoutAK.splice(4, 5,
+    this.inputLayoutAK.splice(5, 6,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -867,6 +895,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   getBulan(filterBulan, loopBulan) {
     this.formValueAK = {
       format_laporan: this.formValueAK['format_laporan'],
+      jenis_laporan: this.formValueAK['jenis_laporan'],
       metode_laporan: this.formValueAK['metode_laporan'],
       kode_cabang: this.formValueAK['kode_cabang'],
       nama_cabang: this.formValueAK['nama_cabang'],
@@ -876,7 +905,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       periode_berjarak: ""
     }
     this.bulanAK = loopBulan[filterBulan]
-    this.inputLayoutAK.splice(5, 4,
+    this.inputLayoutAK.splice(6, 5,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -915,7 +944,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.formValueAK.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutAK.splice(5, 4,
+      this.inputLayoutAK.splice(6, 5,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',
@@ -953,7 +982,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.formValueAK.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutAK.splice(5, 4,
+      this.inputLayoutAK.splice(6, 5,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',

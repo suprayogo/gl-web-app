@@ -343,6 +343,7 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
     {
       label: 'Diinput tanggal',
       value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -351,6 +352,7 @@ export class HistoriEditKasirComponent implements OnInit, AfterViewInit {
     {
       label: 'Diupdate tanggal',
       value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {

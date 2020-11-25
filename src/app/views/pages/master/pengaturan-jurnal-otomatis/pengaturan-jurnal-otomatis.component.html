@@ -29,7 +29,7 @@
                                 [jurnalData]="detailData" [jurnalOtomatis]="true" [jurnalDataSetting]="inputSettingData"
                                 (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (deleteData)="openCDialog()"
                                 (cnlData)="openCDialog()" (editAction)="editDetailData($event)"
-                                (deleteAction)="deleteDetailData($event)">
+                                (deleteAction)="deleteDetailData($event)" [tipeJurnal]="formValue">
                             </kt-forminput>
                         </div>
                     </kt-portlet-body>

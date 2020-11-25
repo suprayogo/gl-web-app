@@ -1,5 +1,6 @@
 <div class="p-container">
-    <div style="display: flex; flex-direction: row; height: 38px; align-items: center; background-color: #1e1e2d;">
+    <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
+        style="display: flex; flex-direction: row; height: 38px; align-items: center; background-color: #1e1e2d;">
         <div style="width: 34%; padding: 10px; border-right: solid 1px lightgrey;" id="h-akun">
             <span class="title">Informasi Akun</span>
         </div>
@@ -14,11 +15,24 @@
         </div>
     </div>
 
+    <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
+        style="display: flex; flex-direction: row; height: 38px; align-items: center; background-color: #1e1e2d;">
+        <div style="width: 38%; padding: 10px; border-right: solid 1px lightgrey;" id="h-akun">
+            <span class="title">Informasi Akun</span>
+        </div>
+        <div style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;" id="h-debit">
+            <span class="title">Keterangan</span>
+        </div>
+        <div style="width: 22%; padding: 10px; border-right: solid 1px lightgrey;" id="h-debit">
+            <span class="title">Nilai Saldo</span>
+        </div>
+    </div>
+
     <div style="overflow-y: auto; width: 100%; height: calc(100% - 38px);" id="c-container">
         <div *ngFor="let x of res_data; let i = index"
             style="width: 100%; height: auto; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
             [id]="i == 0 ? 'content' : null">
-            <div
+            <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
                 style="width: 34%; height: fit-content; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
@@ -34,41 +48,99 @@
                     </div>
                 </div>
                 <!-- <div
-                    style="width: 100%; margin-top: 10px; display: flex; flex-direction: row; justify-content: space-between;"> -->
-                    <div style="margin-top: 5px;">
-                        <div class="input-group">
-                            <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
-                                (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                                (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                                (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                                [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit" placeholder="Pilih Divisi">
-                            <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
-                                <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                                    (click)="openDialog(i, 'kode_divisi')">
-                                    Pilih
-                                </button>
-                            </div>
+                style="width: 100%; margin-top: 10px; display: flex; flex-direction: row; justify-content: space-between;"> -->
+                <div style="margin-top: 5px;">
+                    <div class="input-group">
+                        <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
+                            (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                            [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit" placeholder="Pilih Divisi">
+                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                (click)="openDialog(i, 'kode_divisi')">
+                                Pilih
+                            </button>
                         </div>
                     </div>
-                    <div style="margin-top: 5px;">
-                        <div class="input-group">
-                            <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
-                                (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                                (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                                (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                                [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
-                                placeholder="Pilih Departemen">
-                            <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
-                                <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                                    (click)="openDialog(i, 'kode_departemen')">
-                                    Pilih
-                                </button>
-                            </div>
-                        </div>
-                    </div>   
                 </div>
-            <!-- </div> -->
-            <div style="width: 28%; padding: 10px; border-right: solid 1px lightgrey;">
+                <div style="margin-top: 5px;">
+                    <div class="input-group">
+                        <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
+                            (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                            [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
+                            placeholder="Pilih Departemen">
+                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                (click)="openDialog(i, 'kode_departemen')">
+                                Pilih
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
+                style="width: 38%; height: fit-content; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
+                <div class="input-group">
+                    <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
+                        (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                        (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                        (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                        [(ngModel)]="res_data[i]['keterangan_akun']" [readonly]="noEdit" placeholder="Pilih Akun">
+                    <div class="input-group-append" *ngIf="!noEdit">
+                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                            (click)="openDialog(i, 'kode_akun')">
+                            Pilih
+                        </button>
+                    </div>
+                </div>
+                <div
+                    style="width: 100%; margin-top: 5px; display: flex; flex-direction: row; justify-content: space-between;">
+                    <div class="input-group" style="width: 48%;">
+                        <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
+                            (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                            [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit" placeholder="Pilih Divisi">
+                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                (click)="openDialog(i, 'kode_divisi')">
+                                Pilih
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="width: 48%;">
+                        <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
+                            (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                            [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
+                            placeholder="Pilih Departemen">
+                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                (click)="openDialog(i, 'kode_departemen')">
+                                Pilih
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
+                style="width: 28%; padding: 10px; border-right: solid 1px lightgrey;">
+                <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
+                    placeholder="Keterangan 1" [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit"
+                    (blur)="ket(i, '1')" (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')">
+                <div style="margin-top: 5px;">
+                    <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
+                        placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
+                        (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')">
+                </div>
+            </div>
+            <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
+                style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;">
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
                     placeholder="Keterangan 1" [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit"
                     (blur)="ket(i, '1')" (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')">
@@ -81,7 +153,7 @@
 
             <!-- Begin: Jurnal Umum -->
             <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
-                *ngIf="!jurnalOtomatis && !templateTransaksi">
+                *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
                 <div class="input-group-prepend" style="height: fit-content; display: table;">
                     <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
                 </div>
@@ -90,7 +162,8 @@
                     [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
                     [readonly]="noEdit" [disabled]="disabled[i]['debit']">
             </div>
-            <div style="width: 19%; padding: 10px" class="input-group" *ngIf="!jurnalOtomatis && !templateTransaksi">
+            <div style="width: 19%; padding: 10px" class="input-group"
+                *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
                 <div class="input-group-prepend" style="height: fit-content; display: table;">
                     <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
                 </div>
@@ -100,6 +173,29 @@
                     [readonly]="noEdit" [disabled]="disabled[i]['kredit']">
             </div>
             <!-- End: Jurnal Umum -->
+
+            <!-- Begin: Jurnal Kasir -->
+            <div style="width: 22%; padding: 10px;" class="input-group"
+                *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
+                <div class="input-group-prepend" style="height: fit-content; display: table;">
+                    <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
+                </div>
+                <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
+                    (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
+                    [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
+                    [readonly]="noEdit" [disabled]="noEdit">
+            </div>
+            <div style="width: 22%; padding: 10px" class="input-group"
+                *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
+                <div class="input-group-prepend" style="height: fit-content; display: table;">
+                    <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
+                </div>
+                <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
+                    (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
+                    [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
+                    [readonly]="noEdit" [disabled]="noEdit">
+            </div>
+            <!-- End: Jurnal Kasir -->
 
             <!-- Begin: Template Transaksi -->
             <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
@@ -178,24 +274,56 @@
 <div style="width: 100%; height: 38px; display: flex; flex-direction: row; margin-top: 5px;"
     *ngIf="!loading && !jurnalOtomatis">
     <div style="width: 60%;"></div>
+
+    <!-- UMUM DEBIT -->
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
-        *ngIf="!templateTransaksi">
+        *ngIf="!templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
         <span>Total Debit :</span>
         <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
             {{ numberFormatter(total_debit, 2) }}</h6>
     </div>
+
+    <!-- KASIR MASUK -->
+    <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
+        *ngIf="!templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
+    </div>
+    <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
+        *ngIf="!templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
+        <span>Total Debit :</span>
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'black' : 'black'}">Rp
+            {{ numberFormatter(total_debit, 2) }}</h6>
+    </div>
+
+    <!-- TEMPLATE DEBIT-->
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
         *ngIf="templateTransaksi">
         <span>Total Bobot Debit :</span>
         <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">
             {{ numberFormatter(total_debit, 2) }} %</h6>
     </div>
+
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <!-- UMUM KREDIT -->
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
-        *ngIf="!templateTransaksi">
+        *ngIf="!templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
         <span>Total Kredit :</span>
         <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
             {{ numberFormatter(total_kredit, 2) }}</h6>
     </div>
+
+    <!-- KASIR KELUAR -->
+    <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
+        *ngIf="!templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
+    </div>
+    <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
+        *ngIf="!templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
+        <span>Total Kredit :</span>
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'black' : 'black'}">Rp
+            {{ numberFormatter(total_kredit, 2) }}</h6>
+    </div>
+
+    <!-- TEMPLATE KREDIT-->
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
         *ngIf="templateTransaksi">
         <span>Total Bobot Kredit :</span>

@@ -152,7 +152,8 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diinput tanggal',
-      value: 'input_dt'
+      value: 'input_dt',
+      date: true
     },
     {
       label: 'Diupdate oleh',
@@ -160,7 +161,8 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Diupdate tanggal',
-      value: 'update_dt'
+      value: 'update_dt',
+      date: true
     }
   ];
   browseInterface = {
@@ -183,7 +185,9 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   // Input Name
   formValue = {
     kode_cabang: '',
+    nama_cabang: '',
     kode_bank: '',
+    nama_bank: '',
     no_rekening: '',
     atas_nama: '',
     nama_kantor_cabang: '',
@@ -206,6 +210,15 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       hiddenOn: false,
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+        },
+      },
       inputInfo: {
         id: 'nama-cabang',
         disabled: false,
@@ -230,6 +243,15 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: false,
       hiddenOn: false,
+      blurOption: {
+        ind: 'kode_bank',
+        data: [],
+        valueOf: ['kode_bank', 'nama_bank'],
+        onFound: () => {
+          this.formValue.kode_bank = this.forminput.getData()['kode_bank']
+          this.formValue.nama_bank = this.forminput.getData()['nama_bank']
+        },
+      },
       inputInfo: {
         id: 'nama-bank',
         disabled: false,
@@ -361,6 +383,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
+            this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
             this.ref.markForCheck()
             this.reqBank()
           } else {
@@ -381,6 +404,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputBankData = data['RESULT']
+            this.gbl.updateInputdata(data['RESULT'], 'kode_bank', this.inputLayout)
             this.loading = false
             this.ref.markForCheck()
           } else {
@@ -540,7 +564,9 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     let t_buka_rek = new Date(x['tgl_buka_rekening'])
     this.formValue = {
       kode_cabang: x['kode_cabang'],
+      nama_cabang: x['nama_cabang'],
       kode_bank: x['kode_bank'],
+      nama_bank: x['nama_bank'],
       no_rekening: x['no_rekening'],
       atas_nama: x['atas_nama'],
       nama_kantor_cabang: x['nama_kantor_cabang'],
@@ -610,7 +636,9 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     this.formValue = {
       kode_cabang: '',
+      nama_cabang: '',
       kode_bank: '',
+      nama_bank: '',
       no_rekening: '',
       atas_nama: '',
       nama_kantor_cabang: '',

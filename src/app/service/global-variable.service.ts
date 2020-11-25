@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AlertdialogComponent } from '../views/pages/components/alertdialog/alertdialog.component';
 import { MatDialog } from '@angular/material';
+import { DialogComponent } from '../views/pages/components/dialog/dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -42,8 +43,12 @@ export class GlobalVariableService {
   bulan_periodeAktif: string = "";
   activePeriod: Subject<any> = new Subject<any>();
 
+  dialogRef: any;
+  dialogType: any;
+
   constructor(
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    // private ref: ChangeDetectorRef,
   ) { }
 
   // ACCESS KEY
@@ -296,6 +301,48 @@ export class GlobalVariableService {
       }
     }
   }
+
+  // Dialog
+  // openDialog(type, need) {
+  //   this.topPage()
+  //   this.dialogType = JSON.parse(JSON.stringify(type))
+  //   this.dialogRef = this.dialog.open(DialogComponent, {
+  //     width: '55vw',
+  //     height: 'auto',
+  //     maxWidth: '95vw',
+  //     maxHeight: '95vh',
+  //     backdropClass: 'bg-dialog',
+  //     position: { top: '20px' },
+  //     data: {
+  //       type: type,
+  //       tableInterface:
+  //         type === "kode_cabang" ? need.interface :
+  //           {},
+  //       displayedColumns:
+  //         type === "kode_cabang" ? need.display :
+  //           [],
+  //       tableData:
+  //         type === "kode_cabang" ? need.data :
+  //           [],
+  //       tableRules:
+  //         type === "kode_cabang" ? need.rules :
+  //           [],
+  //       formValue: need.formValue,
+  //       sizeCont: 380
+  //     }
+  //   });
+
+  //   this.dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //      if (type === "kode_cabang") {
+  //         if (need.forminput !== undefined) {
+  //           need.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+  //           need.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
   // Alert Dialog
   openSnackBar(message, type?: any, onCloseFunc?: any) {
