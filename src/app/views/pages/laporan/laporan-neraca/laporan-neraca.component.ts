@@ -301,7 +301,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
       this.formValueNR = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan']
+      let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueNR['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -336,6 +336,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
 
         if (p['id_periode'] !== undefined) {
           p['kode_report'] = this.formValueNR['format_laporan']
+          p['jenis_laporan'] = this.formValueNR['jenis_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
           p['periode_berjarak'] = +this.formValueNR.periode_berjarak.length > 1 ? this.formValueNR.periode_berjarak : "0" + this.formValueNR.periode_berjarak
@@ -738,7 +739,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
               }, 100)
             }
           }
-          let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan']
+          let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan']
           this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()

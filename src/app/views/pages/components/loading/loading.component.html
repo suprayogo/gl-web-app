@@ -2,8 +2,10 @@
     <h6 style="flex: 1" *ngIf="noText == false || noText == null">
         {{ loadingText == null ? 'Sedang diproses.' : loadingText }}
     </h6>
-    <div style="flex: 1">
+    <div style="flex: 1; margin-bottom: 5px;">
         <mat-spinner diameter="40"></mat-spinner>
     </div>
-
+    <h6 style="flex: 1;" *ngIf="noText == false || noText == null">
+        {{ part == null ? '' : part }}
+    </h6>
 </div>

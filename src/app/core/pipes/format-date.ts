@@ -16,8 +16,8 @@ export function formatDate(idate, patternStr?: string){
         m = st[1], 
         d = st[2].split(" ").length < 2 ? st[2] : st[2].split(" ")[0],
         sh = st[2].split(" ").length < 2 ? "" : st[2].split(" ")[1]
-
-    var date = new Date(y + "-" + m + "-" + d + " " + sh)
+    var date = sh.length == 0 ?  new Date(y + "-" + m + "-" + d) : new Date(y + "-" + m + "-" + d + " " + sh)
+    // var date = new Date(y + "-" + m + "-" + d + " " + sh)
 
     if (!patternStr) {
         patternStr = 'dd-MMM-yyyy';
@@ -25,7 +25,7 @@ export function formatDate(idate, patternStr?: string){
     var day = date.getDate(),
         month = date.getMonth(),
         year = date.getFullYear(),
-        hour = date.getHours(),
+        hour = date.getHours() ,
         minute = date.getMinutes(),
         second = date.getSeconds(),
         miliseconds = date.getMilliseconds(),

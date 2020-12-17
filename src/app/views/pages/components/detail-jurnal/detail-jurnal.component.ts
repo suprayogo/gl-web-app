@@ -136,6 +136,16 @@ export class DetailJurnalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // GET VALUE JURNAL BATCH (HEADER INPUT)
+    if (this.tipe != undefined || this.tipe != null) {
+      this.headerJurnal = {
+        kd_cabang: this.tipe['kode_cabang'],
+        jenis: this.tipe['jenis_jurnal'],
+        tipe_tran: this.tipe['tipe_transaksi']
+      }
+    }
+
+    // GET DATA AKUN (DETAIL INPUT)
     let r_data_akun = []
     if (this.dataAkun !== undefined && this.dataAkun != null) {
       for (var i = 0; i < this.dataAkun.length; i++) {
@@ -145,44 +155,21 @@ export class DetailJurnalComponent implements OnInit {
       }
     }
     this.data_akun = JSON.parse(JSON.stringify(r_data_akun))
-    if (this.data !== undefined || this.data != null) {
-      this.res_data = this.data
-    }
-    if (this.templateTransaksi) {
-      this.countPercentDebit()
-      this.countPercentKredit()
-    } else {
-      this.countDebit()
-      this.countKredit()
-    }
 
+    // GET DATA DIVISI (DETAIL INPUT)
+    this.data_divisi = this.dataDivisi
+
+    // GET DATA SETTING JURNAL OTOMATIS (DETAIL INPUT)
     if (this.dataSetting !== undefined && this.dataSetting != null) {
       this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
     }
 
-    if ((this.res_data[0]['setting_debit'] !== '' && this.res_data[0]['setting_debit'] !== undefined) ||
-      (this.res_data[0]['setting_kredit'] !== '' && this.res_data[0]['setting_kredit'] !== undefined)
-    ) {
-      for (var i = 0; i < this.data_setting.length; i++) {
-        if (
-          (this.data_setting[i]['kode_setting'] === this.res_data[0]['setting_debit']) ||
-          (this.data_setting[i]['kode_setting'] === this.res_data[0]['setting_kredit'])
-        ) {
-          this.tipe_setting = this.data_setting[i]['tipe_setting']
-          break;
-        }
-      }
-    }
+    // -------------------------------------------------------------||-----------------------------------------------------------------------------------------------------
 
-    this.data_divisi = this.dataDivisi
-
-    if (this.tipe != undefined || this.tipe != null) {
-      this.headerJurnal = {
-        kd_cabang: this.tipe['kode_cabang'],
-        jenis: this.tipe['jenis_jurnal'],
-        tipe_tran: this.tipe['tipe_transaksi']
-      }
-
+    // GET DATA DETAIL JURNAL BATCH
+    if (this.data !== undefined || this.data != null) {
+      this.res_data = this.data
+    } else {
       if (this.jurnalOtomatis == undefined) {
         if (this.headerJurnal['jenis'] === "2") {
           this.res_data = [
@@ -283,111 +270,18 @@ export class DetailJurnalComponent implements OnInit {
           }
         ]
       }
-
     }
-  }
 
-  checkChanges() {
-    if (this.data !== undefined || this.data != null) {
-      if (this.data[0]['kode_divisi'] === '' && this.data[1]['kode_divisi'] === '' && this.data.length == 2) {
-        this.setValueNewRows = {}
-      }
-      this.res_data = this.data
-      if (this.tipe != undefined || this.tipe != null) {
-        if (this.jurnalOtomatis == true) {
-          if (this.tipe['kode_cabang'] !== this.headerJurnal['kd_cabang']) {
-            for (var i = 0; i < this.res_data.length; i++) {
-              this.res_data[i]['setting_debit'] = ""
-              this.res_data[i]['setting_kredit'] = ""
-            }
-          }
-        }
-
-        this.headerJurnal = {
-          kd_cabang: this.tipe['kode_cabang'],
-          jenis: this.tipe['jenis_jurnal'],
-          tipe_tran: this.tipe['tipe_transaksi']
-        }
-
-        if (this.jurnalOtomatis == undefined) {
-          if (this.headerJurnal['jenis'] === "2") {
-            if (parseFloat(this.res_data[0]['saldo_debit']) > 0 || parseFloat(this.res_data[0]['saldo_kredit']) > 0) {
-              // this.setValueNewRows['kode_divisi'] = this.res_data[0]['']
-            } else {
-              this.res_data = [
-                {
-                  id_akun: '',
-                  kode_akun: '',
-                  nama_akun: '',
-                  kode_divisi: '',
-                  nama_divisi: '',
-                  kode_departemen: '',
-                  nama_departemen: '',
-                  keterangan_akun: '',
-                  keterangan_1: '',
-                  keterangan_2: '',
-                  saldo_debit: 0,
-                  saldo_kredit: 0,
-                  setting_debit: '',
-                  setting_kredit: '',
-                  bobot_debit: 0,
-                  bobot_kredit: 0
-                }
-              ]
-            }
-          } else {
-            if (parseFloat(this.res_data[0]['saldo_debit']) > 0 || parseFloat(this.res_data[0]['saldo_kredit']) > 0) {
-
-            } else {
-              this.res_data = [
-                {
-                  id_akun: '',
-                  kode_akun: '',
-                  nama_akun: '',
-                  kode_divisi: '',
-                  nama_divisi: '',
-                  kode_departemen: '',
-                  nama_departemen: '',
-                  keterangan_akun: '',
-                  keterangan_1: '',
-                  keterangan_2: '',
-                  saldo_debit: 0,
-                  saldo_kredit: 0,
-                  setting_debit: '',
-                  setting_kredit: '',
-                  bobot_debit: 0,
-                  bobot_kredit: 0
-                },
-                {
-                  id_akun: '',
-                  kode_akun: '',
-                  nama_akun: '',
-                  kode_divisi: '',
-                  nama_divisi: '',
-                  kode_departemen: '',
-                  nama_departemen: '',
-                  keterangan_1: '',
-                  keterangan_2: '',
-                  saldo_debit: 0,
-                  saldo_kredit: 0,
-                  setting_debit: '',
-                  setting_kredit: '',
-                  bobot_debit: 0,
-                  bobot_kredit: 0
-                }
-              ]
-            }
-          }
-        }
-      }
+    // VALIDATE COUNT TOTAL BETWEEN TEMPLATE TRANSAKSI OR JURNAL BATCH
+    if (this.templateTransaksi) {
+      this.countPercentDebit()
+      this.countPercentKredit()
+    } else {
       this.countDebit()
       this.countKredit()
     }
 
-    if (this.dataSetting !== undefined && this.dataSetting != null) {
-      this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
-    }
-
+    // VALIDATE SETTING JURNAL OTOMATIS
     if ((this.res_data[0]['setting_debit'] !== '' && this.res_data[0]['setting_debit'] !== undefined) ||
       (this.res_data[0]['setting_kredit'] !== '' && this.res_data[0]['setting_kredit'] !== undefined)
     ) {
@@ -401,6 +295,134 @@ export class DetailJurnalComponent implements OnInit {
         }
       }
     }
+
+  }
+
+  checkChanges() {
+    // GET VALUE JURNAL BATCH (HEADER INPUT)
+    if (this.tipe != undefined || this.tipe != null) {
+      if (this.jurnalOtomatis == true) {
+        if (this.tipe['kode_cabang'] !== this.headerJurnal['kd_cabang']) {
+          for (var i = 0; i < this.res_data.length; i++) {
+            this.res_data[i]['setting_debit'] = ""
+            this.res_data[i]['setting_kredit'] = ""
+          }
+        }
+      }
+
+      this.headerJurnal = {
+        kd_cabang: this.tipe['kode_cabang'],
+        jenis: this.tipe['jenis_jurnal'],
+        tipe_tran: this.tipe['tipe_transaksi']
+      }
+    }
+
+    // GET DATA SETTING JURNAL OTOMATIS (DETAIL INPUT)
+    if (this.dataSetting !== undefined && this.dataSetting != null) {
+      this.data_setting = JSON.parse(JSON.stringify(this.dataSetting))
+    }
+
+    // GET DATA DETAIL JURNAL BATCH
+    if (this.data !== undefined || this.data != null) {
+
+      this.res_data = this.data
+
+      // RESET VALUE NEW ROWS
+      if (this.data[0]['kode_divisi'] === '' && this.data[1]['kode_divisi'] === '' && this.data.length == 2) {
+        this.setValueNewRows = {}
+      }
+
+      if (this.jurnalOtomatis == undefined) {
+        if (this.headerJurnal['jenis'] === "2") {
+          if (parseFloat(this.res_data[0]['saldo_debit']) > 0 || parseFloat(this.res_data[0]['saldo_kredit']) > 0) {
+            // this.setValueNewRows['kode_divisi'] = this.res_data[0]['']
+          } else {
+            this.res_data = [
+              {
+                id_akun: '',
+                kode_akun: '',
+                nama_akun: '',
+                kode_divisi: '',
+                nama_divisi: '',
+                kode_departemen: '',
+                nama_departemen: '',
+                keterangan_akun: '',
+                keterangan_1: '',
+                keterangan_2: '',
+                saldo_debit: 0,
+                saldo_kredit: 0,
+                setting_debit: '',
+                setting_kredit: '',
+                bobot_debit: 0,
+                bobot_kredit: 0
+              }
+            ]
+          }
+        } else {
+          if (parseFloat(this.res_data[0]['saldo_debit']) > 0 || parseFloat(this.res_data[0]['saldo_kredit']) > 0) {
+
+          } else {
+            this.res_data = [
+              {
+                id_akun: '',
+                kode_akun: '',
+                nama_akun: '',
+                kode_divisi: '',
+                nama_divisi: '',
+                kode_departemen: '',
+                nama_departemen: '',
+                keterangan_akun: '',
+                keterangan_1: '',
+                keterangan_2: '',
+                saldo_debit: 0,
+                saldo_kredit: 0,
+                setting_debit: '',
+                setting_kredit: '',
+                bobot_debit: 0,
+                bobot_kredit: 0
+              },
+              {
+                id_akun: '',
+                kode_akun: '',
+                nama_akun: '',
+                kode_divisi: '',
+                nama_divisi: '',
+                kode_departemen: '',
+                nama_departemen: '',
+                keterangan_1: '',
+                keterangan_2: '',
+                saldo_debit: 0,
+                saldo_kredit: 0,
+                setting_debit: '',
+                setting_kredit: '',
+                bobot_debit: 0,
+                bobot_kredit: 0
+              }
+            ]
+          }
+        }
+      }
+
+      // COUNT TOTAL SALDO
+      this.countDebit()
+      this.countKredit()
+    } else { }
+
+    // VALIDATE SETTING JURNAL OTOMATIS
+    if ((this.res_data[0]['setting_debit'] !== '' && this.res_data[0]['setting_debit'] !== undefined) ||
+      (this.res_data[0]['setting_kredit'] !== '' && this.res_data[0]['setting_kredit'] !== undefined)
+    ) {
+      for (var i = 0; i < this.data_setting.length; i++) {
+        if (
+          (this.data_setting[i]['kode_setting'] === this.res_data[0]['setting_debit']) ||
+          (this.data_setting[i]['kode_setting'] === this.res_data[0]['setting_kredit'])
+        ) {
+          this.tipe_setting = this.data_setting[i]['tipe_setting']
+          break;
+        }
+      }
+    }
+
     this.ref.markForCheck()
   }
 
@@ -1044,7 +1066,7 @@ export class DetailJurnalComponent implements OnInit {
     })
   }
 
-  checkPosition(ind){
+  checkPosition(ind) {
     let pst, pstJO, pstTOP, dialogPst, dialogPstJO, dialogTOP, pixel = {}
 
     if (ind == 0) {

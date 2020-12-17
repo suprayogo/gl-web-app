@@ -372,7 +372,11 @@ export class PegaturanAkunComponent implements OnInit, AfterViewInit {
             }))}`,
             kode_akun: data[i]['kode_akun'],
             id_akun: this.inputAkunData[j]['id_akun'],
-            nama_akun: this.inputAkunData[j]['nama_akun']
+            nama_akun: this.inputAkunData[j]['nama_akun'],
+            id_kategori_akun: this.inputAkunData[j]['id_kategori_akun'],
+            tipe_induk: this.inputAkunData[j]['tipe_induk'],
+            id_induk_akun: this.inputAkunData[j]['id_induk_akun'],
+            tipe_akun: this.inputAkunData[j]['tipe_akun']
           }
           endRes.push(x)
           break;

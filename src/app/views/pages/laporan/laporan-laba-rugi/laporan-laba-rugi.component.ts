@@ -301,7 +301,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.formValueLR = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan']
+      let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueLR['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -336,6 +336,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
 
         if (p['id_periode'] !== undefined) {
           p['kode_report'] = this.formValueLR['format_laporan']
+          p['jenis_laporan'] = this.formValueLR['jenis_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
           p['periode_berjarak'] = +this.formValueLR.periode_berjarak.length > 1 ? this.formValueLR.periode_berjarak : "0" + this.formValueLR.periode_berjarak
@@ -604,7 +605,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
               }, 100)
             }
           }
-          let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan']
+          let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan']
           this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()

@@ -377,7 +377,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran']
 
                   if (d[i]['kode_tran'] === "SALDO-AWAL") {
-                    no_tran = "Saldo Awal"
+                    no_tran = d[i]['kode_tran']
                     if (d[i]['tipe_akun'] == 0) {
                       d[i]['nilai_debit'] = d[i]['saldo_awal']
                     } else if (d[i]['tipe_akun'] == 1) {
@@ -394,7 +394,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   t.push(d[i]['keterangan_1'])
                   t.push(parseFloat(d[i]['nilai_debit']))
                   t.push(parseFloat(d[i]['nilai_kredit']))
-                  t.push(parseFloat(d[i]['saldo_akhir']))
+                  t.push(d[i]['nama_cabang'])
 
                   res.push(t)
                 }
@@ -431,7 +431,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   "Keterangan",
                   "Nilai Debit",
                   "Nilai Kredit",
-                  "Nilai Saldo"
+                  "Nama Cabang"
                 ]
                 rp['FIELD_NAME'] = [
                   "kodeAkun",
@@ -441,7 +441,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   "keterangan",
                   "nilaiDebit",
                   "nilaiKredit",
-                  "nilaiSaldo"
+                  "namaCabang"
                 ]
                 rp['FIELD_TYPE'] = [
                   "string",
@@ -451,7 +451,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
                   "string",
                   "bigdecimal",
                   "bigdecimal",
-                  "bigdecimal"
+                  "string"
                 ]
                 rp['FIELD_DATA'] = res
                 p['bulan_periode'] = +p['bulan_periode']

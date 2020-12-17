@@ -340,7 +340,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.formValueAK = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+      let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueAK['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -375,6 +375,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
         if (p['id_periode'] !== undefined) {
           p['kode_report'] = this.formValueAK['format_laporan']
+          p['jenis_laporan'] = this.formValueAK['jenis_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           if (this.formValueAK['tipe'] === "t") {
             if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
@@ -411,6 +412,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
           }
           p['nama_perusahaan'] = this.gbl.getNamaPerusahaan()
           p['report_format_code'] = this.formValueAK.format_laporan
+          p['jenis_laporan'] = this.formValueAK.jenis_laporan
           p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
           p['periode_berjarak'] = +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak
           p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
@@ -418,7 +420,8 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
           this.request.apiData('report', this.formValueAK.metode_laporan === '1' ? 'g-data-arus-kas-langsung' : 'g-data-arus-kas', p).subscribe(
             data => {
               if (data['STATUS'] === 'Y') {
-                if (this.formValueAK.metode_laporan === '1') {
+                let z = data['RESULT'] 
+               /*  if (this.formValueAK.metode_laporan === '1') {
                   if (this.formValueAK.format_laporan === 'pdf') {
                     window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
                   } else {
@@ -436,130 +439,128 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                       }, 100)
                     }
                   }
-                  let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+                  let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
                   this.checkKeyReport[rk] = data['RESULT']
                   this.distinctPeriode()
                   this.ref.markForCheck()
                 } else {
-                  let z = data['RESULT'] 
-                  // r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
-                  // saldoAwalKas = parseFloat(z['saldo_awal'])
-                  // for (var x = 0; x < r.length; x++) {
-                  //   let d = r[x]['data']
-                  //   for (var i = 0; i < d.length; i++) {
-                  //     for (var j = 0; j < d.length; j++) {
-                  //       if (
-                  //         (
-                  //           (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) ||
-                  //           (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
-                  //         ) &&
-                  //         d[i]['id_akun'] === d[j]['id_akun'] &&
-                  //         d[i]['group'] === d[j]['group']
-                  //       ) {
-                  //         let t = JSON.parse(JSON.stringify(d[i]))
-                  //         if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
-                  //           t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
-                  //         } else {
-                  //           t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
-                  //         }
-                  //         t['class'] = r[x]['value']
-                  //         t['className'] = r[x]['label']
-                  //         nRes.push(t)
-                  //       }
-                  //     }
+                  r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
+                  saldoAwalKas = parseFloat(z['saldo_awal'])
+                  for (var x = 0; x < r.length; x++) {
+                    let d = r[x]['data']
+                    for (var i = 0; i < d.length; i++) {
+                      for (var j = 0; j < d.length; j++) {
+                        if (
+                          (
+                            (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) ||
+                            (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
+                          ) &&
+                          d[i]['id_akun'] === d[j]['id_akun'] &&
+                          d[i]['group'] === d[j]['group']
+                        ) {
+                          let t = JSON.parse(JSON.stringify(d[i]))
+                          if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
+                            t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
+                          } else {
+                            t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
+                          }
+                          t['class'] = r[x]['value']
+                          t['className'] = r[x]['label']
+                          nRes.push(t)
+                        }
+                      }
 
-                  //     if (d[i]['id_akun'] === 'LBRG') {
-                  //       dLR = d[i]
-                  //       dLR['class'] = r[x]['value']
-                  //       dLR['className'] = r[x]['label']
-                  //     }
-                  //   }
-                  // }
+                      if (d[i]['id_akun'] === 'LBRG') {
+                        dLR = d[i]
+                        dLR['class'] = r[x]['value']
+                        dLR['className'] = r[x]['label']
+                      }
+                    }
+                  }
 
-                  // nRes.splice(0, 0, dLR)
+                  nRes.splice(0, 0, dLR)
 
-                  // for (var i = 0; i < nRes.length; i++) {
-                  //   if (totalTipe[nRes[i]['class']]) {
-                  //     totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
-                  //   } else {
-                  //     totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
-                  //   }
-                  // }
+                  for (var i = 0; i < nRes.length; i++) {
+                    if (totalTipe[nRes[i]['class']]) {
+                      totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
+                    } else {
+                      totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
+                    }
+                  }
 
-                  // for (var prop in totalTipe) {
-                  //   if (totalTipe.hasOwnProperty(prop)) {
-                  //     totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
-                  //   }
-                  // }
+                  for (var prop in totalTipe) {
+                    if (totalTipe.hasOwnProperty(prop)) {
+                      totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
+                    }
+                  }
 
-                  // for (var i = 0; i < nRes.length; i++) {
-                  //   let t = []
+                  for (var i = 0; i < nRes.length; i++) {
+                    let t = []
 
-                  //   t.push(nRes[i]['class'])
-                  //   t.push(nRes[i]['className'])
-                  //   t.push(nRes[i]['kode_akun'])
-                  //   t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
-                  //   t.push(nRes[i]['saldo_akhir'])
-                  //   t.push(totalTipe[nRes[i]['class']])
+                    t.push(nRes[i]['class'])
+                    t.push(nRes[i]['className'])
+                    t.push(nRes[i]['kode_akun'])
+                    t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
+                    t.push(nRes[i]['saldo_akhir'])
+                    t.push(totalTipe[nRes[i]['class']])
 
-                  //   res.push(t)
-                  // }
+                    res.push(t)
+                  }
 
-                  // Check range or not
-                  // let repPeriod;
+                  Check range or not
+                  let repPeriod;
 
-                  // if (p['bulan_periode'] === p['periode_berjarak']) {
-                  //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-                  // } else {
-                  //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
-                  // }
+                  if (p['bulan_periode'] === p['periode_berjarak']) {
+                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+                  } else {
+                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
+                  }
 
-                  // Set Report
-                  // let rp = JSON.parse(JSON.stringify(this.reportObj))
-                  // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-                  // rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
-                  // rp['REPORT_NAME'] = 'Laporan Arus Kas'
-                  // rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
-                  // rp['JASPER_FILE'] = 'rptArusKas.jasper'
-                  // rp['REPORT_PARAMETERS'] = {
-                  //   USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                  //   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                  //   REPORT_COMPANY_CITY: this.info_company.kota,
-                  //   REPORT_COMPANY_TLPN: this.info_company.telepon,
-                  //   REPORT_PERIODE: repPeriod,
-                  //   TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
-                  //   SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
-                  //   SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
-                  // }
-                  // rp['FIELD_TITLE'] = [
-                  //   "Tipe",
-                  //   "Nama Tipe",
-                  //   "Kode Akun",
-                  //   "Nama Akun",
-                  //   "Saldo",
-                  //   "Total Tipe Saldo"
-                  // ]
-                  // rp['FIELD_NAME'] = [
-                  //   "tipe",
-                  //   "namaTipe",
-                  //   "kodeAkun",
-                  //   "namaAkun",
-                  //   "saldo",
-                  //   "totalTipeSaldo"
-                  // ]
-                  // rp['FIELD_TYPE'] = [
-                  //   "string",
-                  //   "string",
-                  //   "string",
-                  //   "string",
-                  //   "bigdecimal",
-                  //   "bigdecimal"
-                  // ]
-                  // rp['FIELD_DATA'] = res
-                  // p['bulan_periode'] = +p['bulan_periode']
-
-                  this.sendGetReport(z, this.formValueAK['format_laporan'])
-                }
+                  Set Report
+                  let rp = JSON.parse(JSON.stringify(this.reportObj))
+                  rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+                  rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
+                  rp['REPORT_NAME'] = 'Laporan Arus Kas'
+                  rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
+                  rp['JASPER_FILE'] = 'rptArusKas.jasper'
+                  rp['REPORT_PARAMETERS'] = {
+                    USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+                    REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                    REPORT_COMPANY_CITY: this.info_company.kota,
+                    REPORT_COMPANY_TLPN: this.info_company.telepon,
+                    REPORT_PERIODE: repPeriod,
+                    TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
+                    SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
+                    SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
+                  }
+                  rp['FIELD_TITLE'] = [
+                    "Tipe",
+                    "Nama Tipe",
+                    "Kode Akun",
+                    "Nama Akun",
+                    "Saldo",
+                    "Total Tipe Saldo"
+                  ]
+                  rp['FIELD_NAME'] = [
+                    "tipe",
+                    "namaTipe",
+                    "kodeAkun",
+                    "namaAkun",
+                    "saldo",
+                    "totalTipeSaldo"
+                  ]
+                  rp['FIELD_TYPE'] = [
+                    "string",
+                    "string",
+                    "string",
+                    "string",
+                    "bigdecimal",
+                    "bigdecimal"
+                  ]
+                  rp['FIELD_DATA'] = res
+                  p['bulan_periode'] = +p['bulan_periode']
+                } */
+                this.sendGetReport(z, this.formValueAK['format_laporan'])
               } else {
                 p['bulan_periode'] = +p['bulan_periode']
                 this.gbl.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
@@ -754,7 +755,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
               }, 100)
             }
           }
-          let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan']
+          let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
           this.checkKeyReport[rk] = data['RESULT']
           this.distinctPeriode()
           this.ref.markForCheck()

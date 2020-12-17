@@ -339,6 +339,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                   t.push(parseFloat(d[i]['saldo_akhir']))
                   t.push(parseFloat(d[i]['saldo_awal']))
                   t.push(parseFloat(d[i]['lbr_giro'] == null || d[i]['lbr_giro'] === "" ? "0" : d[i]['lbr_giro']))
+                  t.push(parseFloat(d[i]['lbr_giro_awal'] == null || d[i]['lbr_giro_awal'] === "" ? "0" : d[i]['lbr_giro_awal']))
+                  t.push(parseFloat(d[i]['lbr_giro_akhir'] == null || d[i]['lbr_giro_akhir'] === "" ? "0" : d[i]['lbr_giro_akhir']))
                   // t.push(parseFloat(d[i]['saldo_awal']))
 
                   res.push(t)
@@ -382,7 +384,9 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                 "Saldo Keluar",
                 "Saldo Akhir",
                 "Saldo Awal",
-                "Lembar Giro"
+                "Lembar Giro",
+                "Lembar Giro Awal",
+                "Lembar Giro Akhir"
               ]
               rp['FIELD_NAME'] = [
                 "kodeCabang",
@@ -401,7 +405,9 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                 "saldoKeluar",
                 "saldoAkhir",
                 "saldoAwal",
-                "lbrGiro"
+                "lbrGiro",
+                "lbrGiroAwal",
+                "lbrGiroAkhir"
               ]
               rp['FIELD_TYPE'] = [
                 "string",
@@ -416,6 +422,8 @@ export class RekapGiroComponent implements OnInit, AfterViewInit {
                 "string",
                 "date",
                 "string",
+                "bigdecimal",
+                "bigdecimal",
                 "bigdecimal",
                 "bigdecimal",
                 "bigdecimal",

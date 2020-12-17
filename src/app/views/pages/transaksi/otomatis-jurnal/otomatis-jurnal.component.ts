@@ -18,7 +18,7 @@ import { InputdialogComponent } from '../../components/inputdialog/inputdialog.c
 import { isInteger } from 'lodash';
 
 const content = {
-  beforeCodeTitle: 'Otomatis Jurnal'
+  beforeCodeTitle: 'Jurnal Otomatis'
 }
 
 @Component({
@@ -50,8 +50,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   detailJurnalLoad: boolean = false;
   tableLoadHT: boolean = false;
   tableLoadRT: boolean = false;
-  loadingDataTextHT: string = "Loading Data Hasil Tarik Data.."
-  loadingDataTextRT: string = "Loading Data Riwayat Tarik Data.."
+  loadingDataTextHT: string = "Loading Data Jurnal Otomatis.."
+  partHT: any = "";
+  loadingDataTextRT: string = "Loading Riwayat Tarik Data.."
   content: any;
   nama_tombol: any;
   onSub: boolean = false;
@@ -67,6 +68,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   enableDelete: boolean = false;
   browseNeedUpdate: boolean = true;
   search: string;
+  //
+  needReqVal: any = 0;
+  periode: any;
+  tipe_setting: any;
+  result: any = [];
+  resultTotal: any = [];
+
 
   // GLOBAL VARIABLE PERUSAHAAN
   subscription: any;
@@ -239,7 +247,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       formWidth: 'col-5',
       label: 'Tgl. Transaksi',
       id: 'tgl-transaksi',
-      type: 'input',
+      type: 'datepicker',
       valueOf: 'tgl_tran',
       required: true,
       readOnly: true,
@@ -513,12 +521,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   //Browse binding event
   browseSelectRow(data) {
-    let x = JSON.parse(JSON.stringify(data))
+    let x = JSON.parse(JSON.stringify(data)),
+    t_tran = new Date(x['tgl_tran'])
     this.formDetail = {
       id: x['id'],
-      nama_setting: x['nama_setting'],      
+      nama_setting: x['nama_setting'],
       no_referensi: x['no_referensi'],
-      tgl_tran: x['tgl_tran'],
+      tgl_tran: JSON.stringify(t_tran.getTime()),
       nama_cabang: x['nama_cabang'],
       keterangan: x['keterangan'],
       jenis_transaksi: x['jenis_jurnal'] === '0' ? "Jurnal Umum" : "Jurnal Kasir",
@@ -558,6 +567,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.loading = false
             this.tableLoadRT = true
+            this.needReqVal = 0
+            this.resultTotal = []
+            this.partHT = ""
             this.browseDataHT = []
             this.browseDataRT = []
             this.ref.markForCheck()
@@ -612,6 +624,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.tableLoadHT = true
+    this.needReqVal = 0
+    this.resultTotal = []
+    this.partHT = ""
     this.browseDataHT = []
     this.ref.markForCheck()
     setTimeout(() => {
@@ -681,10 +696,10 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       } else {
         jres = temp.filter(x => x['saldo_debit'] > 0)
       }
-    }else{
+    } else {
       jres = temp
     }
-   
+
     this.gbl.screenPosition(340)
     this.ref.markForCheck()
     this.formInputCheckChangesJurnal()
@@ -819,59 +834,138 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
       this.formValue = this.forminput.getData()
-      let periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
-      let tipe_setting = []
+      this.periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
+      this.tipe_setting = []
       if (this.formValue.rekap_transaksi === '1') {
-        tipe_setting.push('2')
+        this.tipe_setting.push('2')
       }
       if (this.formValue.rekap_harian === '1') {
-        tipe_setting.push('1')
+        this.tipe_setting.push('1')
       }
       if (this.formValue.rekap_bulanan === '1') {
-        tipe_setting.push('0')
+        this.tipe_setting.push('0')
       }
-      this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: periode, tipe_setting: tipe_setting }).subscribe(
+
+      this.getDataJOtomatis('')
+    }
+  }
+
+  getDataJOtomatis(reqStatus) {
+    this.tableLoadHT = true
+    this.ref.markForCheck()
+    if (reqStatus === '' || reqStatus === 'W') {
+      this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: this.periode, tipe_setting: this.tipe_setting, re_get: this.needReqVal }).subscribe(
         data => {
-          if (data['STATUS'] === 'Y') {
-            let t = JSON.parse(JSON.stringify(data['RESULT'])),
-                res = []
-            if (data['RESULT'].length < 1) {
-              this.openSnackBar('Semua transaksi pada periode aktif sudah tersimpan.', 'info')
-            } else {
-              for (var i = 0; i < t.length; i++) {
-                let dt
-                if (isInteger(t[i]['tgl_tran'])) {
-                  let tdt = new Date(t[i]['tgl_tran'])
-                  dt = tdt.getFullYear() + "-" + (JSON.stringify(tdt.getMonth() + 1).length < 2 ? ("0" + (JSON.stringify(tdt.getMonth() + 1))) : JSON.stringify(tdt.getMonth() + 1)) + "-" + (JSON.stringify(tdt.getDate()).length < 2 ? ("0" + (JSON.stringify(tdt.getDate()))) : JSON.stringify(tdt.getDate()))
-                } else {
-                  dt = t[i]['tgl_tran']
-                }
-                let d = {
-                  id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
-                    length: 8,
-                    numeric: true,
-                    letters: false,
-                    special: false
-                  }))}`,
-                  jenis_jurnal: t[i]['jenis_transaksi'],
-                  tipe_transaksi: t[i]['tipe_transaksi'],
-                  kode_setting: t[i]['kode_setting'],
-                  nama_setting: t[i]['nama_setting'],
-                  keterangan_setting: t[i]['keterangan_setting'],
-                  no_referensi: t[i]['no_referensi'],
-                  tgl_tran: dt,
-                  kode_cabang: t[i]['kode_cabang'],
-                  nama_cabang: t[i]['nama_cabang'],
-                  keterangan: t[i]['keterangan'],
-                  detail: JSON.parse(t[i]['detail'])
-                }
-                res.push(d)
+          if (data['STATUS'] === 'W') {
+
+            // Clone Result
+            let dataJOtomatis = JSON.parse(JSON.stringify(data['RESULT'])),
+              totalSetting = JSON.parse(JSON.stringify(data['RESULT']))
+
+            // Init Data Jurnal Otomatis
+            dataJOtomatis.splice(0, 1)
+            for (var i = 0; i < dataJOtomatis.length; i++) {
+              let initDataJO = {
+                id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
+                  length: 8,
+                  numeric: true,
+                  letters: false,
+                  special: false
+                }))}`,
+                jenis_jurnal: dataJOtomatis[i]['jenis_jurnal'],
+                tipe_transaksi: dataJOtomatis[i]['tipe_transaksi'],
+                kode_setting: dataJOtomatis[i]['kode_setting'],
+                nama_setting: dataJOtomatis[i]['nama_setting'],
+                keterangan_setting: dataJOtomatis[i]['keterangan_setting'],
+                no_referensi: dataJOtomatis[i]['no_referensi'],
+                tgl_tran: dataJOtomatis[i]['tgl_tran'],
+                kode_cabang: dataJOtomatis[i]['kode_cabang'],
+                nama_cabang: dataJOtomatis[i]['nama_cabang'],
+                keterangan: dataJOtomatis[i]['keterangan'],
+                detail: JSON.parse(dataJOtomatis[i]['detail'])
               }
+              this.result.push(initDataJO)
             }
-            this.browseDataHT = res
+            this.browseDataHT = this.result
             this.tableLoadHT = false
+            this.loadingDataTextHT = "Please wait.."
+
+            // Init Data Setting
+            totalSetting.splice(1, i)
+            for (var j = 0; j < totalSetting.length; j++) {
+              let initTotal = {
+                re_get: totalSetting[j]['re_get']
+              }
+              this.resultTotal.push(initTotal)
+            }
+
+            // Part loading start
+            let f, g, h, startloadPart,
+              // Part loading final
+              x, y, z, finalLoadPart
+            
+            // Init Start Count Part Loading
+            if (data['RESULT'][0]['re_get'].toString().length == 1) {
+              f = data['RESULT'][0]['re_get']
+              g = Math.round(f)
+              h = g
+              startloadPart = h / 5
+            } else if (data['RESULT'][0]['re_get'].toString().length == 2) {
+              f = data['RESULT'][0]['re_get'] / 10
+              g = Math.round(f)
+              h = g * 10
+              startloadPart = h / 5
+            } else if (data['RESULT'][0]['re_get'].toString().length == 3) {
+              f = data['RESULT'][0]['re_get'] / 100
+              g = Math.round(f)
+              h = g * 100
+              startloadPart = h / 5
+            }
+
+            // Init Final Count Part Loading
+            if (data['RESULT'][0]['re_get_total'].toString().length == 1) {
+              x = data['RESULT'][0]['re_get_total']
+              y = Math.round(x)
+              z = y
+              finalLoadPart = z / 5
+            } else if (data['RESULT'][0]['re_get_total'].toString().length == 2) {
+              x = data['RESULT'][0]['re_get_total'] / 10
+              y = Math.round(x)
+              z = y * 10
+              finalLoadPart = z / 5
+            } else if (data['RESULT'][0]['re_get_total'].toString().length == 3) {
+              x = data['RESULT'][0]['re_get_total'] / 100
+              y = Math.round(x)
+              z = y * 100
+              finalLoadPart = z / 5
+            }
+
+            // Type Loading Percent (Optional)
+            let dec = 100 / finalLoadPart,
+            percentage = Math.round(this.resultTotal.length * dec) + ' %'
+
+            // Loading Per Part Setting Data
+            // this.partHT = startloadPart + " / " + finalLoadPart
+
+             // Loading Percent
+            this.partHT = percentage
+            this.ref.markForCheck()
+
+            // Continue Request
+            this.needReqVal = data['RESULT'][0]['re_get']
+            if (this.needReqVal > 0) {
+              this.getDataJOtomatis('W')
+            }
+
+          } else if (data['STATUS'] === 'Y') {
+            this.tableLoadHT = false
+            setTimeout(() => {
+              this.ref.markForCheck()
+              this.gbl.screenPosition(700)
+            }, 1000);
             this.ref.markForCheck()
           } else {
+            this.needReqVal = 0
             this.tableLoadHT = false
             this.ref.markForCheck()
             this.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')

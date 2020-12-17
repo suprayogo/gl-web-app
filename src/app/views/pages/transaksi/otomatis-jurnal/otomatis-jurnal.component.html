@@ -37,7 +37,7 @@
                 <hr style="width: 100%;">
 
                 <div class="kt-section" *ngIf="tableLoadHT && !loading">
-                    <kt-loading [loadingText]="loadingDataTextHT"></kt-loading>
+                    <kt-loading [loadingText]="loadingDataTextHT" [part]="partHT"></kt-loading>
                 </div>
 
                 <div *ngIf="!tableLoadHT && !loading">
@@ -47,6 +47,9 @@
                         [containerHeight]=300>
                     </kt-datatable-ag-grid>
                     <kt-forminput (onSubmit)="onSubmit()" (onCancel)="onCancel()"></kt-forminput>
+                    
+                    <!-- ADJUSMENT STYLE -->
+                    <div style="margin-bottom: 10px;"></div>
                 </div>
             </kt-portlet-body>
 

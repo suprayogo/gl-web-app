@@ -160,7 +160,7 @@
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
                     (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
                     [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
-                    [readonly]="noEdit" [disabled]="disabled[i]['debit']">
+                    [readonly]="noEdit" [disabled]="noEdit">
             </div>
             <div style="width: 19%; padding: 10px" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
@@ -170,7 +170,7 @@
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
                     (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
                     [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
-                    [readonly]="noEdit" [disabled]="disabled[i]['kredit']">
+                    [readonly]="noEdit" [disabled]="noEdit">
             </div>
             <!-- End: Jurnal Umum -->
 

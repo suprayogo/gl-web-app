@@ -23,11 +23,8 @@ export class RequestDataService {
     headers: this.httpHeader.httpHeader
   }
 
-  // baseURL = "https://4h4f9wqhi4.execute-api.ap-southeast-1.amazonaws.com/dev/gl" //dev aris
-  // baseURL = "https://jv2hyhuxb7.execute-api.ap-southeast-1.amazonaws.com/dev/gl" //dev billy
-  // baseURL = "https://jv2hyhuxb7.execute-api.ap-southeast-1.amazonaws.com/dev/gl"
-  // baseURL = "https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/test/glt" //test
-  baseURL = "https://a8tvx023yi.execute-api.ap-southeast-1.amazonbillyaws.com/dev/gl" // dev dono
+  baseURL = 'https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/test/glt' // Live
+  // baseURL = 'https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // Dev
   
   constructor(
     //Variables

@@ -548,12 +548,12 @@ export class PengaturanLaporanComponent implements OnInit {
         ft === 'pn' || ft === 'hpp' || ft === 'al' || ft === 'at' || ft === 'ak' || ft === 'psv' ? lv1 + 'px' :
           ft === 'pu' || ft === 'bp' || ft === 'atb' || ft === 'hl' || ft === 'bdp' || ft === 'bp' ? lv2 + 'px' :
             ft === 'adu' || ft === 'plu' || ft === 'hjp' || ft === 'ms' || ft === 'bau' ? lv3 + 'px' :
-              ft === 'blu' || ft === 'lr' || ft === 'inv' || ft === 'pdn' ? lv4 + 'px' : '20px',
+              ft === 'blu' || ft === 'lr' || ft === 'inv' || ft === 'pdn' ? this.formAKValue.jenis_laporan === "0" || this.formAKValue.jenis_laporan === "1" ? lv4 + 'px' : lv3 + 'px' : '20px',
       screenPst =
         ft === 'pn' || ft === 'hpp' || ft === 'al' || ft === 'at' || ft === 'ak' || ft === 'psv' ? lv1 :
           ft === 'pu' || ft === 'bp' || ft === 'atb' || ft === 'hl' || ft === 'bdp' || ft === 'bp' ? lv2 :
             ft === 'adu' || ft === 'plu' || ft === 'hjp' || ft === 'ms' || ft === 'bau' ? lv3 :
-              ft === 'blu' || ft === 'lr' || ft === 'inv' || ft === 'pdn' ? lv4 : 20
+              ft === 'blu' || ft === 'lr' || ft === 'inv' || ft === 'pdn' ? this.formAKValue.jenis_laporan === "0" || this.formAKValue.jenis_laporan === "1" ? lv4 : lv3 : 20
     this.gbl.screenPosition(screenPst)
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '70vw',
@@ -756,10 +756,12 @@ export class PengaturanLaporanComponent implements OnInit {
   }
 
   changeJenisLB(type) {
+    this.formLBValue.jenis_laporan = type
+    this.forminputLB.getData()['jenis_laporan'] = type
     if (type === "0") {
       if (this.laporanData['RPLBRG-RE'] !== undefined) {
-        this.formNRValue.kode_laporan = this.laporanData['RPLBRG-RE']['kode_laporan']
-        this.formNRValue.nama_laporan = this.laporanData['RPLBRG-RE']['nama_laporan']
+        this.formLBValue.kode_laporan = this.laporanData['RPLBRG-RE']['kode_laporan']
+        this.formLBValue.nama_laporan = this.laporanData['RPLBRG-RE']['nama_laporan']
         this.LBSetting = JSON.parse(this.laporanData['RPLBRG-RE']['setting'])
 
         this.forminputLB.getData()['kode_laporan'] = this.laporanData['RPLBRG-RE']['kode_laporan']
@@ -767,8 +769,8 @@ export class PengaturanLaporanComponent implements OnInit {
       }
     } else {
       if (this.laporanData['RPLBRG-DT'] !== undefined) {
-        this.formNRValue.kode_laporan = this.laporanData['RPLBRG-DT']['kode_laporan']
-        this.formNRValue.nama_laporan = this.laporanData['RPLBRG-DT']['nama_laporan']
+        this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT']['kode_laporan']
+        this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT']['nama_laporan']
         this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT']['setting'])
 
         this.forminputLB.getData()['kode_laporan'] = this.laporanData['RPLBRG-DT']['kode_laporan']
@@ -778,6 +780,8 @@ export class PengaturanLaporanComponent implements OnInit {
   }
 
   changeJenisNR(type) {
+    this.formNRValue.jenis_laporan = type
+    this.forminput.getData()['jenis_laporan'] = type
     if (type === "0") {
       if (this.laporanData['RPNRC-RE'] !== undefined) {
         this.formNRValue.kode_laporan = this.laporanData['RPNRC-RE']['kode_laporan']
@@ -800,6 +804,8 @@ export class PengaturanLaporanComponent implements OnInit {
   }
 
   changeJenisAK(type) {
+    this.formAKValue.jenis_laporan = type
+    this.forminputAK.getData()['jenis_laporan'] = type
     if (type === "0") {
       if (this.laporanData['RPAKLR-RE'] !== undefined) {
         this.AKSetting = JSON.parse(this.laporanData['RPAKLR-RE']['setting'])

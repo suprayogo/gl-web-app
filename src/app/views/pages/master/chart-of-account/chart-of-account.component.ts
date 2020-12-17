@@ -31,16 +31,6 @@ export class ChartOfAccountComponent implements OnInit {
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
 
   //Configuration
-  tipe_induk: Object = [
-    {
-      label: 'Induk',
-      value: "0"
-    },
-    {
-      label: 'Perincian',
-      value: "1"
-    }
-  ]
   tipe_akun: Object = [
     {
       label: 'Debit',
@@ -66,6 +56,9 @@ export class ChartOfAccountComponent implements OnInit {
   search: string;
   subscription: any;
   kode_perusahaan: string;
+  dialogRef: any;
+  dialogType: string = null;
+  valTmp: any = ""
 
   //Confirmation Variable
   c_buttonLayout = [
@@ -104,17 +97,18 @@ export class ChartOfAccountComponent implements OnInit {
     id_akun: '',
     kode_akun: '',
     nama_akun: '',
+    initKode_akun: '',
+    initNama_akun: '',
     id_kategori_akun: '',
     kode_kategori_akun: '',
     nama_kategori_akun: '',
-    tipe_induk: "0",
+    tipe_induk: "1",
     id_induk_akun: '',
     kode_induk_akun: '',
     nama_induk_akun: '',
     tipe_akun: 0,
-    saldo_awal: 0,
-    saldo_saat_ini: 0,
     keterangan: '',
+    status_akun: 'G'
   }
 
   // Layout Form
@@ -124,11 +118,11 @@ export class ChartOfAccountComponent implements OnInit {
       label: 'Kode Akun',
       id: 'kode-akun',
       type: 'input',
-      valueOf: 'kode_akun',
+      valueOf: 'initKode_akun',
       required: true,
       readOnly: false,
       update: {
-        disabled: false
+        disabled: true
       },
       inputPipe: true
     },
@@ -137,7 +131,7 @@ export class ChartOfAccountComponent implements OnInit {
       label: 'Nama Akun',
       id: 'nama-akun',
       type: 'input',
-      valueOf: 'nama_akun',
+      valueOf: 'initNama_akun',
       required: true,
       readOnly: false,
       update: {
@@ -152,7 +146,7 @@ export class ChartOfAccountComponent implements OnInit {
       click: (type) => this.openDialog(type),
       btnLabel: '',
       btnIcon: 'flaticon-search',
-      browseType: 'kategori_akun',
+      browseType: 'kode_kategori_akun',
       valueOf: 'kode_kategori_akun',
       required: true,
       readOnly: false,
@@ -160,20 +154,32 @@ export class ChartOfAccountComponent implements OnInit {
         id: 'nama-kategori-akun',
         disabled: false,
         readOnly: true,
-        required: true,
+        required: false,
         valueOf: 'nama_kategori_akun'
       },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Tipe Induk',
-      id: 'tipe-induk',
-      type: 'combobox',
-      options: this.tipe_induk,
-      valueOf: 'tipe_induk',
+      blurOption: {
+        ind: 'kode_kategori_akun',
+        data: [],
+        valueOf: ['kode_kategori_akun', 'nama_kategori_akun'],
+        onFound: () => {
+          if (this.onUpdate == true) {
+            if (this.formValue.id_kategori_akun !== this.forminput.getData()['id_kategori_akun']) {
+              this.forminput.getData()['id_induk_akun'] = ""
+              this.forminput.getData()['kode_akun'] = ""
+              this.forminput.getData()['nama_akun'] = ""
+            }
+          } else {
+            this.valTmp === "" ? this.forminput.getData()['id_kategori_akun'] : this.valTmp
+            if (this.forminput.getData()['id_kategori_akun'] !== this.valTmp) {
+              this.forminput.getData()['id_induk_akun'] = ""
+              this.forminput.getData()['kode_akun'] = ""
+              this.forminput.getData()['nama_akun'] = ""
+              this.valTmp = this.forminput.getData()['id_kategori_akun']
+            }
+          }
+          this.filterDataOnBlur()
+        }
+      },
       update: {
         disabled: false
       }
@@ -187,7 +193,7 @@ export class ChartOfAccountComponent implements OnInit {
       btnLabel: '',
       btnIcon: 'flaticon-search',
       browseType: 'kode_akun',
-      valueOf: 'kode_induk_akun',
+      valueOf: 'kode_akun',
       required: false,
       readOnly: false,
       inputInfo: {
@@ -195,14 +201,16 @@ export class ChartOfAccountComponent implements OnInit {
         disabled: false,
         readOnly: true,
         required: false,
-        valueOf: 'nama_induk_akun'
+        valueOf: 'nama_akun'
+      },
+      blurOption: {
+        ind: 'kode_akun',
+        data: [],
+        valueOf: ['kode_akun', 'nama_akun'],
+        onFound: () => null
       },
       update: {
         disabled: false
-      },
-      hiddenOn: {
-        valueOf: 'tipe_induk',
-        matchValue: "0"
       }
     },
     {
@@ -232,21 +240,6 @@ export class ChartOfAccountComponent implements OnInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Saldo Awal',
-      id: 'saldo-awal',
-      type: 'input',
-      valueOf: 'saldo_awal',
-      required: false,
-      readOnly: false,
-      disabled: true,
-      currency: true,
-      leftAddon: 'Rp.',
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
       label: 'Keterangan',
       id: 'keterangan',
       type: 'input',
@@ -259,7 +252,7 @@ export class ChartOfAccountComponent implements OnInit {
     }
   ]
 
-  //Tree view Variables
+  // Tree View Variable
   titleComponent = "Daftar Chart of Account (COA)"
   indicator = "kode_induk_akun"
   indicatorValue = ""
@@ -285,20 +278,26 @@ export class ChartOfAccountComponent implements OnInit {
     {
       label: 'Keterangan',
       value: 'keterangan'
-    },
-    {
-      label: 'Saldo Awal',
-      value: 'saldo_awal',
-      currency: true
-    },
-    {
-      label: 'Saldo',
-      value: 'saldo_saat_ini',
-      currency: true
     }
   ]
   sortBy = "kode_akun"
 
+  // Kategori Akun Variable
+  inputKategoriAkunDisplayColumns = [
+    {
+      label: 'Kode Kategori Akun',
+      value: 'kode_kategori_akun'
+    },
+    {
+      label: 'Nama Kategori Akun',
+      value: 'nama_kategori_akun'
+    }
+  ]
+  inputKategoriAkunInterface = {}
+  inputKategoriAkunData = []
+  inputKategoriAkunDataRules = []
+
+  // Induk Akun Variable
   inputAkunDisplayColumns = [
     {
       label: 'Kode Akun',
@@ -310,99 +309,20 @@ export class ChartOfAccountComponent implements OnInit {
     },
     {
       label: 'Kategori Akun',
-      value: 'nama_kategori Akun'
+      value: 'nama_kategori_akun'
     },
     {
       label: 'Induk Akun',
-      value: 'nama_induk Akun'
+      value: 'nama_induk_akun'
     },
     {
       label: 'Keterangan',
       value: 'keterangan'
-    },
-    {
-      label: 'Saldo Awal',
-      value: 'saldo_awal',
-      number: true
-    },
-    {
-      label: 'Saldo Saat Ini',
-      value: 'saldo_saat_ini',
-      number: true
-    },
-    {
-      label: 'Diinput Oleh',
-      value: 'nama_input_by'
-    },
-    {
-      label: 'Tgl. Input',
-      value: 'input_dt',
-      date: true
-    },
-    {
-      label: 'Diupdate Oleh',
-      value: 'nama_update_by'
-    },
-    {
-      label: 'Tgl. Update',
-      value: 'update_dt',
-      date: true
-    },
+    }
   ]
-
-  inputAkunInterface = {
-    kode_kategori_akun: 'string',
-    nama_kategori_akun: 'string',
-    input_by: 'string',
-    nama_input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    nama_update_by: 'string',
-    update_dt: 'string'
-  }
+  inputAkunInterface = {}
   inputAkunData = []
   inputAkunDataRules = []
-  inputKategoriAkunDisplayColumns = [
-    {
-      label: 'Kode Kategori Akun',
-      value: 'kode_kategori_akun'
-    },
-    {
-      label: 'Nama Kategori Akun',
-      value: 'nama_kategori_akun'
-    },
-    {
-      label: 'Diinput Oleh',
-      value: 'nama_input_by'
-    },
-    {
-      label: 'Tgl. Input',
-      value: 'input_dt',
-      date: true
-    },
-    {
-      label: 'Diupdate Oleh',
-      value: 'nama_update_by'
-    },
-    {
-      label: 'Tgl. Update',
-      value: 'update_dt',
-      date: true
-    },
-  ]
-
-  inputKategoriAkunInterface = {
-    kode_kategori_akun: 'string',
-    nama_kategori_akun: 'string',
-    input_by: 'string',
-    nama_input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    nama_update_by: 'string',
-    update_dt: 'string'
-  }
-  inputKategoriAkunData = []
-  inputKategoriAkunDataRules = []
 
   // TAB MENU BROWSE 
   browseData = []
@@ -417,17 +337,13 @@ export class ChartOfAccountComponent implements OnInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
+    this.gbl.need(true, false)
     this.subscription = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
-        this.resetForm()
         this.madeRequest()
       }
     )
-    window.parent.postMessage({
-			'type': 'NEEDED-PERUSAHAAN',
-			'res': true
-		}, "*")
   }
 
   ngAfterViewInit(): void {
@@ -443,77 +359,312 @@ export class ChartOfAccountComponent implements OnInit {
     this.subscription === undefined ? null : this.subscription.unsubscribe()
   }
 
+  madeRequest() {
+    this.request.apiData('akun', 'g-kat-akun-dc', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputKategoriAkunData = data['RESULT']
+          this.gbl.updateInputdata(data['RESULT'], 'kode_kategori_akun', this.inputLayout)
+        } else {
+          this.inputKategoriAkunData = []
+          this.gbl.openSnackBar('Gagal mendapatkan daftar kategori akun', 'fail')
+          this.ref.markForCheck()
+        }
+      }
+    )
+    this.sendRequestAkunBisaJadiInduk()
+    this.sendRequestAkun()
+  }
+
+  sendRequestAkunBisaJadiInduk() {
+    this.request.apiData('akun', 'g-akun-bisa-jadi-induk', { kode_perusahaan: this.kode_perusahaan, level_induk: '3' }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputAkunData = data['RESULT']
+          this.loading = false
+          this.ref.markForCheck()
+        } else {
+          this.inputAkunData = []
+          this.loading = false
+          this.ref.markForCheck()
+          this.gbl.openSnackBar('Gagal mendapatkan daftar induk akun.', 'fail')
+        }
+      }
+    )
+  }
+
+  sendRequestAkun() {
+    this.loadingCOA = true
+    this.ref.markForCheck()
+    this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.browseData = data['RESULT']
+          this.loadingCOA = false
+          this.ref.markForCheck()
+        } else {
+          this.browseData = []
+          this.loading = false
+          this.loadingCOA = false
+          this.ref.markForCheck()
+          this.gbl.openSnackBar('Gagal mendapatkan daftar akun.', 'fail')
+        }
+      }
+    )
+  }
+
   //Browse binding event
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data))
     this.formValue = {
       id_akun: x['id_akun'],
-      kode_akun: x['kode_akun'],
-      nama_akun: x['nama_akun'],
+      initKode_akun: x['kode_akun'],
+      initNama_akun: x['nama_akun'],
       id_kategori_akun: x['id_kategori_akun'],
-      tipe_induk: x['tipe_induk'],
       kode_kategori_akun: x['kode_kategori_akun'],
       nama_kategori_akun: x['nama_kategori_akun'],
+      tipe_induk: x['tipe_induk'],
       id_induk_akun: x['id_induk_akun'],
+      kode_akun: x['kode_induk_akun'],
+      nama_akun: x['nama_induk_akun'],
       kode_induk_akun: x['kode_induk_akun'],
       nama_induk_akun: x['nama_induk_akun'],
       tipe_akun: x['tipe_akun'],
-      saldo_awal: parseFloat(x['saldo_awal']),
-      saldo_saat_ini: parseFloat(x['saldo_saat_ini']),
       keterangan: x['keterangan'],
+      status_akun: 'G'
     }
     this.enableDelete = x['boleh_hapus'] === 'Y' ? true : false
+    if (this.enableDelete == false) {
+      this.inputLayout.splice(0, 6,
+        {
+          formWidth: 'col-5',
+          label: 'Kode Akun',
+          id: 'kode-akun',
+          type: 'input',
+          valueOf: 'initKode_akun',
+          required: true,
+          readOnly: false,
+          update: {
+            disabled: true
+          },
+          inputPipe: true
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Nama Akun',
+          id: 'nama-akun',
+          type: 'input',
+          valueOf: 'initNama_akun',
+          required: true,
+          readOnly: false,
+          update: {
+            disabled: true
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Kategori Akun',
+          id: 'kode-kategori-akun',
+          type: 'inputgroup',
+          click: (type) => this.openDialog(type),
+          btnLabel: '',
+          btnIcon: 'flaticon-search',
+          browseType: 'kode_kategori_akun',
+          valueOf: 'kode_kategori_akun',
+          required: true,
+          readOnly: false,
+          inputInfo: {
+            id: 'nama-kategori-akun',
+            disabled: false,
+            readOnly: true,
+            required: false,
+            valueOf: 'nama_kategori_akun'
+          },
+          blurOption: {
+            ind: 'kode_kategori_akun',
+            data: [],
+            valueOf: ['kode_kategori_akun', 'nama_kategori_akun'],
+            onFound: () => {
+              if (this.onUpdate == true) {
+                if (this.formValue.id_kategori_akun !== this.forminput.getData()['id_kategori_akun']) {
+                  this.forminput.getData()['id_induk_akun'] = ""
+                  this.forminput.getData()['kode_akun'] = ""
+                  this.forminput.getData()['nama_akun'] = ""
+                }
+              } else {
+                this.valTmp === "" ? this.forminput.getData()['id_kategori_akun'] : this.valTmp
+                if (this.forminput.getData()['id_kategori_akun'] !== this.valTmp) {
+                  this.forminput.getData()['id_induk_akun'] = ""
+                  this.forminput.getData()['kode_akun'] = ""
+                  this.forminput.getData()['nama_akun'] = ""
+                  this.valTmp = this.forminput.getData()['id_kategori_akun']
+                }
+              }
+              this.filterDataOnBlur()
+            }
+          },
+          update: {
+            disabled: true
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Induk Akun',
+          id: 'kode-induk-akun',
+          type: 'inputgroup',
+          click: (type) => this.openDialog(type),
+          btnLabel: '',
+          btnIcon: 'flaticon-search',
+          browseType: 'kode_akun',
+          valueOf: 'kode_akun',
+          required: false,
+          readOnly: false,
+          inputInfo: {
+            id: 'nama-induk-akun',
+            disabled: false,
+            readOnly: true,
+            required: false,
+            valueOf: 'nama_akun'
+          },
+          blurOption: {
+            ind: 'kode_akun',
+            data: [],
+            valueOf: ['kode_akun', 'nama_akun'],
+            onFound: () => null
+          },
+          update: {
+            disabled: true
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Tipe Akun',
+          id: 'tipe-akun',
+          type: 'combobox',
+          options: this.tipe_akun,
+          valueOf: 'tipe_akun',
+          disabledOn: [
+            {
+              key: 'id_induk_akun',
+              notEmpty: true
+            },
+            {
+              key: 'kode_induk_akun',
+              notEmpty: true
+            },
+            {
+              key: 'nama_induk_akun',
+              notEmpty: true
+            }
+          ],
+          update: {
+            disabled: true
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Keterangan',
+          id: 'keterangan',
+          type: 'input',
+          valueOf: 'keterangan',
+          required: false,
+          readOnly: false,
+          update: {
+            disabled: false
+          }
+        }
+      )
+    }
     this.onUpdate = true;
-    window.scrollTo(0, 0)
-    this.formInputCheckChanges()
-  }
-
-  getBackToInput() {
-    this.selectedTab = 0;
-    //this.getDetail()
+    this.filterDataOnBlur()
+    this.gbl.topPage()
     this.formInputCheckChanges()
   }
 
   // Dialog
   openDialog(type) {
+    this.gbl.topPage()
+    if (type === 'kode_akun') {
+      if (this.forminput.getData()['kode_kategori_akun'] === "" || this.forminput.getData()['nama_kategori_akun'] === "") {
+        this.gbl.openSnackBar('Pilih kategori akun dahulu.', 'info', () => {
+          setTimeout(() => {
+            this.openDialog('kode_kategori_akun')
+          }, 250)
+        })
+        return
+      }
+    }
+    this.dialogType = JSON.parse(JSON.stringify(type))
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '90vw',
+      width: type === "kode_kategori_akun" ? '55vw' : '70vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '40px' },
       data: {
         type: type,
         tableInterface:
-          type === "kategori_akun" ? this.inputKategoriAkunInterface :
+          type === "kode_kategori_akun" ? this.inputKategoriAkunInterface :
             type === "kode_akun" ? this.inputAkunInterface :
               {},
         displayedColumns:
-          type === "kategori_akun" ? this.inputKategoriAkunDisplayColumns :
+          type === "kode_kategori_akun" ? this.inputKategoriAkunDisplayColumns :
             type === "kode_akun" ? this.inputAkunDisplayColumns :
               [],
         tableData:
-          type === "kategori_akun" ? this.inputKategoriAkunData :
-            type === "kode_akun" ? this.inputAkunData.filter(x => x['id_kategori_akun'] === (this.forminput === undefined ? null : this.forminput.getData()['id_kategori_akun']) && x['id_akun'] !== (this.forminput === undefined ? null : this.forminput.getData()['id_akun'])) :
+          type === "kode_kategori_akun" ? this.inputKategoriAkunData :
+            type === "kode_akun" ?
+              this.onUpdate == true ?
+
+                // On Update = true
+                this.inputAkunData.filter(x =>
+                  x['id_kategori_akun'] === this.formValue.id_kategori_akun && x['id_akun'] !== this.formValue.id_akun) :
+
+                // On Update = false
+                this.inputAkunData.filter(x =>
+                  x['id_kategori_akun'] === (this.forminput === undefined || this.forminput === undefined || this.forminput === "" || this.forminput === null ?
+                    this.formValue.id_kategori_akun :
+                    this.forminput.getData()['id_kategori_akun'])) :
               [],
         tableRules:
-          type === "kategori_akun" ? this.inputKategoriAkunDataRules :
+          type === "kode_kategori_akun" ? this.inputKategoriAkunDataRules :
             type === "kode_akun" ? this.inputAkunDataRules :
               [],
-        formValue: this.formValue
-      }
+        formValue: this.formValue,
+        sizeCont: 360,
+      },
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kategori_akun") {
+        if (type === "kode_kategori_akun") {
           if (this.forminput !== undefined) {
+            if (this.onUpdate == true) {
+              if (this.formValue.id_kategori_akun !== result.id_kategori_akun) {
+                this.forminput.updateFormValue('id_induk_akun', "")
+                this.forminput.updateFormValue('kode_akun', "")
+                this.forminput.updateFormValue('nama_akun', "")
+              }
+            } else {
+              if (this.forminput.getData()['id_kategori_akun'] !== result.id_kategori_akun) {
+                this.forminput.updateFormValue('id_induk_akun', "")
+                this.forminput.updateFormValue('kode_akun', "")
+                this.forminput.updateFormValue('nama_akun', "")
+                this.valTmp = result.id_kategori_akun
+              }
+            }
             this.forminput.updateFormValue('id_kategori_akun', result.id_kategori_akun)
             this.forminput.updateFormValue('kode_kategori_akun', result.kode_kategori_akun)
             this.forminput.updateFormValue('nama_kategori_akun', result.nama_kategori_akun)
+            this.filterDataOnBlur()
           }
         } else if (type === "kode_akun") {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('id_induk_akun', result.id_akun)
+            this.forminput.updateFormValue('kode_akun', result.kode_akun)
+            this.forminput.updateFormValue('nama_akun', result.nama_akun)
             this.forminput.updateFormValue('kode_induk_akun', result.kode_akun)
             this.forminput.updateFormValue('nama_induk_akun', result.nama_akun)
             this.forminput.updateFormValue('tipe_akun', result.tipe_akun)
@@ -538,7 +689,7 @@ export class ChartOfAccountComponent implements OnInit {
             label: 'Kode Akun',
             id: 'kode-akun',
             type: 'input',
-            valueOf: this.formValue.kode_akun,
+            valueOf: this.formValue.initKode_akun,
             changeOn: null,
             required: false,
             readOnly: true,
@@ -548,7 +699,7 @@ export class ChartOfAccountComponent implements OnInit {
             label: 'Nama Akun',
             id: 'nama-akun',
             type: 'input',
-            valueOf: this.formValue.nama_akun,
+            valueOf: this.formValue.initNama_akun,
             changeOn: null,
             required: false,
             readOnly: true,
@@ -587,55 +738,86 @@ export class ChartOfAccountComponent implements OnInit {
     )
   }
 
+  filterDataOnBlur() {
+    this.gbl.updateInputdata(this.onUpdate == true ?
+
+      // On Update = true
+      this.inputAkunData.filter(x =>
+        x['id_kategori_akun'] === this.formValue.id_kategori_akun && x['id_akun'] !== this.formValue.id_akun) :
+
+      // On Update = false
+      this.inputAkunData.filter(x =>
+        x['id_kategori_akun'] === (this.forminput === undefined || this.forminput === "" || this.forminput === null ?
+          this.formValue.id_kategori_akun :
+          this.forminput.getData()['id_kategori_akun'])), 'kode_akun', this.inputLayout)
+  }
+
   refreshBrowse(message) {
     this.onUpdate = false
     this.sendRequestAkunBisaJadiInduk()
     this.sendRequestAkun()
-    this.openSnackBar(message, 'success')
+    this.gbl.openSnackBar(message, 'success')
   }
 
-  //Form submit
   onSubmit(inputForm: NgForm) {
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
-        this.loading = true;
-        this.ref.markForCheck()
-        this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
-        this.formValue.id_akun = this.formValue.id_akun === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-          length: 8,
-          numeric: true,
-          letters: false,
-          special: false
-        }))}` : this.formValue.id_akun
-        this.formValue['kode_perusahaan'] = this.kode_perusahaan
-        if (this.formValue.tipe_induk === "0") {
-          this.formValue.id_induk_akun = ""
-          this.formValue.kode_induk_akun = ""
-          this.formValue.nama_induk_akun = ""
+        if (this.forminput.getData()['tipe_induk'] === '1' && this.forminput.getData()['kode_akun'] === '') {
+          this.gbl.openSnackBar('Induk Akun Belum Diisi.', 'info')
+        } else {
+          this.saveData()
         }
-        this.request.apiData('akun', this.onUpdate ? 'u-akun' : 'i-akun', this.formValue).subscribe(
-          data => {
-            if (data['STATUS'] === 'Y') {
-              this.loading = false
-              this.resetForm()
-              this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
-            } else {
-              this.loading = false;
-              this.ref.markForCheck()
-              this.openSnackBar(data['RESULT'])
-            }
-          },
-          error => {
-            this.loading = false;
-            this.ref.markForCheck()
-            this.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
-          }
-        )
       } else {
-        this.openSnackBar('DATA TIDAK LENGKAP.', 'fail')
+        if (this.forminput.getData()['initKode_akun'] === '') {
+          this.gbl.openSnackBar('Kode Akun Belum Diisi.', 'info')
+        } else if (this.forminput.getData()['initNama_akun'] === '') {
+          this.gbl.openSnackBar('Nama Akun Belum Diisi.', 'info')
+        } else if (this.forminput.getData()['kode_kategori_akun'] === '') {
+          this.gbl.openSnackBar('Kategori Akun Belum Diisi.', 'info', () => {
+            setTimeout(() => {
+              this.openDialog('kode_kategori_akun')
+            }, 250)
+          })
+          return
+        }
       }
     }
+  }
+
+  //Form submit
+  saveData() {
+    this.loading = true;
+    this.ref.markForCheck()
+    this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
+    this.formValue.id_akun = this.formValue.id_akun === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
+      length: 8,
+      numeric: true,
+      letters: false,
+      special: false
+    }))}` : this.formValue.id_akun
+    this.formValue.kode_akun = this.formValue.initKode_akun
+    this.formValue.nama_akun = this.formValue.initNama_akun
+    this.formValue['kode_perusahaan'] = this.kode_perusahaan
+
+    this.request.apiData('akun', this.onUpdate ? 'u-akun' : 'i-akun', this.formValue).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.loading = false
+          this.resetForm()
+          this.ref.markForCheck()
+          this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+        } else {
+          this.loading = false;
+          this.ref.markForCheck()
+          this.gbl.openSnackBar(data['RESULT'])
+        }
+      },
+      error => {
+        this.loading = false;
+        this.ref.markForCheck()
+        this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
+      }
+    )
   }
 
   //Reset Value
@@ -644,17 +826,18 @@ export class ChartOfAccountComponent implements OnInit {
       id_akun: '',
       kode_akun: '',
       nama_akun: '',
+      initKode_akun: '',
+      initNama_akun: '',
       id_kategori_akun: '',
-      tipe_induk: this.formValue.tipe_induk,
+      tipe_induk: '1',
       kode_kategori_akun: '',
       nama_kategori_akun: '',
       id_induk_akun: '',
       kode_induk_akun: '',
       nama_induk_akun: '',
       tipe_akun: 0,
-      saldo_awal: 0,
-      saldo_saat_ini: 0,
       keterangan: '',
+      status_akun: 'G'
     }
     //this.detailData = []
     this.formInputCheckChanges()
@@ -664,6 +847,145 @@ export class ChartOfAccountComponent implements OnInit {
     if (!this.onUpdate) {
       this.resetForm()
     } else {
+      this.inputLayout = [
+        {
+          formWidth: 'col-5',
+          label: 'Kode Akun',
+          id: 'kode-akun',
+          type: 'input',
+          valueOf: 'initKode_akun',
+          required: true,
+          readOnly: false,
+          update: {
+            disabled: true
+          },
+          inputPipe: true
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Nama Akun',
+          id: 'nama-akun',
+          type: 'input',
+          valueOf: 'initNama_akun',
+          required: true,
+          readOnly: false,
+          update: {
+            disabled: false
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Kategori Akun',
+          id: 'kode-kategori-akun',
+          type: 'inputgroup',
+          click: (type) => this.openDialog(type),
+          btnLabel: '',
+          btnIcon: 'flaticon-search',
+          browseType: 'kode_kategori_akun',
+          valueOf: 'kode_kategori_akun',
+          required: true,
+          readOnly: false,
+          inputInfo: {
+            id: 'nama-kategori-akun',
+            disabled: false,
+            readOnly: true,
+            required: false,
+            valueOf: 'nama_kategori_akun'
+          },
+          blurOption: {
+            ind: 'kode_kategori_akun',
+            data: [],
+            valueOf: ['kode_kategori_akun', 'nama_kategori_akun'],
+            onFound: () => {
+              if (this.onUpdate == true) {
+                if (this.formValue.id_kategori_akun !== this.forminput.getData()['id_kategori_akun']) {
+                  this.forminput.getData()['id_induk_akun'] = ""
+                  this.forminput.getData()['kode_akun'] = ""
+                  this.forminput.getData()['nama_akun'] = ""
+                }
+              } else {
+                this.valTmp === "" ? this.forminput.getData()['id_kategori_akun'] : this.valTmp
+                if (this.forminput.getData()['id_kategori_akun'] !== this.valTmp) {
+                  this.forminput.getData()['id_induk_akun'] = ""
+                  this.forminput.getData()['kode_akun'] = ""
+                  this.forminput.getData()['nama_akun'] = ""
+                  this.valTmp = this.forminput.getData()['id_kategori_akun']
+                }
+              }
+              this.filterDataOnBlur()
+            }
+          },
+          update: {
+            disabled: false
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Induk Akun',
+          id: 'kode-induk-akun',
+          type: 'inputgroup',
+          click: (type) => this.openDialog(type),
+          btnLabel: '',
+          btnIcon: 'flaticon-search',
+          browseType: 'kode_akun',
+          valueOf: 'kode_akun',
+          required: false,
+          readOnly: false,
+          inputInfo: {
+            id: 'nama-induk-akun',
+            disabled: false,
+            readOnly: true,
+            required: false,
+            valueOf: 'nama_akun'
+          },
+          blurOption: {
+            ind: 'kode_akun',
+            data: [],
+            valueOf: ['kode_akun', 'nama_akun'],
+            onFound: () => null
+          },
+          update: {
+            disabled: false
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Tipe Akun',
+          id: 'tipe-akun',
+          type: 'combobox',
+          options: this.tipe_akun,
+          valueOf: 'tipe_akun',
+          disabledOn: [
+            {
+              key: 'id_induk_akun',
+              notEmpty: true
+            },
+            {
+              key: 'kode_induk_akun',
+              notEmpty: true
+            },
+            {
+              key: 'nama_induk_akun',
+              notEmpty: true
+            }
+          ],
+          update: {
+            disabled: false
+          }
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Keterangan',
+          id: 'keterangan',
+          type: 'input',
+          valueOf: 'keterangan',
+          required: false,
+          readOnly: false,
+          update: {
+            disabled: false
+          }
+        }
+      ]
       this.onUpdate = false;
       this.resetForm()
       this.datatable == undefined ? null : this.datatable.reset()
@@ -684,94 +1006,16 @@ export class ChartOfAccountComponent implements OnInit {
           } else {
             this.loading = false;
             this.ref.markForCheck()
-            this.openSnackBar(data['RESULT'])
+            this.gbl.openSnackBar(data['RESULT'])
           }
         },
         error => {
           this.loading = false;
           this.ref.markForCheck()
-          this.openSnackBar('GAGAL MELAKUKAN PENGHAPUSAN.')
+          this.gbl.openSnackBar('GAGAL MELAKUKAN PENGHAPUSAN.')
         }
       )
     }
-  }
-
-  madeRequest() {
-    this.loading = true
-    this.ref.markForCheck()
-
-    this.request.apiData('kategori-akun', 'g-kategori-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputKategoriAkunData = data['RESULT']
-        } else {
-          this.inputKategoriAkunData = []
-          this.openSnackBar('Gagal mendapatkan daftar kategori akun', 'fail')
-          this.ref.markForCheck()
-        }
-      }
-    )
-
-    this.sendRequestAkunBisaJadiInduk()
-    this.sendRequestAkun()
-
-  }
-
-  sendRequestAkun() {
-    this.loadingCOA = true
-    this.ref.markForCheck()
-    this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.browseData = data['RESULT']
-          this.loadingCOA = false
-          this.ref.markForCheck()
-        } else {
-          this.browseData = []
-          this.loading = false
-          this.loadingCOA = false
-          this.ref.markForCheck()
-          this.openSnackBar('Gagal mendapatkan daftar akun.', 'fail')
-        }
-      }
-    )
-  }
-
-  sendRequestAkunBisaJadiInduk() {
-    this.request.apiData('akun', 'g-akun-bisa-jadi-induk', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          this.inputAkunData = data['RESULT']
-          this.loading = false
-          this.ref.markForCheck()
-        } else {
-          this.inputAkunData = []
-          this.loading = false
-          this.ref.markForCheck()
-          this.openSnackBar('Gagal mendapatkan daftar induk akun.', 'fail')
-        }
-      }
-    )
-  }
-
-  openSnackBar(message, type?: any) {
-    const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '120px' },
-      data: {
-        type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase()
-      },
-      disableClose: true
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
-    })
   }
 
   formInputCheckChanges() {
