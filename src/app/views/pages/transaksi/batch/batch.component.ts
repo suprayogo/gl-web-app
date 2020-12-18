@@ -1206,7 +1206,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
                 this.tableLoad = false
                 this.browseNeedUpdate = false
                 this.ref.markForCheck()
-              }  
+              }
             }
           } else {
             this.browseData = []
@@ -1270,9 +1270,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
           }
           if (this.formValue.jenis_jurnal === "2") {
             if (this.formValue.tipe_transaksi === "0") {
-              this.detailData = res.filter(x => x['saldo_kredit'] > 0)
+              this.detailData = res.filter(x => x['saldo_kredit'] != 0)
             } else {
-              this.detailData = res.filter(x => x['saldo_debit'] > 0)
+              this.detailData = res.filter(x => x['saldo_debit'] != 0)
             }
           } else {
             this.detailData = res

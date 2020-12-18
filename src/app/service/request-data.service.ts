@@ -23,8 +23,8 @@ export class RequestDataService {
     headers: this.httpHeader.httpHeader
   }
 
-  baseURL = 'https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/test/glt' // Live
-  // baseURL = 'https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // Dev
+  // baseURL = 'https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/test/glt' // Live
+  baseURL = 'https://a8tvx023yi.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // Dev
   
   constructor(
     //Variables
