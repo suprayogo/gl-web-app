@@ -960,7 +960,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     if (this.cabang_tmp === "") {
       this.cabang_tmp = this.forminput.getData()['kode_cabang']
     }
-    
+
     if (this.formValue.kode_cabang !== this.cabang_tmp && this.cabang_tmp !== "") {
       this.browseDataHT = []
       this.result = []
@@ -989,6 +989,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Get Data Jurnal Otomatis
   getDataJOtomatis(reqStatus) {
     this.ref.markForCheck()
     if (reqStatus === '' || reqStatus === 'W') {
