@@ -2069,7 +2069,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         update: {
-          disabled: true
+          disabled: false
         },
         timepick: false,
         enableMin: true,
@@ -2119,7 +2119,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         required: false,
         readOnly: true,
         update: {
-          disabled: true
+          disabled: false
         }
       }
     } else if (type === "kasir-periode-tidak-sama") {

@@ -56,6 +56,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   content: any;
   nama_tombol: any;
   onSub: boolean = false;
+  dialogType: string = null;
   // onButton: boolean = true;
   detailLoad: boolean = false;
   enableDetail: boolean = false;
@@ -74,6 +75,8 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   tipe_setting: any;
   result: any = [];
   resultTotal: any = [];
+  cabang_utama: any;
+  cabang_tmp: any = "";
 
 
   // GLOBAL VARIABLE PERUSAHAAN
@@ -382,6 +385,25 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   browseDataRT = []
   browseDataRulesRT = []
 
+  // L.O.V VARIABLE
+  // LIST CABANG
+  inputCabangDisplayColumns = [
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
+      label: 'Nama Cabang',
+      value: 'nama_cabang'
+    }
+  ]
+  inputCabangInterface = {
+    kode_cabang: 'string',
+    nama_cabang: 'string'
+  }
+  inputCabangData = []
+  inputCabangDataRules = []
+
   // Input Name
   formValue = {
     tgl_tarik: '',
@@ -389,7 +411,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     tahun_periode: '',
     rekap_harian: '1',
     rekap_bulanan: '1',
-    rekap_transaksi: '1'
+    rekap_transaksi: '1',
+    kode_cabang: '',
+    nama_cabang: ''
   }
 
   // Layout Form
@@ -428,6 +452,36 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       },
       update: {
         disabled: false
+      }
+    },
+    {
+      labelWidth: 'col-4',
+      formWidth: 'col-7',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.open(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: false,
+      readOnly: true,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => { }
+      },
+      update: {
+        disabled: true
       }
     },
     {
@@ -476,9 +530,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.gbl.need(true, true)
     this.content = content // <-- Init the content
     this.nama_tombol = 'Tarik Data'
-    this.gbl.need(true, true)
     this.reqActivePeriod()
   }
 
@@ -508,8 +562,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
             this.nama_bulan_aktif = this.gbl.getNamaBulan(this.bulanPeriodeAktif)
             this.periode_aktif = this.gbl.getActive()
-            this.madeRequest()
-            this.ref.markForCheck()
+            this.getCabang()
           } else {
             this.ref.markForCheck()
             this.openSnackBar('Data Periode tidak ditemukan.')
@@ -519,10 +572,33 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getCabang() {
+    // GET DATA AKSES CABANG USER
+    this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.inputCabangData = data['RESULT']
+          // Variable
+          let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData))
+          // Cabang Utama User
+          this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
+          this.formValue.kode_cabang = this.cabang_utama.kode_cabang
+          this.formValue.nama_cabang = this.cabang_utama.nama_cabang
+          this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
+          this.madeRequest()
+          this.ref.markForCheck()
+        } else {
+          this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+          this.ref.markForCheck()
+        }
+      }
+    )
+  }
+
   //Browse binding event
   browseSelectRow(data) {
     let x = JSON.parse(JSON.stringify(data)),
-    t_tran = new Date(x['tgl_tran'])
+      t_tran = new Date(x['tgl_tran'])
     this.formDetail = {
       id: x['id'],
       nama_setting: x['nama_setting'],
@@ -538,7 +614,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       tipe_transaksi: x['tipe_transaksi'],
       saldo_transaksi: x['saldo_transaksi'],
       tipe_laporan: this.jenisTransaksiData[x['id_jenis_transaksi']] === undefined ? '' : this.jenisTransaksiData[x['id_jenis_transaksi']]['tipe_laporan'],
-      lmbr_giro: x['lmbr_giro'] === undefined ? 1 : x['lmbr_giro']
+      lmbr_giro: x['lmbr_giro'] === undefined ? 1 : x['lmbr_giro'],
     }
     this.openDialog()
   }
@@ -567,6 +643,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.loading = false
             this.tableLoadRT = true
+            this.result = []
             this.needReqVal = 0
             this.resultTotal = []
             this.partHT = ""
@@ -624,6 +701,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.tableLoadHT = true
+    this.result = []
     this.needReqVal = 0
     this.resultTotal = []
     this.partHT = ""
@@ -664,6 +742,53 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       },
       // error => null
     )
+  }
+
+  open(type) {
+    this.gbl.topPage()
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '55vw',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '20px' },
+      data: {
+        type: type,
+        tableInterface:
+          type === "kode_cabang" ? this.inputCabangInterface :
+            {},
+        displayedColumns:
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            [],
+        tableData:
+          type === "kode_cabang" ? this.inputCabangData :
+            [],
+        tableRules:
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            [],
+        formValue: this.formValue,
+        sizeCont: 380,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_cabang") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+            this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+            if (this.cabang_tmp === "") {
+              this.cabang_tmp = this.forminput.getData()['kode_cabang']
+            }
+          }
+        }
+        this.ref.markForCheck();
+      }
+    });
   }
 
   openDialog() {
@@ -765,7 +890,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       tahun_periode: this.tahunPeriodeAktif,
       rekap_harian: this.formValue.rekap_harian,
       rekap_bulanan: this.formValue.rekap_bulanan,
-      rekap_transaksi: this.formValue.rekap_transaksi
+      rekap_transaksi: this.formValue.rekap_transaksi,
+      kode_cabang: this.formValue.kode_cabang,
+      nama_cabang: this.formValue.nama_cabang
     }
     this.loading = false
     this.sendRequestJenisTransaksi()
@@ -830,6 +957,18 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   }
 
   sendRequestHasilTarik() {
+    if (this.cabang_tmp === "") {
+      this.cabang_tmp = this.forminput.getData()['kode_cabang']
+    }
+    
+    if (this.formValue.kode_cabang !== this.cabang_tmp && this.cabang_tmp !== "") {
+      this.browseDataHT = []
+      this.result = []
+      this.needReqVal = 0
+      this.resultTotal = []
+      this.partHT = ""
+      this.cabang_tmp = this.forminput.getData()['kode_cabang']
+    }
     this.gbl.bottomPage()
     this.tableLoadHT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
@@ -851,10 +990,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   }
 
   getDataJOtomatis(reqStatus) {
-    this.tableLoadHT = true
     this.ref.markForCheck()
     if (reqStatus === '' || reqStatus === 'W') {
-      this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: this.periode, tipe_setting: this.tipe_setting, re_get: this.needReqVal }).subscribe(
+      this.request.apiData('jurnal-otomatis', 'g-data-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan, periode: this.periode, tipe_setting: this.tipe_setting, re_get: this.needReqVal, kode_cabang: this.formValue.kode_cabang }).subscribe(
         data => {
           if (data['STATUS'] === 'W') {
 
@@ -866,12 +1004,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             dataJOtomatis.splice(0, 1)
             for (var i = 0; i < dataJOtomatis.length; i++) {
               let initDataJO = {
-                id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
-                  length: 8,
-                  numeric: true,
-                  letters: false,
-                  special: false
-                }))}`,
+                // id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
+                //   length: 8,
+                //   numeric: true,
+                //   letters: false,
+                //   special: false
+                // }))}`,
+                id: dataJOtomatis[i]['id'],
                 jenis_jurnal: dataJOtomatis[i]['jenis_jurnal'],
                 tipe_transaksi: dataJOtomatis[i]['tipe_transaksi'],
                 kode_setting: dataJOtomatis[i]['kode_setting'],
@@ -887,7 +1026,6 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               this.result.push(initDataJO)
             }
             this.browseDataHT = this.result
-            this.tableLoadHT = false
             this.loadingDataTextHT = "Please wait.."
 
             // Init Data Setting
@@ -903,7 +1041,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             let f, g, h, startloadPart,
               // Part loading final
               x, y, z, finalLoadPart
-            
+
             // Init Start Count Part Loading
             if (data['RESULT'][0]['re_get'].toString().length == 1) {
               f = data['RESULT'][0]['re_get']
@@ -942,13 +1080,17 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
             // Type Loading Percent (Optional)
             let dec = 100 / finalLoadPart,
-            percentage = Math.round(this.resultTotal.length * dec) + ' %'
+              percentage = Math.round(this.resultTotal.length * dec)
+            if (percentage > 100) {
+              percentage = 100
+            }
+            let loadPercent = percentage + ' %'
 
             // Loading Per Part Setting Data
             // this.partHT = startloadPart + " / " + finalLoadPart
 
-             // Loading Percent
-            this.partHT = percentage
+            // Loading Percent
+            this.partHT = loadPercent
             this.ref.markForCheck()
 
             // Continue Request
@@ -966,12 +1108,17 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.ref.markForCheck()
           } else {
             this.needReqVal = 0
+            this.resultTotal = []
+            this.partHT = ""
             this.tableLoadHT = false
             this.ref.markForCheck()
             this.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
           }
         },
         err => {
+          this.needReqVal = 0
+          this.resultTotal = []
+          this.partHT = ""
           this.tableLoadHT = false
           this.ref.markForCheck()
           this.openSnackBar('Gagal mendapatkan hasil tarik data.', 'fail')
@@ -1006,6 +1153,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
       // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
+    }, 10)
+  }
+
+  formInputCheckChangesDetail() {
+    setTimeout(() => {
+      this.ref.markForCheck()
+      this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
     }, 10)
   }
 
