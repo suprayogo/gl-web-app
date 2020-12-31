@@ -156,6 +156,18 @@
               </button>
             </div>
           </div>
+
+
+           <!-- FOR INPUT GROUP -->
+           <div *ngIf="x.type === 'detail'" class="input-group">
+            <div class="input-group-append">
+              <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                (click)="x.click(x.browseType)"
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
+                  *ngIf="x.btnIcon" style="color: white" class="flaticon"
+                  [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -163,6 +175,7 @@
 
     <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: BEGIN-------------------------------------------------------- -->
     <div *ngIf="rightLayout" style="width: 47.5%;">
+      <!-- <h2 style="margin-top: 17%; margin-left: 20%;">APPROVED</h2> -->
       <div class="form-group m-form__group row" *ngFor="let x of rightInputLayout; let i = index" [hidden]="x.hiddenOn ?       
               (
                 isArray(x.hiddenOn.matchValue === undefined ? '' : x.hiddenOn.matchValue) ? 

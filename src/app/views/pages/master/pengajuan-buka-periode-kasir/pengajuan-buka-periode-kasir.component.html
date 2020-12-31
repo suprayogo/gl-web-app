@@ -19,7 +19,6 @@
           <ng-template mat-tab-label>
             <p style="margin-bottom: 0"><b>Input</b></p><br>
           </ng-template>
-
           <kt-portlet-body>
             <div class="kt-section">
               <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [buttonLayout]="buttonLayout"
@@ -27,7 +26,7 @@
                 [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
                 (onSubmit)="onSubmit($event)" [onUpdate]="onUpdate" (onCancel)="onCancel()"
                 (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                [disableSubmit]="disableSubmit" [enableCancel]="enableCancel" (cnlData)="openCDialog()"></kt-forminput>
+                [disableSubmit]="disableSubmit" [enableCancel]="enableCancel" (cnlData)="openCDialog()" [rightLayout]="true"></kt-forminput>
             </div>
           </kt-portlet-body>
 

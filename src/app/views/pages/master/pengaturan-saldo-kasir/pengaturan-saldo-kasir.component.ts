@@ -9,6 +9,7 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 // COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Pengaturan Saldo Kasir'
@@ -26,10 +27,43 @@ export class PengaturanSaldoKasirComponent implements OnInit {
   content: any;
   sub_perusahaan: any;
   kode_perusahaan: string;
+  enableCancel: boolean = false
 
   data_akun = []
   res_data = []
+  default_data = []
   total_saldo_awal_kasir = 0
+
+  c_buttonLayout = [
+    {
+      btnLabel: 'Batal Input',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.resetDefault()
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tidak',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin membatalkan input?',
+      style: {
+        'color': 'red',
+        'font-size': '18px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
 
   formDetail = {
     kode_cabang: '',
@@ -113,7 +147,6 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     this.sub_perusahaan = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
-        this.resetForm()
         this.madeRequest()
       }
     )
@@ -132,18 +165,6 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     this.sub_perusahaan === undefined ? null : this.sub_perusahaan.unsubscribe()
   }
 
-  //Browse binding event
-  browseSelectRow(data) {
-    let x = JSON.parse(JSON.stringify(data))
-    window.scrollTo(0, 0)
-  }
-
-  refreshBrowse(message) {
-    this.loading = false
-    this.ref.markForCheck()
-    this.openSnackBar(message, 'success')
-  }
-
   //Form submit
   onSubmit() {
     this.gbl.topPage()
@@ -156,8 +177,7 @@ export class PengaturanSaldoKasirComponent implements OnInit {
           kode_cabang: this.data_akun[i]['kode_cabang'],
           id_kasir: this.data_akun[i]['id_kasir'],
           id_jenis_transaksi: this.data_akun[i]['id_jenis_transaksi'],
-          saldo: parseFloat(this.data_akun[i]['saldo_awal']),
-          // tipe: parseFloat(this.data_akun[i]['saldo_debit']) > parseFloat(this.data_akun[i]['saldo_kredit']) ? 0 : 1
+          saldo: parseFloat(this.data_akun[i]['saldo_awal'])
         }
         res.push(t)
       }
@@ -180,10 +200,6 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     )
   }
 
-  //Reset Value
-  resetForm() {
-  }
-
   resetDetailForm() {
     this.formDetail = {
       kode_cabang: '',
@@ -194,13 +210,6 @@ export class PengaturanSaldoKasirComponent implements OnInit {
       kode_jenis_transaksi: '',
       saldo_awal: 0
     }
-  }
-
-  onCancel() {
-  }
-
-  deleteData() {
-
   }
 
   openDialog(v) {
@@ -223,6 +232,9 @@ export class PengaturanSaldoKasirComponent implements OnInit {
       backdropClass: 'bg-dialog',
       position: { top: '20px' },
       data: {
+        title: 'Nilai Saldo',
+        showClose: false,
+        noButtonSave: true,
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -233,11 +245,12 @@ export class PengaturanSaldoKasirComponent implements OnInit {
         onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
         deleteData: () => null,
       },
-      disableClose: true
+      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(
       result => {
+        this.submitDetailData(this.formDetail)
       },
       error => null,
     );
@@ -247,8 +260,22 @@ export class PengaturanSaldoKasirComponent implements OnInit {
     for (var i = 0; i < this.data_akun.length; i++) {
       if (this.data_akun[i]['kode_cabang'] === v['kode_cabang'] && this.data_akun[i]['id_kasir'] === v['id_kasir'] && this.data_akun[i]['id_jenis_transaksi'] === v['id_jenis_transaksi']) {
         let t = JSON.parse(JSON.stringify(this.data_akun[i]))
+        if (t['edited'] !== undefined) {
+          delete t['edited']
+        }
         t['saldo_awal'] = v['saldo_awal']
-        t['edited'] = true
+        this.data_akun[i] = t
+        let y = true
+        if (JSON.stringify(this.data_akun) === JSON.stringify(this.default_data) == false) {
+          y = false
+        }
+        if (y == false) {
+          t['edited'] = true
+          this.enableCancel = true
+        } else {
+          this.enableCancel = false
+        }
+        this.ref.markForCheck()
         this.data_akun[i] = t
         break
       }
@@ -264,6 +291,9 @@ export class PengaturanSaldoKasirComponent implements OnInit {
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
+          this.default_data = JSON.parse(JSON.stringify(data['RESULT']))
+          this.loading = false
+          this.ref.markForCheck()
           this.restructureData(data['RESULT'])
         } else {
           this.loading = false
@@ -327,9 +357,6 @@ export class PengaturanSaldoKasirComponent implements OnInit {
   }
 
   restructureData(data) {
-    this.loading = true
-    this.ref.markForCheck()
-
     // Variable Kolom Jenis Kasir
     var flags = [],
       outputCabang = [],
@@ -396,12 +423,47 @@ export class PengaturanSaldoKasirComponent implements OnInit {
       }
     }
     this.res_data = res
-    this.countSaldoAwalKasir()
-    this.loading = false
     this.ref.markForCheck()
+    this.countSaldoAwalKasir()
     setTimeout(() => {
       this.checkHeight()
     }, 1)
+  }
+
+  onReset() {
+    this.openCDialog()
+  }
+
+  resetDefault() {
+    this.dialog.closeAll()
+    this.data_akun = JSON.parse(JSON.stringify(this.default_data))
+    this.enableCancel = false
+    this.ref.markForCheck()
+    this.restructureData(this.default_data)
+  }
+
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '150px' },
+      data: {
+        title: "Konfirmasi Batal Input",
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: []
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+      },
+      error => null
+    )
   }
 
   checkParent(id_parent, nu?) {

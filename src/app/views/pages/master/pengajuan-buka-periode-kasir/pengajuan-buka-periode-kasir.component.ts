@@ -273,7 +273,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   // Layout Form
   inputLayout = [
     {
-      formWidth: 'col-5',
+      labelWidth: 'col-3',
+      formWidth: 'col-9',
       label: 'Periode',
       id: 'bulan-periode',
       type: 'inputgroup',
@@ -297,7 +298,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       }
     },
     {
-      formWidth: 'col-5',
+      labelWidth: 'col-3',
+      formWidth: 'col-9',
       label: 'Cabang',
       id: 'kode-cabang',
       type: 'inputgroup',
@@ -329,7 +331,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       }
     },
     {
-      formWidth: 'col-5',
+      labelWidth: 'col-3',
+      formWidth: 'col-9',
       label: 'No. Transaksi',
       id: 'no-tran',
       type: 'input',
@@ -343,7 +346,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       inputPipe: true
     },
     {
-      formWidth: 'col-5',
+      labelWidth: 'col-3',
+      formWidth: 'col-9',
       label: 'Tgl. Transaksi',
       id: 'tgl-tran',
       type: 'datepicker',
@@ -359,7 +363,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       enableMax: false,
     },
     {
-      formWidth: 'col-5',
+      labelWidth: 'col-3',
+      formWidth: 'col-9',
       label: 'Keterangan',
       id: 'keterangan',
       type: 'input',
@@ -484,7 +489,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
 
   // Filter Data Periode
   filterPeriode(bulan_periode, tahun_periode) {
-    var bulan = bulan_periode.length > 1 ? bulan_periode : "0" + bulan_periode
+    var bulan = bulan_periode.toString().length > 1 ? bulan_periode : "0" + bulan_periode
     var tahun = tahun_periode.toString()
     this.bulanTahun = `${tahun}-${bulan}`
   }
@@ -507,7 +512,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         x['kode_cabang'] === kode_cabang &&
 
         //Filter Based on Bulan & Tahun
-        this.getPeriode(x['tgl_periode']) === this.bulanTahun &&
+        this.getPeriode(x['tgl_periode']) === this.bulanTahun && 
         new Date(x['tgl_periode']).getTime() < tgl_aktif
     )
     this.loadingPeriodeKasir = false

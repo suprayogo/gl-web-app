@@ -1,8 +1,8 @@
 <div style="padding: 65px 25px 25px; position: relative;">
 
   <div class="diag-header">
-    <h5 style="margin-bottom: 0; align-self: center;">{{ title ? title : 'Dialog' }}</h5>
-    <button type="button" (click)="closeDialog(true)" class="close-btn">
+    <h5 style="margin-bottom: 0; align-self: center;">{{ title !== undefined ? title : 'Dialog' }}</h5>
+    <button type="button" (click)="closeDialog(true)" class="close-btn" *ngIf="showClose === undefined ? true : showClose">
       <i class="flaticon flaticon-cancel" style="font-size: 1.5em; line-height: 1;"></i>
     </button>
   </div>

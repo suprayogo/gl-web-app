@@ -14,7 +14,7 @@ export class ConfirmationdialogComponent implements OnInit {
   lblLayout: any;
   inpLayout: any;
   formValue: any;
-  title = false;
+  title: any;
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationdialogComponent>,
@@ -23,6 +23,7 @@ export class ConfirmationdialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.title = this.parameter.title
     this.formValue = this.parameter.formValue
     this.btnLayout = this.parameter.buttonLayout
     this.lblLayout = this.parameter.labelLayout

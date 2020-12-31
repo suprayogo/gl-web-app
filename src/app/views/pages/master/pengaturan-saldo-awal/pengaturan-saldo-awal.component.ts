@@ -9,6 +9,7 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 // COMPONENTS
 import { AlertdialogComponent } from '../../components/alertdialog/alertdialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
+import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 
 const content = {
   beforeCodeTitle: 'Pengaturan Saldo Awal Akun'
@@ -26,11 +27,44 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   content: any;
   sub_perusahaan: any;
   kode_perusahaan: string;
+  enableCancel: boolean = false
 
   data_akun = []
   res_data = []
+  default_data = []
   total_debit = 0
   total_kredit = 0
+
+  c_buttonLayout = [
+    {
+      btnLabel: 'Batal Input',
+      btnClass: 'btn btn-primary',
+      btnClick: () => {
+        this.resetDefault()
+      },
+      btnCondition: () => {
+        return true
+      }
+    },
+    {
+      btnLabel: 'Tidak',
+      btnClass: 'btn btn-secondary',
+      btnClick: () => this.dialog.closeAll(),
+      btnCondition: () => {
+        return true
+      }
+    }
+  ]
+  c_labelLayout = [
+    {
+      content: 'Yakin membatalkan input?',
+      style: {
+        'color': 'red',
+        'font-size': '18px',
+        'font-weight': 'bold'
+      }
+    }
+  ]
 
   formDetail = {
     kode_cabang: '',
@@ -151,7 +185,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     this.sub_perusahaan = this.gbl.change.subscribe(
       value => {
         this.kode_perusahaan = value
-        this.resetForm()
         this.madeRequest()
       }
     )
@@ -168,18 +201,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.sub_perusahaan === undefined ? null : this.sub_perusahaan.unsubscribe()
-  }
-
-  //Browse binding event
-  browseSelectRow(data) {
-    let x = JSON.parse(JSON.stringify(data))
-    window.scrollTo(0, 0)
-  }
-
-  refreshBrowse(message) {
-    this.loading = false
-    this.ref.markForCheck()
-    this.openSnackBar(message, 'success')
   }
 
   //Form submit
@@ -232,10 +253,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     return valid
   }
 
-  //Reset Value
-  resetForm() {
-  }
-
   resetDetailForm() {
     this.formDetail = {
       kode_cabang: '',
@@ -247,13 +264,6 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       saldo_debit: 0,
       saldo_kredit: 0
     }
-  }
-
-  onCancel() {
-  }
-
-  deleteData() {
-
   }
 
   openDialog(v) {
@@ -277,6 +287,9 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       backdropClass: 'bg-dialog',
       position: { top: '20px' },
       data: {
+        title: 'Nilai Saldo',
+        showClose: false,
+        noButtonSave: true,
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
         buttonLayout: [],
@@ -287,11 +300,12 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
         deleteData: () => null,
       },
-      disableClose: true
+      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(
       result => {
+        this.submitDetailData(this.formDetail)
       },
       error => null,
     );
@@ -301,15 +315,29 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     for (var i = 0; i < this.data_akun.length; i++) {
       if (this.data_akun[i]['kode_cabang'] === v['kode_cabang'] && this.data_akun[i]['id_akun'] === v['id_akun']) {
         let t = JSON.parse(JSON.stringify(this.data_akun[i]))
+        if (t['edited'] !== undefined) {
+          delete t['edited']
+        }
         t['saldo_debit'] = v['saldo_debit']
         t['saldo_kredit'] = v['saldo_kredit']
-        t['edited'] = true
+        this.data_akun[i] = t
+        let y = true
+        if (JSON.stringify(this.data_akun) === JSON.stringify(this.default_data) == false) {
+          y = false
+        }
+        if (y == false) {
+          t['edited'] = true
+          this.enableCancel = true
+        } else {
+          this.enableCancel = false
+        }
+        this.ref.markForCheck()
         this.data_akun[i] = t
         break
       }
     }
     this.dialog.closeAll()
-    this.restructureData(this.data_akun)
+    this.restructureData(this.data_akun, false)
   }
 
   madeRequest() {
@@ -319,7 +347,10 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       data => {
         if (data['STATUS'] === 'Y') {
           this.data_akun = data['RESULT']
-          this.restructureData(data['RESULT'])
+          this.default_data = JSON.parse(JSON.stringify(data['RESULT']))
+          this.loading = false
+          this.ref.markForCheck()
+          this.restructureData(data['RESULT'], true)
         } else {
           this.loading = false
           this.data_akun = []
@@ -382,9 +413,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     }
   }
 
-  restructureData(data) {
-    this.loading = true
-    this.ref.markForCheck()
+  restructureData(data, needSort) {
     var flags = [],
       outputCabang = [],
       output = [],
@@ -398,7 +427,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         kode_cabang: data[i]['kode_cabang'],
         nama_cabang: data[i]['nama_cabang'],
         type: 'cat'
-      });
+      })
     }
 
     // Looping Kategori Akun
@@ -409,12 +438,14 @@ export class PengaturanSaldoAwalComponent implements OnInit {
         id_kategori_akun: data[i]['id_kategori_akun'],
         nama_kategori_akun: data[i]['nama_kategori_akun'],
         type: 'cat'
-      });
+      })
     }
 
-    // Sort A-Z/0-1 Kode Akun
-    for (var z = 0; z < data.length; z++) {
-      data.sort((a: any, b: any) => a.kode_akun - b.kode_akun);
+    if (needSort == true) {
+      // Sort A-Z/0-1 Kode Akun
+      for (var z = 0; z < data.length; z++) {
+        data.sort((a: any, b: any) => a.kode_akun - b.kode_akun)
+      }
     }
 
     for (var h = 0; h < outputCabang.length; h++) {
@@ -426,13 +457,48 @@ export class PengaturanSaldoAwalComponent implements OnInit {
     }
 
     this.res_data = res
+    this.ref.markForCheck()
     this.countDebit()
     this.countKredit()
-    this.loading = false
-    this.ref.markForCheck()
     setTimeout(() => {
       this.checkHeight()
     }, 1)
+  }
+
+  onReset() {
+    this.openCDialog()
+  }
+
+  resetDefault() {
+    this.dialog.closeAll()
+    this.data_akun = JSON.parse(JSON.stringify(this.default_data))
+    this.enableCancel = false
+    this.ref.markForCheck()
+    this.restructureData(this.default_data, false)
+  }
+
+  openCDialog() { // Confirmation Dialog
+    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '150px' },
+      data: {
+        title: "Konfirmasi Batal Input",
+        buttonLayout: this.c_buttonLayout,
+        labelLayout: this.c_labelLayout,
+        inputLayout: []
+      },
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+      },
+      error => null
+    )
   }
 
   parseData(p, data, id_akun, id_kategori_akun, kode_cabang) {

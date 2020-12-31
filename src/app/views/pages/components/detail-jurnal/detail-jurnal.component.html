@@ -131,9 +131,9 @@
             <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
                 style="width: 28%; padding: 10px; border-right: solid 1px lightgrey;">
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
-                    placeholder="Keterangan 1" [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit"
+                    placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}" [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit"
                     (blur)="ket(i, '1')" (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')">
-                <div style="margin-top: 5px;">
+                <div *ngIf="status_ket" style="margin-top: 5px;">
                     <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
                         placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
                         (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')">
@@ -142,9 +142,9 @@
             <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
                 style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;">
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
-                    placeholder="Keterangan 1" [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit"
+                    placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}" [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit"
                     (blur)="ket(i, '1')" (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')">
-                <div style="margin-top: 5px;">
+                <div *ngIf="status_ket" style="margin-top: 5px;">
                     <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
                         placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
                         (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')">

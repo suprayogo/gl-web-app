@@ -434,147 +434,146 @@ export class ChartOfAccountComponent implements OnInit {
       status_akun: 'G'
     }
     this.enableDelete = x['boleh_hapus'] === 'Y' ? true : false
-    if (this.enableDelete == false) {
-      this.inputLayout.splice(0, 6,
-        {
-          formWidth: 'col-5',
-          label: 'Kode Akun',
-          id: 'kode-akun',
-          type: 'input',
-          valueOf: 'initKode_akun',
-          required: true,
-          readOnly: false,
-          update: {
-            disabled: true
-          },
-          inputPipe: true
+    let status_edit = parseInt(x['level_akun']) > 3 ? true : false
+    this.inputLayout.splice(0, 6,
+      {
+        formWidth: 'col-5',
+        label: 'Kode Akun',
+        id: 'kode-akun',
+        type: 'input',
+        valueOf: 'initKode_akun',
+        required: true,
+        readOnly: false,
+        update: {
+          disabled: true
         },
-        {
-          formWidth: 'col-5',
-          label: 'Nama Akun',
-          id: 'nama-akun',
-          type: 'input',
-          valueOf: 'initNama_akun',
-          required: true,
-          readOnly: false,
-          update: {
-            disabled: true
-          }
-        },
-        {
-          formWidth: 'col-5',
-          label: 'Kategori Akun',
-          id: 'kode-kategori-akun',
-          type: 'inputgroup',
-          click: (type) => this.openDialog(type),
-          btnLabel: '',
-          btnIcon: 'flaticon-search',
-          browseType: 'kode_kategori_akun',
-          valueOf: 'kode_kategori_akun',
-          required: true,
-          readOnly: false,
-          inputInfo: {
-            id: 'nama-kategori-akun',
-            disabled: false,
-            readOnly: true,
-            required: false,
-            valueOf: 'nama_kategori_akun'
-          },
-          blurOption: {
-            ind: 'kode_kategori_akun',
-            data: [],
-            valueOf: ['kode_kategori_akun', 'nama_kategori_akun'],
-            onFound: () => {
-              if (this.onUpdate == true) {
-                if (this.formValue.id_kategori_akun !== this.forminput.getData()['id_kategori_akun']) {
-                  this.forminput.getData()['id_induk_akun'] = ""
-                  this.forminput.getData()['kode_akun'] = ""
-                  this.forminput.getData()['nama_akun'] = ""
-                }
-              } else {
-                this.valTmp === "" ? this.forminput.getData()['id_kategori_akun'] : this.valTmp
-                if (this.forminput.getData()['id_kategori_akun'] !== this.valTmp) {
-                  this.forminput.getData()['id_induk_akun'] = ""
-                  this.forminput.getData()['kode_akun'] = ""
-                  this.forminput.getData()['nama_akun'] = ""
-                  this.valTmp = this.forminput.getData()['id_kategori_akun']
-                }
-              }
-              this.filterDataOnBlur()
-            }
-          },
-          update: {
-            disabled: true
-          }
-        },
-        {
-          formWidth: 'col-5',
-          label: 'Induk Akun',
-          id: 'kode-induk-akun',
-          type: 'inputgroup',
-          click: (type) => this.openDialog(type),
-          btnLabel: '',
-          btnIcon: 'flaticon-search',
-          browseType: 'kode_akun',
-          valueOf: 'kode_akun',
-          required: false,
-          readOnly: false,
-          inputInfo: {
-            id: 'nama-induk-akun',
-            disabled: false,
-            readOnly: true,
-            required: false,
-            valueOf: 'nama_akun'
-          },
-          blurOption: {
-            ind: 'kode_akun',
-            data: [],
-            valueOf: ['kode_akun', 'nama_akun'],
-            onFound: () => null
-          },
-          update: {
-            disabled: true
-          }
-        },
-        {
-          formWidth: 'col-5',
-          label: 'Tipe Akun',
-          id: 'tipe-akun',
-          type: 'combobox',
-          options: this.tipe_akun,
-          valueOf: 'tipe_akun',
-          disabledOn: [
-            {
-              key: 'id_induk_akun',
-              notEmpty: true
-            },
-            {
-              key: 'kode_induk_akun',
-              notEmpty: true
-            },
-            {
-              key: 'nama_induk_akun',
-              notEmpty: true
-            }
-          ],
-          update: {
-            disabled: true
-          }
-        },
-        {
-          formWidth: 'col-5',
-          label: 'Keterangan',
-          id: 'keterangan',
-          type: 'input',
-          valueOf: 'keterangan',
-          required: false,
-          readOnly: false,
-          update: {
-            disabled: false
-          }
+        inputPipe: true
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Nama Akun',
+        id: 'nama-akun',
+        type: 'input',
+        valueOf: 'initNama_akun',
+        required: true,
+        readOnly: false,
+        update: {
+          disabled: status_edit == false ? true : false
         }
-      )
-    }
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Kategori Akun',
+        id: 'kode-kategori-akun',
+        type: 'inputgroup',
+        click: (type) => this.openDialog(type),
+        btnLabel: '',
+        btnIcon: 'flaticon-search',
+        browseType: 'kode_kategori_akun',
+        valueOf: 'kode_kategori_akun',
+        required: true,
+        readOnly: false,
+        inputInfo: {
+          id: 'nama-kategori-akun',
+          disabled: false,
+          readOnly: true,
+          required: false,
+          valueOf: 'nama_kategori_akun'
+        },
+        blurOption: {
+          ind: 'kode_kategori_akun',
+          data: [],
+          valueOf: ['kode_kategori_akun', 'nama_kategori_akun'],
+          onFound: () => {
+            if (this.onUpdate == true) {
+              if (this.formValue.id_kategori_akun !== this.forminput.getData()['id_kategori_akun']) {
+                this.forminput.getData()['id_induk_akun'] = ""
+                this.forminput.getData()['kode_akun'] = ""
+                this.forminput.getData()['nama_akun'] = ""
+              }
+            } else {
+              this.valTmp === "" ? this.forminput.getData()['id_kategori_akun'] : this.valTmp
+              if (this.forminput.getData()['id_kategori_akun'] !== this.valTmp) {
+                this.forminput.getData()['id_induk_akun'] = ""
+                this.forminput.getData()['kode_akun'] = ""
+                this.forminput.getData()['nama_akun'] = ""
+                this.valTmp = this.forminput.getData()['id_kategori_akun']
+              }
+            }
+            this.filterDataOnBlur()
+          }
+        },
+        update: {
+          disabled: status_edit == false ? true : false
+        }
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Induk Akun',
+        id: 'kode-induk-akun',
+        type: 'inputgroup',
+        click: (type) => this.openDialog(type),
+        btnLabel: '',
+        btnIcon: 'flaticon-search',
+        browseType: 'kode_akun',
+        valueOf: 'kode_akun',
+        required: false,
+        readOnly: false,
+        inputInfo: {
+          id: 'nama-induk-akun',
+          disabled: false,
+          readOnly: true,
+          required: false,
+          valueOf: 'nama_akun'
+        },
+        blurOption: {
+          ind: 'kode_akun',
+          data: [],
+          valueOf: ['kode_akun', 'nama_akun'],
+          onFound: () => null
+        },
+        update: {
+          disabled: status_edit == false ? true : false
+        }
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Tipe Akun',
+        id: 'tipe-akun',
+        type: 'combobox',
+        options: this.tipe_akun,
+        valueOf: 'tipe_akun',
+        disabledOn: [
+          {
+            key: 'id_induk_akun',
+            notEmpty: true
+          },
+          {
+            key: 'kode_induk_akun',
+            notEmpty: true
+          },
+          {
+            key: 'nama_induk_akun',
+            notEmpty: true
+          }
+        ],
+        update: {
+          disabled: true
+        }
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Keterangan',
+        id: 'keterangan',
+        type: 'input',
+        valueOf: 'keterangan',
+        required: false,
+        readOnly: false,
+        update: {
+          disabled: false
+        }
+      }
+    )
     this.onUpdate = true;
     this.filterDataOnBlur()
     this.gbl.topPage()

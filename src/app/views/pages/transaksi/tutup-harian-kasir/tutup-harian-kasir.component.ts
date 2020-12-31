@@ -301,7 +301,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
       browseType: 'kode_cabang',
       valueOf: 'kode_cabang',
       required: true,
-      readOnly: false,
+      readOnly: true,
       hiddenOn: false,
       inputInfo: {
         id: 'nama-cabang',
@@ -309,6 +309,12 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         readOnly: true,
         required: false,
         valueOf: 'nama_cabang'
+      },
+      blurOption: {
+        ind: 'kode_cabang',
+        data: [],
+        valueOf: ['kode_cabang', 'nama_cabang'],
+        onFound: () => {}
       },
       update: {
         disabled: false
@@ -432,8 +438,8 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
     this.content = content // <-- Init the content
     this.nama_tombolPJ = 'Tutup Kasir'
     this.gbl.need(true, true)
-    this.reqKodePerusahaan()
-    // this.reqActivePeriod()
+    // this.reqKodePerusahaan()
+    this.reqActivePeriod()
     // this.madeRequest()
   }
 
@@ -526,9 +532,10 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
             this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
             this.formValue.kode_cabang = this.cabang_utama.kode_cabang
             this.formValue.nama_cabang = this.cabang_utama.nama_cabang
-            // this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
-            this.loading = false
+            this.updateForm(this.formValue.kode_cabang, this.formValue.nama_cabang, this.formValue.tipe_tutup)
+            this.gbl.updateInputdata(this.inputCabangData, 'kode_cabang', this.inputLayout)
             this.ref.markForCheck()
+            this.loading = false
           } else {
             this.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
             this.loading = false
@@ -606,7 +613,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
 
 
     } else {
-      let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '1' && x['buka_kembali'] === "1")
+      let lp = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === kode_cabang && x['aktif'] === '0' && x['buka_kembali'] === "1")
       let res = []
       for (var i = 0; i < lp.length; i++) {
         res.push({

@@ -7,16 +7,22 @@ var dayOfWeekNames = [
     "Wednesday", "Thursday", "Friday", "Saturday"
 ];
 
-export function formatDate(idate, patternStr?: string){
+export function formatDate(idate, patternStr?: string) {
 
-    if(idate == null || idate === undefined || idate === '') return ""
-
-    let st = idate.split("-"), 
-        y = st[0], 
-        m = st[1], 
-        d = st[2].split(" ").length < 2 ? st[2] : st[2].split(" ")[0],
-        sh = st[2].split(" ").length < 2 ? "" : st[2].split(" ")[1]
-    var date = sh.length == 0 ?  new Date(y + "-" + m + "-" + d) : new Date(y + "-" + m + "-" + d + " " + sh)
+    if (idate == null || idate === undefined || idate === '') return ""
+    console.log(idate)
+    let st = idate.split("-"), date
+    if (st.length > 2) {
+        let y = st[0],
+            m = st[1],
+            d = st[2].split(" ").length < 2 ? st[2] : st[2].split(" ")[0],
+            sh = st[2].split(" ").length < 2 ? "" : st[2].split(" ")[1]
+        date = sh.length == 0 ? new Date(y + "-" + m + "-" + d) : new Date(y + "-" + m + "-" + d + " " + sh)
+    } else {
+        let y = st[0],
+            m = st[1]
+        date = new Date(y + "-" + m + "-" + '00')
+    }
     // var date = new Date(y + "-" + m + "-" + d + " " + sh)
 
     if (!patternStr) {
@@ -25,7 +31,7 @@ export function formatDate(idate, patternStr?: string){
     var day = date.getDate(),
         month = date.getMonth(),
         year = date.getFullYear(),
-        hour = date.getHours() ,
+        hour = date.getHours(),
         minute = date.getMinutes(),
         second = date.getSeconds(),
         miliseconds = date.getMilliseconds(),
@@ -44,29 +50,29 @@ export function formatDate(idate, patternStr?: string){
         MMM = MMMM.substr(0, 3),
         yyyy = year + "",
         yy = yyyy.substr(2, 2)
-    ;
+        ;
     // checks to see if month name will be used
     patternStr = patternStr
-      .replace('hh', hh).replace('h', JSON.stringify(h))
-      .replace('HH', HH).replace('H', JSON.stringify(hour))
-      .replace('mm', mm).replace('m', JSON.stringify(minute))
-      .replace('ss', ss).replace('s', JSON.stringify(second))
-      .replace('S', JSON.stringify(miliseconds))
-      .replace('dd', dd).replace('d', JSON.stringify(day))
-      
-      .replace('EEEE', EEEE).replace('EEE', EEE)
-      .replace('yyyy', yyyy)
-      .replace('yy', yy)
-      .replace('aaa', aaa);
+        .replace('hh', hh).replace('h', JSON.stringify(h))
+        .replace('HH', HH).replace('H', JSON.stringify(hour))
+        .replace('mm', mm).replace('m', JSON.stringify(minute))
+        .replace('ss', ss).replace('s', JSON.stringify(second))
+        .replace('S', JSON.stringify(miliseconds))
+        .replace('dd', dd).replace('d', JSON.stringify(day))
+
+        .replace('EEEE', EEEE).replace('EEE', EEE)
+        .replace('yyyy', yyyy)
+        .replace('yy', yy)
+        .replace('aaa', aaa);
     if (patternStr.indexOf('MMM') > -1) {
         patternStr = patternStr
-          .replace('MMMM', MMMM)
-          .replace('MMM', MMM);
+            .replace('MMMM', MMMM)
+            .replace('MMM', MMM);
     }
     else {
         patternStr = patternStr
-          .replace('MM', MM)
-          .replace('M', JSON.stringify(M));
+            .replace('MM', MM)
+            .replace('M', JSON.stringify(M));
     }
     return patternStr;
 }

@@ -473,7 +473,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
   getDetail() {
     let specData = this.dataJurnal.filter(x => x['no_tran'] === this.formDetail.no_jurnal)[0] || {}
 
-    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: specData.id_tran }).subscribe(
+    this.request.apiData('jurnal', 'g-jurnal-detail', { kode_perusahaan: this.kode_perusahaan, id_tran: this.formDetail.id_tran }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           let res = [], resp = JSON.parse(JSON.stringify(data['RESULT']))
@@ -495,9 +495,9 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
             res.push(t)
           }
           if (this.formDetail.tipe_transaksi === "0") {
-            this.detailData = res.filter(x => x['saldo_kredit'] > 0)
+            this.detailData = res.filter(x => x['saldo_kredit'] != 0)
           } else {
-            this.detailData = res.filter(x => x['saldo_debit'] > 0)
+            this.detailData = res.filter(x => x['saldo_debit'] != 0)
           }
           // this.detailData = res
           this.formInputCheckChangesJurnal()
@@ -830,7 +830,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
       nama_cabang: x['nama_cabang'],
       nama_kasir: x['nama_kasir'],
       no_jurnal: x['no_jurnal'],
-      id_tran: x['id_tran'],
+      id_tran: x['id_tran_jurnal'],
       no_tran: x['no_tran'],
       tgl_tran: x['tgl_tran'],
       nama_jenis_transaksi: x['nama_jenis_transaksi'],

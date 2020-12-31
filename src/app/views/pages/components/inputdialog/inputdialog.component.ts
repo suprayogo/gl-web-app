@@ -58,7 +58,8 @@ export class InputdialogComponent implements OnInit {
   editable: boolean = false;
   buttonName: any;
   noButtonSave: boolean;
-  title = false;
+  title: any;
+  showClose: boolean;
 
   // Worklist
   btnWL: boolean;
@@ -92,6 +93,8 @@ export class InputdialogComponent implements OnInit {
       this.checkChangesDetailJurnal()
     }
 
+    this.title = this.parameter.title
+    this.showClose = this.parameter.showClose
     this.buttonName = this.parameter.buttonName === undefined ? "Simpan" : this.parameter.buttonName
     this.noButtonSave = this.parameter.noButtonSave
     this.formValue = this.parameter.formValue

@@ -256,7 +256,11 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         ind: 'kode_cabang',
         data: [],
         valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: () => null
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.formValue.kode_bank = this.forminput.getData()['kode_bank']
+          this.filterRekening(this.formValue.kode_cabang, this.formValue.kode_bank)
+        }
       },
       update: {
         disabled: true
@@ -285,7 +289,11 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         ind: 'kode_bank',
         data: [],
         valueOf: ['kode_bank', 'nama_bank'],
-        onFound: () => null
+        onFound: () => {
+          this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+          this.formValue.kode_bank = this.forminput.getData()['kode_bank']
+          this.filterRekening(this.formValue.kode_cabang, this.formValue.kode_bank)
+        }
       },
       update: {
         disabled: true
@@ -682,6 +690,13 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']
             this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
+            // Variable
+            let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData))
+
+            // Cabang Utama User
+            this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
+            this.formValue.kode_cabang = this.cabang_utama.kode_cabang
+            this.formValue.nama_cabang = this.cabang_utama.nama_cabang
             this.ref.markForCheck()
           } else {
             this.loading = false
@@ -696,17 +711,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.inputBankData = data['RESULT']
             this.gbl.updateInputdata(data['RESULT'], 'kode_bank', this.inputLayout)
-
-            // Variable
-            let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData))
-
-            // Cabang Utama User
-            this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
-            this.formValue.kode_cabang = this.cabang_utama.kode_cabang
-            this.formValue.nama_cabang = this.cabang_utama.nama_cabang
-
             this.filterRekening(this.formValue.kode_cabang, this.formValue.kode_bank)
-
             this.ref.markForCheck()
           } else {
             this.loading = false
@@ -730,6 +735,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         }
       )
     }
+
   }
 
   sendRequestPeriodeKasir(kc) {

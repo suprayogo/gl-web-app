@@ -43,7 +43,7 @@
                                     {{ x['keterangan'] }}</span>
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 10px;">
-                                <span style="color: black" *ngIf="!x['type']">Rp
+                                <span [ngStyle]="{'font-weight': numberFormatter(x['saldo_awal']) != 0 ? 'bold' : 'normal'}" style="color: black;" *ngIf="!x['type']">Rp.
                                     {{ numberFormatter(x['saldo_awal'], 2)  }}</span>
                             </div>
                         </div>
@@ -56,13 +56,14 @@
                     <div style="width: 60%;"></div>
                     <div style="width: 20%; padding: 10px;"></div>
                     <div style="width: 20%; padding: 10px;">
-                        <span [ngStyle]="{'color': total_saldo_awal_kasir ? 'black' : 'black'}">Rp
+                        <span style="font-weight: bold; color: black;">Rp.
                             {{ numberFormatter(total_saldo_awal_kasir, 2)  }}</span>
                     </div>
                 </div>
 
                 <div class="kt-form__actions" style="padding-bottom: 10px;">
                     <button type="button" class="btn btn-brand" (click)="onSubmit()">Simpan</button>
+                    <button type="button" *ngIf="enableCancel" class="btn btn-secondary kt--margin-left-10" style="margin-left: 15px;" (click)="onReset()">Batal</button>
                 </div>
 
             </kt-portlet-body>

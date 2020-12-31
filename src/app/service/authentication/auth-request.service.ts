@@ -8,8 +8,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AuthRequestService {
 
-  // baseURL = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct' // Live
-  baseURL = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // Dev
+  baseURL = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct' // Live
+  // baseURL = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // Dev
   
 
   httpBody = {

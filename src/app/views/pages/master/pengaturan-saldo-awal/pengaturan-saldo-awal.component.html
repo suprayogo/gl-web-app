@@ -41,11 +41,11 @@
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 10px; text-align: right;"
                                 [ngStyle]="{'border-right': x['type'] === 'cat' || checkChild(x['id_akun']) ? '' : 'solid 1px lightgrey'}">
-                                <span style="color: black" *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp
+                                <span [ngStyle]="{'font-weight': numberFormatter(x['saldo_debit']) != 0 ? 'bold' : 'normal'}" style="color: black" *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp.
                                     {{ numberFormatter(x['saldo_debit'], 2)  }}</span>
                             </div>
                             <div style="width: 20%; padding: 10px; padding-right: 25px; text-align: right;">
-                                <span style="color: black" *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp
+                                <span [ngStyle]="{'font-weight': numberFormatter(x['saldo_kredit']) != 0 ? 'bold' : 'normal'}" style="color: black" *ngIf="!x['type'] && !checkChild(x['id_akun'])">Rp.
                                     {{ numberFormatter(x['saldo_kredit'], 2) }}</span>
                             </div>
                         </div>
@@ -57,17 +57,18 @@
                     *ngIf="!loading">
                     <div style="width: 60%;"></div>
                     <div style="width: 20%; padding: 10px; text-align: right;">
-                        <span [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
+                        <span [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}" style="font-weight: bold;">Rp.
                             {{ numberFormatter(total_debit, 2)  }}</span>
                     </div>
                     <div style="width: 20%; padding: 10px; text-align: right;">
-                        <span [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
+                        <span [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}" style="font-weight: bold;">Rp.
                             {{ numberFormatter(total_kredit, 2)  }}</span>
                     </div>
                 </div>
 
                 <div class="kt-form__actions" style="padding-bottom: 10px;">
                     <button type="button" class="btn btn-brand" (click)="onSubmit()">Simpan</button>
+                    <button type="button" *ngIf="enableCancel" class="btn btn-secondary kt--margin-left-10" style="margin-left: 15px;" (click)="onReset()">Batal</button>
                 </div>
 
             </kt-portlet-body>

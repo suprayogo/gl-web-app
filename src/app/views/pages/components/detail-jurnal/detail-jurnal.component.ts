@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTreeFlatDataSource } from '@angular/material';
 
 // Dialog Component
 import { DialogComponent } from '../dialog/dialog.component';
@@ -127,6 +127,7 @@ export class DetailJurnalComponent implements OnInit {
   tipe_setting = ""
 
   loading = false;
+  status_ket: boolean = false
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -136,6 +137,19 @@ export class DetailJurnalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // SET JUMLAH KETERANGAN DETAIL
+    this.request.apiData('lookup', 'g-setting-keterangan', { kode_perusahaan: this.gbl.getKodePerusahaan() }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let x = data['RESULT'][0]['status']
+          this.status_ket = x === "2" ? true : false
+        } else {
+
+        }
+        this.ref.markForCheck()
+      }
+    )
+    
     // GET VALUE JURNAL BATCH (HEADER INPUT)
     if (this.tipe != undefined || this.tipe != null) {
       this.headerJurnal = {

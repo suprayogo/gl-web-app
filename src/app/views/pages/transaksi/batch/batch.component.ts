@@ -2278,9 +2278,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
     if (this.formValue.jenis_jurnal === "2") {
       this.formValue.tipe_transaksi = z['tipe_transaksi']
       this.formValue.lembar_giro = z['lembar_giro']
-    } else {
-      this.formValue.tgl_tran = z['tgl_tran']
     }
+    this.formValue.tgl_tran = z['tgl_tran']
     this.formValue.keterangan = z['keterangan']
     this.detailData = this.forminput === undefined ? this.detailData : this.forminput.getData()['detail']['data']
 
