@@ -396,7 +396,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
         rk = tgl_periode_awal + tgl_periode_akhir + this.formValue['kode_cabang'] + this.formValue['format_laporan'] + this.formValue['kode_bank'] + this.formValue['no_rekening'];
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValue['format_laporan'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formValue['format_laporan'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -823,7 +823,7 @@ export class RekapBankComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'

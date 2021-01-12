@@ -10,7 +10,6 @@ var dayOfWeekNames = [
 export function formatDate(idate, patternStr?: string) {
 
     if (idate == null || idate === undefined || idate === '') return ""
-    console.log(idate)
     let st = idate.split("-"), date
     if (st.length > 2) {
         let y = st[0],

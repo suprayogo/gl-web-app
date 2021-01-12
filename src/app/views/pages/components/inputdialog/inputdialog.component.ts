@@ -21,6 +21,8 @@ export class InputdialogComponent implements OnInit {
   @ViewChild(DetailJurnalComponent, { static: false }) detailjurnal;
 
   inputLayout: Object[] = [];
+  rightInputLayout: Object[] = [];
+  rightLayout: boolean;
   buttonLayout: Object[] = [];
   formValue: Object = {};
   inputPipe: any;
@@ -99,6 +101,8 @@ export class InputdialogComponent implements OnInit {
     this.noButtonSave = this.parameter.noButtonSave
     this.formValue = this.parameter.formValue
     this.inputLayout = this.parameter.inputLayout
+    this.rightLayout = this.parameter.rightLayout
+    this.rightInputLayout = this.parameter.rightInputLayout
     this.buttonLayout = this.parameter.buttonLayout
     this.inputPipe = this.parameter.inputPipe
     this.onBlur = this.parameter.onBlur

@@ -82,6 +82,20 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  inputAkunDisplayColumns = [
+    {
+      label: 'Kode Akun',
+      value: 'kode_akun'
+    },
+    {
+      label: 'Nama Akun',
+      value: 'nama_akun'
+    }
+  ]
+  inputAkunInterface = {}
+  inputAkunData = []
+  inputAkunDataRules = []
+
   inputCabangDisplayColumns = [
     {
       label: 'Kode Cabang',
@@ -92,10 +106,7 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       value: 'nama_cabang'
     }
   ]
-  inputCabangInterface = {
-    kode_cabang: 'string',
-    nama_cabang: 'string'
-  }
+  inputCabangInterface = {}
   inputCabangData = []
   inputCabangDataRules = []
 
@@ -109,15 +120,16 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       value: 'nama_bank'
     }
   ]
-  inputBankInterface = {
-    kode_bank: 'string',
-    nama_bank: 'string'
-  }
+  inputBankInterface = {}
   inputBankData = []
   inputBankDataRules = []
 
   // TAB MENU BROWSE 
   displayedColumnsTable = [
+    {
+      label: 'Nama Akun',
+      value: 'nama_akun'
+    },
     {
       label: 'Kode Cabang',
       value: 'kode_cabang'
@@ -165,25 +177,15 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
       date: true
     }
   ];
-  browseInterface = {
-    kode_cabang: 'string',
-    kode_bank: 'string',
-    no_rekening: 'string',
-    atas_nama: 'string',
-    nama_kantor_cabang: 'string',
-    tgl_buka_rekening: 'string',
-    keterangan: 'string',
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    update_dt: 'string'
-  }
+  browseInterface = {}
   browseData = []
   browseDataRules = []
 
   // Input Name
   formValue = {
+    id_akun: '',
+    kode_akun: '',
+    nama_akun: '',
     kode_cabang: '',
     nama_cabang: '',
     kode_bank: '',
@@ -197,6 +199,39 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
 
   // Layout Form
   inputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Akun',
+      id: 'kode-akun',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_akun',
+      valueOf: 'kode_akun',
+      required: true,
+      readOnly: true,
+      hiddenOn: false,
+      blurOption: {
+        ind: 'kode_akun',
+        data: [],
+        valueOf: ['kode_akun', 'nama_akun'],
+        onFound: () => {
+          this.formValue.kode_akun = this.forminput.getData()['kode_akun']
+          this.formValue.nama_akun = this.forminput.getData()['nama_akun']
+        },
+      },
+      inputInfo: {
+        id: 'nama-akun',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_akun'
+      },
+      update: {
+        disabled: false
+      }
+    },
     {
       formWidth: 'col-5',
       label: 'Cabang',
@@ -379,6 +414,19 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   madeRequest() {
     this.inputCabangData = []
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+      this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan, level_induk: '5' }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.inputAkunData = data['RESULT']
+            this.gbl.updateInputdata(data['RESULT'], 'kode_akun', this.inputLayout)
+            this.ref.markForCheck()
+          } else {
+            this.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
+            this.ref.markForCheck()
+          }
+        }
+      )
+
       this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -433,19 +481,23 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
         tableInterface:
           type === "kode_cabang" ? this.inputCabangInterface :
             type === "kode_bank" ? this.inputBankInterface :
-              {},
+              type === "kode_akun" ? this.inputAkunInterface :
+                {},
         displayedColumns:
           type === "kode_cabang" ? this.inputCabangDisplayColumns :
             type === "kode_bank" ? this.inputBankDisplayColumns :
-              [],
+              type === "kode_akun" ? this.inputAkunDisplayColumns :
+                [],
         tableData:
           type === "kode_cabang" ? this.inputCabangData :
             type === "kode_bank" ? this.inputBankData :
-              [],
+              type === "kode_akun" ? this.inputAkunData :
+                [],
         tableRules:
           type === "kode_cabang" ? this.inputCabangDataRules :
             type === "kode_bank" ? this.inputBankDataRules :
-              [],
+              type === "kode_akun" ? this.inputAkunDataRules :
+                [],
         formValue: this.formValue
       }
     });
@@ -461,6 +513,12 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+          }
+        } else if (type === "kode_akun") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('id_akun', result.id_akun)
+            this.forminput.updateFormValue('kode_akun', result.kode_akun)
+            this.forminput.updateFormValue('nama_akun', result.nama_akun)
           }
         }
         this.ref.markForCheck();
@@ -563,6 +621,9 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
     let x = JSON.parse(JSON.stringify(data))
     let t_buka_rek = new Date(x['tgl_buka_rekening'])
     this.formValue = {
+      id_akun: x['id_akun'],
+      kode_akun: x['kode_akun'],
+      nama_akun: x['nama_akun'],
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
       kode_bank: x['kode_bank'],
@@ -635,6 +696,9 @@ export class RekeningPerusahaanComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.formValue = {
+      id_akun: '',
+      kode_akun: '',
+      nama_akun: '',
       kode_cabang: '',
       nama_cabang: '',
       kode_bank: '',

@@ -821,7 +821,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       let rk = this.formValue['id_tran'] + this.formValue['id_tran_jt'] + this.formValue['no_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -914,7 +914,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       let rk = this.formValue['id_tran'] + this.formValue['id_tran_jt'] + this.formValue['no_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -1015,7 +1015,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = this.checkKeyReport + '.xlsx'

@@ -333,7 +333,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       let rk = this.formValueBB['tahun'] + this.formValueBB['bulan'] + this.formValueBB['periode_berjarak'] + this.formValueBB['kode_cabang'] + this.formValueBB['kode_akun'] + this.formValueBB['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueBB['format_laporan'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formValueBB['format_laporan'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -653,7 +653,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'

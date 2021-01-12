@@ -18,6 +18,7 @@ export class DetailinputAgGridComponent implements OnInit {
   @Input() selectIndicator: any;
   @Input() containerHeight: any;
   @Input() buttonLayout: Object[];
+  @Input() statusLayout: Object[];
   @Input() buttonFuncParam: any;
   @Input() editable: boolean;
   @Input() pinnedBottomRowData: Object[] = [];
@@ -62,6 +63,7 @@ export class DetailinputAgGridComponent implements OnInit {
 
   //Variables
   btnLayout: any;
+  statLayout: any;
 
   constructor() { }
 
@@ -148,6 +150,7 @@ export class DetailinputAgGridComponent implements OnInit {
     this.rowData = colData
 
     this.btnLayout = this.buttonLayout
+    this.statLayout = this.statusLayout
 
     this.rowClassRules = {
       'odd-row': function(params){
@@ -204,6 +207,9 @@ export class DetailinputAgGridComponent implements OnInit {
   }
 
   checkChanges(){
+    if(this.statusLayout[0]['statLabel'] === ''){
+      this.statLayout[0]['statLabel'] = ''
+    }
     this.gridApi.setRowData(this.tableData)
   }
 

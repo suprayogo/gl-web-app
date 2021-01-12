@@ -23,6 +23,10 @@ export class JurnalRequestService {
       httpBody.respondCode = 'GET-DATA-JURNAL-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === "g-hasil-jurnal-oto") {
+      httpBody.respondCode = 'GET-DATA-HASIL-JURNAL-OTOMATIS'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'i-jurnal') {
       httpBody.respondCode = 'SET-DATA-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)

@@ -332,7 +332,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueNS['format_laporan'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formValueNS['format_laporan'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -637,7 +637,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'

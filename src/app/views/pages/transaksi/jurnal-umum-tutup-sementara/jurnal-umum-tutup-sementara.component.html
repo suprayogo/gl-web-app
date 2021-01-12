@@ -35,7 +35,7 @@
                                 [namaTombolPrintDoc2]="namaTombolPrintDoc2" (prntDoc2)="inputDialog('cetakTransKasir')"
                                 [onSubPrintDoc2]="onSubPrintDoc2">
                             </kt-forminput>
-                            <form #form action="http://deva.darkotech.id:8702/erp-ws-main/ws/postdownload/report"
+                            <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report"
                                 method="post" target="_blank">
                                 <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
                                 <button type="submit" (click)="form.submit()" id="fsubmit" hidden

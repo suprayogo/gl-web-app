@@ -348,7 +348,7 @@ export class DetailJurnalComponent implements OnInit {
 
       if (this.jurnalOtomatis == undefined) {
         if (this.headerJurnal['jenis'] === "2") {
-          if (parseFloat(this.res_data[0]['saldo_debit']) > 0 || parseFloat(this.res_data[0]['saldo_kredit']) > 0) {
+          if (parseFloat(this.res_data[0]['saldo_debit']) != 0 || parseFloat(this.res_data[0]['saldo_kredit']) != 0) {
             // this.setValueNewRows['kode_divisi'] = this.res_data[0]['']
           } else {
             this.res_data = [
@@ -373,7 +373,7 @@ export class DetailJurnalComponent implements OnInit {
             ]
           }
         } else {
-          if (parseFloat(this.res_data[0]['saldo_debit']) > 0 || parseFloat(this.res_data[0]['saldo_kredit']) > 0) {
+          if (parseFloat(this.res_data[0]['saldo_debit']) != 0 || parseFloat(this.res_data[0]['saldo_kredit']) != 0) {
 
           } else {
             this.res_data = [
@@ -815,14 +815,13 @@ export class DetailJurnalComponent implements OnInit {
     for (var i = 0; i < this.res_data.length; i++) {
       sum = sum + parseFloat(JSON.stringify(this.res_data[i]['saldo_debit']))
     }
-
     this.total_debit = parseFloat(sum.toFixed(5))
     if (ind !== undefined) {
       if (this.headerJurnal['jenis'] === "2") {
         // NOT SET
       } else {
         for (var i = 1; i < this.res_data.length; i++) {
-          if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0 && parseFloat(JSON.stringify(this.res_data[i]['saldo_debit'])) <= 0) {
+          if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0 && parseFloat(JSON.stringify(this.res_data[i]['saldo_debit'])) == 0) {
             if (i == ind) {
               // NOT SET
             } else if (i != ind && ind != 0) {
@@ -834,7 +833,7 @@ export class DetailJurnalComponent implements OnInit {
         }
       }
 
-      if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0) {
+      if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) > 0 || parseFloat(JSON.stringify(this.res_data[ind]['saldo_debit'])) < 0) {
         this.res_data[ind]['saldo_kredit'] = 0
         this.countKredit(ind)
       }
@@ -857,7 +856,6 @@ export class DetailJurnalComponent implements OnInit {
   countKredit(ind?) {
     let sum = 0,
       a = this.res_data.length - 1
-
     for (var i = 0; i < this.res_data.length; i++) {
       sum = sum + parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit']))
     }
@@ -869,7 +867,7 @@ export class DetailJurnalComponent implements OnInit {
         // NOT SET
       } else {
         for (var i = 1; i < this.res_data.length; i++) {
-          if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0 && parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit'])) <= 0) {
+          if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0 && parseFloat(JSON.stringify(this.res_data[i]['saldo_kredit'])) == 0) {
             if (i == ind) {
               // NOT SET
             } else if (i != ind && ind != 0) {
@@ -881,7 +879,7 @@ export class DetailJurnalComponent implements OnInit {
         }
       }
 
-      if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0) {
+      if (parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) > 0 || parseFloat(JSON.stringify(this.res_data[ind]['saldo_kredit'])) < 0) {
         this.res_data[ind]['saldo_debit'] = 0
         this.countDebit(ind)
       }

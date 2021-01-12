@@ -19,6 +19,7 @@ export class ForminputComponent implements OnInit {
   @Input() inputLayout: any;
   @Input() formValue: any;
   @Input() buttonLayout: any;
+  @Input() statusLayout: any;
   @Input() noButton: boolean;
   @Input() rightLayout: boolean;
   @Input() rightInputLayout: any;

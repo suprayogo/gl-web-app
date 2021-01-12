@@ -22,11 +22,12 @@
           <kt-portlet-body>
             <div class="kt-section">
               <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [buttonLayout]="buttonLayout"
-                [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
-                [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
+                [statusLayout]="statusLayout" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
+                [tableRules]="detailRules" [editable]="editable" [detailLoad]="detailLoad" [enableDetail]="enableDetail"
                 (onSubmit)="onSubmit($event)" [onUpdate]="onUpdate" (onCancel)="onCancel()"
                 (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                [disableSubmit]="disableSubmit" [enableCancel]="enableCancel" (cnlData)="openCDialog()" [rightLayout]="true"></kt-forminput>
+                [disableSubmit]="disableSubmit" [enableCancel]="enableCancel" (cnlData)="openCDialog()"
+                [rightLayout]="true"></kt-forminput>
             </div>
           </kt-portlet-body>
 

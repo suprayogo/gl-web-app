@@ -52,6 +52,10 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   bulanTahun: any;
   batal_alasan: any = "";
   setBatal: boolean = false;
+  statusPengajuan = {
+    label: '',
+    color: ''
+  }
 
   // Perusahaan Global Variable
   subPerusahaan: any;
@@ -62,12 +66,22 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     {
       btnLabel: 'Pilih Tanggal Pengajuan',
       btnClass: 'btn btn-primary',
+      btnDisabled: '',
       btnClick: () => {
         this.openDialog('id_periode')
       },
       btnCondition: () => {
         return true
       }
+    }
+  ]
+
+  statusLayout = [
+    {
+      statLabel: '',
+      statStyle: {
+        'color': ''
+      },
     }
   ]
 
@@ -512,7 +526,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         x['kode_cabang'] === kode_cabang &&
 
         //Filter Based on Bulan & Tahun
-        this.getPeriode(x['tgl_periode']) === this.bulanTahun && 
+        this.getPeriode(x['tgl_periode']) === this.bulanTahun &&
         new Date(x['tgl_periode']).getTime() < tgl_aktif
     )
     this.loadingPeriodeKasir = false
@@ -823,7 +837,25 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
     this.onUpdate = true;
     this.enableCancel = x['boleh_batal'] === 'Y' && x['batal_status'] === "false" ? true : false
-    this.disableSubmit = x['boleh_edit'] === 'N' ? true : false
+    this.disableSubmit = x['approval_status'] === 'AP' || x['approval_status'] === 'RJ' ? true : false
+    this.buttonLayout[0].btnDisabled = x['approval_status'] === 'AP' || x['approval_status'] === 'RJ' ? 'disabled' : ''
+    this.statusPengajuan = {
+      label:
+        x['approval_status'] === 'IP' ? 'IN PROGRESS' :
+          x['approval_status'] === 'AP' ? 'APPROVED' :
+            x['approval_status'] === 'RV' ? 'REVISION' :
+              x['approval_status'] === 'RJ' ? 'REJECTED' :
+                '',
+      color: x['approval_status'] === 'RJ' ? '#F70023' : '#2B57AD'
+    }
+    this.statusLayout = [
+      {
+        statLabel: this.statusPengajuan.label,
+        statStyle: {
+          'color': this.statusPengajuan.color
+        },
+      }
+    ]
     this.bulanTahun = ""
     this.inputPeriodeKasirDataFilter = []
     this.getBackToInput();
@@ -942,6 +974,31 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
       bulan_periode: '',
       tahun_periode: ''
     }
+    this.disableSubmit = false
+    this.buttonLayout[0].btnDisabled = ''
+    this.statusPengajuan = {
+      label: '',
+      color: ''
+    }
+    // setTimeout(() => {
+    //   this.ref.markForCheck()
+    //   this.statusLayout = [
+    //     {
+    //       statLabel: '',
+    //       statStyle: {
+    //         'color': ''
+    //       },
+    //     }
+    //   ]
+    // }, 1);
+    this.statusLayout = [
+      {
+        statLabel: '',
+        statStyle: {
+          'color': ''
+        },
+      }
+    ]
     this.detailData = []
     this.formInputCheckChanges()
     this.formDetailInputCheckChanges()

@@ -154,7 +154,7 @@
             <!-- Begin: Jurnal Umum -->
             <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
-                <div class="input-group-prepend" style="height: fit-content; display: table;">
+                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend" style="height: fit-content; display: table;">
                     <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
@@ -164,7 +164,7 @@
             </div>
             <div style="width: 19%; padding: 10px" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
-                <div class="input-group-prepend" style="height: fit-content; display: table;">
+                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend" style="height: fit-content; display: table;">
                     <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
@@ -177,7 +177,7 @@
             <!-- Begin: Jurnal Kasir -->
             <div style="width: 22%; padding: 10px;" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
-                <div class="input-group-prepend" style="height: fit-content; display: table;">
+                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend" style="height: fit-content; display: table;">
                     <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
@@ -187,7 +187,7 @@
             </div>
             <div style="width: 22%; padding: 10px" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
-                <div class="input-group-prepend" style="height: fit-content; display: table;">
+                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend" style="height: fit-content; display: table;">
                     <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
                 </div>
                 <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
@@ -279,7 +279,7 @@
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
         *ngIf="!templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
         <span>Total Debit :</span>
-        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp.
             {{ numberFormatter(total_debit, 2) }}</h6>
     </div>
 
@@ -290,7 +290,7 @@
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
         *ngIf="!templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
         <span>Total Debit :</span>
-        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'black' : 'black'}">Rp
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'black' : 'black'}">Rp.
             {{ numberFormatter(total_debit, 2) }}</h6>
     </div>
 
@@ -308,7 +308,7 @@
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
         *ngIf="!templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
         <span>Total Kredit :</span>
-        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'red' : 'black'}">Rp.
             {{ numberFormatter(total_kredit, 2) }}</h6>
     </div>
 
@@ -319,7 +319,7 @@
     <div style="width: 20%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;"
         *ngIf="!templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
         <span>Total Kredit :</span>
-        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'black' : 'black'}">Rp
+        <h6 style="align-self: flex-end;" [ngStyle]="{'color': total_debit != total_kredit ? 'black' : 'black'}">Rp.
             {{ numberFormatter(total_kredit, 2) }}</h6>
     </div>
 

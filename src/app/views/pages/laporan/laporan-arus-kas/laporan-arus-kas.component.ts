@@ -343,7 +343,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueAK['format_laporan'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formValueAK['format_laporan'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -423,7 +423,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                 let z = data['RESULT'] 
                /*  if (this.formValueAK.metode_laporan === '1') {
                   if (this.formValueAK.format_laporan === 'pdf') {
-                    window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+                    window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
                   } else {
                     if (this.formValueAK.format_laporan === 'xlsx') {
                       this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
@@ -739,7 +739,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'

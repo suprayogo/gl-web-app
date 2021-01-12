@@ -1103,7 +1103,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   // BROWSE DATA (TAB MENU : BROWSE)
-  refreshBrowse(message, select?) {
+   refreshBrowse(message, select?) {
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
     this.browseData = []
     if (this.formValue.jenis_jurnal === "2") {
@@ -1186,14 +1186,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             if (message !== '') {
-              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
+              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang && x['jenis_jurnal'] === this.formValue.jenis_jurnal)
               this.loading = false
               this.tableLoad = false
               this.ref.markForCheck()
               this.gbl.openSnackBar(message, 'success')
               this.onUpdate = false
             } else {
-              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang)
+              this.browseData = data['RESULT'].filter(x => x['kode_cabang'] === this.formValue.kode_cabang && x['jenis_jurnal'] === this.formValue.jenis_jurnal)
               if (select !== undefined) {
                 let search = JSON.parse(JSON.stringify(this.browseData)),
                   x
@@ -1627,7 +1627,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       }
       if (this.checkKeyReport[ru] !== undefined && this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[ru], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[ru], "_blank")
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[ru] + '.xlsx'
@@ -1738,7 +1738,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       }
       if (this.checkKeyReport[rk] !== undefined && this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -1848,7 +1848,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8702/logis/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'

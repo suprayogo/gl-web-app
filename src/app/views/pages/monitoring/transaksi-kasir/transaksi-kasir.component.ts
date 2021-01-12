@@ -279,7 +279,7 @@ export class TransaksiKasirComponent implements OnInit, AfterViewInit {
     },
     {
       label: 'Nama Jenis Transaksi',
-      value: 'nama_jenis_transaksi'
+      value: 'jenis_transaksi_sub'
     },
     {
       label: 'Nilai Jenis Transaksi',

@@ -158,8 +158,8 @@
           </div>
 
 
-           <!-- FOR INPUT GROUP -->
-           <div *ngIf="x.type === 'detail'" class="input-group">
+          <!-- FOR INPUT GROUP -->
+          <div *ngIf="x.type === 'detail'" class="input-group">
             <div class="input-group-append">
               <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                 (click)="x.click(x.browseType)"
@@ -175,7 +175,6 @@
 
     <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: BEGIN-------------------------------------------------------- -->
     <div *ngIf="rightLayout" style="width: 47.5%;">
-      <!-- <h2 style="margin-top: 17%; margin-left: 20%;">APPROVED</h2> -->
       <div class="form-group m-form__group row" *ngFor="let x of rightInputLayout; let i = index" [hidden]="x.hiddenOn ?       
               (
                 isArray(x.hiddenOn.matchValue === undefined ? '' : x.hiddenOn.matchValue) ? 
@@ -313,16 +312,16 @@
         </div>
       </div>
     </div>
+    <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: END----------------------------------------------------------- -->
   </div>
-  <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: END----------------------------------------------------------- -->
-
+  
   <div class="kt-section" *ngIf="detailLoad && enableDetail">
     <kt-loading></kt-loading>
   </div>
 
   <div *ngIf="!detailLoad && enableDetail">
-    <kt-detailinput-ag-grid [buttonLayout]="buttonLayout" [tableColumn]="tableColumn" [tableData]="tableData"
-      [tableRules]="tableRules" [editable]="editable" (editAction)="editDetailData($event)"
+    <kt-detailinput-ag-grid [buttonLayout]="buttonLayout" [statusLayout]="statusLayout" [tableColumn]="tableColumn"
+      [tableData]="tableData" [tableRules]="tableRules" [editable]="editable" (editAction)="editDetailData($event)"
       (deleteAction)="delDetailData($event)" [containerHeight]="containerHeight"></kt-detailinput-ag-grid>
   </div>
 
