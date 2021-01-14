@@ -762,7 +762,7 @@ export class TransaksiJurnalOtomatisComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
       height:
-        type === 'jurnal' ? '82vh' :
+        type === 'jurnal' ? this.formDetail.jenis_jurnal === '2' ? '85vh' : '82vh' :
           type === 'cetak' ? 'auto' :
             undefined,
       maxWidth: '95vw',

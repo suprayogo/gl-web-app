@@ -43,16 +43,16 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   // BUTTON
   noCancel: boolean = true; // SET ACTIVE HIDE BUTTON CANCEL
   // METHOD HASIL TARIK JURNAL OTOMATIS
-  partHT: any = ""; // PART DATA LOADING
+  partHT: any = ''; // PART DATA LOADING
   needReqVal: any = 0; // PART GET DATA
-  cabang_tmp: any = ""; // CABANG
-  re_get_tmp: any = ""; // VALUE PART AWAL 
+  cabang_tmp: any = ''; // CABANG
+  re_get_tmp: any = ''; // VALUE PART AWAL 
   result: any = []; // FUll DATA
   resultTotal: any = []; // VALUE LOADING
   // OTHERS
   content: any;
-  loadingDataTextHT: string = "Loading Data Jurnal Otomatis.."
-  loadingDataTextRT: string = "Loading Riwayat Tarik Data.."
+  loadingDataTextHT: string = 'Loading Data Jurnal Otomatis..'
+  loadingDataTextRT: string = 'Loading Riwayat Tarik Data..'
   nama_tombol: any;
   periode: any;
   cabang_utama: any;
@@ -185,7 +185,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           this.result = []
           this.needReqVal = 0
           this.resultTotal = []
-          this.partHT = ""
+          this.partHT = ''
           this.cabang_tmp = this.forminput.getData()['kode_cabang']
           this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
         }
@@ -457,7 +457,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     // PERUSAHAAN AKTIF
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
 
-    if (this.kode_perusahaan !== "") {
+    if (this.kode_perusahaan !== '') {
       this.madeRequest()
     }
   }
@@ -468,7 +468,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   }
 
   madeRequest() {
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') {
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -541,23 +541,23 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   // GET DATA RIWAYAT TARIK JURNAL
   getRiwayatTarik() {
     this.tableLoadRT = true
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== '')) {
       this.request.apiData('jurnal-otomatis', 'g-tarik-data-terakhir', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif.id_periode }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.browseDataRT = data['RESULT']
             if (data['RESULT'].length > 0) {
-              let dt = data['RESULT'][0]['input_dt'].split(" ")[0],
-                st = dt.split("-"),
+              let dt = data['RESULT'][0]['input_dt'].split(' ')[0],
+                st = dt.split('-'),
                 y = st[0],
-                m = st[1].replace("0", ""),
+                m = st[1].replace('0', ''),
                 d = st[2],
-                edt = d + " " + this.gbl.getNamaBulan(m) + " " + y
+                edt = d + ' ' + this.gbl.getNamaBulan(m) + ' ' + y
               this.formValue.tgl_tarik = edt
               this.forminput.updateFormValue('tgl_tarik', edt)
             } else {
-              this.formValue.tgl_tarik = "Belum pernah tarik"
-              this.forminput.updateFormValue('tgl_tarik', "Belum pernah tarik")
+              this.formValue.tgl_tarik = 'Belum pernah tarik'
+              this.forminput.updateFormValue('tgl_tarik', 'Belum pernah tarik')
             }
             this.tableLoadRT = false
           } else {
@@ -572,23 +572,23 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   // INITAL HASIL TARIK DATA JURNAL OTOMATIK
   initHasilTarik() {
-    if (this.cabang_tmp === "") {
+    if (this.cabang_tmp === '') {
       this.cabang_tmp = this.forminput.getData()['kode_cabang']
     }
 
-    if (this.formValue.kode_cabang !== this.cabang_tmp && this.cabang_tmp !== "") {
+    if (this.formValue.kode_cabang !== this.cabang_tmp && this.cabang_tmp !== '') {
       this.browseDataHT = []
       this.result = []
       this.needReqVal = 0
       this.resultTotal = []
-      this.partHT = ""
+      this.partHT = ''
       this.cabang_tmp = this.forminput.getData()['kode_cabang']
     }
     this.gbl.bottomPage()
     this.tableLoadHT = true
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== '')) {
       this.formValue = this.forminput.getData()
-      this.periode = this.gbl.getTahunPeriodeAktif() + "-" + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : "0" + this.gbl.getBulanPeriodeAktif())
+      this.periode = this.gbl.getTahunPeriodeAktif() + '-' + (this.gbl.getBulanPeriodeAktif().length > 1 ? this.gbl.getBulanPeriodeAktif() : '0' + this.gbl.getBulanPeriodeAktif())
       this.tipe_setting = []
       if (this.formValue.rekap_transaksi === '1') {
         this.tipe_setting.push('2')
@@ -651,7 +651,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               this.result.push(dataJOtomatis[i])
             }
             this.browseDataHT = this.result
-            this.loadingDataTextHT = "Please wait.."
+            this.loadingDataTextHT = 'Please wait..'
 
             // Init Data Setting
             totalSetting.splice(1, i)
@@ -667,11 +667,11 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               // Part loading final
               x, y, z, finalLoadPart
 
-            if (this.re_get_tmp === "") {
+            if (this.re_get_tmp === '') {
               this.re_get_tmp = data['RESULT'][0]['re_get']
             }
 
-            if (this.re_get_tmp !== "") {
+            if (this.re_get_tmp !== '') {
               // Init Start Count Part Loading
               if (data['RESULT'][0]['re_get'].toString().length == 1) {
                 f = data['RESULT'][0]['re_get']
@@ -718,7 +718,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             let loadPercent = percentage + ' %'
 
             // Loading Per Part Setting Data
-            // this.partHT = startloadPart + " / " + finalLoadPart
+            // this.partHT = startloadPart + ' / ' + finalLoadPart
 
             // Loading Percent
             this.partHT = loadPercent
@@ -741,7 +741,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           } else {
             this.needReqVal = 0
             this.resultTotal = []
-            this.partHT = ""
+            this.partHT = ''
             this.tableLoadHT = false
             this.ref.markForCheck()
             this.gbl.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
@@ -750,7 +750,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         err => {
           this.needReqVal = 0
           this.resultTotal = []
-          this.partHT = ""
+          this.partHT = ''
           this.tableLoadHT = false
           this.ref.markForCheck()
           this.gbl.openSnackBar('Gagal mendapatkan hasil tarik data.', 'fail')
@@ -765,7 +765,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.formDetail = {
       nama_cabang: x['nama_cabang'],
       jenis_jurnal: x['jenis_jurnal'] === '1' ? '2' : '0',
-      nama_jenis_jurnal: x['jenis_jurnal'] === '1' ? "Jurnal Kasir" : "Jurnal Umum",
+      nama_jenis_jurnal: x['jenis_jurnal'] === '1' ? 'Jurnal Kasir' : 'Jurnal Umum',
       // HEADER UMUM
       id: x['id'],
       kode_setting: x['kode_setting'],
@@ -811,8 +811,8 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     })
 
     // Check Type Jurnal
-    if (this.formDetail.jenis_jurnal === "2") {
-      if (this.formDetail.tipe_transaksi === "0") {
+    if (this.formDetail.jenis_jurnal === '2') {
+      if (this.formDetail.tipe_transaksi === '0') {
         this.detailData = detail.filter(x => x['saldo_kredit'] != 0)
       } else {
         this.detailData = detail.filter(x => x['saldo_debit'] != 0)
@@ -831,7 +831,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       this.loading = true
       this.ref.markForCheck()
       let endRes = {
-        batch: "",
+        batch: '',
         kode_perusahaan: this.kode_perusahaan,
         id_periode: this.idPeriodeAktif,
         detail: this.browseDataHT
@@ -844,7 +844,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.result = []
             this.needReqVal = 0
             this.resultTotal = []
-            this.partHT = ""
+            this.partHT = ''
             this.browseDataHT = []
             this.browseDataRT = []
             this.ref.markForCheck()
@@ -902,7 +902,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.result = []
     this.needReqVal = 0
     this.resultTotal = []
-    this.partHT = ""
+    this.partHT = ''
     this.browseDataHT = []
     this.ref.markForCheck()
     setTimeout(() => {
@@ -1030,42 +1030,42 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_cabang" ? this.inputCabangInterface :
-            type === "kode_jurnal" ? this.inputJurnalInterface :
+          type === 'kode_cabang' ? this.inputCabangInterface :
+            type === 'kode_jurnal' ? this.inputJurnalInterface :
               {},
         displayedColumns:
-          type === "kode_cabang" ? this.inputCabangDisplayColumns :
-            type === "kode_jurnal" ? this.inputJurnalDisplayColumns :
+          type === 'kode_cabang' ? this.inputCabangDisplayColumns :
+            type === 'kode_jurnal' ? this.inputJurnalDisplayColumns :
               [],
         tableData:
-          type === "kode_cabang" ? this.inputCabangData :
-            type === "kode_jurnal" ? this.formValue.kode_cabang === '' ? this.inputJurnalData : this.inputJurnalData.filter(x => x.kode_cabang === this.formValue.kode_cabang) :
+          type === 'kode_cabang' ? this.inputCabangData :
+            type === 'kode_jurnal' ? this.formValue.kode_cabang === '' ? this.inputJurnalData : this.inputJurnalData.filter(x => x.kode_cabang === this.formValue.kode_cabang) :
               [],
         tableRules:
-          type === "kode_cabang" ? this.inputCabangDataRules :
-            type === "kode_jurnal" ? this.inputJurnalDataRules :
+          type === 'kode_cabang' ? this.inputCabangDataRules :
+            type === 'kode_jurnal' ? this.inputJurnalDataRules :
               [],
         formValue: this.formValue,
         selectable: type === 'kode_jurnal' ? true : false,
         selected: this.filterDataJurnal,
-        selectIndicator: "kode_jurnal",
+        selectIndicator: 'kode_jurnal',
         sizeCont: 380,
       },
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_cabang") {
+        if (type === 'kode_cabang') {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
             this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-            if (this.cabang_tmp === "") {
+            if (this.cabang_tmp === '') {
               this.cabang_tmp = this.forminput.getData()['kode_cabang']
             }
           }
-        } else if (type === "kode_jurnal") {
+        } else if (type === 'kode_jurnal') {
           let x = result, y = true
           for (var i = 0; i < x.length; i++) {
             for (var j = 0; j < this.filterDataJurnal.length; j++) {
@@ -1076,7 +1076,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           }
           this.filterDataJurnal.splice(0, this.filterDataJurnal.length)
           for (var i = 0; i < x.length; i++) {
-            if (x[i]['id'] === "" || x[i]['id'] == null || x[i]['id'] === undefined) {
+            if (x[i]['id'] === '' || x[i]['id'] == null || x[i]['id'] === undefined) {
               x[i]['id'] = `${MD5(Date().toLocaleString() + Date.now() + randomString({
                 length: 8,
                 numeric: true,
@@ -1096,7 +1096,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               this.result = []
               this.needReqVal = 0
               this.resultTotal = []
-              this.partHT = ""
+              this.partHT = ''
               this.cabang_tmp = this.forminput.getData()['kode_cabang']
             }
           }
@@ -1113,7 +1113,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.gbl.screenPosition(340)
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
-      height: '48vh',
+      height: this.formDetail.jenis_jurnal === '2' ? '46vh' : '48vh',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
