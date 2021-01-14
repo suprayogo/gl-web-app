@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { MatTabChangeEvent, MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material';
-import { NgForm } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 import * as MD5 from 'crypto-js/md5';
 import * as randomString from 'random-string';
 
@@ -15,7 +14,6 @@ import { ForminputComponent } from '../../components/forminput/forminput.compone
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
-import { isInteger } from 'lodash';
 
 const content = {
   beforeCodeTitle: 'Jurnal Otomatis'
@@ -30,9 +28,46 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   // VIEW CHILD TO CALL FUNCTION
   @ViewChild(ForminputComponent, { static: false }) forminput;
-  @ViewChild('rt', { static: false }) rt;
-  @ViewChild('ht', { static: false }) ht;
+  @ViewChild('rt', { static: false }) rt; // Riwayat Tarik
+  @ViewChild('ht', { static: false }) ht; // Hasil Tarik
   @ViewChild(DatatableAgGridComponent, { static: false }) datatable;
+
+  // LOADING
+  loading: boolean = true;
+  tableLoadHT: boolean = false;
+  tableLoadRT: boolean = false;
+  // DIALOG
+  rightLayout: boolean = false; // SET ACTIVE LAYOUT INPUT RIGHT SIDE
+  dialogRef: any;
+  dialogType: string = null;
+  // BUTTON
+  noCancel: boolean = true; // SET ACTIVE HIDE BUTTON CANCEL
+  // METHOD HASIL TARIK JURNAL OTOMATIS
+  partHT: any = ""; // PART DATA LOADING
+  needReqVal: any = 0; // PART GET DATA
+  cabang_tmp: any = ""; // CABANG
+  re_get_tmp: any = ""; // VALUE PART AWAL 
+  result: any = []; // FUll DATA
+  resultTotal: any = []; // VALUE LOADING
+  // OTHERS
+  content: any;
+  loadingDataTextHT: string = "Loading Data Jurnal Otomatis.."
+  loadingDataTextRT: string = "Loading Riwayat Tarik Data.."
+  nama_tombol: any;
+  periode: any;
+  cabang_utama: any;
+  tipe_setting: any;
+  jenisTransaksiData = {}
+  // GLOBAL VARIABLE PERUSAHAAN
+  subscription: any;
+  kode_perusahaan: any;
+  // GLOBAL VARIABLE PERIODE AKTIF
+  subsPA: any;
+  periode_aktif: any;
+  idPeriodeAktif: any;
+  tahunPeriodeAktif: any;
+  bulanPeriodeAktif: any;
+  nama_bulan_aktif: any;
 
   tipe_laporan = [
     {
@@ -45,382 +80,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     }
   ]
 
-  // VARIABLES
-  loading: boolean = true;
-  detailJurnalLoad: boolean = false;
-  tableLoadHT: boolean = false;
-  tableLoadRT: boolean = false;
-  loadingDataTextHT: string = "Loading Data Jurnal Otomatis.."
-  partHT: any = "";
-  loadingDataTextRT: string = "Loading Riwayat Tarik Data.."
-  content: any;
-  nama_tombol: any;
-  onSub: boolean = false;
-  dialogRef: any;
-  dialogType: string = null;
-  // onButton: boolean = true;
-  detailLoad: boolean = false;
-  enableDetail: boolean = false;
-  enableCancel: boolean = false;
-  noCancel: boolean = true;
-  editable: boolean = false;
-  selectedTab: number = 0;
-  loadTab: boolean = false;
-  onUpdate: boolean = false;
-  enableDelete: boolean = false;
-  browseNeedUpdate: boolean = true;
-  search: string;
   //
-  needReqVal: any = 0;
-  periode: any;
-  tipe_setting: any;
-  result: any = [];
-  resultTotal: any = [];
-  cabang_utama: any;
-  cabang_tmp: any = "";
-  re_get_tmp: any = "";
-
-
-  // GLOBAL VARIABLE PERUSAHAAN
-  subscription: any;
-  kode_perusahaan: any;
-
-  // GLOBAL VARIABLE PERIODE AKTIF
-  subsPA: any;
-  periode_aktif: any;
-  idPeriodeAktif: any;
-  tahunPeriodeAktif: any;
-  bulanPeriodeAktif: any;
-  nama_bulan_aktif: any;
-
-  // GLOBAL VARIABLE AKSES PERIODE
-  //
-
-  //CDialog
-  c_buttonLayout = [
-    {
-      btnLabel: 'Simpan',
-      btnClass: 'btn btn-primary',
-      btnClick: () => {
-        this.onSubmit()
-      },
-      btnCondition: () => {
-        return true
-      }
-    },
-    {
-      btnLabel: 'Tutup',
-      btnClass: 'btn btn-secondary',
-      btnClick: () => this.dialog.closeAll(),
-      btnCondition: () => {
-        return true
-      }
-    }
-  ]
-  c_labelLayout = [
-    {
-      content: 'Yakin akan simpan data ?',
-      style: {
-        'color': 'red',
-        'font-size': '16px',
-        'font-weight': 'bold'
-      }
-    }
-  ]
-
-  c_inputLayout = []
-
-  // Input Name
-  formDetail = {
-    id: '',
-    nama_setting: '',
-    no_referensi: '',
-    tgl_tran: '',
-    nama_cabang: '',
-    keterangan: '',
-    jenis_transaksi: '0',
-    jenis_jurnal: '',
-    id_jenis_transaksi: '',
-    nama_jenis_transaksi: '',
-    nilai_jenis_transaksi: '',
-    tipe_transaksi: '',
-    saldo_transaksi: 0,
-    tipe_laporan: '',
-    lmbr_giro: 1
-  }
-
-  detailData = []
-
-  umumInputLayout = [
-    {
-      formWidth: 'col-5',
-      label: 'Jenis Jurnal',
-      id: 'jenis-jurnal',
-      type: 'input',
-      valueOf: 'jenis_transaksi',
-      required: true,
-      readOnly: true,
-      disabled: true,
-      inputPipe: false
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Nama Jurnal',
-      id: 'nama-jurnal',
-      type: 'input',
-      valueOf: 'nama_setting',
-      required: true,
-      readOnly: true,
-      disabled: true,
-      inputPipe: false
-    },
-    // {
-    //   formWidth: 'col-5',
-    //   label: 'Referensi',
-    //   id: 'no-referensi',
-    //   type: 'input',
-    //   valueOf: 'no_referensi',
-    //   required: true,
-    //   readOnly: true,
-    //   disabled: true,
-    //   inputPipe: true,
-    //   hiddenOn: {
-    //     valueOf: 'no_referensi',
-    //     matchValue: ""
-    //   }
-    // },
-    {
-      formWidth: 'col-5',
-      label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
-      type: 'input',
-      valueOf: 'tgl_tran',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Cabang',
-      id: 'nama-cabang',
-      type: 'input',
-      valueOf: 'nama_cabang',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Keterangan',
-      id: 'keterangan',
-      type: 'input',
-      valueOf: 'keterangan',
-      required: false,
-      readOnly: true,
-      disabled: true
-    }
-  ]
-
-  kasirInputLayout = [
-    {
-      formWidth: 'col-5',
-      label: 'Jenis Jurnal',
-      id: 'jenis-jurnal',
-      type: 'input',
-      valueOf: 'nama_setting',
-      required: true,
-      readOnly: true,
-      disabled: true,
-      inputPipe: false
-    },
-    // {
-    //   formWidth: 'col-5',
-    //   label: 'Referensi',
-    //   id: 'no-referensi',
-    //   type: 'input',
-    //   valueOf: 'no_referensi',
-    //   required: true,
-    //   readOnly: true,
-    //   disabled: true,
-    //   inputPipe: true,
-    //   hiddenOn: {
-    //     valueOf: 'no_referensi',
-    //     matchValue: ""
-    //   }
-    // },
-    {
-      formWidth: 'col-5',
-      label: 'Tgl. Transaksi',
-      id: 'tgl-transaksi',
-      type: 'datepicker',
-      valueOf: 'tgl_tran',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Cabang',
-      id: 'nama-cabang',
-      type: 'input',
-      valueOf: 'nama_cabang',
-      required: true,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Jenis Transaksi',
-      id: 'jenis-transaksi',
-      type: 'inputgroup',
-      valueOf: 'nama_jenis_transaksi',
-      required: false,
-      readOnly: true,
-      disabled: true,
-      inputInfo: {
-        id: 'tipe-jenis-transaksi',
-        disabled: true,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_tipe_transaksi'
-      },
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Nilai Jenis Transaksi',
-      id: 'nilai-jenis-transaksi',
-      type: 'input',
-      valueOf: 'nilai_jenis_transaksi',
-      required: false,
-      readOnly: true,
-      disabled: true
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Nilai Transaksi',
-      id: 'nilai-transaksi',
-      type: 'input',
-      valueOf: 'saldo_transaksi',
-      currency: true,
-      required: false,
-      disabled: true,
-      readOnly: true,
-      leftAddon: 'Rp.',
-      currencyOptions: {
-        precision: 2
-      },
-      update: {
-        disabled: false
-      }
-    },
-    {
-      formWidth: 'col-5',
-      label: 'Keterangan',
-      id: 'keterangan',
-      type: 'input',
-      valueOf: 'keterangan',
-      required: false,
-      readOnly: true,
-      disabled: true
-    }
-  ]
-
-  // Data Hasil Tarik
-  displayedColumnsTableHT = [
-    {
-      label: 'Jenis Jurnal',
-      value: 'jenis_jurnal_sub'
-    },
-    {
-      label: 'Nama Jurnal',
-      value: 'nama_setting'
-    },
-    // {
-    //   label: 'No. Referensi',
-    //   value: 'no_referensi'
-    // },
-    {
-      label: 'Tgl. Transaksi',
-      value: 'tgl_tran'
-    },
-    {
-      label: 'Cabang',
-      value: 'nama_cabang'
-    },
-    {
-      label: 'Keterangan',
-      value: 'keterangan'
-    }
-  ];
-  browseInterfaceHT = {}
-  browseDataHT = []
-  browseDataRulesHT = [
-    {
-      target: 'jenis_jurnal',
-      replacement: {
-        '0': 'Jurnal Umum',
-        '1': 'Jurnal Kasir'
-      },
-      redefined: 'jenis_jurnal_sub'
-    }
-  ]
-  jenisTransaksiData = {}
-
-  // Data Riwayat Tarik
-  displayedColumnsTableRT = [
-    {
-      label: 'Ditarik Oleh',
-      value: 'input_by'
-    },
-    {
-      label: 'Ditarik Tanggal',
-      value: 'input_dt',
-      date: true
-    }
-  ];
-  browseInterfaceRT = {
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string'
-  }
-  browseDataRT = []
-  browseDataRulesRT = []
-
-  // L.O.V VARIABLE
-  // LIST CABANG
-  inputCabangDisplayColumns = [
-    {
-      label: 'Kode Cabang',
-      value: 'kode_cabang'
-    },
-    {
-      label: 'Nama Cabang',
-      value: 'nama_cabang'
-    }
-  ]
-  inputCabangInterface = {}
-  inputCabangData = []
-  inputCabangDataRules = []
-
-  // LIST CABANG
-  inputJurnalDisplayColumns = [
-    {
-      label: 'Nama Jurnal',
-      value: 'nama_jurnal',
-      selectable: true
-    },
-    {
-      label: 'Kode Cabang',
-      value: 'kode_cabang'
-    }
-  ]
-  inputJurnalInterface = {}
-  inputJurnalData = []
-  filterDataJurnal = []
-  checkFilterJurnal = []
-  inputJurnalDataRules = []
-
-  // Input Name
   formValue = {
     tgl_tarik: '',
     bulan_periode: '',
@@ -432,7 +92,33 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     nama_cabang: ''
   }
 
-  // Layout Form
+  //
+  formDetail = {
+    nama_cabang: '',
+    jenis_jurnal: '0',
+    nama_jenis_jurnal: '0',
+    // HEADER UMUM
+    id: '',
+    kode_setting: '',
+    nama_setting: '',
+    no_referensi: '',
+    tgl_tran: '',
+    keterangan: '',
+    // HEADER (+KASIR)
+    tipe_laporan: '',
+    id_jenis_transaksi: '',
+    nama_jenis_transaksi: '',
+    nama_bank: '',
+    no_rekening: '',
+    atas_nama: '',
+    rekening_perusahaan: '',
+    lembar_giro: 0,
+    tipe_transaksi: '',
+    nama_tipe_transaksi: '',
+    saldo_transaksi: 0
+  }
+
+  // LAYOUT FORM INPUT
   inputLayout = [
     {
       labelWidth: 'col-4',
@@ -476,7 +162,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       label: 'Cabang',
       id: 'kode-cabang',
       type: 'inputgroup',
-      click: (type) => this.open(type),
+      click: (type) => this.openDialog(type),
       btnLabel: '',
       btnIcon: 'flaticon-search',
       browseType: 'kode_cabang',
@@ -549,7 +235,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       formWidth: 'col-7',
       label: 'Filter Jurnal',
       type: 'detail',
-      click: (type) => this.open(type),
+      click: (type) => this.openDialog(type),
       btnLabel: 'Data Jurnal',
       btnIcon: 'flaticon-list-3',
       browseType: 'kode_jurnal',
@@ -562,6 +248,197 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     },
   ]
 
+  // LAYOUT FORM DETAIL
+  detailInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Jenis Jurnal',
+      id: 'jenis-jurnal',
+      type: 'input',
+      valueOf: 'nama_jenis_jurnal',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: false
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Nama Jurnal',
+      id: 'nama-jurnal',
+      type: 'input',
+      valueOf: 'nama_setting',
+      required: true,
+      readOnly: true,
+      disabled: true,
+      inputPipe: false
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tgl. Transaksi',
+      id: 'tgl-transaksi',
+      type: 'input',
+      valueOf: 'tgl_tran',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Keterangan',
+      id: 'keterangan',
+      type: 'input',
+      valueOf: 'keterangan',
+      required: false,
+      readOnly: true,
+      disabled: true
+    }
+  ]
+
+  rightDetailInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Jenis Transaksi',
+      id: 'jenis-transaksi',
+      type: 'input',
+      valueOf: 'nama_jenis_transaksi',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Rekening & Bank',
+      id: 'rekening',
+      type: 'input',
+      valueOf: 'rekening_perusahaan',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Atas Nama',
+      id: 'atas-nama',
+      type: 'input',
+      valueOf: 'atas_nama',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Lembar Giro',
+      id: 'lembar-giro',
+      type: 'input',
+      valueOf: 'lembar_giro',
+      required: true,
+      readOnly: true,
+      disabled: true
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Tipe Transaksi',
+      id: 'tipe-transaksi',
+      type: 'input',
+      valueOf: 'nama_tipe_transaksi',
+      required: true,
+      readOnly: true,
+      disabled: true
+    }
+  ]
+
+  // LIST CABANG
+  inputCabangDisplayColumns = [
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    },
+    {
+      label: 'Nama Cabang',
+      value: 'nama_cabang'
+    }
+  ]
+  inputCabangInterface = {}
+  inputCabangData = []
+  inputCabangDataRules = []
+  // ----------------------
+
+  // LIST FILTER JURNAL
+  inputJurnalDisplayColumns = [
+    {
+      label: 'Nama Jurnal',
+      value: 'nama_jurnal',
+      selectable: true
+    },
+    {
+      label: 'Kode Cabang',
+      value: 'kode_cabang'
+    }
+  ]
+  inputJurnalInterface = {}
+  inputJurnalData = []
+  inputJurnalDataRules = []
+  filterDataJurnal = []
+  checkFilterJurnal = []
+  // --------------------
+
+  // LIST HASIL TARIK DATA JURNAL OTOMATIS
+  displayedColumnsTableHT = [
+    {
+      label: 'Cabang',
+      value: 'nama_cabang'
+    },
+    {
+      label: 'Jenis Jurnal',
+      value: 'jenis_jurnal_sub'
+    },
+    {
+      label: 'Nama Jurnal',
+      value: 'nama_setting'
+    },
+    {
+      label: 'Tgl. Transaksi',
+      value: 'tgl_tran',
+    },
+    {
+      label: 'Keterangan',
+      value: 'keterangan'
+    }
+  ]
+  browseInterfaceHT = {}
+  browseDataHT = []
+  browseDataRulesHT = [
+    {
+      target: 'jenis_jurnal',
+      replacement: {
+        '0': 'Jurnal Umum',
+        '1': 'Jurnal Kasir'
+      },
+      redefined: 'jenis_jurnal_sub'
+    }
+  ]
+  // -------------------------------------
+
+  // LIST RIWAYAT TARIK DATA JURNAL OTOMATIS
+  displayedColumnsTableRT = [
+    {
+      label: 'Ditarik Oleh',
+      value: 'input_by'
+    },
+    {
+      label: 'Ditarik Tanggal',
+      value: 'input_dt',
+      date: true
+    }
+  ]
+  browseInterfaceRT = {}
+  browseDataRT = []
+  browseDataRulesRT = []
+  // ---------------------------------------
+
+  // DETAIL
+  detailData = []
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -570,10 +447,10 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.gbl.need(true, true)
     this.content = content // <-- Init the content
+    this.gbl.need(true, true)
     this.nama_tombol = 'Tarik Data'
-    this.reqActivePeriod()
+    this.madeRequest()
   }
 
   ngAfterViewInit(): void {
@@ -581,7 +458,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
 
     if (this.kode_perusahaan !== "") {
-      this.reqActivePeriod()
+      this.madeRequest()
     }
   }
 
@@ -590,7 +467,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.subsPA === undefined ? null : this.subsPA.unsubscribe()
   }
 
-  reqActivePeriod() {
+  madeRequest() {
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
@@ -602,18 +479,18 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.bulanPeriodeAktif = this.gbl.getBulanPeriodeAktif()
             this.nama_bulan_aktif = this.gbl.getNamaBulan(this.bulanPeriodeAktif)
             this.periode_aktif = this.gbl.getActive()
+            this.ref.markForCheck()
             this.getCabang()
           } else {
-            this.ref.markForCheck()
-            this.openSnackBar('Data Periode tidak ditemukan.')
+            this.gbl.openSnackBar('Data Periode tidak ditemukan.')
           }
         }
       )
     }
   }
 
+  // GET DATA CABANG
   getCabang() {
-    // GET DATA AKSES CABANG USER
     this.request.apiData('cabang', 'g-cabang-akses').subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
@@ -625,426 +502,44 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           this.formValue.kode_cabang = this.cabang_utama.kode_cabang
           this.formValue.nama_cabang = this.cabang_utama.nama_cabang
           this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
-          this.madeRequest()
+          this.formValue = {
+            tgl_tarik: '',
+            bulan_periode: this.nama_bulan_aktif,
+            tahun_periode: this.tahunPeriodeAktif,
+            rekap_harian: this.formValue.rekap_harian,
+            rekap_bulanan: this.formValue.rekap_bulanan,
+            rekap_transaksi: this.formValue.rekap_transaksi,
+            kode_cabang: this.formValue.kode_cabang,
+            nama_cabang: this.formValue.nama_cabang
+          }
           this.ref.markForCheck()
+          this.getSettingJurnal()
         } else {
-          this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
-          this.ref.markForCheck()
+          this.gbl.openSnackBar('Gagal mendapatkan data cabang. Mohon coba lagi nanti.', 'fail')
         }
       }
     )
   }
 
-  //Browse binding event
-  browseSelectRow(data) {
-    let x = JSON.parse(JSON.stringify(data)),
-      t_tran = new Date(x['tgl_tran'])
-    this.formDetail = {
-      id: x['id'],
-      nama_setting: x['nama_setting'],
-      no_referensi: x['no_referensi'],
-      tgl_tran: /* JSON.stringify(t_tran.getTime()) */x['tgl_tran'],
-      nama_cabang: x['nama_cabang'],
-      keterangan: x['keterangan'],
-      jenis_transaksi: x['jenis_jurnal'] === '0' ? "Jurnal Umum" : "Jurnal Kasir",
-      jenis_jurnal: x['jenis_jurnal'] === '1' ? '2' : '0',
-      id_jenis_transaksi: x['id_jenis_transaksi'],
-      nama_jenis_transaksi: this.jenisTransaksiData[x['id_jenis_transaksi']] === undefined ? '' : this.jenisTransaksiData[x['id_jenis_transaksi']]['nama_jenis_transaksi'],
-      nilai_jenis_transaksi: x['nilai_jenis_transaksi'],
-      tipe_transaksi: x['tipe_transaksi'],
-      saldo_transaksi: x['saldo_transaksi'],
-      tipe_laporan: this.jenisTransaksiData[x['id_jenis_transaksi']] === undefined ? '' : this.jenisTransaksiData[x['id_jenis_transaksi']]['tipe_laporan'],
-      lmbr_giro: x['lmbr_giro'] === undefined ? 1 : x['lmbr_giro'],
-    }
-    this.openDialog()
-  }
-
-  refreshTab(message) {
-    this.loading = false
-    this.ref.markForCheck()
-    this.onUpdate = false
-    this.openSnackBar(message, 'success')
-  }
-
-  //Form submit
-  onSubmit() {
-    let valid = this.validateSubmit()
-    if (valid === true) {
-      this.loading = true
-      this.ref.markForCheck()
-      let endRes = {
-        batch: "",
-        kode_perusahaan: this.kode_perusahaan,
-        id_periode: this.idPeriodeAktif,
-        detail: this.browseDataHT
-      }
-      this.request.apiData('jurnal-otomatis', 'i-jurnal-otomatis', endRes).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.loading = false
-            this.tableLoadRT = true
-            this.result = []
-            this.needReqVal = 0
-            this.resultTotal = []
-            this.partHT = ""
-            this.browseDataHT = []
-            this.browseDataRT = []
-            this.ref.markForCheck()
-            this.sendRequestRiwayat()
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.gbl.topPage()
-            this.openSnackBar('Gagal menyimpan jurnal. Mohon dicoba beberapa saat lagi.', 'fail')
-          }
-        }
-      )
-    } else {
-      this.gbl.topPage()
-      if (valid === 'nodata') {
-        this.openSnackBar('Tidak ada hasil tarik data jurnal. Mohon tarik data terlebih dahulu', 'info')
-      } else if (valid === 'nobalance') {
-        this.openSnackBar('Nilai saldo jurnal ada yang tidak seimbang.', 'fail')
-      }
-    }
-  }
-
-  validateSubmit() {
-    let valid: any = true
-
-    for (var i = 0; i < this.browseDataHT.length; i++) {
-      let dataI = this.browseDataHT[i],
-        debit = 0,
-        kredit = 0
-      // for (var j = 0; j < dataI['detail'].length; j++) {
-      //   if (dataI['detail'][j]['debit'] === true) {
-      //     debit = debit + parseFloat(dataI['detail'][j]['saldo'])
-      //   } else if (dataI['detail'][j]['debit'] === false) {
-      //     kredit = kredit + parseFloat(dataI['detail'][j]['saldo'])
-      //   }
-      // }
-
-      if (debit !== kredit) {
-        valid = 'nobalance'
-        break
-      }
-    }
-
-    if (this.browseDataHT.length < 1) {
-      valid = 'nodata'
-    }
-
-    return valid
-  }
-
-  //Reset Value
-  resetForm() {
-    this.gbl.topPage()
-    this.tableLoadHT = true
-    this.result = []
-    this.needReqVal = 0
-    this.resultTotal = []
-    this.partHT = ""
-    this.browseDataHT = []
-    this.ref.markForCheck()
-    setTimeout(() => {
-      this.tableLoadHT = false
-      this.ref.markForCheck()
-    }, 500)
-  }
-
-  onCancel() {
-    this.resetForm()
-    this.ht == undefined ? null : this.ht.reset()
-    this.rt == undefined ? null : this.rt.reset()
-  }
-
-  openCDialog() { // Confirmation Dialog
-    const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '580px' },
-      data: {
-        buttonLayout: this.c_buttonLayout,
-        labelLayout: this.c_labelLayout,
-        inputLayout: this.c_inputLayout
-      },
-      disableClose: true
-    })
-
-
-    dialogRef.afterClosed().subscribe(
-      result => {
-        // this.batal_alasan = ""
-      },
-      // error => null
-    )
-  }
-
-  open(type) {
-    this.gbl.topPage()
-    this.dialogType = JSON.parse(JSON.stringify(type))
-    this.dialogRef = this.dialog.open(DialogComponent, {
-      width: '55vw',
-      height: 'auto',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '20px' },
-      data: {
-        type: type,
-        tableInterface:
-          type === "kode_cabang" ? this.inputCabangInterface :
-            type === "kode_jurnal" ? this.inputJurnalInterface :
-              {},
-        displayedColumns:
-          type === "kode_cabang" ? this.inputCabangDisplayColumns :
-            type === "kode_jurnal" ? this.inputJurnalDisplayColumns :
-              [],
-        tableData:
-          type === "kode_cabang" ? this.inputCabangData :
-            type === "kode_jurnal" ? this.formValue.kode_cabang === '' ? this.inputJurnalData : this.inputJurnalData.filter(x => x.kode_cabang === this.formValue.kode_cabang) :
-              [],
-        tableRules:
-          type === "kode_cabang" ? this.inputCabangDataRules :
-            type === "kode_jurnal" ? this.inputJurnalDataRules :
-              [],
-        formValue: this.formValue,
-        selectable: type === 'kode_jurnal' ? true : false,
-        selected: this.filterDataJurnal,
-        selectIndicator: "kode_jurnal",
-        sizeCont: 380,
-      },
-    });
-
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (type === "kode_cabang") {
-          if (this.forminput !== undefined) {
-            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
-            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-            this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-            this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-            if (this.cabang_tmp === "") {
-              this.cabang_tmp = this.forminput.getData()['kode_cabang']
-            }
-          }
-        } else if (type === "kode_jurnal") {
-          let x = result,  y = true
-          for (var i = 0; i < x.length; i++) {
-            for (var j = 0; j < this.filterDataJurnal.length; j++) {
-              if (this.filterDataJurnal[j]['kode_jurnal'] === x[i]['kode_jurnal']) {
-                x[i] = this.filterDataJurnal[j]
-              }
-            }
-          }
-          this.filterDataJurnal.splice(0, this.filterDataJurnal.length)
-          for (var i = 0; i < x.length; i++) {
-            if (x[i]['id'] === "" || x[i]['id'] == null || x[i]['id'] === undefined) {
-              x[i]['id'] = `${MD5(Date().toLocaleString() + Date.now() + randomString({
-                length: 8,
-                numeric: true,
-                letters: false,
-                special: false
-              }))}`
-            }
-            this.filterDataJurnal.push(x[i])
-            if (Object.keys(this.checkFilterJurnal).length > 0) {
-              if (JSON.stringify(this.filterDataJurnal) === JSON.stringify(this.checkFilterJurnal) == false) {
-                y = false
-              }
-            }
-
-            if (y == false) {
-              this.browseDataHT = []
-              this.result = []
-              this.needReqVal = 0
-              this.resultTotal = []
-              this.partHT = ""
-              this.cabang_tmp = this.forminput.getData()['kode_cabang']
-            }
-          }
-          this.formInputCheckChangesDetail()
-        }
-        this.dialogRef = undefined
-        this.dialogType = null
-        this.ref.markForCheck();
-      }
-    });
-  }
-
-  openDialog() {
-    let jres = [], temp = []
-    for (var i = 0; i < this.browseDataHT.length; i++) {
-      if (this.browseDataHT[i]['id'] === this.formDetail['id']) {
-        for (var j = 0; j < this.browseDataHT[i]['detail'].length; j++) {
-          let t = {
-            id_akun: this.browseDataHT[i]['detail'][j]['id_akun'],
-            kode_akun: this.browseDataHT[i]['detail'][j]['kode_akun'],
-            nama_akun: this.browseDataHT[i]['detail'][j]['nama_akun'],
-            keterangan_akun: this.browseDataHT[i]['detail'][j]['keterangan'],
-            kode_divisi: this.browseDataHT[i]['detail'][j]['kode_divisi'],
-            nama_divisi: this.browseDataHT[i]['detail'][j]['nama_divisi'],
-            kode_departemen: this.browseDataHT[i]['detail'][j]['kode_departemen'],
-            nama_departemen: this.browseDataHT[i]['detail'][j]['nama_departemen'],
-            keterangan_1: this.browseDataHT[i]['detail'][j]['keterangan_1'],
-            keterangan_2: this.browseDataHT[i]['detail'][j]['keterangan_2'],
-            saldo_debit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_debit']),
-            saldo_kredit: parseFloat(this.browseDataHT[i]['detail'][j]['nilai_kredit'])
-          }
-          temp.push(t)
-        }
-        break;
-      }
-    }
-    if (this.formDetail.jenis_jurnal === "2") {
-      if (this.formDetail.tipe_transaksi === "0") {
-        jres = temp.filter(x => x['saldo_kredit'] > 0)
-      } else {
-        jres = temp.filter(x => x['saldo_debit'] > 0)
-      }
-    } else {
-      jres = temp
-    }
-
-    this.gbl.screenPosition(340)
-    this.ref.markForCheck()
-    this.formInputCheckChangesJurnal()
-    let kil = JSON.parse(JSON.stringify(this.kasirInputLayout))
-    if (this.formDetail['jenis_transaksi'] === '1' && this.formDetail['tipe_laporan'] === 'g') {
-      kil.splice(5, 0, {
-        formWidth: 'col-5',
-        label: 'Lembar Giro',
-        id: 'lembar-giro',
-        type: 'input',
-        valueOf: 'lmbr_giro',
-        currency: true,
-        required: false,
-        disabled: true,
-        readOnly: true,
-        update: {
-          disabled: false
-        }
-      })
-    }
-    const dialogRef = this.dialog.open(InputdialogComponent, {
-      width: 'auto',
-      height: '60vh',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      backdropClass: 'bg-dialog',
-      position: { top: '330px' },
-      data: {
-        width: '90vw',
-        formValue: this.formDetail,
-        // inputLayout: this.formDetail['jenis_transaksi'] === '0' ? this.umumInputLayout : kil,
-        inputLayout: this.umumInputLayout,
-        buttonLayout: [],
-        detailJurnal: true,
-        detailLoad: false,
-        jurnalData: jres,
-        jurnalDataAkun: [],
-        noEditJurnal: true,
-        noButtonSave: true,
-        inputPipe: (t, d) => null,
-        onBlur: (t, v) => null,
-        openDialog: (t) => null,
-        resetForm: () => null,
-        // onSubmit: (x: NgForm) => this.submitDetailData(this.formDetail),
-        deleteData: () => null,
-      },
-      disableClose: false
-    });
-
-    dialogRef.afterClosed().subscribe(
-      result => {
-        this.ht == undefined ? null : this.ht.reset()
-      },
-      error => null,
-    );
-  }
-
-  // REQUEST DATA FROM API (to : L.O.V or Table)
-  madeRequest() {
-    this.formValue = {
-      tgl_tarik: '',
-      bulan_periode: this.nama_bulan_aktif,
-      tahun_periode: this.tahunPeriodeAktif,
-      rekap_harian: this.formValue.rekap_harian,
-      rekap_bulanan: this.formValue.rekap_bulanan,
-      rekap_transaksi: this.formValue.rekap_transaksi,
-      kode_cabang: this.formValue.kode_cabang,
-      nama_cabang: this.formValue.nama_cabang
-    }
+  // GET DATA SETTING JURNAL
+  getSettingJurnal() {
     this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputJurnalData = data['RESULT']
           let x = JSON.parse(JSON.stringify(data['RESULT']))
           this.restructureDetailData(x)
-          this.ref.markForCheck()
         } else {
-
+          this.gbl.openSnackBar('Gagal mendapatkan data setting jurnal. Mohon coba lagi nanti.', 'fail')
         }
       }
     )
     this.loading = false
-    this.sendRequestJenisTransaksi()
+    this.getRiwayatTarik()
   }
 
-  restructureDetailData(data) {
-    let endRes = []
-    for (var i = 0; i < data.length; i++) {
-      for (var j = 0; j < this.inputJurnalData.length; j++) {
-        if (data[i]['kode_jurnal'] === this.inputJurnalData[j]['kode_jurnal']) {
-          let x = {
-            id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
-              length: 8,
-              numeric: true,
-              letters: false,
-              special: false
-            }))}`,
-            kode_jurnal: data[i]['kode_jurnal'],
-            nama_jurnal: this.inputJurnalData[j]['nama_jurnal']
-          }
-          endRes.push(x)
-          break;
-        }
-      }
-    }
-    this.filterDataJurnal = endRes
-  }
-
-  sendRequestJenisTransaksi() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
-      this.request.apiData('jenis-transaksi', 'g-jenis-transaksi', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            let res = {}
-            for (var i = 0; i < data['RESULT'].length; i++) {
-              res[data['RESULT'][i]['id_jenis_transaksi']] = data['RESULT'][i]
-            }
-            this.jenisTransaksiData = res
-
-            this.sendRequestRiwayat()
-          } else {
-            this.loading = false
-            this.ref.markForCheck()
-            this.openSnackBar('Gagal mendapatkan data.', 'fail')
-          }
-        }
-      )
-    } else {
-      this.loading = false
-      this.ref.markForCheck()
-      this.openSnackBar('Gagal mendapatkan data.', 'fail')
-    }
-  }
-
-  sendRequestRiwayat() {
+  // GET DATA RIWAYAT TARIK JURNAL
+  getRiwayatTarik() {
     this.tableLoadRT = true
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif.id_periode !== undefined && this.periode_aktif.id_periode !== "")) {
       this.request.apiData('jurnal-otomatis', 'g-tarik-data-terakhir', { kode_perusahaan: this.kode_perusahaan, id_periode: this.periode_aktif.id_periode }).subscribe(
@@ -1065,18 +560,18 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               this.forminput.updateFormValue('tgl_tarik', "Belum pernah tarik")
             }
             this.tableLoadRT = false
-            this.ref.markForCheck()
           } else {
-            this.tableLoadRT = false
             this.ref.markForCheck()
-            this.openSnackBar('Data Riwayat tidak ditemukan.')
+            this.tableLoadRT = false
+            this.gbl.openSnackBar('Data Riwayat tidak ditemukan.')
           }
         }
       )
     }
   }
 
-  sendRequestHasilTarik() {
+  // INITAL HASIL TARIK DATA JURNAL OTOMATIK
+  initHasilTarik() {
     if (this.cabang_tmp === "") {
       this.cabang_tmp = this.forminput.getData()['kode_cabang']
     }
@@ -1104,12 +599,12 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       if (this.formValue.rekap_bulanan === '1') {
         this.tipe_setting.push('0')
       }
-      this.getDataJOtomatis('')
+      this.getJurnalOtomatis('')
     }
   }
 
-  // Get Data Jurnal Otomatis
-  getDataJOtomatis(reqStatus) {
+  // GET DATA JURNAL OTOMATIS
+  getJurnalOtomatis(reqStatus) {
     this.ref.markForCheck()
     if (reqStatus === '' || reqStatus === 'W') {
       let endRes = Object.assign(
@@ -1146,13 +641,12 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
                 nama_setting: dataJOtomatis[i]['nama_setting'],
                 keterangan_setting: dataJOtomatis[i]['keterangan_setting'],
                 no_referensi: dataJOtomatis[i]['no_referensi'],
-                tgl_tran: dataJOtomatis[i]['tgl_tran'].length,
+                tgl_tran: dataJOtomatis[i]['tgl_tran'],
                 kode_cabang: dataJOtomatis[i]['kode_cabang'],
                 nama_cabang: dataJOtomatis[i]['nama_cabang'],
                 keterangan: dataJOtomatis[i]['keterangan'],
                 detail: JSON.parse(dataJOtomatis[i]['detail'])
               }
-              // dataJOtomatis[i]['tgl_tran'].length > 2 ? true : false
               dataJOtomatis[i]['detail'] = JSON.parse(dataJOtomatis[i]['detail'])
               this.result.push(dataJOtomatis[i])
             }
@@ -1233,7 +727,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             // Continue Request
             this.needReqVal = data['RESULT'][0]['re_get']
             if (this.needReqVal > 0) {
-              this.getDataJOtomatis('W')
+              this.getJurnalOtomatis('W')
             }
 
           } else if (data['STATUS'] === 'Y') {
@@ -1250,7 +744,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.partHT = ""
             this.tableLoadHT = false
             this.ref.markForCheck()
-            this.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
+            this.gbl.openSnackBar('Data hasil tarik tidak ditemukan.', 'fail')
           }
         },
         err => {
@@ -1259,31 +753,396 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           this.partHT = ""
           this.tableLoadHT = false
           this.ref.markForCheck()
-          this.openSnackBar('Gagal mendapatkan hasil tarik data.', 'fail')
+          this.gbl.openSnackBar('Gagal mendapatkan hasil tarik data.', 'fail')
         }
       )
     }
   }
 
-  openSnackBar(message, type?: any, onCloseFunc?: any) {
-    const dialogRef = this.dialog.open(AlertdialogComponent, {
-      width: 'auto',
+  // BROWSE BINDING EVENT (HEADER)
+  browseSelectRow(data) {
+    let x = JSON.parse(JSON.stringify(data))
+    this.formDetail = {
+      nama_cabang: x['nama_cabang'],
+      jenis_jurnal: x['jenis_jurnal'] === '1' ? '2' : '0',
+      nama_jenis_jurnal: x['jenis_jurnal'] === '1' ? "Jurnal Kasir" : "Jurnal Umum",
+      // HEADER UMUM
+      id: x['id'],
+      kode_setting: x['kode_setting'],
+      nama_setting: x['nama_setting'],
+      no_referensi: x['no_referensi'],
+      tgl_tran: x['tgl_tran'],
+      keterangan: x['keterangan'],
+      // HEADER (+KASIR)
+      tipe_laporan: x['tipe_laporan'],
+      id_jenis_transaksi: x['id_jenis_transaksi'],
+      nama_jenis_transaksi: x['nama_jenis_transaksi'],
+      nama_bank: x['nama_bank'],
+      no_rekening: x['no_rekening'],
+      atas_nama: x['atas_nama'],
+      rekening_perusahaan: '',
+      lembar_giro: parseFloat(x['nilai_jenis_transaksi']),
+      tipe_transaksi: x['tipe_transaksi'],
+      nama_tipe_transaksi: x['tipe_transaksi'] === '0' ? 'Masuk' : x['tipe_transaksi'] === '1' ? 'Keluar' : '',
+      saldo_transaksi: x['saldo_transaksi']
+    }
+    this.formDetail.rekening_perusahaan = this.formDetail.no_rekening + '(' + this.formDetail.nama_bank + ')'
+    this.rightLayout = this.formDetail.jenis_jurnal === '2' ? true : false
+    this.viewDetailLayout()
+  }
+
+  // BROWSE BINDING EVENT (DETAIL)
+  getDetail() {
+    let filter = [], tmp = JSON.parse(JSON.stringify(this.browseDataHT)), detail = []
+    // Filter Spesific Detail
+    filter = tmp.filter(header => header.id === this.formDetail.id)[0]['detail']
+    // Init Detail Data
+    detail = filter.map(detail => {
+      const container = detail
+      // Add Important Object
+      container['keterangan_akun'] = detail.keterangan 
+      container['saldo_debit'] = parseFloat(detail.nilai_debit)
+      container['saldo_kredit'] = parseFloat(detail.nilai_kredit)
+      // Delete Useless Object
+      delete container.keterangan
+      delete container.nilai_debit
+      delete container.nilai_kredit
+      return container
+    })
+
+    // Check Type Jurnal
+    if (this.formDetail.jenis_jurnal === "2") {
+      if (this.formDetail.tipe_transaksi === "0") {
+        this.detailData = detail.filter(x => x['saldo_kredit'] != 0)
+      } else {
+        this.detailData = detail.filter(x => x['saldo_debit'] != 0)
+      }
+    } else {
+      this.detailData = detail
+    }
+    this.formInputCheckChangesJurnal()
+    this.inputDialog()
+  }
+
+  // Form submit
+  onSubmit() {
+    let valid = this.validateSubmit()
+    if (valid === true) {
+      this.loading = true
+      this.ref.markForCheck()
+      let endRes = {
+        batch: "",
+        kode_perusahaan: this.kode_perusahaan,
+        id_periode: this.idPeriodeAktif,
+        detail: this.browseDataHT
+      }
+      this.request.apiData('jurnal-otomatis', 'i-jurnal-otomatis', endRes).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.loading = false
+            this.tableLoadRT = true
+            this.result = []
+            this.needReqVal = 0
+            this.resultTotal = []
+            this.partHT = ""
+            this.browseDataHT = []
+            this.browseDataRT = []
+            this.ref.markForCheck()
+            this.getRiwayatTarik()
+          } else {
+            this.loading = false
+            this.ref.markForCheck()
+            this.gbl.topPage()
+            this.gbl.openSnackBar('Gagal menyimpan jurnal. Mohon dicoba beberapa saat lagi.', 'fail')
+          }
+        }
+      )
+    } else {
+      this.gbl.topPage()
+      if (valid === 'nodata') {
+        this.gbl.openSnackBar('Tidak ada hasil tarik data jurnal. Mohon tarik data terlebih dahulu', 'info')
+      } else if (valid === 'nobalance') {
+        this.gbl.openSnackBar('Nilai saldo jurnal ada yang tidak seimbang.', 'fail')
+      }
+    }
+  }
+
+  validateSubmit() {
+    let valid: any = true
+
+    for (var i = 0; i < this.browseDataHT.length; i++) {
+      let dataI = this.browseDataHT[i],
+        debit = 0,
+        kredit = 0
+      // for (var j = 0; j < dataI['detail'].length; j++) {
+      //   if (dataI['detail'][j]['debit'] === true) {
+      //     debit = debit + parseFloat(dataI['detail'][j]['saldo'])
+      //   } else if (dataI['detail'][j]['debit'] === false) {
+      //     kredit = kredit + parseFloat(dataI['detail'][j]['saldo'])
+      //   }
+      // }
+
+      if (debit !== kredit) {
+        valid = 'nobalance'
+        break
+      }
+    }
+
+    if (this.browseDataHT.length < 1) {
+      valid = 'nodata'
+    }
+
+    return valid
+  }
+
+  // Reset Value
+  resetForm() {
+    this.gbl.topPage()
+    this.tableLoadHT = true
+    this.result = []
+    this.needReqVal = 0
+    this.resultTotal = []
+    this.partHT = ""
+    this.browseDataHT = []
+    this.ref.markForCheck()
+    setTimeout(() => {
+      this.tableLoadHT = false
+      this.ref.markForCheck()
+    }, 500)
+  }
+
+  onCancel() {
+    this.resetForm()
+    this.ht == undefined ? null : this.ht.reset()
+    this.rt == undefined ? null : this.rt.reset()
+  }
+
+  restructureDetailData(data) {
+    let endRes = []
+    for (var i = 0; i < data.length; i++) {
+      for (var j = 0; j < this.inputJurnalData.length; j++) {
+        if (data[i]['kode_jurnal'] === this.inputJurnalData[j]['kode_jurnal']) {
+          let x = {
+            id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
+              length: 8,
+              numeric: true,
+              letters: false,
+              special: false
+            }))}`,
+            kode_jurnal: data[i]['kode_jurnal'],
+            nama_jurnal: this.inputJurnalData[j]['nama_jurnal']
+          }
+          endRes.push(x)
+          break;
+        }
+      }
+    }
+    this.filterDataJurnal = endRes
+  }
+
+  viewDetailLayout() {
+    this.rightLayout = this.formDetail.jenis_jurnal === '2' ? true : false
+    if (this.formDetail.jenis_jurnal === '2') {
+      if (this.formDetail.tipe_laporan === 'b') {
+        this.setDetailLayout('bank-rightSide')
+      } else if (this.formDetail.tipe_laporan === 'g') {
+        this.setDetailLayout('giro-rightSide')
+      } else {
+        this.setDetailLayout('others')
+      }
+    }
+    this.getDetail()
+  }
+
+  setDetailLayout(type) {
+    if (type === 'reset-rightSide') {
+      this.rightDetailInputLayout = [
+        {
+          formWidth: 'col-5',
+          label: 'Jenis Transaksi',
+          id: 'jenis-transaksi',
+          type: 'input',
+          valueOf: 'nama_jenis_transaksi',
+          required: true,
+          readOnly: true,
+          disabled: true
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Rekening & Bank',
+          id: 'rekening',
+          type: 'input',
+          valueOf: 'rekening_perusahaan',
+          required: true,
+          readOnly: true,
+          disabled: true
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Atas Nama',
+          id: 'atas-nama',
+          type: 'input',
+          valueOf: 'atas_nama',
+          required: true,
+          readOnly: true,
+          disabled: true
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Lembar Giro',
+          id: 'lembar-giro',
+          type: 'input',
+          valueOf: 'lembar_giro',
+          required: true,
+          readOnly: true,
+          disabled: true
+        },
+        {
+          formWidth: 'col-5',
+          label: 'Tipe Transaksi',
+          id: 'tipe-transaksi',
+          type: 'input',
+          valueOf: 'nama_tipe_transaksi',
+          required: true,
+          readOnly: true,
+          disabled: true
+        }
+      ]
+    } else if (type === 'bank-rightSide') {
+      this.rightDetailInputLayout.splice(3, 1)
+    } else if (type === 'giro-rightSide') {
+      this.rightDetailInputLayout.splice(1, 2)
+    } else if (type === 'others') {
+      this.rightDetailInputLayout.splice(1, 3)
+    }
+  }
+
+  openDialog(type) {
+    this.gbl.topPage()
+    this.dialogType = JSON.parse(JSON.stringify(type))
+    this.dialogRef = this.dialog.open(DialogComponent, {
+      width: '55vw',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '120px' },
+      position: { top: '20px' },
       data: {
-        type: type === undefined || type == null ? '' : type,
-        message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase(),
-        onCloseFunc: onCloseFunc === undefined || onCloseFunc == null ? null : () => onCloseFunc()
+        type: type,
+        tableInterface:
+          type === "kode_cabang" ? this.inputCabangInterface :
+            type === "kode_jurnal" ? this.inputJurnalInterface :
+              {},
+        displayedColumns:
+          type === "kode_cabang" ? this.inputCabangDisplayColumns :
+            type === "kode_jurnal" ? this.inputJurnalDisplayColumns :
+              [],
+        tableData:
+          type === "kode_cabang" ? this.inputCabangData :
+            type === "kode_jurnal" ? this.formValue.kode_cabang === '' ? this.inputJurnalData : this.inputJurnalData.filter(x => x.kode_cabang === this.formValue.kode_cabang) :
+              [],
+        tableRules:
+          type === "kode_cabang" ? this.inputCabangDataRules :
+            type === "kode_jurnal" ? this.inputJurnalDataRules :
+              [],
+        formValue: this.formValue,
+        selectable: type === 'kode_jurnal' ? true : false,
+        selected: this.filterDataJurnal,
+        selectIndicator: "kode_jurnal",
+        sizeCont: 380,
       },
-      disableClose: true
-    })
+    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
-    })
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (type === "kode_cabang") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
+            this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
+            this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
+            this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
+            if (this.cabang_tmp === "") {
+              this.cabang_tmp = this.forminput.getData()['kode_cabang']
+            }
+          }
+        } else if (type === "kode_jurnal") {
+          let x = result, y = true
+          for (var i = 0; i < x.length; i++) {
+            for (var j = 0; j < this.filterDataJurnal.length; j++) {
+              if (this.filterDataJurnal[j]['kode_jurnal'] === x[i]['kode_jurnal']) {
+                x[i] = this.filterDataJurnal[j]
+              }
+            }
+          }
+          this.filterDataJurnal.splice(0, this.filterDataJurnal.length)
+          for (var i = 0; i < x.length; i++) {
+            if (x[i]['id'] === "" || x[i]['id'] == null || x[i]['id'] === undefined) {
+              x[i]['id'] = `${MD5(Date().toLocaleString() + Date.now() + randomString({
+                length: 8,
+                numeric: true,
+                letters: false,
+                special: false
+              }))}`
+            }
+            this.filterDataJurnal.push(x[i])
+            if (Object.keys(this.checkFilterJurnal).length > 0) {
+              if (JSON.stringify(this.filterDataJurnal) === JSON.stringify(this.checkFilterJurnal) == false) {
+                y = false
+              }
+            }
+
+            if (y == false) {
+              this.browseDataHT = []
+              this.result = []
+              this.needReqVal = 0
+              this.resultTotal = []
+              this.partHT = ""
+              this.cabang_tmp = this.forminput.getData()['kode_cabang']
+            }
+          }
+          this.formInputCheckChangesDetail()
+        }
+        this.dialogRef = undefined
+        this.dialogType = null
+        this.ref.markForCheck();
+      }
+    });
+  }
+
+  inputDialog() {
+    this.gbl.screenPosition(340)
+    const dialogRef = this.dialog.open(InputdialogComponent, {
+      width: 'auto',
+      height: '48vh',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: '400px' },
+      data: {
+        width: '85vw',
+        title: this.formDetail.nama_cabang,
+        formValue: this.formDetail,
+        rightLayout: this.rightLayout,
+        rightInputLayout: this.rightDetailInputLayout,
+        inputLayout: this.detailInputLayout,
+        buttonLayout: [],
+        detailJurnal: true,
+        detailLoad: false,
+        jurnalData: this.detailData,
+        noEditJurnal: true,
+        noButtonSave: true,
+        resetForm: () => null,    
+      },
+      disableClose: false
+    });
+
+    dialogRef.afterClosed().subscribe(
+      result => {
+        this.ht == undefined ? null : this.ht.reset()
+        this.setDetailLayout('reset-rightSide')
+      },
+      error => null,
+    );
   }
 
   formInputCheckChanges() {
@@ -1307,5 +1166,4 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       this.forminput === undefined ? null : this.forminput.checkChangesDetailJurnal()
     }, 1)
   }
-
 }

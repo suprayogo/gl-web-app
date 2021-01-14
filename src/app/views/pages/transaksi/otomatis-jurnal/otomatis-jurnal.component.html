@@ -15,7 +15,7 @@
                         <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [namaTombol]="nama_tombol"
                             [buttonLayout]="buttonLayout" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
                             [tableRules]="detailRules" [editable]="editable" [detailLoad]="detailLoad"
-                            [enableDetail]="enableDetail" (onSubmit)="sendRequestHasilTarik()" [onUpdate]="onUpdate"
+                            [enableDetail]="enableDetail" (onSubmit)="initHasilTarik()" [onUpdate]="onUpdate"
                             [enableDelete]="enableDelete" (deleteData)="openCDialog()"
                             (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
                             (onCancel)="onCancel()" [onSub]="onSub" [noCancel]="noCancel">
