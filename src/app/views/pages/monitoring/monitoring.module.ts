@@ -48,6 +48,7 @@ import { BukuBesarComponent } from './buku-besar/buku-besar.component';
 import { TransaksiKasirComponent } from './transaksi-kasir/transaksi-kasir.component';
 import { HistoriEditKasirComponent } from './histori-edit-kasir/histori-edit-kasir.component';
 import { TransaksiJurnalOtomatisComponent } from './transaksi-jurnal-otomatis/transaksi-jurnal-otomatis.component';
+import { TransaksiBatchComponent } from './transaksi-batch/transaksi-batch.component';
 
 
 const routes: Routes = [
@@ -127,7 +128,8 @@ const routes: Routes = [
     BukuBesarComponent,
     TransaksiKasirComponent,
     HistoriEditKasirComponent,
-    TransaksiJurnalOtomatisComponent
+    TransaksiJurnalOtomatisComponent,
+    TransaksiBatchComponent
   ]
 })
 export class MonitoringModule { }

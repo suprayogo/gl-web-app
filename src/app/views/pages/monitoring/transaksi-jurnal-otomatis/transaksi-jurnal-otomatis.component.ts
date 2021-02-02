@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { MatTabChangeEvent, MatDialog } from '@angular/material';
-import { NgForm } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 
 // REQUEST DATA FROM API
 import { RequestDataService } from '../../../../service/request-data.service';
@@ -10,7 +9,6 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { DatatableAgGridComponent } from '../../components/datatable-ag-grid/datatable-ag-grid.component';
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
-import { ConfirmationdialogComponent } from '../../components/confirmationdialog/confirmationdialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
@@ -473,7 +471,6 @@ export class TransaksiJurnalOtomatisComponent implements OnInit, AfterViewInit {
 
   detailCetakLayout = [
     {
-
       formWidth: 'col-5',
       label: 'Format Cetak',
       id: 'format-cetak',
@@ -755,7 +752,7 @@ export class TransaksiJurnalOtomatisComponent implements OnInit, AfterViewInit {
       this.dialogRef = undefined
       this.dialogType = null
     }
-    );
+    )
   }
 
   inputDialog(type) {

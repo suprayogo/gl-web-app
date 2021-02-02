@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-xl-12">
+        <!-- Start of a Content -->
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+            <kt-portlet-body>
+                <div class="kt-section" *ngIf="!loading">
+                    <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [namaTombol]="nama_tombol"
+                        (onSubmit)="onSubmit($event)" [noCancel]="true">
+                    </kt-forminput>
+                    <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report" method="post"
+                        target="_blank">
+                        <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                        <button type="submit" (click)="form.submit()" id="fsubmit" hidden value="Submit">Submit</button>
+                    </form>
+                    <div *ngIf="loadingReport">
+                        <kt-loading></kt-loading>
+                    </div>
+                </div>
+            </kt-portlet-body>
+        </kt-portlet>
+        <!-- End of a Content -->
+    </div>
+</div>

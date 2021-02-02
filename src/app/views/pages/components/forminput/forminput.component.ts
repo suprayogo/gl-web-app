@@ -80,6 +80,7 @@ export class ForminputComponent implements OnInit {
   button_name_print_doc = 'Cetak Dokumen'
   button_name_print_doc2 = 'Cetak Dokumen'
   errorType: any;
+  tmpFocus: any;
 
   //Range Datepicker
   hoveredDate: NgbDate | null = null;
@@ -120,6 +121,21 @@ export class ForminputComponent implements OnInit {
 
   inputPipe(valueOf, data) {
     this.cFormValue[valueOf] = data.toUpperCase()
+  }
+
+  focusFunction(x, type) {
+    x.target.style.background = 'yellow'
+    if(type === 'datepicker' || type === 'datepicker-range'){
+      this.tmpFocus = x
+    }
+  }
+
+  focusOutFunction(x, type) {
+    if (type === 'datepicker' || type === 'datepicker-range') {
+      this.tmpFocus.target.style.background = ''
+    } else {
+      x.target.style.background = ''
+    }
   }
 
   //Selection event (Select Box)

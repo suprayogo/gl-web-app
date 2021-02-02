@@ -77,6 +77,7 @@ export class InputdialogComponent implements OnInit {
   jurnalDataAkun: any;
   jurnalData: any;
   noEditJurnal: boolean;
+  tmpFocus: any;
 
   constructor(
     public dialogRef: MatDialogRef<InputdialogComponent>,
@@ -162,6 +163,21 @@ export class InputdialogComponent implements OnInit {
 
   revision() {
     this.parameter.revisionData()
+  }
+
+  focusFunction(x, type) {
+    x.target.style.background = 'yellow'
+    if(type === 'datepicker' || type === 'datepicker-range'){
+      this.tmpFocus = x
+    }
+  }
+
+  focusOutFunction(x, type) {
+    if (type === 'datepicker' || type === 'datepicker-range') {
+      this.tmpFocus.target.style.background = ''
+    } else {
+      x.target.style.background = ''
+    }
   }
 
   closeDialog(t?) {

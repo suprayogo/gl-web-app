@@ -28,6 +28,7 @@ export class PengaturanSaldoKasirComponent implements OnInit {
   sub_perusahaan: any;
   kode_perusahaan: string;
   enableCancel: boolean = false
+  disabled: boolean = false
 
   data_akun = []
   res_data = []
@@ -124,6 +125,7 @@ export class PengaturanSaldoKasirComponent implements OnInit {
       required: false,
       readOnly: false,
       numberOnly: true,
+      disabled: false,
       currencyOptions: {
         precision: 2,
         allowNegative: true
@@ -287,6 +289,36 @@ export class PengaturanSaldoKasirComponent implements OnInit {
   madeRequest() {
     this.loading = true
     this.ref.markForCheck()
+    this.request.apiData('lookup', 'g-start-set-saldo', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let x = data['RESULT']
+          if (x == false) {
+            this.disabled = true
+            this.detailInputLayout.splice(3, 1,
+              {
+                formWidth: 'col-5',
+                label: 'Saldo',
+                id: 'saldo-awal',
+                type: 'input',
+                valueOf: 'saldo_awal',
+                required: false,
+                readOnly: false,
+                numberOnly: true,
+                disabled: true,
+                currencyOptions: {
+                  precision: 2,
+                  allowNegative: true
+                },
+                update: {
+                  disabled: false
+                }
+              }
+            )
+          }
+        }
+      }
+    )
     this.request.apiData('kasir', 'g-saldo-awal-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {

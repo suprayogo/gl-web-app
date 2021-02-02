@@ -23,6 +23,10 @@ export class LookupRequestService {
       httpBody.respondCode = 'GET-DATA-LOOKUP-STATUS'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-start-set-saldo') {
+      httpBody.respondCode = 'GET-DATA-START-PENGGUNAAN-APP'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

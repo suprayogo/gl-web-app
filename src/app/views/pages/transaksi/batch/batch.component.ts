@@ -672,6 +672,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       },
       onSelectFunc: (v) => {
         // this.resetForm()
+        this.formInputChangeTipeTran()
         this.formValue.tipe_transaksi = v
         this.formInputCheckChangesJurnal()
       }
@@ -1103,7 +1104,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   // BROWSE DATA (TAB MENU : BROWSE)
-   refreshBrowse(message, select?) {
+  refreshBrowse(message, select?) {
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
     this.browseData = []
     if (this.formValue.jenis_jurnal === "2") {
@@ -2521,6 +2522,16 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChangesDetailJurnal()
     }, 1)
+  }
+
+  formInputChangeTipeTran() {
+    this.detailData = this.forminput.getData()['detail']['data']
+    for (var i = 0; i < this.forminput.getData()['detail']['data'].length; i++) {
+      var tmp_saldo_debit = this.forminput.getData()['detail']['data'][i].saldo_debit
+      var tmp_saldo_kredit = this.forminput.getData()['detail']['data'][i].saldo_kredit
+      this.detailData[i].saldo_debit = tmp_saldo_kredit
+      this.detailData[i].saldo_kredit = tmp_saldo_debit
+    }
   }
 
 }

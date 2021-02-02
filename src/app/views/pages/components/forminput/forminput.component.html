@@ -57,13 +57,14 @@
               (keyup.enter)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
               (keyup.tab)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
               style="text-transform: uppercase"
-              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+              (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
             <div class="input-group-append">
               <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                 (click)="x.click(x.browseType)"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
-                  *ngIf="x.btnIcon" style="color: white" class="flaticon"
-                  [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+                  *ngIf="x.btnIcon" style="color: white" class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel
+                }}</button>
             </div>
             <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo"
               type="text" name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled"
@@ -73,21 +74,24 @@
 
           <!-- FOR NORMAL INPUT -->
           <div *ngIf="x.type === 'input'" [ngClass]="{'input-group': x.rightAddon || x.leftAddon}">
-            <div class="input-group-prepend" *ngIf="x.leftAddon"><span class="input-group-text"
-                id="basic-addon-left">{{ x.leftAddon }}</span></div>
+            <div class="input-group-prepend" *ngIf="x.leftAddon"><span class="input-group-text" id="basic-addon-left">{{
+                x.leftAddon }}</span></div>
             <input *ngIf="!x.numberOnly && !x.currency" class="form-control m-input" type="text" name="{{ x.id }}"
               [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-              (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null">
+              (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null" (focus)="focusFunction($event)"
+              (focusout)="focusOutFunction($event)">
             <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
               [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
-              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+              (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
             <input *ngIf="x.currency" class="form-control m-input number-align-right" type="text" name="{{ x.id }}"
               [(ngModel)]="cFormValue[x.valueOf]"
               (keyup)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null" [readonly]="x.readOnly"
               [required]="x.required"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-              currencyMask [options]="x.currencyOptions">
+              currencyMask [options]="x.currencyOptions" (focus)="focusFunction($event)"
+              (focusout)="focusOutFunction($event)">
             <div class="input-group-append" *ngIf="x.rightAddon"><span class="input-group-text"
                 id="basic-addon-right">{{ x.rightAddon }}</span></div>
           </div>
@@ -98,11 +102,12 @@
               <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
                 (dateSelect)="onDateSelect($event, x.valueOf, x.onSelectFunc)"
                 [ngModel]="getDateFormat(cFormValue[x.valueOf])"
-                (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
+                (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle(focusFunction($event, x.type))"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
                 [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null"
-                [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null">
+                [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null"
+                (closed)="focusOutFunction($event, x.type)">
               <div class="input-group-append">
                 <button tabindex="-1" class="btn btn-primary btn-datepicker-single"
                   (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
@@ -124,7 +129,7 @@
           <!-- DATEPICKER RANGE -->
           <div *ngIf="x.type === 'datepicker-range'" class="input-group">
             <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker" readonly
-              [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
+              [autoClose]="true" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
               (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
               [ngModel]="getDateFormat(cFormValue[x.valueOf])"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
@@ -158,14 +163,14 @@
           </div>
 
 
-          <!-- FOR INPUT GROUP -->
+          <!-- FOR CHECKBOX -->
           <div *ngIf="x.type === 'detail'" class="input-group">
             <div class="input-group-append">
               <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                 (click)="x.click(x.browseType)"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
-                  *ngIf="x.btnIcon" style="color: white" class="flaticon"
-                  [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+                  *ngIf="x.btnIcon" style="color: white" class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel
+                }}</button>
             </div>
           </div>
         </div>
@@ -208,13 +213,14 @@
               (keyup.enter)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
               (keyup.tab)="x.blurOption ? onBlur($event, x.blurOption['ind'], x.blurOption['data'], x.blurOption['valueOf'], x.blurOption['onFound']) : null"
               style="text-transform: uppercase"
-              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+              (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
             <div class="input-group-append">
               <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                 (click)="x.click(x.browseType)"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
-                  *ngIf="x.btnIcon" style="color: white" class="flaticon"
-                  [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}</button>
+                  *ngIf="x.btnIcon" style="color: white" class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel
+                }}</button>
             </div>
             <input tabindex="-1" class="form-control m-input margin-left-5 disabled-input" *ngIf="x.inputInfo"
               type="text" name="{{ x.inputInfo.id }}" [disabled]="x.inputInfo.disabled"
@@ -224,21 +230,24 @@
 
           <!-- FOR NORMAL INPUT -->
           <div *ngIf="x.type === 'input'" [ngClass]="{'input-group': x.rightAddon || x.leftAddon}">
-            <div class="input-group-prepend" *ngIf="x.leftAddon"><span class="input-group-text"
-                id="basic-addon-left">{{ x.leftAddon }}</span></div>
+            <div class="input-group-prepend" *ngIf="x.leftAddon"><span class="input-group-text" id="basic-addon-left">{{
+                x.leftAddon }}</span></div>
             <input *ngIf="!x.numberOnly && !x.currency" class="form-control m-input" type="text" name="{{ x.id }}"
               [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-              (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null">
+              (input)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null" (focus)="focusFunction($event)"
+              (focusout)="focusOutFunction($event)">
             <input *ngIf="x.numberOnly" class="form-control m-input" type="number" name="{{ x.id }}"
               [(ngModel)]="cFormValue[x.valueOf]" [readonly]="x.readOnly" [required]="x.required"
-              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+              [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
+              (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
             <input *ngIf="x.currency" class="form-control m-input number-align-right" type="text" name="{{ x.id }}"
               [(ngModel)]="cFormValue[x.valueOf]"
               (keyup)="x.inputPipe ? inputPipe(x.valueOf, $event.target.value) : null" [readonly]="x.readOnly"
               [required]="x.required"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
-              currencyMask [options]="x.currencyOptions">
+              currencyMask [options]="x.currencyOptions" (focus)="focusFunction($event)"
+              (focusout)="focusOutFunction($event)">
             <div class="input-group-append" *ngIf="x.rightAddon"><span class="input-group-text"
                 id="basic-addon-right">{{ x.rightAddon }}</span></div>
           </div>
@@ -249,11 +258,12 @@
               <input class="form-control" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
                 (dateSelect)="onDateSelect($event, x.valueOf, x.onSelectFunc)"
                 [ngModel]="getDateFormat(cFormValue[x.valueOf])"
-                (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
+                (focus)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle(focusFunction($event, x.type))"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
                 [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null"
-                [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null">
+                [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null"
+                (closed)="focusOutFunction($event, x.type)">
               <div class="input-group-append">
                 <button tabindex="-1" class="btn btn-primary btn-datepicker-single"
                   (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
@@ -314,7 +324,7 @@
     </div>
     <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: END----------------------------------------------------------- -->
   </div>
-  
+
   <div class="kt-section" *ngIf="detailLoad && enableDetail">
     <kt-loading></kt-loading>
   </div>

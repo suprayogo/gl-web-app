@@ -55,6 +55,10 @@ export class ReportRequestService {
       httpBody.respondCode = 'GET-DATA-REPORT-REKAPITULASI-PETTY-CASH'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-data-rekapitulasi') {
+      httpBody.respondCode = 'GET-DATA-REPORT-REKAPITULASI'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-report') {
       httpBody.respondCode = 'GET-REPORT'
       httpBody.requestParam = JSON.stringify(formData)

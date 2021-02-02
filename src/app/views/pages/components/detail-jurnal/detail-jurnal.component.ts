@@ -125,6 +125,7 @@ export class DetailJurnalComponent implements OnInit {
   total_debit = 0
   total_kredit = 0
   tipe_setting = ""
+  tmpFocus: any;
 
   loading = false;
   status_ket: boolean = false
@@ -445,6 +446,21 @@ export class DetailJurnalComponent implements OnInit {
       this.res_data = this.data
       this.countPercentDebit()
       this.countPercentKredit()
+    }
+  }
+
+  focusFunction(x, type) {
+    x.target.style.background = 'yellow'
+    if(type === 'datepicker' || type === 'datepicker-range'){
+      this.tmpFocus = x
+    }
+  }
+
+  focusOutFunction(x, type) {
+    if (type === 'datepicker' || type === 'datepicker-range') {
+      this.tmpFocus.target.style.background = ''
+    } else {
+      x.target.style.background = ''
     }
   }
 

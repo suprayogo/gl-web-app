@@ -28,6 +28,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   sub_perusahaan: any;
   kode_perusahaan: string;
   enableCancel: boolean = false
+  disabled: boolean = false
 
   data_akun = []
   res_data = []
@@ -139,6 +140,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       required: false,
       readOnly: false,
       numberOnly: true,
+      disabled: false,
       currencyOptions: {
         precision: 2
       },
@@ -159,6 +161,7 @@ export class PengaturanSaldoAwalComponent implements OnInit {
       required: false,
       readOnly: false,
       numberOnly: true,
+      disabled: false,
       currencyOptions: {
         precision: 2
       },
@@ -343,6 +346,61 @@ export class PengaturanSaldoAwalComponent implements OnInit {
   madeRequest() {
     this.loading = true
     this.ref.markForCheck()
+    this.request.apiData('lookup', 'g-start-set-saldo', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          let x = data['RESULT']
+          if (x == false) {
+            this.disabled = true
+            this.detailInputLayout.splice(4, 2,
+              {
+                formWidth: 'col-5',
+                label: 'Saldo Awal Debit ',
+                id: 'saldo-awal-debit',
+                type: 'input',
+                valueOf: 'saldo_debit',
+                required: false,
+                readOnly: false,
+                numberOnly: true,
+                disabled: true,
+                currencyOptions: {
+                  precision: 2
+                },
+                resetOption: {
+                  type: 'saldo_kredit',
+                  value: 0
+                },
+                update: {
+                  disabled: false
+                }
+              },
+              {
+                formWidth: 'col-5',
+                label: 'Saldo Awal Kredit ',
+                id: 'saldo-awal-kredit',
+                type: 'input',
+                valueOf: 'saldo_kredit',
+                required: false,
+                readOnly: false,
+                numberOnly: true,
+                disabled: true,
+                currencyOptions: {
+                  precision: 2
+                },
+                resetOption: {
+                  type: 'saldo_debit',
+                  value: 0
+                },
+                update: {
+                  disabled: false
+                }
+              }
+            )
+          }
+        }
+      }
+    )
+
     this.request.apiData('akun', 'g-saldo-awal-akun-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {

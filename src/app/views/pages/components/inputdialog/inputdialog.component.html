@@ -38,7 +38,8 @@
                     (blur)="onBlur(x.browseType, $event.target.value)"
                     (keyup.enter)="onBlur(x.browseType, $event.target.value)"
                     (keyup.tab)="onBlur(x.browseType, $event.target.value)" style="text-transform: uppercase"
-                    [disabled]="onUpdate && x.update.disabled">
+                    [disabled]="onUpdate && x.update.disabled" (focus)="focusFunction($event)"
+                    (focusout)="focusOutFunction($event)">
                   <div class="input-group-append">
                     <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
                       [disabled]="onUpdate && x.update.disabled"><i *ngIf="x.btnIcon" class="flaticon"
@@ -54,12 +55,14 @@
                   <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
                     [(ngModel)]="formValue[x.valueOf]" (value)="formValue[x.valueOf]" [readonly]="x.readOnly"
                     [required]="x.required" [disabled]="x.disabled || onUpdate && x.update.disabled"
-                    (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null">
+                    (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null"
+                    (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                   <input *ngIf="x.numberOnly" class="form-control m-input number-align-right" type="text"
                     name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]"
                     (keyup)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : x.resetOption ? resetValue(x.resetOption['type'], x.resetOption['value']) : null"
                     [readonly]="x.readOnly" [required]="x.required"
-                    [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions">
+                    [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions"
+                    (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                   <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
                 </div>
                 <!-- FOR RIGHT ADDON -->
@@ -93,7 +96,8 @@
                 <div *ngIf="x.type === 'datepicker'" class="input-group">
                   <input class="form-control m-input" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
                     (dateSelect)="x.dateSelect($event, x.valueOf)" [ngModel]="getDateFormat(formValue[x.valueOf])"
-                    (focus)="dd.toggle()" [disabled]="onUpdate && x.update.disabled"
+                    (focus)="dd.toggle(focusFunction($event, x.type))" (closed)="focusOutFunction($event, x.type)"
+                    [disabled]="onUpdate && x.update.disabled"
                     [minDate]="x.enableMin && !onUpdate ? getMinToday() : x.enableMin && onUpdate ? getMinToday(x.valueOf) : null">
                   <div class="input-group-append">
                     <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
@@ -168,7 +172,8 @@
                     (blur)="onBlur(x.browseType, $event.target.value)"
                     (keyup.enter)="onBlur(x.browseType, $event.target.value)"
                     (keyup.tab)="onBlur(x.browseType, $event.target.value)" style="text-transform: uppercase"
-                    [disabled]="onUpdate && x.update.disabled">
+                    [disabled]="onUpdate && x.update.disabled" (focus)="focusFunction($event)"
+                    (focusout)="focusOutFunction($event)">
                   <div class="input-group-append">
                     <button tabindex="-1" type="button" class="btn btn-primary" (click)="x.click(x.browseType)"
                       [disabled]="onUpdate && x.update.disabled"><i *ngIf="x.btnIcon" class="flaticon"
@@ -184,12 +189,14 @@
                   <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
                     [(ngModel)]="formValue[x.valueOf]" (value)="formValue[x.valueOf]" [readonly]="x.readOnly"
                     [required]="x.required" [disabled]="x.disabled || onUpdate && x.update.disabled"
-                    (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null">
+                    (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null" (focus)="focusFunction($event)"
+                    (focusout)="focusOutFunction($event)">
                   <input *ngIf="x.numberOnly" class="form-control m-input number-align-right" type="text"
                     name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]"
                     (keyup)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : x.resetOption ? resetValue(x.resetOption['type'], x.resetOption['value']) : null"
                     [readonly]="x.readOnly" [required]="x.required"
-                    [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions">
+                    [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions" (focus)="focusFunction($event)"
+                    (focusout)="focusOutFunction($event)">
                   <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
                 </div>
                 <!-- FOR RIGHT ADDON -->
@@ -223,7 +230,8 @@
                 <div *ngIf="x.type === 'datepicker'" class="input-group">
                   <input class="form-control m-input" name="{{ x.id }}" ngbDatepicker #dd="ngbDatepicker" readonly
                     (dateSelect)="x.dateSelect($event, x.valueOf)" [ngModel]="getDateFormat(formValue[x.valueOf])"
-                    (focus)="dd.toggle()" [disabled]="onUpdate && x.update.disabled"
+                    (focus)="dd.toggle(focusFunction($event, x.type))" (closed)="focusOutFunction($event, x.type)"
+                    [disabled]="onUpdate && x.update.disabled"
                     [minDate]="x.enableMin && !onUpdate ? getMinToday() : x.enableMin && onUpdate ? getMinToday(x.valueOf) : null">
                   <div class="input-group-append">
                     <button tabindex="-1" class="btn btn-primary" (click)="dd.toggle()" type="button"
