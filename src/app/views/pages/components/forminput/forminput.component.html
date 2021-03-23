@@ -107,7 +107,7 @@
                 [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null"
                 [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null"
-                (closed)="focusOutFunction($event, x.type)">
+                (closed)="focusOutFunction(undefined, x.type)">
               <div class="input-group-append">
                 <button tabindex="-1" class="btn btn-primary btn-datepicker-single"
                   (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
@@ -263,7 +263,7 @@
                 [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null"
                 [markDisabled]="x.onDisableDate ? x.disableCustomDate ? getdisableCustomDate(x.disableCustomDate()) : null : null"
-                (closed)="focusOutFunction($event, x.type)">
+                (closed)="focusOutFunction(undefined, x.type)">
               <div class="input-group-append">
                 <button tabindex="-1" class="btn btn-primary btn-datepicker-single"
                   (click)="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm ? null : dd.toggle()"
@@ -286,7 +286,7 @@
           <div *ngIf="x.type === 'datepicker-range'">
             <div class="input-group">
               <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker"
-                [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
+                [autoClose]="true" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
                 [startDate]="fromDate!" (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
                 [ngModel]="getDateFormat(cFormValue[x.valueOf])"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"

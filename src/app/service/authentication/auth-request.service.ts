@@ -8,9 +8,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AuthRequestService {
 
-  baseURL = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct' // Live
-  // baseURL = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // Dev
-  
+  // baseURL = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // LIVE
+  baseURL = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // DEVELOP
 
   httpBody = {
     respondCode: '',
@@ -60,18 +59,18 @@ export class AuthRequestService {
       this.httpBody.respondCode = "VALIDATE"
       this.httpBody.authParam = JSON.stringify(this.authParam.getAuth())
       this.http.post(this.baseURL, this.httpBody, { headers: this.httpHeader.getHeader(token) }).subscribe( //   <-- +'1'
-      data => {
-        if (data['STATUS'] === 'Y') { //   <-- Y'
-          resolve(true)
-        } else {
-          window.parent.postMessage({
-            'type': 'VALIDATE',
-            'res': false
-          }, '*')
-          resolve(false)
+        data => {
+          if (data['STATUS'] === 'Y') { //   <-- Y'
+            resolve(true)
+          } else {
+            window.parent.postMessage({
+              'type': 'VALIDATE',
+              'res': false
+            }, '*')
+            resolve(false)
+          }
         }
-      }
-    )
+      )
     })
   }
 }

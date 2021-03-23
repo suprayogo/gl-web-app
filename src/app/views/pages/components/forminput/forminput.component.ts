@@ -5,6 +5,7 @@ import { TimeStringAdapter } from '../../time-adapter.module';
 
 import { DetailinputAgGridComponent } from '../detailinput-ag-grid/detailinput-ag-grid.component';
 import { DetailJurnalComponent } from '../detail-jurnal/detail-jurnal.component';
+import { GlobalVariableService } from '../../../../service/global-variable.service';
 
 @Component({
   selector: 'kt-forminput',
@@ -91,7 +92,8 @@ export class ForminputComponent implements OnInit {
   constructor(
     private ref: ChangeDetectorRef,
     private calendar: NgbCalendar,
-    public formatter: NgbDateParserFormatter
+    public formatter: NgbDateParserFormatter,
+    private gbl: GlobalVariableService
   ) {
     this.fromDate = calendar.getToday();
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 0);
@@ -130,7 +132,7 @@ export class ForminputComponent implements OnInit {
     }
   }
 
-  focusOutFunction(x, type) {
+  focusOutFunction(x?, type?) {
     if (type === 'datepicker' || type === 'datepicker-range') {
       this.tmpFocus.target.style.background = ''
     } else {
@@ -269,7 +271,7 @@ export class ForminputComponent implements OnInit {
       return {
         year: date.getFullYear(),
         month: date.getMonth() + 1,
-        day: (date.getMonth() + 1) == 2 ? 29 :
+        day: (date.getMonth() + 1) == 2 ? this.gbl.leapYear(date.getFullYear()) == false ? 28 : 29 :
           (
             (date.getMonth() + 1) == 1 ||
             (date.getMonth() + 1) == 3 ||
@@ -284,7 +286,7 @@ export class ForminputComponent implements OnInit {
       return {
         year: parseInt(d['y']),
         month: parseInt(d['m']),
-        day: parseInt(d['m']) == 2 ? 29 :
+        day: parseInt(d['m']) == 2 ? this.gbl.leapYear(parseInt(d['y'])) == false ? 28 : 29 :
           (
             parseInt(d['m']) == 1 ||
             parseInt(d['m']) == 3 ||
@@ -301,7 +303,6 @@ export class ForminputComponent implements OnInit {
   getMinToday(d?: any) {
     let pdata = Date.now()
     let date = pdata == null ? null : new Date(pdata)
-
     if (d === undefined || d == null) {
       return {
         year: date.getFullYear(),
@@ -315,7 +316,6 @@ export class ForminputComponent implements OnInit {
         day: 1
       }
     }
-
   }
 
   getdisableCustomDate(d?: any) {

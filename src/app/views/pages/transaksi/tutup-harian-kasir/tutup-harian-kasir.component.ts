@@ -314,7 +314,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
         ind: 'kode_cabang',
         data: [],
         valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: () => {}
+        onFound: () => { }
       },
       update: {
         disabled: false
@@ -621,8 +621,25 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
           value: lp[i]['id_periode']
         })
       }
+      // this.tgl_perlu_tutup = res
 
-      this.tgl_perlu_tutup = res
+      let
+        // Init Date Browser Time Zone
+        y = res.map(detail => {
+          const cont = detail
+          cont['label'] = new Date(detail.label)
+          return cont
+        }),
+        // Sort Date
+        z = y.sort((a, b) => b.label - a.label),
+        // Init to Date String
+        result = z.map(detail => {
+          const cont = detail
+          cont['label'] = this.gbl.splitDate(detail['label'].getTime())
+          return cont
+        })
+      // Tanggal Tutup Harian Kasir Buka Kembali
+      this.tgl_perlu_tutup = result
 
       this.inputLayout.splice(2, 1,
         {

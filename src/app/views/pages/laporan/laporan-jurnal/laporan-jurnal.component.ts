@@ -374,7 +374,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                 for (var i = 0; i < d.length; i++) {
                   let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran'].split("-")
 
-                  if (d[i]['kode_tran'] !== "SALDO-AWAL") {
+                  // if (d[i]['kode_tran'] !== "SALDO-AWAL") {
                     t.push(d[i]['no_tran'])
                     t.push(new Date(d[i]['tgl_tran']).getTime())
                     t.push(d[i]['kode_akun'])
@@ -387,7 +387,7 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
                     t.push(parseFloat(d[i]['nilai_kredit']))
 
                     res.push(t)
-                  }
+                  // }
                 }
 
                 // Check range or not

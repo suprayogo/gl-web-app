@@ -64,10 +64,16 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   // GLOBAL VARIABLE PERIODE AKTIF
   subsPA: any;
   periode_aktif: any;
+  periode_tutup: any;
   idPeriodeAktif: any;
   tahunPeriodeAktif: any;
   bulanPeriodeAktif: any;
   nama_bulan_aktif: any;
+  tgl_jurnal: any;
+
+  opsi_tahun: any
+  opsi_bulan: any
+  checkTutup: any
 
   tipe_laporan = [
     {
@@ -135,27 +141,53 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         disabled: false
       }
     },
+    // {
+    //   labelWidth: 'col-4',
+    //   formWidth: 'col-7',
+    //   label: 'Periode Aktif',
+    //   id: 'bulan-periode',
+    //   type: 'inputgroup',
+    //   valueOf: 'bulan_periode',
+    //   required: true,
+    //   readOnly: true,
+    //   noButton: true,
+    //   disabled: true,
+    //   inputInfo: {
+    //     id: 'tahun-periode',
+    //     disabled: false,
+    //     readOnly: true,
+    //     required: false,
+    //     valueOf: 'tahun_periode'
+    //   },
+    //   update: {
+    //     disabled: false
+    //   }
+    // },
     {
       labelWidth: 'col-4',
       formWidth: 'col-7',
-      label: 'Periode Aktif',
+      label: 'Tahun',
+      id: 'tahun-periode',
+      type: 'combobox',
+      options: [],
+      valueOf: 'tahun_periode',
+      required: false,
+      readOnly: false,
+      disabled: false,
+      onSelectFunc: (v) => { }
+    },
+    {
+      labelWidth: 'col-4',
+      formWidth: 'col-7',
+      label: 'Bulan',
       id: 'bulan-periode',
-      type: 'inputgroup',
+      type: 'combobox',
+      options: [],
       valueOf: 'bulan_periode',
-      required: true,
-      readOnly: true,
-      noButton: true,
-      disabled: true,
-      inputInfo: {
-        id: 'tahun-periode',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'tahun_periode'
-      },
-      update: {
-        disabled: false
-      }
+      required: false,
+      readOnly: false,
+      disabled: false,
+      onSelectFunc: (v) => { }
     },
     {
       labelWidth: 'col-4',
@@ -504,6 +536,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
+            this.periode_tutup = JSON.parse(JSON.stringify(data['RESULT'].filter(x => x.aktif === '1' || x.tutup_sementara === '1')))
             this.gbl.periodeAktif(this.periode_aktif['id_periode'], this.periode_aktif['tahun_periode'], this.periode_aktif['bulan_periode'])
             this.idPeriodeAktif = this.gbl.getIdPeriodeAktif()
             this.tahunPeriodeAktif = this.gbl.getTahunPeriodeAktif()
@@ -532,11 +565,12 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
           this.formValue.kode_cabang = this.cabang_utama.kode_cabang
           this.formValue.nama_cabang = this.cabang_utama.nama_cabang
+          this.cabang_tmp = this.cabang_utama.kode_cabang
           this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
           this.formValue = {
             tgl_tarik: '',
-            bulan_periode: this.nama_bulan_aktif,
-            tahun_periode: this.tahunPeriodeAktif,
+            bulan_periode: this.periode_aktif.bulan_periode,
+            tahun_periode: this.periode_aktif.tahun_periode,
             rekap_harian: this.formValue.rekap_harian,
             tgl_tran: this.formValue.tgl_tran,
             rekap_bulanan: this.formValue.rekap_bulanan,
@@ -544,6 +578,75 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             kode_cabang: this.formValue.kode_cabang,
             nama_cabang: this.formValue.nama_cabang
           }
+          // INIT LIST TAHUN BOLEH TUTUP FULL
+          let list_tahun = JSON.parse(JSON.stringify(this.periode_tutup)).map(detail => {
+            const cont = detail
+            cont['label'] = detail['tahun_periode']
+            cont['value'] = detail['tahun_periode']
+            return cont
+          }),
+
+            flags = [], x = []
+          for (var i = 0; i < list_tahun.length; i++) {
+            if (flags[list_tahun[i]['tahun_periode']]) continue;
+            flags[list_tahun[i]['tahun_periode']] = true;
+            x.push(list_tahun[i])
+          }
+
+          // INIT LIST BULAN BOLEH TUTUP
+          let list_bulan = JSON.parse(JSON.stringify(this.periode_tutup)).map(detail => {
+            const cont = detail
+            cont['label'] = this.gbl.getNamaBulan(detail['bulan_periode'])
+            cont['value'] = detail['bulan_periode']
+            return cont
+          })
+
+          // =========================
+          this.opsi_tahun = x
+          this.opsi_bulan = list_bulan
+          // ========= || ============
+
+          this.inputLayout.splice(1, 2,
+            {
+              labelWidth: 'col-4',
+              formWidth: 'col-7',
+              label: 'Tahun',
+              id: 'tahun-periode',
+              type: 'combobox',
+              options: this.opsi_tahun,
+              valueOf: 'tahun_periode',
+              required: false,
+              readOnly: false,
+              disabled: false,
+              onSelectFunc: (v) => {
+                // this.forminput.getData().tahun_periode = v
+                // this.formValue.tahun_periode = v
+
+                // RESET
+                this.forminput.getData().bulan_periode = ''
+                // this.formValue.bulan_periode = ''
+
+                this.filterMonth(v)
+              }
+            },
+            {
+              labelWidth: 'col-4',
+              formWidth: 'col-7',
+              label: 'Bulan',
+              id: 'bulan-periode',
+              type: 'combobox',
+              options: this.opsi_bulan,
+              valueOf: 'bulan_periode',
+              required: false,
+              readOnly: false,
+              disabled: false,
+              onSelectFunc: (v) => {
+                // this.forminput.getData().bulan_periode = v
+                // this.formValue.bulan_periode = v
+              }
+            }
+          )
+          this.filterMonth(this.formValue.tahun_periode)
           this.ref.markForCheck()
           this.getSettingJurnal()
         } else {
@@ -552,6 +655,28 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       }
     )
   }
+
+  filterMonth(v) {
+    this.inputLayout.splice(2, 1,
+      {
+        labelWidth: 'col-4',
+        formWidth: 'col-7',
+        label: 'Bulan',
+        id: 'bulan-periode',
+        type: 'combobox',
+        options: this.opsi_bulan.filter(x => x.tahun_periode === parseInt(v)),
+        valueOf: 'bulan_periode',
+        required: false,
+        readOnly: false,
+        disabled: false,
+        onSelectFunc: (v) => {
+          // this.forminput.getData().bulan_periode = v
+          // this.formValue.bulan_periode = v
+        }
+      }
+    )
+  }
+
 
   // GET DATA SETTING JURNAL
   getSettingJurnal() {
@@ -627,16 +752,20 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       }
       if (this.formValue.rekap_harian === '1') {
         this.tipe_setting.push('1')
-        this.formValue.tgl_tran = this.formValue.tgl_tran === '' ? '' : this.gbl.splitDate(parseInt(this.formValue.tgl_tran))
+        this.tgl_jurnal = this.formValue.tgl_tran === '' ? '' : this.gbl.splitDate(parseInt(this.formValue.tgl_tran))
       } else {
-        this.formValue.tgl_tran = ''
+        this.tgl_jurnal = ''
       }
       if (this.formValue.rekap_bulanan === '1') {
         this.tipe_setting.push('0')
       }
-      this.gbl.bottomPage()
-      this.tableLoadHT = true
-      this.getJurnalOtomatis('')
+      if (this.forminput.getData().bulan_periode === '') {
+        this.gbl.openSnackBar('Mohon pilih bulan terlebih dahulu!', 'fail')
+      } else {
+        this.gbl.bottomPage()
+        this.tableLoadHT = true
+        this.getJurnalOtomatis('')
+      }
     }
   }
 
@@ -644,12 +773,13 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   getJurnalOtomatis(reqStatus) {
     this.ref.markForCheck()
     if (reqStatus === '' || reqStatus === 'W') {
+      let b = parseInt(this.formValue.bulan_periode) < 10 ? "0" + this.formValue.bulan_periode : this.formValue.bulan_periode
       let endRes = Object.assign(
         {
           kode_perusahaan: this.kode_perusahaan,
           kode_cabang: this.formValue.kode_cabang,
-          periode: this.periode,
-          tgl_periode: this.formValue.tgl_tran,
+          periode: this.formValue.tahun_periode + "-" + b,
+          tgl_periode: this.tgl_jurnal,
           tipe_setting: this.tipe_setting,
           re_get: this.needReqVal,
           list_kode_jurnal: this.filterDataJurnal

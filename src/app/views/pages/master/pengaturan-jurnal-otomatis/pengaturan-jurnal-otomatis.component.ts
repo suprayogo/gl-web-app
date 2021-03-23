@@ -160,7 +160,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   displayedColumnsTable = [
     {
       label: 'Jenis Jurnal',
-      value: 'nama_pengaturan_transaksi'
+      value: 'jenis_jurnal_sub'
     },
     {
       label: 'Kode Jurnal',
@@ -201,12 +201,12 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
   browseData = []
   browseDataRules = [
     {
-      target: 'batal_status',
+      target: 'jenis_jurnal',
       replacement: {
-        't': 'Batal',
-        'f': ''
+        '0': 'Jurnal Umum',
+        '1': 'Jenis Kasir'
       },
-      redefined: 'batal_status_sub'
+      redefined: 'jenis_jurnal_sub'
     }
   ]
 
@@ -443,12 +443,12 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
       nama_jurnal: x['nama_jurnal'],
       kode_cabang: x['kode_cabang'],
       nama_cabang: x['nama_cabang'],
-      jenis_transaksi: x['jenis_transaksi'],
+      jenis_transaksi: x['jenis_jurnal'],
       id_jenis_transaksi: x['id_jenis_transaksi'],
       kode_jenis_transaksi: x['kode_jenis_transaksi'],
       nilai_jenis_transaksi: x['nilai_jenis_transasksi'],
       tipe_transaksi: x['tipe_transaksi'],
-      tipe_laporan: '',
+      tipe_laporan: x['tipe_laporan'],
       keterangan: x['keterangan']
     }
     if(this.formValue.jenis_transaksi === "0"){

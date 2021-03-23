@@ -12,7 +12,7 @@ export class JurnalRequestService {
 
   validate(data, httpBody, options, formData?: Object) {
     if (data === 'g-jurnal') {
-      httpBody.respondCode = 'GET-DATA-JURNAL'
+      httpBody.respondCode = 'GET-DATA-JURNAL-HEADER'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'g-jurnal-detail') {

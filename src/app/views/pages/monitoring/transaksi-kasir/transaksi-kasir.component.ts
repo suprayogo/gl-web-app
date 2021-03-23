@@ -13,7 +13,7 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { InputdialogComponent } from '../../components/inputdialog/inputdialog.component';
 
 const content = {
-  beforeCodeTitle: 'Monitoring Transaksi Jurnal Batch'
+  beforeCodeTitle: 'Monitoring Transaksi Kasir'
 }
 
 @Component({

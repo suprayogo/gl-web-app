@@ -82,7 +82,7 @@ export class GlobalVariableService {
       }
     }, "*")
   }
-  
+
 
   // NEED COMPANY AND PERIOD
   need(Company, Period, isPeriodeKasir?: boolean) {
@@ -197,7 +197,7 @@ export class GlobalVariableService {
     this.chPeriodeKasir.next(d)
   }
 
-  setPeriodeKasirAktif(pa_id, tgp){
+  setPeriodeKasirAktif(pa_id, tgp) {
     this.id_periode_kasir_aktif = pa_id
     this.tgl_periode_aktif = tgp
     let res = {
@@ -228,7 +228,7 @@ export class GlobalVariableService {
       n = 'Februari'
     } else if (m === '3' || m === '03' || m == 3) {
       n = 'Maret'
-    } else if (m === '4'|| m === '04' || m == 4) {
+    } else if (m === '4' || m === '04' || m == 4) {
       n = 'April'
     } else if (m === '5' || m === '05' || m == 5) {
       n = 'Mei'
@@ -285,8 +285,8 @@ export class GlobalVariableService {
     this.activePeriod.next(res)
   }
 
-   //General Get Date Now
-   getDateNow() {
+  //General Get Date Now
+  getDateNow() {
     let p = new Date().getTime()
     return p
   }
@@ -311,6 +311,10 @@ export class GlobalVariableService {
       formatYMD = `${years}-${months}-${days}`
 
     return formatYMD
+  }
+
+  leapYear(year) {
+    return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
   }
 
   // Dialog

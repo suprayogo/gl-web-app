@@ -1,4 +1,5 @@
 <div class="p-container">
+    <!-- JUDUL KOLOM JURNAL UMUM -->
     <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
         style="display: flex; flex-direction: row; height: 38px; align-items: center; background-color: #1e1e2d;">
         <div style="width: 34%; padding: 10px; border-right: solid 1px lightgrey;" id="h-akun">
@@ -14,7 +15,9 @@
             <span class="title">Kredit</span>
         </div>
     </div>
+    <!-- ////////////////////// -->
 
+    <!-- JUDUL KOLOM JURNAL TRANSAKSI -->
     <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
         style="display: flex; flex-direction: row; height: 38px; align-items: center; background-color: #1e1e2d;">
         <div style="width: 38%; padding: 10px; border-right: solid 1px lightgrey;" id="h-akun">
@@ -23,17 +26,29 @@
         <div style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;" id="h-debit">
             <span class="title">Keterangan</span>
         </div>
-        <div style="width: 22%; padding: 10px; border-right: solid 1px lightgrey;" id="h-debit">
+        <!-- JUDUL KOLOM JURNAL TRANSAKSI JENIS SELAIN GIRO -->
+        <div *ngIf="tipe['tipe_laporan'] !== 'g'" style="width: 22%; padding: 10px; border-right: solid 1px lightgrey;"
+            id="h-debit">
             <span class="title">Nilai Saldo</span>
         </div>
+        <!-- JUDUL KOLOM JURNAL TRANSAKSI JENIS GIRO -->
+        <div *ngIf="tipe['tipe_laporan'] === 'g'" style="width: 22%; padding: 10px; border-right: solid 1px lightgrey;"
+            id="h-debit">
+            <span class="title">Nilai Saldo & Lembar Giro</span>
+        </div>
     </div>
+    <!-- //////////////////////////// -->
 
+    <!-- KOLOM INPUT -->
     <div style="overflow-y: auto; width: 100%; height: calc(100% - 38px);" id="c-container">
         <div *ngFor="let x of res_data; let i = index"
             style="width: 100%; height: auto; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
             [id]="i == 0 ? 'content' : null">
+
+            <!-- INPUT INFORMASI AKUN JURNAL UMUM -->
             <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
                 style="width: 34%; height: fit-content; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
+                <!-- INPUT AKUN -->
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
                         (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
@@ -50,6 +65,7 @@
                 </div>
                 <!-- <div
                 style="width: 100%; margin-top: 10px; display: flex; flex-direction: row; justify-content: space-between;"> -->
+                <!-- INPUT DIVISI -->
                 <div style="margin-top: 5px;">
                     <div class="input-group">
                         <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
@@ -66,6 +82,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- INPUT DEPARTEMEN -->
                 <div style="margin-top: 5px;">
                     <div class="input-group">
                         <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
@@ -84,8 +101,12 @@
                     </div>
                 </div>
             </div>
+            <!-- //////////////////////////////// -->
+
+            <!-- INPUT INFORMASI AKUN JURNAL TRANSAKSI -->
             <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
-                style="width: 38%; height: fit-content; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
+                style="width: 38%; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
+                <!-- INPUT AKUN -->
                 <div class="input-group">
                     <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
                         (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
@@ -100,8 +121,10 @@
                         </button>
                     </div>
                 </div>
+                <!-- INPUT DIVISI & DEPARTEMEN -->
                 <div
                     style="width: 100%; margin-top: 5px; display: flex; flex-direction: row; justify-content: space-between;">
+                    <!-- INPUT DIVISI -->
                     <div class="input-group" style="width: 48%;">
                         <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
                             (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
@@ -116,7 +139,7 @@
                             </button>
                         </div>
                     </div>
-
+                    <!-- INPUT DEPARTEMEN -->
                     <div class="input-group" style="width: 48%;">
                         <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
                             (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
@@ -134,13 +157,18 @@
                     </div>
                 </div>
             </div>
+            <!-- /////////////// *height: fit-content; -->
+
+            <!-- INPUT KETERANGAN JURNAL UMUM -->
             <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
                 style="width: 28%; padding: 10px; border-right: solid 1px lightgrey;">
+                <!-- KETERANGAN 1 -->
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
                     placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}"
                     [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit" (blur)="ket(i, '1')"
                     (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')" (focus)="focusFunction($event)"
                     (focusout)="focusOutFunction($event)">
+                <!-- KETERANGAN 2 -->
                 <div *ngIf="status_ket" style="margin-top: 5px;">
                     <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
                         placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
@@ -148,13 +176,18 @@
                         (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                 </div>
             </div>
+            <!-- //////////////////////////// -->
+
+            <!-- INPUT KETERANGAN JURNAL TRANSAKSI -->
             <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
                 style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;">
+                <!-- KETERANGAN 1 -->
                 <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
                     placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}"
                     [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit" (blur)="ket(i, '1')"
                     (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')" (focus)="focusFunction($event)"
                     (focusout)="focusOutFunction($event)">
+                <!-- KETERANGAN 2 -->
                 <div *ngIf="status_ket" style="margin-top: 5px;">
                     <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
                         placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
@@ -162,8 +195,10 @@
                         (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                 </div>
             </div>
+            <!-- ///////////////////////////////// -->
 
-            <!-- Begin: Jurnal Umum -->
+            <!-- INPUT NILAI SALDO JURNAL UMUM -->
+            <!-- INPUT SALDO DEBIT -->
             <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
                 <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
@@ -176,6 +211,7 @@
                     [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
                     (focusout)="focusOutFunction($event)">
             </div>
+            <!-- INPUT SALDO KREDIT -->
             <div style="width: 19%; padding: 10px" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
                 <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
@@ -188,9 +224,10 @@
                     [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
                     (focusout)="focusOutFunction($event)">
             </div>
-            <!-- End: Jurnal Umum -->
+            <!-- ///////////////////////////// -->
 
-            <!-- Begin: Jurnal Kasir -->
+            <!-- INPUT NILAI SALDO JURNAL TRANSAKSI -->
+            <!-- INPUT TIPE TRANSAKSI KELUAR -->
             <div style="width: 22%; padding: 10px;" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
                 <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
@@ -202,7 +239,20 @@
                     [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
                     [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
                     (focusout)="focusOutFunction($event)">
+                <div *ngIf="tipe['tipe_laporan'] === 'g'"
+                    style="width: 100%; margin-top: 5px; display: flex; justify-content: space-between;">
+                    <div style="margin-top: 8px; width: 49%;">
+                        Lembar Giro
+                    </div>
+                    <div style="width: 50%;">
+                        <input class="form-control m-input" type="text" name="{{ 'lembar-' + i }}"
+                            [(ngModel)]="res_data[i]['lembar_giro']" currencyMask [options]="numberOptions"
+                            [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
+                            (focusout)="focusOutFunction($event)">
+                    </div>
+                </div>
             </div>
+            <!-- INPUT TIPE TRANSAKSI MASUK -->
             <div style="width: 22%; padding: 10px" class="input-group"
                 *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
                 <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
@@ -214,8 +264,20 @@
                     [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
                     [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
                     (focusout)="focusOutFunction($event)">
+                <div *ngIf="tipe['tipe_laporan'] === 'g'"
+                    style="width: 100%; margin-top: 5px; display: flex; justify-content: space-between;">
+                    <div style="margin-top: 8px; width: 49%;">
+                        Lembar Giro
+                    </div>
+                    <div style="width: 50%;">
+                        <input class="form-control m-input" type="text" name="{{ 'lembar-' + i }}"
+                            [(ngModel)]="res_data[i]['lembar_giro']" currencyMask [options]="numberOptions"
+                            [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
+                            (focusout)="focusOutFunction($event)">
+                    </div>
+                </div>
             </div>
-            <!-- End: Jurnal Kasir -->
+            <!-- ////////////////////////////////// -->
 
             <!-- Begin: Template Transaksi -->
             <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
@@ -269,7 +331,7 @@
             </div>
         </div>
     </div>
-    <!-- End: Jurnal Otomatis -->
+    <!-- /////////// -->
 
     <div style="width: 100%; height: 26px; display: flex; flex-direction: row;" *ngIf="!noEdit">
         <div style="width: 60%; height: 100%;"></div>
@@ -288,7 +350,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <div style="width: 100%; height: 38px; display: flex; flex-direction: row; margin-top: 5px;"

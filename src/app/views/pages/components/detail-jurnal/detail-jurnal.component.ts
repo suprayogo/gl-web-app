@@ -37,6 +37,19 @@ export class DetailJurnalComponent implements OnInit {
     inputMode: CurrencyMaskInputMode.NATURAL
   }
 
+  numberOptions = {
+    align: "left",
+    allowNegative: true,
+    allowZero: true,
+    decimal: ",",
+    precision: 0,
+    prefix: "",
+    suffix: "",
+    thousands: ".",
+    nullable: false,
+    inputMode: CurrencyMaskInputMode.NATURAL
+  }
+
   setValueNewRows = {}
 
   headerJurnal = {}
@@ -150,7 +163,7 @@ export class DetailJurnalComponent implements OnInit {
         this.ref.markForCheck()
       }
     )
-    
+
     // GET VALUE JURNAL BATCH (HEADER INPUT)
     if (this.tipe != undefined || this.tipe != null) {
       this.headerJurnal = {
@@ -180,7 +193,6 @@ export class DetailJurnalComponent implements OnInit {
     }
 
     // -------------------------------------------------------------||-----------------------------------------------------------------------------------------------------
-
     // GET DATA DETAIL JURNAL BATCH
     if (this.data !== undefined || this.data != null) {
       this.res_data = this.data
@@ -204,7 +216,8 @@ export class DetailJurnalComponent implements OnInit {
               setting_debit: '',
               setting_kredit: '',
               bobot_debit: 0,
-              bobot_kredit: 0
+              bobot_kredit: 0,
+              lembar_giro: 1
             }
           ]
         } else {
@@ -225,7 +238,8 @@ export class DetailJurnalComponent implements OnInit {
               setting_debit: '',
               setting_kredit: '',
               bobot_debit: 0,
-              bobot_kredit: 0
+              bobot_kredit: 0,
+              lembar_giro: 1
             },
             {
               id_akun: '',
@@ -242,7 +256,8 @@ export class DetailJurnalComponent implements OnInit {
               setting_debit: '',
               setting_kredit: '',
               bobot_debit: 0,
-              bobot_kredit: 0
+              bobot_kredit: 0,
+              lembar_giro: 1
             }
           ]
         }
@@ -264,7 +279,8 @@ export class DetailJurnalComponent implements OnInit {
             setting_debit: '',
             setting_kredit: '',
             bobot_debit: 0,
-            bobot_kredit: 0
+            bobot_kredit: 0,
+            lembar_giro: 1
           },
           {
             id_akun: '',
@@ -281,7 +297,8 @@ export class DetailJurnalComponent implements OnInit {
             setting_debit: '',
             setting_kredit: '',
             bobot_debit: 0,
-            bobot_kredit: 0
+            bobot_kredit: 0,
+            lembar_giro: 1
           }
         ]
       }
@@ -328,7 +345,8 @@ export class DetailJurnalComponent implements OnInit {
       this.headerJurnal = {
         kd_cabang: this.tipe['kode_cabang'],
         jenis: this.tipe['jenis_jurnal'],
-        tipe_tran: this.tipe['tipe_transaksi']
+        tipe_tran: this.tipe['tipe_transaksi'],
+        tipe_rep: this.tipe['tipe_laporan']
       }
     }
 
@@ -345,6 +363,16 @@ export class DetailJurnalComponent implements OnInit {
       // RESET VALUE NEW ROWS
       if (this.data[0]['kode_divisi'] === '' && this.data[1]['kode_divisi'] === '' && this.data.length == 2) {
         this.setValueNewRows = {}
+      }
+
+      let result
+      if (this.headerJurnal['jenis'] === '2' && this.headerJurnal['tipe_rep'] === 'g') {
+        result = this.res_data.map(detail => {
+          const container = detail
+          container['lembar_giro'] = 1
+          return container
+        })
+        this.res_data = result
       }
 
       if (this.jurnalOtomatis == undefined) {
@@ -369,7 +397,8 @@ export class DetailJurnalComponent implements OnInit {
                 setting_debit: '',
                 setting_kredit: '',
                 bobot_debit: 0,
-                bobot_kredit: 0
+                bobot_kredit: 0,
+                lembar_giro: 1
               }
             ]
           }
@@ -394,7 +423,8 @@ export class DetailJurnalComponent implements OnInit {
                 setting_debit: '',
                 setting_kredit: '',
                 bobot_debit: 0,
-                bobot_kredit: 0
+                bobot_kredit: 0,
+                lembar_giro: 1
               },
               {
                 id_akun: '',
@@ -411,7 +441,8 @@ export class DetailJurnalComponent implements OnInit {
                 setting_debit: '',
                 setting_kredit: '',
                 bobot_debit: 0,
-                bobot_kredit: 0
+                bobot_kredit: 0,
+                lembar_giro: 1
               }
             ]
           }
@@ -451,7 +482,7 @@ export class DetailJurnalComponent implements OnInit {
 
   focusFunction(x, type) {
     x.target.style.background = 'yellow'
-    if(type === 'datepicker' || type === 'datepicker-range'){
+    if (type === 'datepicker' || type === 'datepicker-range') {
       this.tmpFocus = x
     }
   }
@@ -983,7 +1014,8 @@ export class DetailJurnalComponent implements OnInit {
         setting_debit: '',
         setting_kredit: '',
         bobot_debit: 0,
-        bobot_kredit: 0
+        bobot_kredit: 0,
+        lembar_giro: 1
       }
     this.res_data.push(r)
     this.disabled.push(d)

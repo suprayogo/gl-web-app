@@ -16,14 +16,14 @@ export class AkunRequestService {
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'g-akun-dc') {
-      // this.url = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc'
-      this.url = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct'
+      // this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // DEVELOP
+      this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // LIVE
       httpBody.respondCode = 'GET-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'g-kat-akun-dc') {
-      // this.url = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/dev/dc'
-      this.url = 'https://cos140bjk1.execute-api.ap-southeast-1.amazonaws.com/test/dct'
+      // this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // DEVELOP
+      this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // LIVE
       httpBody.respondCode = 'GET-DATA-KATEGORI-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
