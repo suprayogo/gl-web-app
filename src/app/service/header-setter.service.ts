@@ -5,9 +5,7 @@ import { HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class HeaderSetterService {
-
-  test:any
-
+  
   httpHeader = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': localStorage.getItem('token') == null ? "" : localStorage.getItem('token')

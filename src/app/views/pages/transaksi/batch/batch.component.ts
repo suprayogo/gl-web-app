@@ -395,6 +395,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         disabled: true
       },
       onSelectFunc: (value) => {
+        this.forminput.getData()['periode'] = "0"
         this.setValPeriodType(value)
         if (value === "2") {
           this.resetForm()
@@ -1245,7 +1246,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     } else {
       this.tableLoad = true
       let ba = this.periode_aktif.bulan_periode < 10 ? "0" + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode,
-      bs = this.periodeTS.bulan_periode < 10 ? "0" + this.periodeTS.bulan_periode : this.periodeTS.bulan_periode
+        bs = this.periodeTS.bulan_periode < 10 ? "0" + this.periodeTS.bulan_periode : this.periodeTS.bulan_periode
       this.request.apiData('jurnal', 'g-jurnal', {
         kode_perusahaan: this.kode_perusahaan,
         kode_cabang: this.formValue.kode_cabang,
@@ -1299,6 +1300,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.formValue = this.setFormV(x, t_tran, 'kasir')
       this.id_periode = ''
       if (this.formValue.periode === '0') {
+        if(x['buka_kembali'] === '1'){
+          this.enableEdit = false
+        }
         if (this.formValue.tipe_laporan === 'b') {
           this.insertAt(this.inputLayout, 5, 1, this.setFormLayout('kasir-khusus-bank'))
         } else {
@@ -1944,7 +1948,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   sendGetPrintDoc(p, type, jurnal) {
-    this.request.apiData('report', 'g-report', p).subscribe(
+    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, p)
+    this.request.apiData('report', 'g-report', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {

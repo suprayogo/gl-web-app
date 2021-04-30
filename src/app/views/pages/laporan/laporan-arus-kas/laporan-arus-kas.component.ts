@@ -363,18 +363,18 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
-        for (var i = 0; i < this.submitPeriodeData.length; i++) {
-          if (
-            (typeof this.formValueAK.bulan === "number" ? JSON.stringify(this.formValueAK.bulan) : this.formValueAK.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
-            (typeof this.formValueAK.tahun === "number" ? JSON.stringify(this.formValueAK.tahun) : this.formValueAK.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
-          ) {
-            p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
-            break
-          }
-        }
+        // for (var i = 0; i < this.submitPeriodeData.length; i++) {
+        //   if (
+        //     (typeof this.formValueAK.bulan === "number" ? JSON.stringify(this.formValueAK.bulan) : this.formValueAK.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
+        //     (typeof this.formValueAK.tahun === "number" ? JSON.stringify(this.formValueAK.tahun) : this.formValueAK.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
+        //   ) {
+        //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
+        //     break
+        //   }
+        // }
 
-        if (p['id_periode'] !== undefined) {
-          p['kode_report'] = this.formValueAK['format_laporan']
+        // if (p['id_periode'] !== undefined) {
+          p['format_laporan'] = this.formValueAK['format_laporan']
           p['jenis_laporan'] = this.formValueAK['jenis_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
           if (this.formValueAK['tipe'] === "t") {
@@ -411,12 +411,18 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
             }
           }
           p['nama_perusahaan'] = this.gbl.getNamaPerusahaan()
-          p['report_format_code'] = this.formValueAK.format_laporan
+          // p['report_format_code'] = this.formValueAK.format_laporan
           p['jenis_laporan'] = this.formValueAK.jenis_laporan
-          p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
-          p['periode_berjarak'] = +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak
-          p['tahun_periode'] = JSON.stringify(p['tahun_periode'])
+          p['periode_from'] = +this.formValueAK.bulan.length > 1 ? this.formValueAK.bulan : "0" + this.formValueAK.bulan
+          p['periode_to'] = +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak
+          p['tahun_periode'] = this.formValueAK['tahun'].toString()
+          p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
+          p['nama_cabang'] = this.formValueAK['nama_cabang'] === "" ? undefined : this.formValueAK['nama_cabang']
           p['bulan_periode_sebelum'] = p['bulan_periode_sebelum'].length > 1 ? p['bulan_periode_sebelum'] : "0" + p['bulan_periode_sebelum']
+          p['company_adress'] = this.info_company.alamat
+          p['company_city'] = this.info_company.kota
+          p['company_contact'] = this.info_company.telepon
+          p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
           this.request.apiData('report', this.formValueAK.metode_laporan === '1' ? 'g-data-arus-kas-langsung' : 'g-data-arus-kas', p).subscribe(
             data => {
               if (data['STATUS'] === 'Y') {
@@ -562,14 +568,14 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
                 } */
                 this.sendGetReport(z, this.formValueAK['format_laporan'])
               } else {
-                p['bulan_periode'] = +p['bulan_periode']
+                // p['bulan_periode'] = +p['bulan_periode']
                 this.gbl.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
                 this.distinctPeriode()
                 this.ref.markForCheck()
               }
             }
           )
-        }
+        // }
       }
 
     }
@@ -735,20 +741,20 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   }
 
   sendGetReport(p, type) {
-    this.request.apiData('report', 'g-report', p).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
+    // this.request.apiData('report', 'g-report', p).subscribe(
+    //   data => {
+    //     if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
           } else {
             if (type === 'xlsx') {
-              this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
+              this.keyReportFormatExcel = p + '.xlsx'
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
                 sbmBtn.click();
               }, 100)
             } else {
-              this.keyReportFormatExcel = data['RESULT'] + '.xls'
+              this.keyReportFormatExcel = p + '.xls'
               setTimeout(() => {
                 let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
                 sbmBtn.click();
@@ -756,17 +762,17 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
             }
           }
           let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
-          this.checkKeyReport[rk] = data['RESULT']
+          this.checkKeyReport[rk] = p
           this.distinctPeriode()
           this.ref.markForCheck()
-        } else {
-          this.gbl.topPage()
-          this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
-          this.distinctPeriode()
-          this.ref.markForCheck()
-        }
-      }
-    )
+    //     } else {
+    //       this.gbl.topPage()
+    //       this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
+    //       this.distinctPeriode()
+    //       this.ref.markForCheck()
+    //     }
+    //   }
+    // )
   }
 
   formInputCheckChanges() {

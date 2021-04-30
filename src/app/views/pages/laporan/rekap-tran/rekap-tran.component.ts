@@ -493,7 +493,7 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
         return {
           year: dt.getFullYear(),
           month: dt.getMonth() + 1,
-          day: (dt.getMonth() + 1) == 2 ? 29 :
+          day: (dt.getMonth() + 1) == 2 ? this.gbl.leapYear(dt.getFullYear()) == false ? 28 : 29 :
             (
               (dt.getMonth() + 1) == 1 ||
               (dt.getMonth() + 1) == 3 ||

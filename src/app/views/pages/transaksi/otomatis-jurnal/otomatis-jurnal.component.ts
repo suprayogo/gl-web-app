@@ -51,6 +51,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   resultTotal: any = []; // VALUE LOADING
   // OTHERS
   content: any;
+  onUpdate: boolean = false
   loadingDataTextHT: string = 'Loading Data Jurnal Otomatis..'
   loadingDataTextRT: string = 'Loading Riwayat Tarik Data..'
   nama_tombol: any;
@@ -174,6 +175,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: false,
       disabled: false,
+      update: {
+        disabled: true
+      },
       onSelectFunc: (v) => { }
     },
     {
@@ -187,6 +191,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: false,
       disabled: false,
+      update: {
+        disabled: true
+      },
       onSelectFunc: (v) => { }
     },
     {
@@ -306,7 +313,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       required: false,
       readOnly: true,
       update: {
-        disabled: true
+        disabled: false
       }
     },
   ]
@@ -618,6 +625,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               required: false,
               readOnly: false,
               disabled: false,
+              update: {
+                disabled: true
+              },
               onSelectFunc: (v) => {
                 // this.forminput.getData().tahun_periode = v
                 // this.formValue.tahun_periode = v
@@ -640,6 +650,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
               required: false,
               readOnly: false,
               disabled: false,
+              update: {
+                disabled: true
+              },
               onSelectFunc: (v) => {
                 // this.forminput.getData().bulan_periode = v
                 // this.formValue.bulan_periode = v
@@ -669,6 +682,9 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
         required: false,
         readOnly: false,
         disabled: false,
+        update: {
+          disabled: true
+        },
         onSelectFunc: (v) => {
           // this.forminput.getData().bulan_periode = v
           // this.formValue.bulan_periode = v
@@ -764,6 +780,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       } else {
         this.gbl.bottomPage()
         this.tableLoadHT = true
+        this.onUpdate = true
         this.getJurnalOtomatis('')
       }
     }
@@ -887,6 +904,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             }, 1000);
             this.ref.markForCheck()
           } else {
+            this.onUpdate = false
             this.needReqVal = 0
             this.resultTotal = []
             this.partHT = ''
@@ -896,6 +914,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
           }
         },
         err => {
+          this.onUpdate = false
           this.needReqVal = 0
           this.resultTotal = []
           this.partHT = ''
@@ -976,17 +995,19 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   onSubmit() {
     let valid = this.validateSubmit()
     if (valid === true) {
+      let x = this.periode_tutup.filter(x => x.tahun_periode === +this.formValue.tahun_periode && x.bulan_periode === +this.formValue.bulan_periode)
       this.loading = true
       this.ref.markForCheck()
       let endRes = {
         batch: '',
         kode_perusahaan: this.kode_perusahaan,
-        id_periode: this.idPeriodeAktif,
+        id_periode: x[0].id_periode,
         detail: this.browseDataHT
       }
       this.request.apiData('jurnal-otomatis', 'i-jurnal-otomatis', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
+            this.onUpdate = false
             this.loading = false
             this.tableLoadRT = true
             this.result = []
@@ -998,6 +1019,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
             this.ref.markForCheck()
             this.getRiwayatTarik()
           } else {
+            this.onUpdate = false
             this.loading = false
             this.ref.markForCheck()
             this.gbl.topPage()
@@ -1047,6 +1069,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
   resetForm() {
     this.gbl.topPage()
     this.tableLoadHT = true
+    this.onUpdate = false
     this.result = []
     this.needReqVal = 0
     this.resultTotal = []
@@ -1063,8 +1086,8 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
     this.formValue = this.forminput.getData()
     this.formValue = {
       tgl_tarik: this.formValue.tgl_tarik,
-      bulan_periode: this.nama_bulan_aktif,
-      tahun_periode: this.tahunPeriodeAktif,
+      bulan_periode: this.formValue.bulan_periode,
+      tahun_periode: this.formValue.tahun_periode,
       rekap_harian: this.formValue.rekap_harian,
       tgl_tran: '',
       rekap_bulanan: this.formValue.rekap_bulanan,

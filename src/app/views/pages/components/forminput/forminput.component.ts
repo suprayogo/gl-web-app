@@ -95,8 +95,8 @@ export class ForminputComponent implements OnInit {
     public formatter: NgbDateParserFormatter,
     private gbl: GlobalVariableService
   ) {
-    this.fromDate = calendar.getToday();
-    this.toDate = calendar.getNext(calendar.getToday(), 'd', 0);
+    // this.fromDate = calendar.getToday();
+    // this.toDate = calendar.getNext(calendar.getToday(), 'd', 0);
   }
 
   ngOnInit() {
@@ -127,7 +127,7 @@ export class ForminputComponent implements OnInit {
 
   focusFunction(x, type) {
     x.target.style.background = 'yellow'
-    if(type === 'datepicker' || type === 'datepicker-range'){
+    if (type === 'datepicker' || type === 'datepicker-range') {
       this.tmpFocus = x
     }
   }
@@ -220,7 +220,7 @@ export class ForminputComponent implements OnInit {
     this.detailjurnal === undefined ? null : this.detailjurnal.checkChangesTemplate()
   }
 
-  //Date picker function
+  // Date picker function
   getDateFormat(data) {
     let pdata = data === '' ? null : parseInt(data)
     let date = pdata == null ? null : new Date(pdata)
@@ -339,6 +339,11 @@ export class ForminputComponent implements OnInit {
       }
       return dis
     }
+  }
+  // Date picker range function
+  getDateRangeFormat(data) {
+    this.fromDate = data == undefined || null ? '' : data[0]
+    this.toDate = data == undefined || null ? '' : data[1]
   }
 
   // Range Date Picker

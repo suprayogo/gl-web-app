@@ -23,8 +23,9 @@ export class RequestDataService {
     headers: this.httpHeader.httpHeader
   }
 
-  // baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // LIVE
-  baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // DEVELOP
+  baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // LIVE
+  // baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // DEVELOP
+  // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gl/tax' // DEVELOP TAX
   
   constructor(
     //Variables

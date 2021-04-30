@@ -15,8 +15,16 @@ export class ReportRequestService {
       httpBody.respondCode = 'GET-DATA-REPORT-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-data-jurnal-2') {
+      httpBody.respondCode = 'GET-DATA-REPORT-JURNAL-2'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-data-buku-besar') {
       httpBody.respondCode = 'GET-DATA-REPORT-BUKU-BESAR'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-data-buku-besar-2') {
+      httpBody.respondCode = 'GET-DATA-REPORT-BUKU-BESAR-2'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'g-data-neraca-saldo') {

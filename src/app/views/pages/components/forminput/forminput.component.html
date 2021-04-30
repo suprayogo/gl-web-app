@@ -131,7 +131,7 @@
             <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker" readonly
               [autoClose]="true" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
               (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
-              [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+              [ngModel]="getDateRangeFormat(cFormValue[x.valueOf])"
               [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
               [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
               [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
@@ -288,7 +288,7 @@
               <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker"
                 [autoClose]="true" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
                 [startDate]="fromDate!" (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
-                [ngModel]="getDateFormat(cFormValue[x.valueOf])"
+                [ngModel]="getDateRangeFormat(cFormValue[x.valueOf])"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
                 [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
                 [maxDate]="x.enableMax ? x.minMaxDate ? getMaxToday(x.minMaxDate()) : x.maxDate ? x.maxDate() : null : null">
