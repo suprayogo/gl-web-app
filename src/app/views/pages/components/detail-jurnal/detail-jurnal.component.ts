@@ -365,15 +365,6 @@ export class DetailJurnalComponent implements OnInit {
         this.setValueNewRows = {}
       }
 
-      let result
-      if (this.headerJurnal['jenis'] === '2' && this.headerJurnal['tipe_rep'] === 'g') {
-        result = this.res_data.map(detail => {
-          const container = detail
-          container['lembar_giro'] = 1
-          return container
-        })
-        this.res_data = result
-      }
 
       if (this.jurnalOtomatis == undefined) {
         if (this.headerJurnal['jenis'] === "2") {
@@ -452,7 +443,17 @@ export class DetailJurnalComponent implements OnInit {
       // COUNT TOTAL SALDO
       this.countDebit()
       this.countKredit()
-    } else { }
+    } else { 
+      let result
+      if (this.headerJurnal['jenis'] === '2' && this.headerJurnal['tipe_rep'] === 'g') {
+        result = this.res_data.map(detail => {
+          const container = detail
+          container['lembar_giro'] = 1
+          return container
+        })
+        this.res_data = result
+      }
+    }
 
     // VALIDATE SETTING JURNAL OTOMATIS
     if ((this.res_data[0]['setting_debit'] !== '' && this.res_data[0]['setting_debit'] !== undefined) ||
@@ -994,11 +995,11 @@ export class DetailJurnalComponent implements OnInit {
 
 
   addRow() {
-    let d = {
-      debit: this.disabled[1]['debit'],
-      kredit: this.disabled[1]['kredit']
-    },
-      r = {
+    // let d = {
+    //   debit: this.disabled[1]['debit'],
+    //   kredit: this.disabled[1]['kredit']
+    // },
+    let  r = {
         id_akun: /* this.setValueNewRows['id_akun'] === undefined ? "" : this.setValueNewRows['id_akun'] */'',
         kode_akun: /* this.setValueNewRows['kode_akun'] === undefined ? "" : this.setValueNewRows['kode_akun'] */'',
         nama_akun: /* this.setValueNewRows['nama_akun'] === undefined ? "" : this.setValueNewRows['nama_akun'] */'',
@@ -1018,7 +1019,7 @@ export class DetailJurnalComponent implements OnInit {
         lembar_giro: 1
       }
     this.res_data.push(r)
-    this.disabled.push(d)
+    // this.disabled.push(d)
     setTimeout(() => {
       if (this.templateTransaksi) {
         this.countPercentDebit()
@@ -1030,10 +1031,10 @@ export class DetailJurnalComponent implements OnInit {
     }, 100)
   }
 
-  deleteRow() {
+  deleteRow(i) {
     if (this.headerJurnal['jenis'] === "2") {
       if (this.res_data.length > 1) {
-        this.res_data.splice(this.res_data.length - 1, 1)
+        this.res_data.splice(i, 1)
         setTimeout(() => {
           if (this.templateTransaksi) {
             this.countPercentDebit()
@@ -1046,7 +1047,7 @@ export class DetailJurnalComponent implements OnInit {
       }
     } else {
       if (this.res_data.length > 2) {
-        this.res_data.splice(this.res_data.length - 1, 1)
+        this.res_data.splice(i, 1)
         setTimeout(() => {
           if (this.templateTransaksi) {
             this.countPercentDebit()
@@ -1057,11 +1058,10 @@ export class DetailJurnalComponent implements OnInit {
           }
         }, 100)
       }
-      if (this.disabled.length > 2) {
-        this.disabled.splice(this.disabled.length - 1, 1)
-      }
+      // if (this.disabled.length > 2) {
+      //   this.disabled.splice(this.disabled.length - 1, 1)
+      // }
     }
-
   }
 
   clearJurnalOtomatisData(i) {

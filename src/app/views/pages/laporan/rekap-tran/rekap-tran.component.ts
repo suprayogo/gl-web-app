@@ -69,6 +69,7 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
     }
   ]
   // TEMPLATE REPORT
+  lookupComp: any
   info_company = {
     alamat: '',
     kota: '',
@@ -367,17 +368,18 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            for (var i = 0; i < data['RESULT'].length; i++) {
-              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-                this.info_company.alamat = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-                this.info_company.kota = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-                this.info_company.telepon = data['RESULT'][i]['nilai1']
-              }
-            }
+            this.lookupComp = data['RESULT']
+            // for (var i = 0; i < data['RESULT'].length; i++) {
+            //   if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
+            //     this.info_company.alamat = data['RESULT'][i]['nilai1']
+            //   }
+            //   if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
+            //     this.info_company.kota = data['RESULT'][i]['nilai1']
+            //   }
+            //   if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
+            //     this.info_company.telepon = data['RESULT'][i]['nilai1']
+            //   }
+            // }
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }
@@ -554,6 +556,17 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       this.loading = false
     } else {
+      for (var i = 0; i < this.lookupComp.length; i++) {
+        if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValue['kode_cabang']) {
+          this.info_company.alamat = this.formValue['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+        }
+        if (this.lookupComp[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValue['kode_cabang']) {
+          this.info_company.kota = this.formValue['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+        }
+        if (this.lookupComp[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValue['kode_cabang']) {
+          this.info_company.telepon = this.formValue['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+        }
+      }
       let endRes = Object.assign(
         {
           kode_perusahaan: this.kode_perusahaan,

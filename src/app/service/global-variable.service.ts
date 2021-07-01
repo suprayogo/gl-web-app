@@ -303,14 +303,21 @@ export class GlobalVariableService {
   }
 
   // SPLIT DATE FROM MILISECOND TO FORMAT Y-M-D
-  splitDate(date) {
+  splitDate(date, specType?) {
     let getDate = new Date(date),
       years = getDate.getUTCFullYear(),
       months = (getDate.getUTCMonth() < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
       days = (getDate.getDate() < 10) ? "0" + getDate.getDate() : getDate.getDate(),
-      formatYMD = `${years}-${months}-${days}`
+      formatYMD = `${years}-${months}-${days}`,
+      formatMY = `${months}-${years}`
 
-    return formatYMD
+    if (specType != undefined) {
+      if (specType === 'M-Y') {
+        return formatMY
+      }
+    } else {
+      return formatYMD
+    }
   }
 
   leapYear(year) {

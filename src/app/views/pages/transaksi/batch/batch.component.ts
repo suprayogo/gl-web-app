@@ -97,6 +97,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   ]
 
   // INFO COMPANY
+  lookupComp: any
   info_company = {
     alamat: '',
     kota: '',
@@ -900,17 +901,18 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            for (var i = 0; i < data['RESULT'].length; i++) {
-              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-                this.info_company.alamat = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-                this.info_company.kota = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-                this.info_company.telepon = data['RESULT'][i]['nilai1']
-              }
-            }
+            this.lookupComp = data['RESULT']
+            // for (var i = 0; i < data['RESULT'].length; i++) {
+            //   if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
+            //     this.info_company.alamat = data['RESULT'][i]['nilai1']
+            //   }
+            //   if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
+            //     this.info_company.kota = data['RESULT'][i]['nilai1']
+            //   }
+            //   if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
+            //     this.info_company.telepon = data['RESULT'][i]['nilai1']
+            //   }
+            // }
             this.ref.markForCheck()
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
@@ -1245,8 +1247,11 @@ export class BatchComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.tableLoad = true
-      let ba = this.periode_aktif.bulan_periode < 10 ? "0" + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode,
+      let ba = this.periode_aktif.bulan_periode < 10 ? "0" + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode, bs
+      if (this.periodeTS != undefined) {
         bs = this.periodeTS.bulan_periode < 10 ? "0" + this.periodeTS.bulan_periode : this.periodeTS.bulan_periode
+      }
+
       this.request.apiData('jurnal', 'g-jurnal', {
         kode_perusahaan: this.kode_perusahaan,
         kode_cabang: this.formValue.kode_cabang,
@@ -1300,7 +1305,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.formValue = this.setFormV(x, t_tran, 'kasir')
       this.id_periode = ''
       if (this.formValue.periode === '0') {
-        if(x['buka_kembali'] === '1'){
+        if (x['buka_kembali'] === '1') {
           this.enableEdit = false
         }
         if (this.formValue.tipe_laporan === 'b') {
@@ -1749,6 +1754,18 @@ export class BatchComponent implements OnInit, AfterViewInit {
       } else {
         this.formReport = JSON.parse(JSON.stringify(this.formValue))
         this.reportDetail = JSON.parse(JSON.stringify(this.detailData))
+
+        for (var i = 0; i < this.lookupComp.length; i++) {
+          if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formReport['kode_cabang']) {
+            this.info_company.alamat = this.lookupComp[i]['nilai1']
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formReport['kode_cabang']) {
+            this.info_company.kota = this.lookupComp[i]['nilai1']
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formReport['kode_cabang']) {
+            this.info_company.telepon = this.lookupComp[i]['nilai1']
+          }
+        }
         let data = []
         for (var i = 0; i < this.reportDetail.length; i++) {
           let t = []
@@ -1770,7 +1787,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           data.push(t)
         }
 
-        let rp = JSON.parse(JSON.stringify(this.reportObj))
+        let rp = JSON.parse(JSON.stringify(this.reportObj)), a = this.gbl.splitDate(parseInt(this.formReport['tgl_tran']), 'M-Y'), b = a.split('-'), c = this.gbl.getNamaBulan(b[0])
         rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
         rp['REPORT_CODE'] = 'DOK-TRAN-JURNAL'
         rp['REPORT_NAME'] = 'Dokumen Transaksi Jurnal Umum'
@@ -1781,9 +1798,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           REPORT_COMPANY_ADDRESS: this.info_company.alamat,
           REPORT_COMPANY_CITY: this.info_company.kota,
           REPORT_COMPANY_TLPN: this.info_company.telepon,
-          REPORT_PERIODE: "Periode: " +
-            this.gbl.getNamaBulan(this.periode_aktif['bulan_periode']) + " " +
-            this.periode_aktif['tahun_periode']
+          REPORT_PERIODE: "Periode: " + c + ' ' + b[1]
         }
 
         rp['FIELD_TITLE'] = [
@@ -1797,7 +1812,6 @@ export class BatchComponent implements OnInit, AfterViewInit {
           "Keterangan 2",
           "Saldo Debit",
           "Saldo Kredit",
-
         ]
         rp['FIELD_NAME'] = [
           "noTran",
@@ -1860,6 +1874,17 @@ export class BatchComponent implements OnInit, AfterViewInit {
       } else {
         this.formReport = JSON.parse(JSON.stringify(this.formValue))
         this.reportDetail = JSON.parse(JSON.stringify(this.detailData))
+        for (var i = 0; i < this.lookupComp.length; i++) {
+          if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formReport['kode_cabang']) {
+            this.info_company.alamat = this.lookupComp[i]['nilai1']
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formReport['kode_cabang']) {
+            this.info_company.kota = this.lookupComp[i]['nilai1']
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formReport['kode_cabang']) {
+            this.info_company.telepon = this.lookupComp[i]['nilai1']
+          }
+        }
         let data = []
         for (var i = 0; i < this.reportDetail.length; i++) {
           let t = []
@@ -1948,7 +1973,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   sendGetPrintDoc(p, type, jurnal) {
-    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, p)
+    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, kode_cabang: this.formValue.kode_cabang, jenis_jurnal: jurnal === 'umum' ? '0' : '1' }, p)
     this.request.apiData('report', 'g-report', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {

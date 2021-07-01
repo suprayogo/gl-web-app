@@ -23,10 +23,11 @@ export class RequestDataService {
     headers: this.httpHeader.httpHeader
   }
 
-  baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // LIVE
-  // baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // DEVELOP
-  // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gl/tax' // DEVELOP TAX
-  
+  baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // DEVELOP
+  // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gltax' // DEVELOP TAX
+  // baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // LIVE SSI
+  // baseURL = 'https://sz1nahtisg.execute-api.ap-southeast-1.amazonaws.com/pro/gltax' // LIVE MPS
+
   constructor(
     //Variables
     private httpHeader: HeaderSetterService,
@@ -47,10 +48,10 @@ export class RequestDataService {
     return this.apiDataService.apiData(type, data, formData)
   }
 
-  authenticate(type, formData): any{
-    if(type === 'login'){
+  authenticate(type, formData): any {
+    if (type === 'login') {
       return this.authService.login(formData)
-    }else if(type === 'validate'){
+    } else if (type === 'validate') {
       return this.authService.validate()
     }
   }

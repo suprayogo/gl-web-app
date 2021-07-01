@@ -119,6 +119,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
   }
 
   // INFO PERUSAHAAN
+  lookupComp: any
   info_company = {
     alamat: '',
     kota: '',
@@ -363,7 +364,17 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
         //     break
         //   }
         // }
-
+        for (var i = 0; i < this.lookupComp.length; i++) {
+          if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueBB['kode_cabang']) {
+            this.info_company.alamat = this.formValueBB['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueBB['kode_cabang']) {
+            this.info_company.kota = this.formValueBB['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueBB['kode_cabang']) {
+            this.info_company.telepon = this.formValueBB['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+        }
         // if (p['id_periode'] !== undefined) {
         // p['kode_perusahaan'] = this.kode_perusahaan
         // p['bulan_periode'] = p['bulan_periode'].length > 1 ? p['bulan_periode'] : "0" + p['bulan_periode']
@@ -595,17 +606,18 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            for (var i = 0; i < data['RESULT'].length; i++) {
-              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-                this.info_company.alamat = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-                this.info_company.kota = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-                this.info_company.telepon = data['RESULT'][i]['nilai1']
-              }
-            }
+            this.lookupComp = data['RESULT']
+            // for (var i = 0; i < data['RESULT'].length; i++) {
+            //   if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
+            //     this.info_company.alamat = data['RESULT'][i]['nilai1']
+            //   }
+            //   if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
+            //     this.info_company.kota = data['RESULT'][i]['nilai1']
+            //   }
+            //   if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
+            //     this.info_company.telepon = data['RESULT'][i]['nilai1']
+            //   }
+            // }
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }

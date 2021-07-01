@@ -42,292 +42,311 @@
     <!-- KOLOM INPUT -->
     <div style="overflow-y: auto; width: 100%; height: calc(100% - 38px);" id="c-container">
         <div *ngFor="let x of res_data; let i = index"
-            style="width: 100%; height: auto; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;"
+            style="width: auto; height: 100%; display: flex; flex-direction: column; border-bottom: 1px solid lightgrey;"
             [id]="i == 0 ? 'content' : null">
-
-            <!-- INPUT INFORMASI AKUN JURNAL UMUM -->
-            <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
-                style="width: 34%; height: fit-content; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
-                <!-- INPUT AKUN -->
-                <div class="input-group">
-                    <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
-                        (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
-                        (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_akun')"
-                        (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_akun')"
-                        [(ngModel)]="res_data[i]['keterangan_akun']" [readonly]="noEdit" placeholder="Pilih Akun"
-                        (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
-                    <div class="input-group-append" *ngIf="!noEdit">
-                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                            (click)="openDialog(i, 'kode_akun')">
-                            Pilih
-                        </button>
-                    </div>
-                </div>
-                <!-- <div
-                style="width: 100%; margin-top: 10px; display: flex; flex-direction: row; justify-content: space-between;"> -->
-                <!-- INPUT DIVISI -->
-                <div style="margin-top: 5px;">
-                    <div class="input-group">
-                        <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
-                            (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                            [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit" placeholder="Pilih Divisi"
-                            (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
-                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
-                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                                (click)="openDialog(i, 'kode_divisi')">
-                                Pilih
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- INPUT DEPARTEMEN -->
-                <div style="margin-top: 5px;">
-                    <div class="input-group">
-                        <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
-                            (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                            [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
-                            placeholder="Pilih Departemen" (focus)="focusFunction($event)"
-                            (focusout)="focusOutFunction($event)">
-                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
-                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                                (click)="openDialog(i, 'kode_departemen')">
-                                Pilih
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- //////////////////////////////// -->
-
-            <!-- INPUT INFORMASI AKUN JURNAL TRANSAKSI -->
-            <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
-                style="width: 38%; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
-                <!-- INPUT AKUN -->
-                <div class="input-group">
-                    <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
-                        (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
-                        (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_akun')"
-                        (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_akun')"
-                        [(ngModel)]="res_data[i]['keterangan_akun']" [readonly]="noEdit" placeholder="Pilih Akun"
-                        (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
-                    <div class="input-group-append" *ngIf="!noEdit">
-                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                            (click)="openDialog(i, 'kode_akun')">
-                            Pilih
-                        </button>
-                    </div>
-                </div>
-                <!-- INPUT DIVISI & DEPARTEMEN -->
+            <div style="height: 90%;">
                 <div
-                    style="width: 100%; margin-top: 5px; display: flex; flex-direction: row; justify-content: space-between;">
-                    <!-- INPUT DIVISI -->
-                    <div class="input-group" style="width: 48%;">
-                        <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
-                            (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
-                            [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit" placeholder="Pilih Divisi"
-                            (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
-                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
-                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                                (click)="openDialog(i, 'kode_divisi')">
-                                Pilih
-                            </button>
+                    style="width: 100%; height: auto; display: flex; flex-direction: row; border-bottom: 1px solid lightgrey;">
+                    <!-- INPUT INFORMASI AKUN JURNAL UMUM -->
+                    <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
+                        style="width: 34%; height: fit-content; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
+                        <!-- INPUT AKUN -->
+                        <div class="input-group">
+                            <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
+                                (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                                (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                                (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                                [(ngModel)]="res_data[i]['keterangan_akun']" [readonly]="noEdit"
+                                placeholder="Pilih Akun" (focus)="focusFunction($event)"
+                                (focusout)="focusOutFunction($event)">
+                            <div class="input-group-append" *ngIf="!noEdit">
+                                <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                    (click)="openDialog(i, 'kode_akun')">
+                                    Pilih
+                                </button>
+                            </div>
+                        </div>
+                        <!-- <div style="width: 100%; margin-top: 10px; display: flex; flex-direction: row; justify-content: space-between;"> -->
+                        <!-- INPUT DIVISI -->
+                        <div style="margin-top: 5px;">
+                            <div class="input-group">
+                                <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
+                                    (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                                    (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                                    (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                                    [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit"
+                                    placeholder="Pilih Divisi" (focus)="focusFunction($event)"
+                                    (focusout)="focusOutFunction($event)">
+                                <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                                    <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                        (click)="openDialog(i, 'kode_divisi')">
+                                        Pilih
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- INPUT DEPARTEMEN -->
+                        <div style="margin-top: 5px;">
+                            <div class="input-group">
+                                <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
+                                    (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                                    (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                                    (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                                    [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
+                                    placeholder="Pilih Departemen" (focus)="focusFunction($event)"
+                                    (focusout)="focusOutFunction($event)">
+                                <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                                    <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                        (click)="openDialog(i, 'kode_departemen')">
+                                        Pilih
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- INPUT DEPARTEMEN -->
-                    <div class="input-group" style="width: 48%;">
-                        <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
-                            (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                            (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                            (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
-                            [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
-                            placeholder="Pilih Departemen" (focus)="focusFunction($event)"
+                    <!-- //////////////////////////////// -->
+
+                    <!-- INPUT INFORMASI AKUN JURNAL TRANSAKSI -->
+                    <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
+                        style="width: 38%; padding: 10px; border-right: solid 1px lightgray; display: flex; flex-direction: column;">
+                        <!-- INPUT AKUN -->
+                        <div class="input-group">
+                            <input class="form-control m-input" type="text" name="{{ 'akun-' + i }}"
+                                (blur)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                                (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                                (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_akun')"
+                                [(ngModel)]="res_data[i]['keterangan_akun']" [readonly]="noEdit"
+                                placeholder="Pilih Akun" (focus)="focusFunction($event)"
+                                (focusout)="focusOutFunction($event)">
+                            <div class="input-group-append" *ngIf="!noEdit">
+                                <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                    (click)="openDialog(i, 'kode_akun')">
+                                    Pilih
+                                </button>
+                            </div>
+                        </div>
+                        <!-- INPUT DIVISI & DEPARTEMEN -->
+                        <div
+                            style="width: 100%; margin-top: 5px; display: flex; flex-direction: row; justify-content: space-between;">
+                            <!-- INPUT DIVISI -->
+                            <div class="input-group" style="width: 48%;">
+                                <input class="form-control m-input" type="text" name="{{ 'divisi-' + i }}"
+                                    (blur)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                                    (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                                    (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_divisi')"
+                                    [(ngModel)]="res_data[i]['nama_divisi']" [readonly]="noEdit"
+                                    placeholder="Pilih Divisi" (focus)="focusFunction($event)"
+                                    (focusout)="focusOutFunction($event)">
+                                <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                                    <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                        (click)="openDialog(i, 'kode_divisi')">
+                                        Pilih
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- INPUT DEPARTEMEN -->
+                            <div class="input-group" style="width: 48%;">
+                                <input class="form-control m-input" type="text" name="{{ 'departemen-' + i }}"
+                                    (blur)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                                    (keyup.enter)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                                    (keyup.tab)="noEdit ? null : onBlur($event, i, 'kode_departemen')"
+                                    [(ngModel)]="res_data[i]['nama_departemen']" [readonly]="noEdit"
+                                    placeholder="Pilih Departemen" (focus)="focusFunction($event)"
+                                    (focusout)="focusOutFunction($event)">
+                                <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
+                                    <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                        (click)="openDialog(i, 'kode_departemen')">
+                                        Pilih
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /////////////// *height: fit-content; -->
+
+                    <!-- INPUT KETERANGAN JURNAL UMUM -->
+                    <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
+                        style="width: 28%; padding: 10px; border-right: solid 1px lightgrey;">
+                        <!-- KETERANGAN 1 -->
+                        <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
+                            placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}"
+                            [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit" (blur)="ket(i, '1')"
+                            (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')" (focus)="focusFunction($event)"
                             (focusout)="focusOutFunction($event)">
-                        <div class="input-group-append" style="height: fit-content;" *ngIf="!noEdit">
-                            <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                                (click)="openDialog(i, 'kode_departemen')">
-                                Pilih
-                            </button>
+                        <!-- KETERANGAN 2 -->
+                        <div *ngIf="status_ket" style="margin-top: 5px;">
+                            <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
+                                placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
+                                (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')"
+                                (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- /////////////// *height: fit-content; -->
+                    <!-- //////////////////////////// -->
 
-            <!-- INPUT KETERANGAN JURNAL UMUM -->
-            <div *ngIf="jurnalOtomatis || tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1'"
-                style="width: 28%; padding: 10px; border-right: solid 1px lightgrey;">
-                <!-- KETERANGAN 1 -->
-                <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
-                    placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}"
-                    [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit" (blur)="ket(i, '1')"
-                    (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
-                <!-- KETERANGAN 2 -->
-                <div *ngIf="status_ket" style="margin-top: 5px;">
-                    <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
-                        placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
-                        (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')"
-                        (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
-                </div>
-            </div>
-            <!-- //////////////////////////// -->
-
-            <!-- INPUT KETERANGAN JURNAL TRANSAKSI -->
-            <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
-                style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;">
-                <!-- KETERANGAN 1 -->
-                <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
-                    placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}"
-                    [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit" (blur)="ket(i, '1')"
-                    (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
-                <!-- KETERANGAN 2 -->
-                <div *ngIf="status_ket" style="margin-top: 5px;">
-                    <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
-                        placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
-                        (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')"
-                        (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
-                </div>
-            </div>
-            <!-- ///////////////////////////////// -->
-
-            <!-- INPUT NILAI SALDO JURNAL UMUM -->
-            <!-- INPUT SALDO DEBIT -->
-            <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
-                *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
-                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
-                    style="height: fit-content; display: table;">
-                    <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
-                </div>
-                <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
-                    (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
-                    [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
-                    [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
-            </div>
-            <!-- INPUT SALDO KREDIT -->
-            <div style="width: 19%; padding: 10px" class="input-group"
-                *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
-                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
-                    style="height: fit-content; display: table;">
-                    <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
-                </div>
-                <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
-                    (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
-                    [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
-                    [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
-            </div>
-            <!-- ///////////////////////////// -->
-
-            <!-- INPUT NILAI SALDO JURNAL TRANSAKSI -->
-            <!-- INPUT TIPE TRANSAKSI KELUAR -->
-            <div style="width: 22%; padding: 10px;" class="input-group"
-                *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
-                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
-                    style="height: fit-content; display: table;">
-                    <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
-                </div>
-                <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
-                    (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
-                    [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
-                    [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
-                <div *ngIf="tipe['tipe_laporan'] === 'g'"
-                    style="width: 100%; margin-top: 5px; display: flex; justify-content: space-between;">
-                    <div style="margin-top: 8px; width: 49%;">
-                        Lembar Giro
+                    <!-- INPUT KETERANGAN JURNAL TRANSAKSI -->
+                    <div *ngIf="!jurnalOtomatis && tipe['jenis_jurnal'] === '2'"
+                        style="width: 40%; padding: 10px; border-right: solid 1px lightgrey;">
+                        <!-- KETERANGAN 1 -->
+                        <input class="form-control m-input" type="text" name="{{ 'keterangan-1-' + i }}"
+                            placeholder="{{ status_ket == false ? 'Keterangan' : 'Keterangan 1' }}"
+                            [(ngModel)]="res_data[i]['keterangan_1']" [readonly]="noEdit" (blur)="ket(i, '1')"
+                            (keyup.enter)="ket(i, '1')" (keyup.tab)="ket(i, '1')" (focus)="focusFunction($event)"
+                            (focusout)="focusOutFunction($event)">
+                        <!-- KETERANGAN 2 -->
+                        <div *ngIf="status_ket" style="margin-top: 5px;">
+                            <input class="form-control m-input" type="text" name="{{ 'keterangan-2-' + i }}"
+                                placeholder="Keterangan 2" [(ngModel)]="res_data[i]['keterangan_2']" [readonly]="noEdit"
+                                (blur)="ket(i, '2')" (keyup.enter)="ket(i, '2')" (keyup.tab)="ket(i, '2')"
+                                (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
+                        </div>
                     </div>
-                    <div style="width: 50%;">
-                        <input class="form-control m-input" type="text" name="{{ 'lembar-' + i }}"
-                            [(ngModel)]="res_data[i]['lembar_giro']" currencyMask [options]="numberOptions"
+                    <!-- ///////////////////////////////// -->
+
+                    <!-- INPUT NILAI SALDO JURNAL UMUM -->
+                    <!-- INPUT SALDO DEBIT -->
+                    <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
+                        *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
+                        <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
+                            style="height: fit-content; display: table;">
+                            <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
+                        </div>
+                        <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
+                            (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
+                            [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
                             [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
                             (focusout)="focusOutFunction($event)">
                     </div>
-                </div>
-            </div>
-            <!-- INPUT TIPE TRANSAKSI MASUK -->
-            <div style="width: 22%; padding: 10px" class="input-group"
-                *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
-                <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
-                    style="height: fit-content; display: table;">
-                    <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
-                </div>
-                <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
-                    (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
-                    [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
-                    [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
-                <div *ngIf="tipe['tipe_laporan'] === 'g'"
-                    style="width: 100%; margin-top: 5px; display: flex; justify-content: space-between;">
-                    <div style="margin-top: 8px; width: 49%;">
-                        Lembar Giro
-                    </div>
-                    <div style="width: 50%;">
-                        <input class="form-control m-input" type="text" name="{{ 'lembar-' + i }}"
-                            [(ngModel)]="res_data[i]['lembar_giro']" currencyMask [options]="numberOptions"
+                    <!-- INPUT SALDO KREDIT -->
+                    <div style="width: 19%; padding: 10px" class="input-group"
+                        *ngIf="!jurnalOtomatis && !templateTransaksi && (tipe['jenis_jurnal'] === '0' || tipe['jenis_jurnal'] === '1')">
+                        <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
+                            style="height: fit-content; display: table;">
+                            <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
+                        </div>
+                        <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
+                            (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
+                            [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
                             [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
                             (focusout)="focusOutFunction($event)">
                     </div>
-                </div>
-            </div>
-            <!-- ////////////////////////////////// -->
+                    <!-- ///////////////////////////// -->
 
-            <!-- Begin: Template Transaksi -->
-            <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
-                *ngIf="templateTransaksi">
-                <input class="form-control m-input number-align-right" type="text" name="{{ 'bDebit-' + i }}"
-                    (blur)="countPercentDebit(i)" (keyup.enter)="countPercentDebit(i)"
-                    (keyup.tab)="countPercentDebit(i)" [(ngModel)]="res_data[i]['bobot_debit']" currencyMask
-                    [options]="currencyOptions" [readonly]="noEdit" [disabled]="noEdit">
-                <div class="input-group-prepend" style="height: fit-content;">
-                    <span class="input-group-text" id="basic-addon-left">%</span>
-                </div>
-            </div>
-            <div style="width: 19%; padding: 10px" class="input-group" *ngIf="templateTransaksi">
-                <input class="form-control m-input number-align-right" type="text" name="{{ 'bKredit-' + i }}"
-                    (blur)="countPercentKredit(i)" (keyup.enter)="countPercentKredit(i)"
-                    (keyup.tab)="countPercentKredit(i)" [(ngModel)]="res_data[i]['bobot_kredit']" currencyMask
-                    [options]="currencyOptions" [readonly]="noEdit" [disabled]="noEdit">
-                <div class="input-group-prepend" style="height: fit-content;">
-                    <span class="input-group-text" id="basic-addon-left">%</span>
-                </div>
-            </div>
-            <!-- End: Template Transaksi-->
+                    <!-- INPUT NILAI SALDO JURNAL TRANSAKSI -->
+                    <!-- INPUT TIPE TRANSAKSI KELUAR -->
+                    <div style="width: 22%; padding: 10px;" class="input-group"
+                        *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '1'">
+                        <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
+                            style="height: fit-content; display: table;">
+                            <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
+                        </div>
+                        <input class="form-control m-input number-align-right" type="text" name="{{ 'debit-' + i }}"
+                            (blur)="countDebit(i)" (keyup.enter)="countDebit(i)" (keyup.tab)="countDebit(i)"
+                            [(ngModel)]="res_data[i]['saldo_debit']" currencyMask [options]="currencyOptions"
+                            [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
+                            (focusout)="focusOutFunction($event)">
+                        <div *ngIf="tipe['tipe_laporan'] === 'g'"
+                            style="width: 100%; margin-top: 5px; display: flex; justify-content: space-between;">
+                            <div style="margin-top: 8px; width: 49%;">
+                                Lembar Giro
+                            </div>
+                            <div style="width: 50%;">
+                                <input class="form-control m-input" type="text" name="{{ 'lembar-' + i }}"
+                                    [(ngModel)]="res_data[i]['lembar_giro']" currencyMask [options]="numberOptions"
+                                    [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
+                                    (focusout)="focusOutFunction($event)">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- INPUT TIPE TRANSAKSI MASUK -->
+                    <div style="width: 22%; padding: 10px" class="input-group"
+                        *ngIf="!jurnalOtomatis && !templateTransaksi && tipe['jenis_jurnal'] === '2' && tipe['tipe_transaksi'] === '0'">
+                        <div *ngIf="noEdit == true ? false : true" class="input-group-prepend"
+                            style="height: fit-content; display: table;">
+                            <span class="input-group-text btn-input-group" id="basic-addon-left">Rp.</span>
+                        </div>
+                        <input class="form-control m-input number-align-right" type="text" name="{{ 'kredit-' + i }}"
+                            (blur)="countKredit(i)" (keyup.enter)="countKredit(i)" (keyup.tab)="countKredit(i)"
+                            [(ngModel)]="res_data[i]['saldo_kredit']" currencyMask [options]="currencyOptions"
+                            [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
+                            (focusout)="focusOutFunction($event)">
+                        <div *ngIf="tipe['tipe_laporan'] === 'g'"
+                            style="width: 100%; margin-top: 5px; display: flex; justify-content: space-between;">
+                            <div style="margin-top: 8px; width: 49%;">
+                                Lembar Giro
+                            </div>
+                            <div style="width: 50%;">
+                                <input class="form-control m-input" type="text" name="{{ 'lembar-' + i }}"
+                                    [(ngModel)]="res_data[i]['lembar_giro']" currencyMask [options]="numberOptions"
+                                    [readonly]="noEdit" [disabled]="noEdit" (focus)="focusFunction($event)"
+                                    (focusout)="focusOutFunction($event)">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ////////////////////////////////// -->
 
-            <!-- Begin: Jurnal Otomatis -->
-            <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;"
-                *ngIf="jurnalOtomatis">
-                <div class="input-group">
-                    <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
-                        [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
-                    <div class="input-group-append">
-                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                            (click)="openDialog(i, 'kode_setting', 'd')">
-                            Pilih
-                        </button>
+                    <!-- Begin: Template Transaksi -->
+                    <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey" class="input-group"
+                        *ngIf="templateTransaksi">
+                        <input class="form-control m-input number-align-right" type="text" name="{{ 'bDebit-' + i }}"
+                            (blur)="countPercentDebit(i)" (keyup.enter)="countPercentDebit(i)"
+                            (keyup.tab)="countPercentDebit(i)" [(ngModel)]="res_data[i]['bobot_debit']" currencyMask
+                            [options]="currencyOptions" [readonly]="noEdit" [disabled]="noEdit">
+                        <div class="input-group-prepend" style="height: fit-content;">
+                            <span class="input-group-text" id="basic-addon-left">%</span>
+                        </div>
+                    </div>
+                    <div style="width: 19%; padding: 10px" class="input-group" *ngIf="templateTransaksi">
+                        <input class="form-control m-input number-align-right" type="text" name="{{ 'bKredit-' + i }}"
+                            (blur)="countPercentKredit(i)" (keyup.enter)="countPercentKredit(i)"
+                            (keyup.tab)="countPercentKredit(i)" [(ngModel)]="res_data[i]['bobot_kredit']" currencyMask
+                            [options]="currencyOptions" [readonly]="noEdit" [disabled]="noEdit">
+                        <div class="input-group-prepend" style="height: fit-content;">
+                            <span class="input-group-text" id="basic-addon-left">%</span>
+                        </div>
+                    </div>
+                    <!-- End: Template Transaksi-->
+
+                    <!-- Begin: Jurnal Otomatis -->
+                    <div style="width: 19%; padding: 10px; border-right: solid 1px lightgrey; text-align: center;"
+                        *ngIf="jurnalOtomatis">
+                        <div class="input-group">
+                            <input class="form-control m-input" type="text" name="{{ 'dsetting-' + i }}"
+                                [(ngModel)]="res_data[i]['setting_debit']" placeholder="Sumber data" readonly>
+                            <div class="input-group-append">
+                                <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                    (click)="openDialog(i, 'kode_setting', 'd')">
+                                    Pilih
+                                </button>
+                            </div>
+                        </div>
+                        <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
+                    </div>
+                    <div style="width: 19%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis">
+                        <div class="input-group">
+                            <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
+                                [(ngModel)]="res_data[i]['setting_kredit']" placeholder="Sumber data" readonly>
+                            <div class="input-group-append">
+                                <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
+                                    (click)="openDialog(i, 'kode_setting', 'k')">
+                                    Pilih
+                                </button>
+                            </div>
+                        </div>
+                        <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
                     </div>
                 </div>
-                <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
             </div>
-            <div style="width: 19%; padding: 10px; text-align: center;" *ngIf="jurnalOtomatis">
-                <div class="input-group">
-                    <input class="form-control m-input" type="text" name="{{ 'ksetting-' + i }}"
-                        [(ngModel)]="res_data[i]['setting_kredit']" placeholder="Sumber data" readonly>
-                    <div class="input-group-append">
-                        <button tabindex="-1" type="button" class="btn btn-primary btn-input-group"
-                            (click)="openDialog(i, 'kode_setting', 'k')">
-                            Pilih
-                        </button>
+            <div style="height: 10%;">
+                <div style="width: 100%; height: 26px; display: flex; flex-direction: row;" *ngIf="!noEdit">
+                    <div style="width: 80%; height: 100%;"></div>
+                    <div style="width: 20%; height: 100%; display: flex; justify-content: center; align-items: center;">
+                        <div class="baris" style="display: flex; justify-content: center; align-items: center; cursor: pointer;"
+                            (click)="deleteRow(i)">
+                            <i class="flaticon2-trash"></i>
+                            <span style="margin-left: 10px;" class="unselectable">Hapus Baris</span>
+                        </div>
                     </div>
                 </div>
-                <span style="cursor: pointer;" (click)="clearJurnalOtomatisData(i)">Hapus</span>
             </div>
         </div>
     </div>
@@ -340,13 +359,6 @@
                 (click)="addRow()">
                 <i class="flaticon2-add-square"></i>
                 <span style="margin-left: 10px;" class="unselectable">Tambah Baris</span>
-            </div>
-        </div>
-        <div style="width: 20%; height: 100%; display: flex; justify-content: center; align-items: center;">
-            <div class="baris" style="display: flex; justify-content: center; align-items: center; cursor: pointer;"
-                (click)="deleteRow()">
-                <i class="flaticon2-trash"></i>
-                <span style="margin-left: 10px;" class="unselectable">Hapus Baris</span>
             </div>
         </div>
     </div>

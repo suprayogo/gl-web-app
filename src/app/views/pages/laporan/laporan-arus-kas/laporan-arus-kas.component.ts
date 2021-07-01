@@ -412,6 +412,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
           }
           p['nama_perusahaan'] = this.gbl.getNamaPerusahaan()
           // p['report_format_code'] = this.formValueAK.format_laporan
+          p['tipe_periode'] = this.formValueAK.tipe
           p['jenis_laporan'] = this.formValueAK.jenis_laporan
           p['periode_from'] = +this.formValueAK.bulan.length > 1 ? this.formValueAK.bulan : "0" + this.formValueAK.bulan
           p['periode_to'] = +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak
