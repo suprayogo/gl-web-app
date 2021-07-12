@@ -49,6 +49,7 @@ export class ForminputComponent implements OnInit {
   //Show delete button on parent in 'update' state
   @Input() enableDelete: boolean;
   @Input() enableCancel: boolean;
+  @Input() enableStatus: boolean;
   @Input() disableSubmit: boolean;
   @Input() disablePrintButton: boolean;
   @Input() disablePrintButton2: boolean;
@@ -63,7 +64,7 @@ export class ForminputComponent implements OnInit {
   @Input() namaTombol2: any;
   @Input() namaTombolPrintDoc: any;
   @Input() namaTombolPrintDoc2: any;
-
+  @Input() namaStatus: any;
 
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
@@ -80,6 +81,7 @@ export class ForminputComponent implements OnInit {
   button_name2: any = 'Example';
   button_name_print_doc = 'Cetak Dokumen'
   button_name_print_doc2 = 'Cetak Dokumen'
+  status_name = 'Batal Tran'
   errorType: any;
   tmpFocus: any;
 
@@ -105,6 +107,7 @@ export class ForminputComponent implements OnInit {
     this.button_name2 = this.namaTombol2 === undefined ? this.button_name2 : this.namaTombol2
     this.button_name_print_doc = this.namaTombolPrintDoc === undefined ? this.button_name_print_doc : this.namaTombolPrintDoc
     this.button_name_print_doc2 = this.namaTombolPrintDoc2 === undefined ? this.button_name_print_doc2 : this.namaTombolPrintDoc2
+    this.status_name = this.namaStatus === undefined ? this.status_name : this.namaStatus
   }
 
   getData() {

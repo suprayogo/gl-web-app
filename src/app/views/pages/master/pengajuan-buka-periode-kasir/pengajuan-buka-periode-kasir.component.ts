@@ -289,6 +289,39 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     {
       labelWidth: 'col-3',
       formWidth: 'col-9',
+      label: 'Cabang',
+      id: 'kode-cabang',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_cabang',
+      valueOf: 'kode_cabang',
+      required: true,
+      readOnly: true,
+      hiddenOn: false,
+      inputInfo: {
+        id: 'nama-cabang',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_cabang'
+      },
+      // blurOption: {
+      //   ind: 'kode_cabang',
+      //   data: [],
+      //   valueOf: ['kode_cabang', 'nama_cabang'],
+      //   onFound: () => {
+      //     this.filterPeriodeKasirByCabang(this.forminput.getData()['kode_cabang'])
+      //   }
+      // },
+      update: {
+        disabled: true
+      }
+    },
+    {
+      labelWidth: 'col-3',
+      formWidth: 'col-9',
       label: 'Periode',
       id: 'bulan-periode',
       type: 'inputgroup',
@@ -306,39 +339,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         readOnly: true,
         required: false,
         valueOf: 'tahun_periode'
-      },
-      update: {
-        disabled: true
-      }
-    },
-    {
-      labelWidth: 'col-3',
-      formWidth: 'col-9',
-      label: 'Cabang',
-      id: 'kode-cabang',
-      type: 'inputgroup',
-      click: (type) => this.openDialog(type),
-      btnLabel: '',
-      btnIcon: 'flaticon-search',
-      browseType: 'kode_cabang',
-      valueOf: 'kode_cabang',
-      required: true,
-      readOnly: false,
-      hiddenOn: false,
-      inputInfo: {
-        id: 'nama-cabang',
-        disabled: false,
-        readOnly: true,
-        required: false,
-        valueOf: 'nama_cabang'
-      },
-      blurOption: {
-        ind: 'kode_cabang',
-        data: [],
-        valueOf: ['kode_cabang', 'nama_cabang'],
-        onFound: () => {
-          this.filterPeriodeKasirByCabang(this.forminput.getData()['kode_cabang'])
-        }
       },
       update: {
         disabled: true
@@ -392,6 +392,9 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
   ]
 
+  cabang_utama: any
+  inputPeriodeDataCabang: any
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -442,34 +445,36 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
   madeRequest() {
     // Request Data Cabang
     if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
-      this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
-        data => {
-          if (data['STATUS'] === 'Y') {
-            this.inputCabangData = data['RESULT']
-            this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
-            this.ref.markForCheck()
-            if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
-              if (this.dialogType === "kode_cabang") {
-                this.dialog.closeAll()
-                this.openDialog('kode_cabang')
-              }
-            }
-          } else {
-            this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
-            this.ref.markForCheck()
-          }
-        }
-      )
-
+      // this.request.apiData('cabang', 'g-cabang', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      //   data => {
+      //     if (data['STATUS'] === 'Y') {
+      //       this.inputCabangData = data['RESULT']
+      //       this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
+      //       this.ref.markForCheck()
+      //       if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
+      //         if (this.dialogType === "kode_cabang") {
+      //           this.dialog.closeAll()
+      //           this.openDialog('kode_cabang')
+      //         }
+      //       }
+      //     } else {
+      //       this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. mohon coba lagi nanti.')
+      //       this.ref.markForCheck()
+      //     }
+      //   }
+      // )
+      // GET DATA AKSES CABANG USER
       // Request Data Periode
-      this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('periode', 'g-periode-aktif', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.inputPeriodeData = data['RESULT'].filter(
-              x =>
-                x['aktif'] === '1' ||
-                x['tutup_sementara'] === '1'
-            )
+            // this.inputPeriodeData = data['RESULT'].filter(
+            //   x =>
+            //     x['aktif'] === '1' ||
+            //     x['tutup_sementara'] === '1'
+            // )
+            this.inputPeriodeDataCabang = data['RESULT']
+            console.log(this.inputPeriodeData)
             this.ref.markForCheck()
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan daftar periode. mohon coba lagi nanti.')
@@ -483,7 +488,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputPeriodeKasirData = data['RESULT']
-            this.loading = false
             this.ref.markForCheck()
             if (this.dialog.openDialogs || this.dialog.openDialogs.length) {
               if (this.dialogType === "id_periode") {
@@ -491,6 +495,7 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
                 this.openDialog('id_periode')
               }
             }
+            this.cabangFilt()
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan daftar periode kasir. mohon coba lagi nanti.')
             this.loading = false
@@ -501,11 +506,45 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
   }
 
+  cabangFilt() {
+    this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          this.ref.markForCheck()
+          this.inputCabangData = data['RESULT']
+          // Variable
+          let akses_cabang = JSON.parse(JSON.stringify(this.inputCabangData))
+          // Cabang Utama User
+          this.cabang_utama = akses_cabang.filter(x => x.cabang_utama_user === 'true')[0] || {}
+          this.formValue.kode_cabang = this.cabang_utama.kode_cabang
+          this.formValue.nama_cabang = this.cabang_utama.nama_cabang
+          this.inputPeriodeData = this.inputPeriodeDataCabang.filter(
+            x => (x['aktif'] === '1' || x['tutup_sementara'] === '1') &&
+              x['kode_cabang'] === this.formValue.kode_cabang
+          )
+          this.ref.markForCheck()
+          // this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
+          window.parent.postMessage({
+            'type': 'CHANGE-PERIODE',
+            'value': {
+              kode_cabang: this.formValue.kode_cabang
+            }
+          }, "*")
+
+          this.loading = false
+        } else {
+          this.gbl.openSnackBar('Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.', 'fail')
+        }
+      }
+    )
+  }
+
   // Filter Data Periode
   filterPeriode(bulan_periode, tahun_periode) {
     var bulan = bulan_periode.toString().length > 1 ? bulan_periode : "0" + bulan_periode
     var tahun = tahun_periode.toString()
     this.bulanTahun = `${tahun}-${bulan}`
+    this.filterPeriodeKasirByCabang(this.formValue.kode_cabang)
   }
 
   // Split Date From Data
@@ -543,27 +582,27 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
     }
 
     // Condition Multi Level L.O.V
-    if (type === 'kode_cabang') {
-      if (this.forminput.getData()['bulan_periode'] === "") {
-        this.gbl.openSnackBar('Pilih Periode Terlebih Dahulu.', 'info', () => {
+    if (type === 'periode') {
+      if (this.forminput.getData()['kode_cabang'] === "") {
+        this.gbl.openSnackBar('Pilih Cabang Terlebih Dahulu.', 'info', () => {
           setTimeout(() => {
-            this.openDialog('periode')
+            this.openDialog('kode_cabang')
           }, 250)
         })
         return
       }
     } else if (type === 'id_periode') {
       if (this.forminput.getData()['kode_cabang'] === "" && this.forminput.getData()['bulan_periode'] === "") {
-        this.gbl.openSnackBar('Pilih Periode dan Cabang Terlebih Dahulu.', 'info', () => {
+        this.gbl.openSnackBar('Pilih Cabang dan Periode Terlebih Dahulu.', 'info', () => {
           setTimeout(() => {
-            this.openDialog('periode')
+            this.openDialog('kode_cabang')
           }, 250)
         })
         return
-      } else if (this.forminput.getData()['kode_cabang'] === "") {
-        this.gbl.openSnackBar('Pilih Cabang Terlebih Dahulu.', 'info', () => {
+      } else if (this.forminput.getData()['bulan_periode'] === "") {
+        this.gbl.openSnackBar('Pilih periode Terlebih Dahulu.', 'info', () => {
           setTimeout(() => {
-            this.openDialog('kode_cabang')
+            this.openDialog('periode')
           }, 250)
         })
         return
@@ -618,8 +657,8 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
             if (this.forminput.getData()['bulan_periode'] !== nama_bulan) {
               this.forminput.updateFormValue('bulan_periode', nama_bulan)
               this.forminput.updateFormValue('tahun_periode', result.tahun_periode)
-              this.forminput.updateFormValue('kode_cabang', '')
-              this.forminput.updateFormValue('nama_cabang', '')
+              // this.forminput.updateFormValue('kode_cabang', '')
+              // this.forminput.updateFormValue('nama_cabang', '')
               this.filterPeriode(result.bulan_periode, result.tahun_periode)
             }
           }
@@ -627,7 +666,24 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-            this.filterPeriodeKasirByCabang(result.kode_cabang)
+            if (this.forminput.getData()['kode_cabang'] !== this.formValue.kode_cabang) {
+              this.formValue.kode_cabang = result.kode_cabang
+              this.formValue.nama_cabang = result.nama_cabang
+              this.forminput.getData()['bulan_periode'] = ''
+              this.forminput.getData()['tahun_periode'] = ''
+              this.inputPeriodeData = this.inputPeriodeDataCabang.filter(
+                x => (x['aktif'] === '1' || x['tutup_sementara'] === '1') &&
+                  x['kode_cabang'] === this.formValue.kode_cabang
+              )
+              this.detailData = []
+              this.formDetailInputCheckChanges()
+              window.parent.postMessage({
+                'type': 'CHANGE-PERIODE',
+                'value': {
+                  kode_cabang: this.forminput.getData()['kode_cabang']
+                }
+              }, "*")
+            }
           }
         } else if (type === "id_periode") {
           let x = result

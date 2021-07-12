@@ -30,7 +30,7 @@
                                     (onSubmit)="openCDialog('posting_jurnal')" [onUpdate]="onUpdate"
                                     [enableDelete]="enableDelete" (deleteData)="openCDialog()"
                                     (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                                    (onCancel)="onCancel()" [onSub]="onSub">
+                                    (onCancel)="onCancel()" [onSub]="onSub" [disableSubmit]="disableSubmit">
                                 </kt-forminput>
                             </div>
 
@@ -82,7 +82,7 @@
                                 (onSubmit)="openCDialog('tutup_periode_sementara')" [onUpdate]="onUpdate"
                                 [enableDelete]="enableDelete" (deleteData)="openCDialog()"
                                 (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                                [noCancel]="noCancel">
+                                [noCancel]="noCancel" [disableSubmit]="disableSubmitTPS">
                             </kt-forminput>
                         </div>
                     </kt-portlet-body>
@@ -106,7 +106,7 @@
                                 (onSubmit)="openCDialog('tutup_periode')" [onUpdate]="onUpdate"
                                 [enableDelete]="enableDelete" (deleteData)="openCDialog()"
                                 (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
-                                [noCancel]="noCancel">
+                                [noCancel]="noCancel" [disableSubmit]="disableSubmitTP">
                             </kt-forminput>
                         </div>
                     </kt-portlet-body>

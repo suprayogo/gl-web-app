@@ -437,7 +437,7 @@ export class TutupHarianKasirComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.content = content // <-- Init the content
     this.nama_tombolPJ = 'Tutup Kasir'
-    this.gbl.need(true, true)
+    this.gbl.need(true, false)
     // this.reqKodePerusahaan()
     this.reqActivePeriod()
     // this.madeRequest()

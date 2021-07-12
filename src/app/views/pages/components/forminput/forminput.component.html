@@ -177,7 +177,7 @@
       </div>
     </div>
     <!-- -----------------------------------------------LAYOUT LEFT SIDE :: END----------------------------------------------------------- -->
-
+ 
     <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: BEGIN-------------------------------------------------------- -->
     <div *ngIf="rightLayout" style="width: 47.5%;">
       <div class="form-group m-form__group row" *ngFor="let x of rightInputLayout; let i = index" [hidden]="x.hiddenOn ?       
@@ -286,8 +286,8 @@
           <div *ngIf="x.type === 'datepicker-range'">
             <div class="input-group">
               <input type="hidden" class="form-control" name="{{ x.id }}" ngbDatepicker #dpr="ngbDatepicker"
-                [autoClose]="true" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
-                [startDate]="fromDate!" (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
+                [autoClose]="true" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!"
+                (dateSelect)="onDateSelection($event, x.valueOf, x.onSelectFunc)"
                 [ngModel]="getDateRangeFormat(cFormValue[x.valueOf])"
                 [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"
                 [minDate]="x.enableMin ? x.minMaxDate ? getMinToday(x.minMaxDate()) : x.minDate ? x.minDate() : null : null"
@@ -325,6 +325,12 @@
     <!-- -----------------------------------------------LAYOUT RIGHT SIDE :: END----------------------------------------------------------- -->
   </div>
 
+  <div *ngIf="onUpdate && enableStatus" style="width: 50%; margin: 5px 0 5px 40%; display: flex; flex-direction: row; justify-content: space-between;">
+    <div style="background-color: #FD3648; border: 2px solid #999999; padding: 7px;">
+      <h4 class="no-copy" style="color: #f5f5f5;">{{ status_name }}</h4>
+    </div>
+  </div>
+
   <div class="kt-section" *ngIf="detailLoad && enableDetail">
     <kt-loading></kt-loading>
   </div>
@@ -353,11 +359,11 @@
       *ngIf="onSubPrintDoc" [disabled]="disablePrintButton ? true : false">{{ button_name_print_doc }}</button>
     <button type="button" class="btn btn-brand" style="margin-left: 10px;" (click)="printDoc2(inputForm)"
       *ngIf="onSubPrintDoc2" [disabled]="disablePrintButton2 ? true : false">{{ button_name_print_doc2 }}</button>
-    <button type="button" class="btn btn-danger kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
-      *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" *ngIf="!noCancel" style="margin-left: 10px;"
       (click)="onReset()">Batal</button>
     <button type="button" class="btn btn-secondary kt--margin-left-10" style="margin-left: 10px;" (click)="delData()"
       *ngIf="onUpdate && enableDelete">Hapus</button>
+    <button type="button" class="btn btn-danger kt--margin-left-10" style="margin-left: 10px;" (click)="cancelData()"
+      *ngIf="onUpdate && enableCancel">Batal Transaksi</button>
   </div>
 </form>

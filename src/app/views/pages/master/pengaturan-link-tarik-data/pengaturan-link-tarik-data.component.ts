@@ -336,7 +336,7 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, true)
+    this.gbl.need(true, false)
     this.madeRequest()
     this.reqKodePerusahaan()
   }

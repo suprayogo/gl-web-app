@@ -15,6 +15,10 @@ export class PeriodeRequestService {
       httpBody.respondCode = 'GET-DATA-PERIODE'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-periode-aktif') {
+      httpBody.respondCode = 'GET-DATA-PERIODE-AKTIF'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-periode-kasir') {
       httpBody.respondCode = 'GET-DATA-PERIODE-KASIR'
       httpBody.requestParam = JSON.stringify(formData)

@@ -284,7 +284,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.content = content // <-- Init the content
-    this.gbl.need(true, true)
+    this.gbl.need(true, false)
     this.reqKodePerusahaan()
     this.madeRequest()
   }

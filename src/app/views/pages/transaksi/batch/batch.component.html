@@ -24,14 +24,14 @@
                         <div class="kt-section">
                             <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
                                 [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
-                                [enableCancel]="enableCancel" [disableSubmit]="disableSubmit"
+                                [enableCancel]="enableCancel" [enableStatus]="enableStatus" [disableSubmit]="disableSubmit"
                                 [disablePrintButton]="disablePrintButton" [disablePrintButton2]="disablePrintButton2"
                                 [detailJurnal]="enableDetail" [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
                                 [jurnalDataDivisi]="inputDivisiData" [jurnalData]="detailData"
                                 (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (cnlData)="openCDialog()"
                                 (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
                                 [namaTombolPrintDoc]="namaTombolPrintDoc" (prntDoc)="onSubmit($event, 'umum')"
-                                [onSubPrintDoc]="onSubPrintDoc" [namaTombolPrintDoc2]="namaTombolPrintDoc2"
+                                [onSubPrintDoc]="onSubPrintDoc" [namaTombolPrintDoc2]="namaTombolPrintDoc2" [namaStatus]="'Transaksi Batal'"
                                 (prntDoc2)="onSubmit($event, 'kasir')" [onSubPrintDoc2]="onSubPrintDoc2"
                                 [rightLayout]="true" [rightInputLayout]="rightInputLayout" [tipeJurnal]="formValue"
                                 [noEditJurnal]="!enableEdit">
