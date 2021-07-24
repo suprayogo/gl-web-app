@@ -510,7 +510,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       nama_akun: '',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'],
-      periode_berjarak: this.activePeriod['bulan_periode']
+      periode_berjarak: this.activePeriod['bulan_to']
     }
 
     this.bulanBB = this.initBulan[this.formValueBB['tahun']]
@@ -630,7 +630,12 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
             this.inputPeriodeData = data['RESULT']
             this.submitPeriodeData = Array.from(data['RESULT'])
             if (this.inputPeriodeData.length > 0) {
-              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
+              // this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
+              this.activePeriod = {
+                tahun_periode: this.getTahunTertinggi(),
+                bulan_periode: this.getBulanTerendah(this.getTahunTertinggi()),
+                bulan_to: this.getBulanTertinggi(this.getTahunTertinggi())
+              }
             }
             this.ref.markForCheck()
           } else {
@@ -781,7 +786,7 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
       nama_akun: this.formValueBB.nama_akun,
       tahun: this.formValueBB.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueBB.tahun,
       bulan: this.formValueBB.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueBB.bulan,
-      periode_berjarak: this.formValueBB.periode_berjarak === "" ? this.activePeriod['bulan_periode'] : this.formValueBB.periode_berjarak
+      periode_berjarak: this.formValueBB.periode_berjarak === "" ? this.activePeriod['bulan_to'] : this.formValueBB.periode_berjarak
     }
     this.initBulan = tmp
     this.bulanBB = tmp[this.formValueBB.tahun]
@@ -1010,5 +1015,19 @@ export class LaporanBukuBesarComponent implements OnInit, AfterViewInit {
 
       this.ref.markForCheck()
     }
+  }
+
+  getTahunTertinggi() {
+    return Math.max.apply(Math, this.inputPeriodeData.map(function (o) { return parseInt(o['tahun_periode']) }))
+  }
+
+  getBulanTerendah(t) {
+    let array = this.inputPeriodeData.filter(x => x['tahun_periode'] === t)
+    return Math.min.apply(Math, array.map(function (o) { return parseInt(o['bulan_periode']) }))
+  }
+
+  getBulanTertinggi(t) {
+    let array = this.inputPeriodeData.filter(x => x['tahun_periode'] === t)
+    return Math.max.apply(Math, array.map(function (o) { return parseInt(o['bulan_periode']) }))
   }
 }

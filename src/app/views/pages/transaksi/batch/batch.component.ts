@@ -1603,23 +1603,27 @@ export class BatchComponent implements OnInit, AfterViewInit {
   }
 
   // FORM CANCEL
-  onCancel() {
+  onCancel(spec?) {
     if (!this.onUpdate) {
       this.resetForm()
     } else {
       this.onUpdate = false;
-      this.resetForm()
+      this.resetForm(spec)
       this.datatable == undefined ? null : this.datatable.reset()
     }
   }
 
   // RESET VALUE
-  resetForm() {
+  resetForm(spec?) {
     this.formValue = {
       id_tran: '',
       no_tran: '',
       no_jurnal: '',
-      tgl_tran: this.statSubmit == true ? this.formValue.tgl_tran : JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")),
+      tgl_tran: this.statSubmit == true ? 
+            spec != undefined && spec === 'batal' ? 
+            JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")) : 
+            this.formValue.tgl_tran : 
+            JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")),
       id_akses_periode: this.formValue.id_akses_periode,
       kode_cabang: this.formValue.kode_cabang,
       nama_cabang: this.formValue.nama_cabang,
@@ -1707,6 +1711,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     if (this.onUpdate) {
       this.loading = true;
+      this.statSubmit = true
       this.ref.markForCheck()
       let endRes = {
         kode_perusahaan: this.kode_perusahaan,
@@ -1717,14 +1722,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.request.apiData('jurnal', 'c-jurnal', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            this.onCancel()
+            this.onCancel('batal')
             this.ref.markForCheck()
             this.browseNeedUpdate = true
             this.refreshBrowse('BERHASIL DIBATALKAN')
           } else {
             this.loading = false;
             this.ref.markForCheck()
-            this.gbl.openSnackBar(data['RESULT'])
+            this.gbl.openSnackBar(data['RESULT'], 'fail')
           }
         },
         error => {
@@ -2429,7 +2434,6 @@ export class BatchComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    console.log(this.periode_aktif['bulan_periode'])
     return x
   }
 

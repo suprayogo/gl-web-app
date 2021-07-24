@@ -338,247 +338,265 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   onSubmitAK(inputForm: NgForm) {
     if (this.forminput !== undefined) {
       this.formValueAK = this.forminput.getData()
-      this.loading = true
-      this.ref.markForCheck()
-      let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
-      if (this.checkKeyReport[rk] !== undefined) {
-        if (this.formValueAK['format_laporan'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+      if (this.formValueAK.tipe === 't') {
+        if (this.formValueAK.tahun === '' || this.formValueAK.tahun == undefined) {
+          this.gbl.openSnackBar("tahun periode belum diisi", 'info')
         } else {
-          if (this.formValueAK['format_laporan'] === 'xlsx') {
-            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
-            setTimeout(() => {
-              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-              sbmBtn.click();
-            }, 100)
+          this.getRpt()
+        }
+      } else if (this.formValueAK.tipe === 'b') {
+        if (
+          (this.formValueAK.tahun === '' || this.formValueAK.tahun == undefined) &&
+          (this.formValueAK.bulan === '' || this.formValueAK.bulan == undefined) &&
+          (this.formValueAK.periode_berjarak === '' || this.formValueAK.periode_berjarak == undefined)) {
+          this.gbl.openSnackBar("tahun atau bulan periode belum diisi", 'info')
+        } else {
+          this.getRpt()
+        }
+      }
+    }
+  }
+
+  getRpt() {
+    this.loading = true
+    this.ref.markForCheck()
+    let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
+    if (this.checkKeyReport[rk] !== undefined) {
+      if (this.formValueAK['format_laporan'] === 'pdf') {
+        window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+      } else {
+        if (this.formValueAK['format_laporan'] === 'xlsx') {
+          this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
+          setTimeout(() => {
+            let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+            sbmBtn.click();
+          }, 100)
+        } else {
+          this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
+          setTimeout(() => {
+            let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+            sbmBtn.click();
+          }, 100)
+        }
+      }
+      this.loading = false
+      this.ref.markForCheck()
+    } else {
+      let p = {}
+      // for (var i = 0; i < this.submitPeriodeData.length; i++) {
+      //   if (
+      //     (typeof this.formValueAK.bulan === "number" ? JSON.stringify(this.formValueAK.bulan) : this.formValueAK.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
+      //     (typeof this.formValueAK.tahun === "number" ? JSON.stringify(this.formValueAK.tahun) : this.formValueAK.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
+      //   ) {
+      //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
+      //     break
+      //   }
+      // }
+
+      // if (p['id_periode'] !== undefined) {
+      p['format_laporan'] = this.formValueAK['format_laporan']
+      p['jenis_laporan'] = this.formValueAK['jenis_laporan']
+      p['kode_perusahaan'] = this.kode_perusahaan
+      if (this.formValueAK['tipe'] === "t") {
+        if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
+          this.loading = false
+          this.ref.markForCheck()
+          this.gbl.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
+          return
+        }
+        p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
+        p['bulan_periode'] = "12"
+        p['bulan_periode_sebelum'] = this.getBulanTertinggi(p['tahun_periode_sebelum'])
+        p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
+        p['id_akun'] = this.formValueAK['id_akun'] === "" ? undefined : this.formValueAK['id_akun']
+      } else if (this.formValueAK['tipe'] === "b") {
+        if (p['bulan_periode'] === "1") {
+          if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
+            this.loading = false
+            this.ref.markForCheck()
+            this.gbl.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
+            return
+          }
+          p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
+          p['bulan_periode_sebelum'] = JSON.stringify(this.getBulanTertinggi(p['tahun_periode_sebelum']))
+        } else {
+          if (this.getBulanTerendah(p['tahun_periode']) == parseInt(p['bulan_periode']) && this.formValueAK.metode_laporan === '0') {
+            this.loading = false
+            this.ref.markForCheck()
+            this.gbl.openSnackBar('Bulan periode merupakan bulan terakhir yang terdaftar.', 'info')
+            return
+          }
+          p['bulan_periode_sebelum'] = JSON.stringify(parseInt(p['bulan_periode']) - 1)
+          p['tahun_periode_sebelum'] = p['tahun_periode']
+        }
+      }
+      p['nama_perusahaan'] = this.gbl.getNamaPerusahaan()
+      // p['report_format_code'] = this.formValueAK.format_laporan
+      p['tipe_periode'] = this.formValueAK.tipe
+      p['jenis_laporan'] = this.formValueAK.jenis_laporan
+      p['periode_from'] = this.formValueAK.tipe === 'b' ? +this.formValueAK.bulan.length > 1 ? this.formValueAK.bulan : "0" + this.formValueAK.bulan : ''
+      p['periode_to'] = this.formValueAK.tipe === 'b' ? +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak : ''
+      p['tahun_periode'] = this.formValueAK['tahun'].toString()
+      p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
+      p['nama_cabang'] = this.formValueAK['nama_cabang'] === "" ? undefined : this.formValueAK['nama_cabang']
+      p['bulan_periode_sebelum'] = p['bulan_periode_sebelum'].length > 1 ? p['bulan_periode_sebelum'] : "0" + p['bulan_periode_sebelum']
+      p['company_adress'] = this.info_company.alamat
+      p['company_city'] = this.info_company.kota
+      p['company_contact'] = this.info_company.telepon
+      p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
+      this.request.apiData('report', this.formValueAK.metode_laporan === '1' ? 'g-data-arus-kas-langsung' : 'g-data-arus-kas', p).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            let z = data['RESULT']
+            /*  if (this.formValueAK.metode_laporan === '1') {
+               if (this.formValueAK.format_laporan === 'pdf') {
+                 window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
+               } else {
+                 if (this.formValueAK.format_laporan === 'xlsx') {
+                   this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
+                   setTimeout(() => {
+                     let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                     sbmBtn.click();
+                   }, 100)
+                 } else {
+                   this.keyReportFormatExcel = data['RESULT'] + '.xls'
+                   setTimeout(() => {
+                     let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+                     sbmBtn.click();
+                   }, 100)
+                 }
+               }
+               let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
+               this.checkKeyReport[rk] = data['RESULT']
+               this.distinctPeriode()
+               this.ref.markForCheck()
+             } else {
+               r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
+               saldoAwalKas = parseFloat(z['saldo_awal'])
+               for (var x = 0; x < r.length; x++) {
+                 let d = r[x]['data']
+                 for (var i = 0; i < d.length; i++) {
+                   for (var j = 0; j < d.length; j++) {
+                     if (
+                       (
+                         (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) ||
+                         (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
+                       ) &&
+                       d[i]['id_akun'] === d[j]['id_akun'] &&
+                       d[i]['group'] === d[j]['group']
+                     ) {
+                       let t = JSON.parse(JSON.stringify(d[i]))
+                       if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
+                         t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
+                       } else {
+                         t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
+                       }
+                       t['class'] = r[x]['value']
+                       t['className'] = r[x]['label']
+                       nRes.push(t)
+                     }
+                   }
+
+                   if (d[i]['id_akun'] === 'LBRG') {
+                     dLR = d[i]
+                     dLR['class'] = r[x]['value']
+                     dLR['className'] = r[x]['label']
+                   }
+                 }
+               }
+
+               nRes.splice(0, 0, dLR)
+
+               for (var i = 0; i < nRes.length; i++) {
+                 if (totalTipe[nRes[i]['class']]) {
+                   totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
+                 } else {
+                   totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
+                 }
+               }
+
+               for (var prop in totalTipe) {
+                 if (totalTipe.hasOwnProperty(prop)) {
+                   totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
+                 }
+               }
+
+               for (var i = 0; i < nRes.length; i++) {
+                 let t = []
+
+                 t.push(nRes[i]['class'])
+                 t.push(nRes[i]['className'])
+                 t.push(nRes[i]['kode_akun'])
+                 t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
+                 t.push(nRes[i]['saldo_akhir'])
+                 t.push(totalTipe[nRes[i]['class']])
+
+                 res.push(t)
+               }
+
+               Check range or not
+               let repPeriod;
+
+               if (p['bulan_periode'] === p['periode_berjarak']) {
+                 repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
+               } else {
+                 repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
+               }
+
+               Set Report
+               let rp = JSON.parse(JSON.stringify(this.reportObj))
+               rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+               rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
+               rp['REPORT_NAME'] = 'Laporan Arus Kas'
+               rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
+               rp['JASPER_FILE'] = 'rptArusKas.jasper'
+               rp['REPORT_PARAMETERS'] = {
+                 USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+                 REPORT_COMPANY_ADDRESS: this.info_company.alamat,
+                 REPORT_COMPANY_CITY: this.info_company.kota,
+                 REPORT_COMPANY_TLPN: this.info_company.telepon,
+                 REPORT_PERIODE: repPeriod,
+                 TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
+                 SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
+                 SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
+               }
+               rp['FIELD_TITLE'] = [
+                 "Tipe",
+                 "Nama Tipe",
+                 "Kode Akun",
+                 "Nama Akun",
+                 "Saldo",
+                 "Total Tipe Saldo"
+               ]
+               rp['FIELD_NAME'] = [
+                 "tipe",
+                 "namaTipe",
+                 "kodeAkun",
+                 "namaAkun",
+                 "saldo",
+                 "totalTipeSaldo"
+               ]
+               rp['FIELD_TYPE'] = [
+                 "string",
+                 "string",
+                 "string",
+                 "string",
+                 "bigdecimal",
+                 "bigdecimal"
+               ]
+               rp['FIELD_DATA'] = res
+               p['bulan_periode'] = +p['bulan_periode']
+             } */
+            this.sendGetReport(z, this.formValueAK['format_laporan'])
           } else {
-            this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xls'
-            setTimeout(() => {
-              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-              sbmBtn.click();
-            }, 100)
+            // p['bulan_periode'] = +p['bulan_periode']
+            this.gbl.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
+            this.distinctPeriode()
+            this.ref.markForCheck()
           }
         }
-        this.loading = false
-        this.ref.markForCheck()
-      } else {
-        let p = {}
-        // for (var i = 0; i < this.submitPeriodeData.length; i++) {
-        //   if (
-        //     (typeof this.formValueAK.bulan === "number" ? JSON.stringify(this.formValueAK.bulan) : this.formValueAK.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
-        //     (typeof this.formValueAK.tahun === "number" ? JSON.stringify(this.formValueAK.tahun) : this.formValueAK.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
-        //   ) {
-        //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
-        //     break
-        //   }
-        // }
-
-        // if (p['id_periode'] !== undefined) {
-          p['format_laporan'] = this.formValueAK['format_laporan']
-          p['jenis_laporan'] = this.formValueAK['jenis_laporan']
-          p['kode_perusahaan'] = this.kode_perusahaan
-          if (this.formValueAK['tipe'] === "t") {
-            if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
-              this.loading = false
-              this.ref.markForCheck()
-              this.gbl.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
-              return
-            }
-            p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
-            p['bulan_periode'] = "12"
-            p['bulan_periode_sebelum'] = this.getBulanTertinggi(p['tahun_periode_sebelum'])
-            p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
-            p['id_akun'] = this.formValueAK['id_akun'] === "" ? undefined : this.formValueAK['id_akun']
-          } else if (this.formValueAK['tipe'] === "b") {
-            if (p['bulan_periode'] === "1") {
-              if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
-                this.loading = false
-                this.ref.markForCheck()
-                this.gbl.openSnackBar('Tahun periode merupakan tahun terakhir yang terdaftar.', 'info')
-                return
-              }
-              p['tahun_periode_sebelum'] = JSON.stringify(parseInt(p['tahun_periode']) - 1)
-              p['bulan_periode_sebelum'] = JSON.stringify(this.getBulanTertinggi(p['tahun_periode_sebelum']))
-            } else {
-              if (this.getBulanTerendah(p['tahun_periode']) == parseInt(p['bulan_periode']) && this.formValueAK.metode_laporan === '0') {
-                this.loading = false
-                this.ref.markForCheck()
-                this.gbl.openSnackBar('Bulan periode merupakan bulan terakhir yang terdaftar.', 'info')
-                return
-              }
-              p['bulan_periode_sebelum'] = JSON.stringify(parseInt(p['bulan_periode']) - 1)
-              p['tahun_periode_sebelum'] = p['tahun_periode']
-            }
-          }
-          p['nama_perusahaan'] = this.gbl.getNamaPerusahaan()
-          // p['report_format_code'] = this.formValueAK.format_laporan
-          p['tipe_periode'] = this.formValueAK.tipe
-          p['jenis_laporan'] = this.formValueAK.jenis_laporan
-          p['periode_from'] = +this.formValueAK.bulan.length > 1 ? this.formValueAK.bulan : "0" + this.formValueAK.bulan
-          p['periode_to'] = +this.formValueAK.periode_berjarak.length > 1 ? this.formValueAK.periode_berjarak : "0" + this.formValueAK.periode_berjarak
-          p['tahun_periode'] = this.formValueAK['tahun'].toString()
-          p['kode_cabang'] = this.formValueAK['kode_cabang'] === "" ? undefined : this.formValueAK['kode_cabang']
-          p['nama_cabang'] = this.formValueAK['nama_cabang'] === "" ? undefined : this.formValueAK['nama_cabang']
-          p['bulan_periode_sebelum'] = p['bulan_periode_sebelum'].length > 1 ? p['bulan_periode_sebelum'] : "0" + p['bulan_periode_sebelum']
-          p['company_adress'] = this.info_company.alamat
-          p['company_city'] = this.info_company.kota
-          p['company_contact'] = this.info_company.telepon
-          p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
-          this.request.apiData('report', this.formValueAK.metode_laporan === '1' ? 'g-data-arus-kas-langsung' : 'g-data-arus-kas', p).subscribe(
-            data => {
-              if (data['STATUS'] === 'Y') {
-                let z = data['RESULT'] 
-               /*  if (this.formValueAK.metode_laporan === '1') {
-                  if (this.formValueAK.format_laporan === 'pdf') {
-                    window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
-                  } else {
-                    if (this.formValueAK.format_laporan === 'xlsx') {
-                      this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
-                      setTimeout(() => {
-                        let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                        sbmBtn.click();
-                      }, 100)
-                    } else {
-                      this.keyReportFormatExcel = data['RESULT'] + '.xls'
-                      setTimeout(() => {
-                        let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                        sbmBtn.click();
-                      }, 100)
-                    }
-                  }
-                  let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
-                  this.checkKeyReport[rk] = data['RESULT']
-                  this.distinctPeriode()
-                  this.ref.markForCheck()
-                } else {
-                  r = JSON.parse(z['res']), res = [], nRes = [], dLR = {}, totalTipe = {}, totalAktivitasKas = 0, saldoAwalKas = 0, saldoAkhirKas = 0
-                  saldoAwalKas = parseFloat(z['saldo_awal'])
-                  for (var x = 0; x < r.length; x++) {
-                    let d = r[x]['data']
-                    for (var i = 0; i < d.length; i++) {
-                      for (var j = 0; j < d.length; j++) {
-                        if (
-                          (
-                            (parseInt(d[i]['tahun']) > parseInt(d[j]['tahun'])) ||
-                            (d[i]['tahun'] === d[i]['tahun'] && parseInt(d[i]['bulan']) > parseInt(d[j]['bulan']))
-                          ) &&
-                          d[i]['id_akun'] === d[j]['id_akun'] &&
-                          d[i]['group'] === d[j]['group']
-                        ) {
-                          let t = JSON.parse(JSON.stringify(d[i]))
-                          if (d[i]['group'] === 'AKTIVA-LANCAR' || d[i]['group'] === 'AKTIVA-TETAP') {
-                            t['saldo_akhir'] = (t['saldo_akhir'] - d[j]['saldo_akhir']) * -1
-                          } else {
-                            t['saldo_akhir'] = t['saldo_akhir'] - d[j]['saldo_akhir']
-                          }
-                          t['class'] = r[x]['value']
-                          t['className'] = r[x]['label']
-                          nRes.push(t)
-                        }
-                      }
-
-                      if (d[i]['id_akun'] === 'LBRG') {
-                        dLR = d[i]
-                        dLR['class'] = r[x]['value']
-                        dLR['className'] = r[x]['label']
-                      }
-                    }
-                  }
-
-                  nRes.splice(0, 0, dLR)
-
-                  for (var i = 0; i < nRes.length; i++) {
-                    if (totalTipe[nRes[i]['class']]) {
-                      totalTipe[nRes[i]['class']] = totalTipe[nRes[i]['class']] + parseFloat(nRes[i]['saldo_akhir'])
-                    } else {
-                      totalTipe[nRes[i]['class']] = parseFloat(nRes[i]['saldo_akhir'])
-                    }
-                  }
-
-                  for (var prop in totalTipe) {
-                    if (totalTipe.hasOwnProperty(prop)) {
-                      totalAktivitasKas = totalAktivitasKas + totalTipe[prop]
-                    }
-                  }
-
-                  for (var i = 0; i < nRes.length; i++) {
-                    let t = []
-
-                    t.push(nRes[i]['class'])
-                    t.push(nRes[i]['className'])
-                    t.push(nRes[i]['kode_akun'])
-                    t.push(nRes[i]['kode_akun'] === "LBRG" ? nRes[i]['nama_akun'] : nRes[i]['saldo_akhir'] > 0 ? "Kenaikkan " + nRes[i]['nama_akun'] : "Penurunan " + nRes[i]['nama_akun'])
-                    t.push(nRes[i]['saldo_akhir'])
-                    t.push(totalTipe[nRes[i]['class']])
-
-                    res.push(t)
-                  }
-
-                  Check range or not
-                  let repPeriod;
-
-                  if (p['bulan_periode'] === p['periode_berjarak']) {
-                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-                  } else {
-                    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
-                  }
-
-                  Set Report
-                  let rp = JSON.parse(JSON.stringify(this.reportObj))
-                  rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-                  rp['REPORT_CODE'] = 'RPT-ARUS-KAS'
-                  rp['REPORT_NAME'] = 'Laporan Arus Kas'
-                  rp['REPORT_FORMAT_CODE'] = this.formValueAK['format_laporan']
-                  rp['JASPER_FILE'] = 'rptArusKas.jasper'
-                  rp['REPORT_PARAMETERS'] = {
-                    USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                    REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                    REPORT_COMPANY_CITY: this.info_company.kota,
-                    REPORT_COMPANY_TLPN: this.info_company.telepon,
-                    REPORT_PERIODE: repPeriod,
-                    TOTAL_AKTIVITAS_KAS: this.format(totalAktivitasKas, 2, 3, ".", ","),
-                    SALDO_AWAL_KAS: this.format(saldoAwalKas, 2, 3, ".", ","),
-                    SALDO_AKHIR_KAS: this.format(saldoAwalKas + totalAktivitasKas, 2, 3, ".", ",")
-                  }
-                  rp['FIELD_TITLE'] = [
-                    "Tipe",
-                    "Nama Tipe",
-                    "Kode Akun",
-                    "Nama Akun",
-                    "Saldo",
-                    "Total Tipe Saldo"
-                  ]
-                  rp['FIELD_NAME'] = [
-                    "tipe",
-                    "namaTipe",
-                    "kodeAkun",
-                    "namaAkun",
-                    "saldo",
-                    "totalTipeSaldo"
-                  ]
-                  rp['FIELD_TYPE'] = [
-                    "string",
-                    "string",
-                    "string",
-                    "string",
-                    "bigdecimal",
-                    "bigdecimal"
-                  ]
-                  rp['FIELD_DATA'] = res
-                  p['bulan_periode'] = +p['bulan_periode']
-                } */
-                this.sendGetReport(z, this.formValueAK['format_laporan'])
-              } else {
-                // p['bulan_periode'] = +p['bulan_periode']
-                this.gbl.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
-                this.distinctPeriode()
-                this.ref.markForCheck()
-              }
-            }
-          )
-        // }
-      }
-
+      )
+      // }
     }
   }
 
@@ -593,7 +611,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       tipe: 't',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'],
-      periode_berjarak: this.activePeriod['bulan_periode']
+      periode_berjarak: this.activePeriod['bulan_to']
     }
 
     this.bulanAK = this.initBulan[this.formValueAK['tahun']]
@@ -719,8 +737,13 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
             this.inputPeriodeData = data['RESULT']
             this.submitPeriodeData = Array.from(data['RESULT'])
             if (this.inputPeriodeData.length > 0) {
-              this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
+              // this.activePeriod = this.inputPeriodeData.filter(x => x.aktif === '1')[0] || {}
 
+              this.activePeriod = {
+                tahun_periode: this.getTahunTertinggi(),
+                bulan_periode: this.getBulanTerendah(this.getTahunTertinggi()),
+                bulan_to: this.getBulanTertinggi(this.getTahunTertinggi())
+              }
             }
             this.distinctPeriode()
             this.ref.markForCheck()
@@ -745,27 +768,27 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     // this.request.apiData('report', 'g-report', p).subscribe(
     //   data => {
     //     if (data['STATUS'] === 'Y') {
-          if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
-          } else {
-            if (type === 'xlsx') {
-              this.keyReportFormatExcel = p + '.xlsx'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            } else {
-              this.keyReportFormatExcel = p + '.xls'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            }
-          }
-          let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
-          this.checkKeyReport[rk] = p
-          this.distinctPeriode()
-          this.ref.markForCheck()
+    if (type === 'pdf') {
+      window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
+    } else {
+      if (type === 'xlsx') {
+        this.keyReportFormatExcel = p + '.xlsx'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      } else {
+        this.keyReportFormatExcel = p + '.xls'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      }
+    }
+    let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
+    this.checkKeyReport[rk] = p
+    this.distinctPeriode()
+    this.ref.markForCheck()
     //     } else {
     //       this.gbl.topPage()
     //       this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
@@ -844,9 +867,9 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
       tipe: this.formValueAK.tipe,
-      tahun: this.formValueAK.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueAK.tahun,
+      tahun: this.formValueAK.tahun === "" ? this.activePeriod['tahun_periode']  : this.formValueAK.tahun,
       bulan: this.formValueAK.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.bulan,
-      periode_berjarak: this.formValueAK.periode_berjarak === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.periode_berjarak
+      periode_berjarak: this.formValueAK.periode_berjarak === "" ? this.activePeriod['bulan_to'] : this.formValueAK.periode_berjarak
     }
     this.initBulan = tmp
     this.bulanAK = tmp[this.formValueAK.tahun]
@@ -1020,6 +1043,10 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
 
       this.ref.markForCheck()
     }
+  }
+
+  getTahunTertinggi() {
+    return Math.max.apply(Math, this.inputPeriodeData.map(function (o) { return parseInt(o['tahun_periode']) }))
   }
 
   getTahunTerendah() {
