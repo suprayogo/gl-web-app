@@ -759,6 +759,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
       value: 'keterangan'
     },
     {
+      label: 'Status Batal',
+      value: 'batal_status_name'
+    },
+    {
       label: 'Diinput oleh',
       value: 'nama_input_by',
     },
@@ -796,10 +800,6 @@ export class BatchComponent implements OnInit, AfterViewInit {
       value: 'nama_jenis_transaksi'
     },
     {
-      label: 'Keterangan',
-      value: 'keterangan'
-    },
-    {
       label: 'Tipe Transaksi',
       value: 'nama_tipe_transaksi'
     },
@@ -809,8 +809,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
       number: true
     },
     {
-      label: 'Status',
-      value: 'batal_status_sub'
+      label: 'Keterangan',
+      value: 'keterangan'
+    },
+    {
+      label: 'Status Batal',
+      value: 'batal_status_name'
     },
     {
       label: 'Diinput oleh',
@@ -833,7 +837,17 @@ export class BatchComponent implements OnInit, AfterViewInit {
   ];
   browseInterface = {}
   browseData = []
-  browseDataRules = []
+  browseDataRules = [
+    {
+      target: 'batal_status',
+      replacement: {
+        true: 'Y',
+        false: '',
+        '': ''
+      },
+      redefined: 'batal_status_name'
+    }
+  ]
 
   constructor(
     public dialog: MatDialog,
@@ -1797,6 +1811,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           t.push(this.formReport['nama_cabang'])
           t.push(this.reportDetail[i]['kode_akun'])
           t.push(this.reportDetail[i]['nama_akun'])
+          t.push(this.reportDetail[i]['kode_divisi'])
+          t.push(this.reportDetail[i]['nama_divisi'])
+          t.push(this.reportDetail[i]['kode_departemen'])
+          t.push(this.reportDetail[i]['nama_departemen'])
           t.push(this.reportDetail[i]['keterangan_1'])
           t.push(this.reportDetail[i]['keterangan_2'])
           t.push(this.reportDetail[i]['saldo_debit'])
@@ -1826,6 +1844,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           "Nama Cabang",
           "Kode Akun",
           "Nama Akun",
+          "Kode Divisi",
+          "Nama Divisi",
+          "Kode Departemen",
+          "Nama Departemen",
           "Keterangan 1",
           "Keterangan 2",
           "Saldo Debit",
@@ -1838,6 +1860,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           "namaCabang",
           "kodeAkun",
           "namaAkun",
+          "kodeDivisi",
+          "namaDivisi",
+          "kodeDepartemen",
+          "namaDepartemen",
           "keterangan_1",
           "keterangan_2",
           "nilaiDebit",
@@ -1846,6 +1872,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
         rp['FIELD_TYPE'] = [
           "string",
           "date",
+          "string",
+          "string",
+          "string",
+          "string",
           "string",
           "string",
           "string",
@@ -1912,6 +1942,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           t.push(this.formReport['nama_cabang'])
           t.push(this.reportDetail[i]['kode_akun'])
           t.push(this.reportDetail[i]['nama_akun'])
+          t.push(this.reportDetail[i]['kode_divisi'])
+          t.push(this.reportDetail[i]['nama_divisi'])
+          t.push(this.reportDetail[i]['kode_departemen'])
+          t.push(this.reportDetail[i]['nama_departemen'])
           t.push(this.reportDetail[i]['keterangan_1'])
           t.push(this.reportDetail[i]['keterangan_2'])
           t.push(this.reportDetail[i]['saldo_debit'])
@@ -1945,6 +1979,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           "Nama Cabang",
           "Kode Akun",
           "Nama Akun",
+          "Kode Divisi",
+          "Nama Divisi",
+          "Kode Departemen",
+          "Nama Departemen",
           "Keterangan 1",
           "Keterangan 2",
           "Saldo Debit",
@@ -1959,6 +1997,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           "namaCabang",
           "kodeAkun",
           "namaAkun",
+          "kodeDivisi",
+          "namaDivisi",
+          "kodeDepartemen",
+          "namaDepartemen",
           "keterangan_1",
           "keterangan_2",
           "nilaiDebit",
@@ -1969,6 +2011,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
         rp['FIELD_TYPE'] = [
           "string",
           "date",
+          "string",
+          "string",
+          "string",
+          "string",
           "string",
           "string",
           "string",

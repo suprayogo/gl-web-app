@@ -44,11 +44,10 @@ export class GlobalVariableService {
   activePeriod: Subject<any> = new Subject<any>();
 
   dialogRef: any;
-  dialogType: any;
+  selectValue: any
 
   constructor(
-    public dialog: MatDialog,
-    // private ref: ChangeDetectorRef,
+    public dialog: MatDialog
   ) { }
 
   // ACCESS KEY
@@ -250,8 +249,8 @@ export class GlobalVariableService {
     return n;
   }
 
-  getBatasTanggal(m) {
-    let day = m == 2 ? 29 :
+  maxDate(m, t) {
+    let day = m == 2 ? this.leapYear(t) == false ? 28 : 29 :
       (
         m == 1 ||
         m == 3 ||
@@ -309,11 +308,14 @@ export class GlobalVariableService {
       months = (getDate.getUTCMonth() < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
       days = (getDate.getDate() < 10) ? "0" + getDate.getDate() : getDate.getDate(),
       formatYMD = `${years}-${months}-${days}`,
-      formatMY = `${months}-${years}`
+      formatMY = `${months}-${years}`,
+      formatDMY = `${days}-${months}-${years}`
 
     if (specType != undefined) {
       if (specType === 'M-Y') {
         return formatMY
+      } else if (specType === 'D-M-Y') {
+        return formatDMY
       }
     } else {
       return formatYMD
@@ -323,48 +325,6 @@ export class GlobalVariableService {
   leapYear(year) {
     return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
   }
-
-  // Dialog
-  // openDialog(type, need) {
-  //   this.topPage()
-  //   this.dialogType = JSON.parse(JSON.stringify(type))
-  //   this.dialogRef = this.dialog.open(DialogComponent, {
-  //     width: '55vw',
-  //     height: 'auto',
-  //     maxWidth: '95vw',
-  //     maxHeight: '95vh',
-  //     backdropClass: 'bg-dialog',
-  //     position: { top: '20px' },
-  //     data: {
-  //       type: type,
-  //       tableInterface:
-  //         type === "kode_cabang" ? need.interface :
-  //           {},
-  //       displayedColumns:
-  //         type === "kode_cabang" ? need.display :
-  //           [],
-  //       tableData:
-  //         type === "kode_cabang" ? need.data :
-  //           [],
-  //       tableRules:
-  //         type === "kode_cabang" ? need.rules :
-  //           [],
-  //       formValue: need.formValue,
-  //       sizeCont: 380
-  //     }
-  //   });
-
-  //   this.dialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //      if (type === "kode_cabang") {
-  //         if (need.forminput !== undefined) {
-  //           need.forminput.updateFormValue('kode_cabang', result.kode_cabang)
-  //           need.forminput.updateFormValue('nama_cabang', result.nama_cabang)
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
 
   // Alert Dialog
   openSnackBar(message, type?: any, onCloseFunc?: any) {
@@ -386,5 +346,75 @@ export class GlobalVariableService {
     dialogRef.afterClosed().subscribe(result => {
       this.dialog.closeAll()
     })
+  }
+
+  openDialog(type?: any, data?: any, inputValue?: any, setting?: any) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: setting['width'] != undefined ? setting['width'] : 'auto',
+      height: setting['height'] != undefined ? setting['height'] : 'auto',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      backdropClass: 'bg-dialog',
+      position: { top: setting['posTop'] != undefined ? setting['posTop'] : 'auto' },
+      data: {
+        type: type,
+        title: type === this.loopType(data)['type'] ? this.loopType(data)['title'] :
+          undefined,
+        displayedColumns:
+          type === this.loopType(data)['type'] ? this.loopType(data)['columns'] :
+            [],
+        tableData:
+          type === this.loopType(data)['type'] ? this.loopType(data)['contain'] :
+            [],
+        tableRules:
+          type === this.loopType(data)['type'] ? this.loopType(data)['rules'] :
+            [],
+        tableInterface:
+          type === this.loopType(data)['type'] ? this.loopType(data)['interface'] :
+            {},
+        formValue: inputValue
+      }
+    })
+
+    return dialogRef
+  }
+
+  loopType(data?: any) {
+    for (var i = 0; i < data.length; i++) {
+      let type = data[i]['type'],
+        title = data[i]['title'],
+        columns = data[i]['columns'],
+        contain = data[i]['contain'],
+        rules = data[i]['rules'],
+        intrface = data[i]['interface']
+
+      return {
+        type: type,
+        title: title,
+        columns: columns,
+        contain: contain,
+        rules: rules,
+        interface: intrface
+      }
+    }
+  }
+
+  getTahunTertinggi(data) {
+    return Math.max.apply(Math, data.map(function (o) { return parseInt(o['tahun_periode']) }))
+  }
+
+  getBulanTertinggi(data, filterYears) {
+    let array = data.filter(x => x['tahun_periode'] === filterYears)
+    return Math.max.apply(Math, array.map(function (o) { return parseInt(o['bulan_periode']) }))
+  }
+
+  // Arr Splice
+  arrSplice(arrName, start, howMany, arrReplace?: any) {
+    if (arrReplace !== undefined) {
+      arrName.splice(start, howMany, arrReplace)
+    } else {
+      arrName.splice(start, howMany)
+    }
+    return arrName
   }
 }

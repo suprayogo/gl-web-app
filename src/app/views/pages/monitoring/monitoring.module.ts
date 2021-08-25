@@ -49,6 +49,7 @@ import { TransaksiKasirComponent } from './transaksi-kasir/transaksi-kasir.compo
 import { HistoriEditKasirComponent } from './histori-edit-kasir/histori-edit-kasir.component';
 import { TransaksiJurnalOtomatisComponent } from './transaksi-jurnal-otomatis/transaksi-jurnal-otomatis.component';
 import { TransaksiBatchComponent } from './transaksi-batch/transaksi-batch.component';
+import { DataJurnalBatchComponent } from './data-jurnal-batch/data-jurnal-batch.component';
 
 
 const routes: Routes = [
@@ -71,6 +72,10 @@ const routes: Routes = [
   {
     path: 'histori-edit-kasir',
     component: HistoriEditKasirComponent
+  },
+  {
+    path: 'data-jurnal-batch',
+    component: DataJurnalBatchComponent
   }
 ];
 
@@ -129,7 +134,8 @@ const routes: Routes = [
     TransaksiKasirComponent,
     HistoriEditKasirComponent,
     TransaksiJurnalOtomatisComponent,
-    TransaksiBatchComponent
+    TransaksiBatchComponent,
+    DataJurnalBatchComponent
   ]
 })
 export class MonitoringModule { }

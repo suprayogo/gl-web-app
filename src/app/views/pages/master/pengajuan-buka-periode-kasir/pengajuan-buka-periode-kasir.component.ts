@@ -474,7 +474,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
             //     x['tutup_sementara'] === '1'
             // )
             this.inputPeriodeDataCabang = data['RESULT']
-            console.log(this.inputPeriodeData)
             this.ref.markForCheck()
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan daftar periode. mohon coba lagi nanti.')

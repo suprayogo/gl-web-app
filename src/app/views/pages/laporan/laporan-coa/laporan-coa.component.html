@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="col-xl-12">
+        <!-- Start of a Content -->
+        <kt-portlet>
+            <kt-portlet-header [title]="'Laporan Chart of Account'"></kt-portlet-header>
+            <kt-portlet-body>
+                <div class="kt-section" *ngIf="loading">
+                    <kt-loading></kt-loading>
+                </div>
+
+                <div *ngIf="!loading">
+                    <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" (onSubmit)="onSubmit($event)"
+                        [namaTombol]="'Lihat Laporan'" [noCancel]="true"></kt-forminput>
+                    <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report" method="post"
+                        target="_blank">
+                        <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                        <button type="submit" (click)="form.submit()" id="fsubmit" hidden value="Submit">Submit</button>
+                    </form>
+                </div>
+            </kt-portlet-body>
+        </kt-portlet>
+        <!-- End of a Content -->
+    </div>
+</div>
