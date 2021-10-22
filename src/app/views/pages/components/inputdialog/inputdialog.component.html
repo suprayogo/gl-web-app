@@ -189,14 +189,14 @@
                   <input *ngIf="!x.numberOnly" class="form-control m-input" type="text" name="{{ x.id }}"
                     [(ngModel)]="formValue[x.valueOf]" (value)="formValue[x.valueOf]" [readonly]="x.readOnly"
                     [required]="x.required" [disabled]="x.disabled || onUpdate && x.update.disabled"
-                    (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
+                    (input)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : null"
+                    (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                   <input *ngIf="x.numberOnly" class="form-control m-input number-align-right" type="text"
                     name="{{ x.id }}" [(ngModel)]="formValue[x.valueOf]"
                     (keyup)="x.inputPipe ? x.inputPipe(x.valueOf, $event.target.value) : x.resetOption ? resetValue(x.resetOption['type'], x.resetOption['value']) : null"
                     [readonly]="x.readOnly" [required]="x.required"
-                    [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions" (focus)="focusFunction($event)"
-                    (focusout)="focusOutFunction($event)">
+                    [disabled]="x.disabled || onUpdate && x.update.disabled" currencyMask [options]="x.currencyOptions"
+                    (focus)="focusFunction($event)" (focusout)="focusOutFunction($event)">
                   <span *ngIf="x.toolTip" class="m-form__help">{{ x.toolTip }}</span>
                 </div>
                 <!-- FOR RIGHT ADDON -->
@@ -283,6 +283,15 @@
           </div>
           <div *ngIf="rightLayout" style="width: 2%;"></div>
           <!-- ////////// -->
+        </div>
+
+        <!-- BERSAMBUNG -->
+        <!-- Button -->
+        <div class="m-form__actions">
+          <button type="button" style="margin: 5px 0 5px 5px;" class="btn btn-primary" (click)="closeDialog()">Cetak
+            Transaksi</button>
+          <button type="button" *ngFor="let x of buttonLayou" [className]="x.btnClass"
+            (click)="x.getSelectedOnpress ? x.btnClick(getSelected()) : x.btnClick()">{{ x.btnLabel }}</button>
         </div>
 
         <div *ngIf="lowLoading">

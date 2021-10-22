@@ -2117,6 +2117,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
       dp = []
 
     if (periode.length < 1) {
+      this.daftar_periode = [
+        {
+          label: '',
+          value: ''
+        }
+      ]
+      this.insertAt(this.inputLayout, 3, 1, this.setFormLayout('tutup-sementara-null'))
       this.loading = false
       this.disableSubmit = true
       this.ref.markForCheck()
@@ -2782,7 +2789,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   splitDate(date) {
     let getDate = new Date(date),
       years = getDate.getUTCFullYear(),
-      months = (getDate.getUTCMonth() < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
+      months = ((getDate.getUTCMonth() + 1) < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
       days = (getDate.getUTCDate() < 10) ? "0" + getDate.getUTCDate() : getDate.getUTCDate(),
       formatYMD = `${years}-${months}-${days}`
 

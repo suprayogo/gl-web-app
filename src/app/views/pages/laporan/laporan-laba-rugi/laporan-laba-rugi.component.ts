@@ -58,7 +58,11 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       value: '0'
     },
     {
-      label: 'Perincian',
+      label: 'Perincian Prepertual',
+      value: '1'
+    },
+    {
+      label: 'Perincian Periodik',
       value: '1'
     }
   ]
@@ -326,17 +330,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
-        // for (var i = 0; i < this.submitPeriodeData.length; i++) {
-        //   if (
-        //     (typeof this.formValueLR.bulan === "number" ? JSON.stringify(this.formValueLR.bulan) : this.formValueLR.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
-        //     (typeof this.formValueLR.tahun === "number" ? JSON.stringify(this.formValueLR.tahun) : this.formValueLR.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
-        //   ) {
-        //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
-        //     break
-        //   }
-        // }
-
-        // if (p['id_periode'] !== undefined) {
           p['format_laporan'] = this.formValueLR['format_laporan']
           p['jenis_laporan'] = this.formValueLR['jenis_laporan']
           p['kode_perusahaan'] = this.kode_perusahaan
@@ -350,91 +343,18 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
           p['company_city'] = this.info_company.kota
           p['company_contact'] = this.info_company.telepon
           p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
+          // BERSAMBUNG
           this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
             data => {
               if (data['STATUS'] === 'Y') {
-                // let d = data['RESULT'], res = []
-                // for (var i = 0; i < d.length; i++) {
-                //   let t = []
-
-                //   t.push(d[i]['tipe_laporan'])
-                //   t.push(d[i]['nama_tipe_laporan'])
-                //   t.push(d[i]['kode_akun'])
-                //   t.push(d[i]['nama_akun'])
-                //   if (d[i]['tipe_laporan'] === 'b') {
-                //     t.push(d[i]['saldo'])
-                //     t.push(0)
-                //   } else if (d[i]['tipe_laporan'] === 'p') {
-                //     t.push(0)
-                //     t.push(d[i]['saldo'])
-                //     // t.push(d[i]['tipe_akun'] === "1" ? JSON.stringify(parseFloat(d[i]['saldo']) * -1) : d[i]['saldo'])
-                //   }
-
-                //   res.push(t)
-                // }
-
-                //  // Check range or not
-                //  let repPeriod;
-
-                //  if(p['bulan_periode'] === p['periode_berjarak']){
-                //    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-                //  }else{
-                //    repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode'] 
-                //  }
- 
-                //  // Set Report
-                // let rp = JSON.parse(JSON.stringify(this.reportObj))
-                // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-                // rp['REPORT_CODE'] = 'RPT-LABA-RUGI'
-                // rp['REPORT_NAME'] = 'Laporan Laba Rugi'
-                // rp['REPORT_FORMAT_CODE'] = this.formValueLR['format_laporan']
-                // rp['JASPER_FILE'] = 'rptLabaRugi.jasper'
-                // rp['REPORT_PARAMETERS'] = {
-                //   USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                //   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                //   REPORT_COMPANY_CITY: this.info_company.kota,
-                //   REPORT_COMPANY_TLPN: this.info_company.telepon,
-                //   REPORT_PERIODE: repPeriod
-                // }
-                // rp['FIELD_TITLE'] = [
-                //   "Tipe",
-                //   "Nama Tipe",
-                //   "Kode Akun",
-                //   "Nama Akun",
-                //   "Nilai Beban",
-                //   "Nilai Pendapatan"
-                // ]
-                // rp['FIELD_NAME'] = [
-                //   "tipe",
-                //   "namaTipe",
-                //   "kodeAkun",
-                //   "namaAkun",
-                //   "nilaiBeban",
-                //   "nilaiPendapatan"
-                // ]
-                // rp['FIELD_TYPE'] = [
-                //   "string",
-                //   "string",
-                //   "string",
-                //   "string",
-                //   "bigdecimal",
-                //   "bigdecimal"
-                // ]
-                // rp['FIELD_DATA'] = res
-                // p['bulan_periode'] = +p['bulan_periode']
-                // p['periode_berjarak'] = +p['periode_berjarak']
-
                 this.sendGetReport(data['RESULT'], this.formValueLR['format_laporan'])
               } else {
-                // p['bulan_periode'] = +p['bulan_periode']
-                // p['periode_berjarak'] = +p['periode_berjarak']
                 this.gbl.openSnackBar('Gagal mendapatkan data laba rugi.', 'fail')
                 this.distinctPeriode()
                 this.ref.markForCheck()
               }
             }
           )
-        // }
       }
 
     }

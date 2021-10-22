@@ -322,7 +322,7 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     {
       labelWidth: 'col-3',
       formWidth: 'col-9',
-      label: 'Rekening',
+      label: 'Rekening Bank',
       id: 'rekening',
       type: 'input',
       valueOf: 'rekening',
@@ -355,7 +355,7 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     {
       labelWidth: 'col-3',
       formWidth: 'col-9',
-      label: 'Status Batal',
+      label: 'Status Transaksi',
       id: 'batal-status',
       type: 'input',
       valueOf: 'batal_status',
@@ -556,8 +556,16 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
   onSubmit(inputForm: NgForm) {
     if (this.forminput !== undefined) {
       if (inputForm.valid) {
-        this.tableLoad = true
-        this.reqDataJurnal() // Get Data Report
+        if (JSON.stringify(this.formValue) === JSON.stringify(this.forminput.getData()) == false) {
+          this.tableLoad = true
+          this.reqDataJurnal() // Get Data Report
+        } else {
+          this.tableLoad = true
+          setTimeout(() => {
+            this.ref.markForCheck()
+            this.tableLoad = false
+          }, 750);
+        }
       }
     }
   }
@@ -646,7 +654,7 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     this.formDetail.jenis_jurnal = x['jurnal_kasir'] === '1' ? '2' : '0'
     this.formDetail.tipe_transaksi = x['tipe_transaksi']
     this.formDetail.tipe_laporan = x['tipe_laporan']
-    this.formDetail.rekening = x['no_rekening'] + ' - ' + x['nama_bank']
+    this.formDetail.rekening = x['no_rekening'] + ' (' + x['nama_bank'] + ')'
     cancStat = x['batal_status'] === '' || !x['batal_status'] ? false : true
 
     if (this.formDetail.jenis_jurnal !== '2') {
@@ -659,6 +667,16 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
 
     if (!cancStat) {
       this.detailInputLayout.splice(6, 1)
+      if (this.formDetail.jenis_jurnal !== '2') {
+        this.detailInputLayout.splice(3, 1)
+      } else {
+        if (this.formDetail.tipe_laporan !== 'b') {
+          this.detailInputLayout.splice(5, 1)
+        } else {
+          this.detailInputLayout.splice(6, 1)
+        }
+      }
+      this.formDetail.batal_status = ''
     } else {
       this.formDetail.batal_status = 'Batal'
     }

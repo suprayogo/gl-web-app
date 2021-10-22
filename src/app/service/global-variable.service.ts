@@ -305,7 +305,7 @@ export class GlobalVariableService {
   splitDate(date, specType?) {
     let getDate = new Date(date),
       years = getDate.getUTCFullYear(),
-      months = (getDate.getUTCMonth() < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
+      months = ((getDate.getUTCMonth() + 1) < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
       days = (getDate.getDate() < 10) ? "0" + getDate.getDate() : getDate.getDate(),
       formatYMD = `${years}-${months}-${days}`,
       formatMY = `${months}-${years}`,

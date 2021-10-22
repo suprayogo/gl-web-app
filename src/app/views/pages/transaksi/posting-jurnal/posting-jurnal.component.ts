@@ -422,33 +422,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     kode_cabang: '',
     nama_cabang: '',
     id_periode: '',
-    tahun_periode: '',
+    tahun_periode: 0,
     bulan_periode: '',
+    numb_bulan_periode: 0
   }
 
   // Layout Form POSTING JURNAL
   inputLayout = [
-    // {
-    //   formWidth: 'col-9',
-    //   label: 'Periode Aktif',
-    //   id: 'bulan-periode',
-    //   type: 'inputgroup',
-    //   valueOf: 'bulan_periode',
-    //   required: true,
-    //   readOnly: true,
-    //   noButton: true,
-    //   disabled: true,
-    //   inputInfo: {
-    //     id: 'tahun-periode',
-    //     disabled: false,
-    //     readOnly: true,
-    //     required: false,
-    //     valueOf: 'tahun_periode'
-    //   },
-    //   update: {
-    //     disabled: false
-    //   }
-    // },
     {
       formWidth: 'col-9',
       label: 'Cabang',
@@ -468,15 +448,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         required: false,
         valueOf: 'nama_cabang'
       },
-      // blurOption: {
-      //   ind: 'kode_cabang',
-      //   data: [],
-      //   valueOf: ['kode_cabang', 'nama_cabang'],
-      //   onFound: () => {
-      //     // this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-      //     // this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-      //   }
-      // },
       update: {
         disabled: true
       }
@@ -548,15 +519,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         required: false,
         valueOf: 'nama_cabang'
       },
-      // blurOption: {
-      //   ind: 'kode_cabang',
-      //   data: [],
-      //   valueOf: ['kode_cabang', 'nama_cabang'],
-      //   onFound: () => {
-      //     // this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-      //     // this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-      //   }
-      // },
       update: {
         disabled: true
       }
@@ -608,15 +570,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         required: false,
         valueOf: 'nama_cabang'
       },
-      // blurOption: {
-      //   ind: 'kode_cabang',
-      //   data: [],
-      //   valueOf: ['kode_cabang', 'nama_cabang'],
-      //   onFound: () => {
-      //     // this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-      //     // this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-      //   }
-      // },
       update: {
         disabled: true
       }
@@ -637,13 +590,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       formWidth: 'col-5',
       label: 'Bulan',
       id: 'bulan-periode',
-      type: 'input',
-      valueOf: 'bulan_periode',
+      type: 'combobox',
+      options: [],
+      valueOf: 'numb_bulan_periode',
       required: false,
-      readOnly: true,
-      update: {
-        disabled: false
-      },
+      readOnly: false,
+      disabled: false,
+      onSelectFunc: (v) => { }
     }
   ]
 
@@ -662,8 +615,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.nama_tombolTPS = 'Tutup Periode Sementara'
     this.gbl.need(true, false)
     this.reqKodePerusahaan()
-    // this.reqActivePeriod()
-    // this.madeRequest()
   }
 
   ngAfterViewInit(): void {
@@ -671,9 +622,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
 
     if (this.kode_perusahaan !== "") {
-      // this.madeRequest()
       this.reqActivePeriod()
-      // this.tabTP()
     }
   }
 
@@ -692,7 +641,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
 
         if (this.kode_perusahaan !== "") {
-          // this.madeRequest()
           this.reqActivePeriod()
         }
 
@@ -746,6 +694,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
           if (type != undefined && type === 'falseTPS') {
             this.periode_aktif = this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValueTPS.kode_cabang)[0] || {}
+            this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValueTPS.kode_cabang)
           }
 
           if (type != undefined && type === 'falseTP') {
@@ -753,7 +702,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValueTP.kode_cabang)
           }
 
-          // this.gbl.updateInputdata(data['RESULT'], 'kode_cabang', this.inputLayout)
           this.ref.markForCheck()
           this.actPeriod()
           this.madeRequest()
@@ -827,6 +775,14 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.opsi_bulan = list_bulan
     // ========= || ============
 
+    if (this.forminput != undefined) {
+      this.forminput.updateFormValue('tahun_periode', this.gbl.getTahunTertinggi(this.periode_tutup))
+      this.forminput.updateFormValue('numb_bulan_periode', this.gbl.getBulanTertinggi(this.periode_tutup, parseInt(this.forminput.getData()['tahun_periode'])).toString())
+      this.formValue.tahun_periode = parseInt(this.forminput.getData()['tahun_periode'])
+      this.formValue.bulan_periode = this.gbl.getNamaBulan(this.forminput.getData()['numb_bulan_periode'])
+      this.formValue.numb_bulan_periode = parseInt(this.forminput.getData()['numb_bulan_periode'])
+    }
+
     this.inputLayout.splice(0, 3,
       {
         formWidth: 'col-9',
@@ -847,15 +803,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           required: false,
           valueOf: 'nama_cabang'
         },
-        // blurOption: {
-        //   ind: 'kode_cabang',
-        //   data: [],
-        //   valueOf: ['kode_cabang', 'nama_cabang'],
-        //   onFound: () => {
-        //     // this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-        //     // this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-        //   }
-        // },
         update: {
           disabled: true
         }
@@ -911,7 +858,9 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         }
       }
     )
-
+    let z = this.periode_tutup.filter(x => x.tahun_periode === this.formValue.tahun_periode && x.bulan_periode === this.formValue.numb_bulan_periode)
+    this.sendRequestRiwayat(z[0].id_periode)
+    this.sendRequesBelumPosting(z[0].id_periode)
     this.filterMonth(this.formValue.tahun_periode, 'PJ')
   }
 
@@ -965,7 +914,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         numb_bulan_periode: this.periode_aktif.bulan_periode,
         tahun_periode: this.periode_aktif.tahun_periode
       }
-
       this.inputTP()
       this.ref.markForCheck()
     }
@@ -1021,15 +969,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           required: false,
           valueOf: 'nama_cabang'
         },
-        // blurOption: {
-        //   ind: 'kode_cabang',
-        //   data: [],
-        //   valueOf: ['kode_cabang', 'nama_cabang'],
-        //   onFound: () => {
-        //     // this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
-        //     // this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-        //   }
-        // },
         update: {
           disabled: true
         }
@@ -1087,45 +1026,111 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         nama_cabang: this.formValueTPS.nama_cabang,
         id_periode: this.periode_aktif.id_periode,
         bulan_periode: this.periode_aktif.nama_bulan_periode,
+        numb_bulan_periode: this.periode_aktif.bulan_periode,
         tahun_periode: this.periode_aktif.tahun_periode
       }
-    } else {
-      this.formValueTPS = {
-        kode_cabang: this.formValueTPS.kode_cabang,
-        nama_cabang: this.formValueTPS.nama_cabang,
-        id_periode: '',
-        bulan_periode: '',
-        tahun_periode: ''
-      }
+      this.inputTPS()
+      this.ref.markForCheck()
     }
-    this.c_inputLayoutTPS = [
+    this.loadTabTPS = false
+  }
+
+  inputTPS() {
+    // INIT LIST TAHUN BOLEH TUTUP FULL
+    let list_tahun = JSON.parse(JSON.stringify(this.periode_tutup)).map(detail => {
+      const cont = detail
+      cont['label'] = detail['tahun_periode']
+      cont['value'] = detail['tahun_periode']
+      return cont
+    }),
+
+      flags = [], x = []
+    for (var i = 0; i < list_tahun.length; i++) {
+      if (flags[list_tahun[i]['tahun_periode']]) continue;
+      flags[list_tahun[i]['tahun_periode']] = true;
+      x.push(list_tahun[i])
+    }
+
+    // INIT LIST BULAN BOLEH TUTUP
+    let list_bulan = JSON.parse(JSON.stringify(this.periode_tutup)).map(detail => {
+      const cont = detail
+      cont['label'] = this.gbl.getNamaBulan(detail['bulan_periode'])
+      cont['value'] = detail['bulan_periode']
+      return cont
+    })
+
+    // =========================
+    this.opsi_tahun = x
+    this.opsi_bulan = list_bulan
+    // ========= || ============
+
+    this.inputLayoutTPS.splice(0, 3,
+      {
+        formWidth: 'col-5',
+        label: 'Cabang',
+        id: 'kode-cabang',
+        type: 'inputgroup',
+        click: (type) => this.listDialog(type),
+        btnLabel: '',
+        btnIcon: 'flaticon-search',
+        browseType: 'kode_cabangTPS',
+        valueOf: 'kode_cabang',
+        required: false,
+        readOnly: true,
+        inputInfo: {
+          id: 'nama-cabang',
+          disabled: false,
+          readOnly: true,
+          required: false,
+          valueOf: 'nama_cabang'
+        },
+        update: {
+          disabled: true
+        }
+      },
       {
         formWidth: 'col-5',
         label: 'Tahun',
         id: 'tahun-periode',
-        type: 'input',
-        valueOf: this.formValueTPS.tahun_periode,
+        type: 'combobox',
+        options: this.opsi_tahun,
+        valueOf: 'tahun_periode',
         required: false,
-        readOnly: true,
-        update: {
-          disabled: false
+        readOnly: false,
+        disabled: false,
+        onSelectFunc: (v) => {
+          this.forminputTPS.getData().tahun_periode = parseInt(v)
+          this.formValueTPS.tahun_periode = parseInt(v)
+
+          // RESET
+          this.forminputTPS.getData().numb_bulan_periode = 0
+          this.formValueTPS.numb_bulan_periode = 0
+          this.forminputTPS.getData().bulan_periode = ''
+          this.formValueTPS.bulan_periode = ''
+
+          this.filterMonth(v, 'TP')
         }
       },
       {
         formWidth: 'col-5',
         label: 'Bulan',
         id: 'bulan-periode',
-        type: 'input',
-        valueOf: this.formValueTPS.bulan_periode,
+        type: 'combobox',
+        options: this.opsi_bulan,
+        valueOf: 'numb_bulan_periode',
         required: false,
-        readOnly: true,
-        update: {
-          disabled: false
+        readOnly: false,
+        disabled: false,
+        onSelectFunc: (v) => {
+          this.forminputTPS.getData().numb_bulan_periode = parseInt(v)
+          this.formValueTPS.numb_bulan_periode = parseInt(v)
+          this.forminputTPS.getData().bulan_periode = this.gbl.getNamaBulan(v)
+          this.formValueTPS.bulan_periode = this.gbl.getNamaBulan(v)
         }
       }
-    ]
-    this.loadTabTPS = false
-    this.ref.markForCheck()
+    )
+
+    this.filterMonth(this.formValueTPS.tahun_periode, 'TPS')
   }
 
   openCDialog(type) { // Confirmation Dialog
@@ -1174,6 +1179,32 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         id: 'bulan-periode',
         type: 'input',
         valueOf: this.formValueTP.bulan_periode,
+        required: false,
+        readOnly: true,
+        update: {
+          disabled: false
+        }
+      }
+    ]
+    this.c_inputLayoutTPS = [
+      {
+        formWidth: 'col-5',
+        label: 'Tahun',
+        id: 'tahun-periode',
+        type: 'input',
+        valueOf: this.formValueTPS.tahun_periode,
+        required: false,
+        readOnly: true,
+        update: {
+          disabled: false
+        }
+      },
+      {
+        formWidth: 'col-5',
+        label: 'Bulan',
+        id: 'bulan-periode',
+        type: 'input',
+        valueOf: this.formValueTPS.bulan_periode,
         required: false,
         readOnly: true,
         update: {
@@ -1237,6 +1268,26 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   }
 
   openConfirm(type) {
+    if (type === "tutup_periode_sementara") {
+      if (this.forminputTPS.getData()['bulan_periode'] === "") {
+        this.openSnackBar('Pilih bulan periode terlebih dahulu', 'info')
+      } else {
+        this.confirmSubmit(type)
+      }
+    }
+    if (type === "tutup_periode") {
+      if (this.forminputTP.getData()['bulan_periode'] === "") {
+        this.openSnackBar('Pilih bulan periode terlebih dahulu', 'info')
+      } else {
+        this.confirmSubmit(type)
+      }
+    }
+    if (type === "posting_jurnal") {
+      this.confirmSubmit(type)
+    }
+  }
+
+  confirmSubmit(type) {
     const dialogRef = this.dialog.open(ConfirmationdialogComponent, {
       width: 'auto',
       height: 'auto',
@@ -1278,28 +1329,29 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
   onTabSelect(event: MatTabChangeEvent) {
     this.selectedTab = event.index
     if (this.selectedTab == 2) {
-      // this.resetForm()
+      this.periode_aktif = this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValueTP.kode_cabang)[0] || {}
+      this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.forminputTP.getData()['kode_cabang'])
       this.djbp == undefined ? null : this.djbp.reset()
       this.drp == undefined ? null : this.drp.reset()
-      this.periode_aktif = this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValueTP.kode_cabang)[0] || {}
       this.actPeriod()
       this.tabTP()
       this.formInputCheckChanges()
     } else if (this.selectedTab == 1) {
       this.periode_aktif = this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValueTPS.kode_cabang)[0] || {}
-      this.actPeriod()
-      // this.resetForm()
+      this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.forminputTPS.getData()['kode_cabang'])
       this.djbp == undefined ? null : this.djbp.reset()
       this.drp == undefined ? null : this.drp.reset()
+      this.actPeriod()
       this.tabTPS()
       this.formInputCheckChanges()
-    }
-
-    if (this.selectedTab == 0) {
+    } else if (this.selectedTab == 0) {
       this.periode_aktif = this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValue.kode_cabang)[0] || {}
-      this.actPeriod()
+      this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.forminput.getData()['kode_cabang'])
       this.djbp == undefined ? null : this.djbp.checkColumnFit()
       this.drp == undefined ? null : this.drp.checkColumnFit()
+      this.actPeriod()
+      // this.postJurnalInput()
+      this.formInputCheckChanges()
     }
   }
 
@@ -1419,7 +1471,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
             this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
 
-            // this.periode_aktif =  this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValue.kode_cabang)[0] || {}
             this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValue.kode_cabang)
             if (this.periode_tutup.length > 0) {
               this.disableSubmit = false
@@ -1430,70 +1481,31 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.ref.markForCheck()
           }
         } else if (type === "kode_cabangTPS") {
-          if (this.forminput !== undefined) {
+          if (this.forminputTPS !== undefined) {
             this.forminputTPS.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminputTPS.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValueTPS.kode_cabang = this.forminputTPS.getData()['kode_cabang']
             this.formValueTPS.nama_cabang = this.forminputTPS.getData()['nama_cabang']
+            this.forminputTPS.updateFormValue('bulan_periode', '')
 
-            this.periode_aktif = this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValueTPS.kode_cabang)[0] || {}
-
-            if (Object.keys(this.periode_aktif).length > 0) {
-              this.actPeriod()
-              this.forminputTPS.updateFormValue('id_periode', this.periode_aktif.id_periode)
-              this.forminputTPS.updateFormValue('bulan_periode', this.periode_aktif.nama_bulan_periode)
-              this.forminputTPS.updateFormValue('tahun_periode', this.periode_aktif.tahun_periode)
-              this.formValueTPS.id_periode = this.periode_aktif.id_periode
-              this.formValueTPS.bulan_periode = this.periode_aktif.nama_bulan_periode
-              this.formValueTPS.tahun_periode = this.periode_aktif.tahun_periode
+            this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValueTPS.kode_cabang)
+            if (this.periode_tutup.length > 0) {
               this.disableSubmitTPS = false
             } else {
-              this.forminputTPS.updateFormValue('id_periode', '')
-              this.forminputTPS.updateFormValue('bulan_periode', '')
-              this.forminputTPS.updateFormValue('tahun_periode', '')
-              this.formValueTPS.id_periode = ''
-              this.formValueTPS.bulan_periode = ''
-              this.formValueTPS.tahun_periode = ''
               this.disableSubmitTPS = true
             }
 
-            this.inputLayoutTPS.splice(1, 2,
-              {
-                formWidth: 'col-5',
-                label: 'Tahun',
-                id: 'tahun-periode',
-                type: 'input',
-                valueOf: 'tahun_periode',
-                required: false,
-                readOnly: true,
-                update: {
-                  disabled: false
-                }
-              },
-              {
-                formWidth: 'col-5',
-                label: 'Bulan',
-                id: 'bulan-periode',
-                type: 'input',
-                valueOf: 'bulan_periode',
-                required: false,
-                readOnly: true,
-                update: {
-                  disabled: false
-                },
-              }
-            )
-            this.tabTPS()
+            this.inputTPS()
             this.ref.markForCheck()
           }
         } else if (type === "kode_cabangTP") {
-          if (this.forminput !== undefined) {
+          if (this.forminputTP !== undefined) {
             this.forminputTP.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminputTP.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValueTP.kode_cabang = this.forminputTP.getData()['kode_cabang']
             this.formValueTP.nama_cabang = this.forminputTP.getData()['nama_cabang']
+            this.forminputTP.updateFormValue('bulan_periode', '')
 
-            // this.periode_aktif =  this.periode_cabang_aktif.filter(x => x.aktif === '1' && x.kode_cabang === this.formValue.kode_cabang)[0] || {}
             this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValueTP.kode_cabang)
             if (this.periode_tutup.length > 0) {
               this.disableSubmitTP = false
@@ -1591,7 +1603,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         }
       }
     ]
-    //this.getDetail()
     this.formInputCheckChanges()
   }
 
@@ -1655,13 +1666,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       this.dialog.closeAll()
       this.gbl.topPage()
       this.ref.markForCheck()
-      this.loading = true;
-      // this.formValueTP.id_periode = this.formValueTP.id_periode === '' ? `${MD5(Date().toLocaleString() + Date.now() + randomString({
-      //   length: 8,
-      //   numeric: true,
-      //   letters: false,
-      //   special: false
-      // }))}` : this.formValueTP.id_periode
+      this.loading = true
       this.formValueTP.id_periode = this.checkTutup.id
       let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValueTP)
       this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode', endRes).subscribe(
@@ -1670,7 +1675,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             window.parent.postMessage({
               'type': 'UPDATE-PERIODE'
             }, "*")
-            // this.resetForm()
             this.browseNeedUpdate = true
             this.loadTab = true
             this.ref.markForCheck()
@@ -1693,35 +1697,40 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
 
   //Form submit
   onSubmitTPS(inputForm: NgForm) {
-    this.dialog.closeAll()
-    this.gbl.topPage()
-    this.loading = true;
-    this.ref.markForCheck()
-    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValueTPS)
-    this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode-sementara', endRes).subscribe(
-      data => {
-        if (data['STATUS'] === 'Y') {
-          window.parent.postMessage({
-            'type': 'UPDATE-PERIODE'
-          }, "*")
-          //  this.resetForm()
-          this.browseNeedUpdate = true
-          this.loadTabTPS = true
-          this.ref.markForCheck()
-          this.openSnackBar("PERIODE TELAH DITUTUP SEMENTARA", 'success')
-          this.reqActivePeriod('falseTPS')
-        } else {
+    let status_save = this.checkPeriodeTutup('TPS')
+    if (status_save == false) {
+      this.openSnackBar('TUTUP PERIODE SEMENTARA GAGAL! LAKUKAN TUTUP PERIODE SEMENTARA PADA PERIODE SEBELUMNYA', 'fail')
+    } else {
+      this.dialog.closeAll()
+      this.gbl.topPage()
+      this.loading = true
+      this.ref.markForCheck()
+      this.formValueTPS.id_periode = this.checkTutup.id
+      let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan }, this.formValueTPS)
+      this.request.apiData('periode', this.onUpdate ? '' : 'i-tutup-periode-sementara', endRes).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            window.parent.postMessage({
+              'type': 'UPDATE-PERIODE'
+            }, "*")
+            this.browseNeedUpdate = true
+            this.loadTabTPS = true
+            this.ref.markForCheck()
+            this.openSnackBar("PERIODE TELAH DITUTUP SEMENTARA", 'success')
+            this.reqActivePeriod('falseTPS')
+          } else {
+            this.loading = false;
+            this.ref.markForCheck()
+            this.openSnackBar('GAGAL MELAKUKAN TUTUP PERIODE SEMENTARA', 'fail')
+          }
+        },
+        error => {
           this.loading = false;
           this.ref.markForCheck()
-          this.openSnackBar('GAGAL MELAKUKAN TUTUP PERIODE SEMENTARA', 'fail')
+          this.openSnackBar('GAGAL MELAKUKAN PROSES.')
         }
-      },
-      error => {
-        this.loading = false;
-        this.ref.markForCheck()
-        this.openSnackBar('GAGAL MELAKUKAN PROSES.')
-      }
-    )
+      )
+    }
   }
 
   // Form Submit
@@ -1810,6 +1819,47 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           }
         }
       }
+    } if (type === 'TPS') {
+      for (var i = 0; i < this.opsi_tahun.length; i++) {
+        if (this.formValueTPS.tahun_periode === this.opsi_tahun[i]['value']) {
+          selectTahun = this.opsi_tahun[i]['tahun_periode']
+          break;
+        }
+      }
+
+      filterBulan = JSON.parse(JSON.stringify(this.opsi_bulan)).filter(x => x.tahun_periode === selectTahun)
+
+      for (var i = 0; i < filterBulan.length; i++) {
+        if (this.formValueTPS.numb_bulan_periode === filterBulan[i]['value']) {
+          this.checkTutup = {
+            tahun: filterBulan[i]['tahun_periode'],
+            bulan: filterBulan[i]['bulan_periode'],
+            aktif: filterBulan[i]['aktif'],
+            ts: filterBulan[i]['tutup_sementara'],
+            id: filterBulan[i]['id_periode'],
+          }
+          break;
+        }
+      }
+
+
+      if (this.periode_tutup.length > 1) {
+        for (var i = 0; i < this.periode_tutup.length; i++) {
+          if (this.periode_tutup[i].tahun_periode < this.checkTutup.tahun) {
+            status_save = true
+            break;
+          } else {
+            if (filterBulan.length > 1) {
+              for (var j = 0; j < filterBulan.length; j++) {
+                if (filterBulan[j].bulan_periode < this.checkTutup.bulan) {
+                  status_save = true
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
     } else if (type === 'PJ') {
       for (var i = 0; i < this.opsi_tahun.length; i++) {
         if (this.formValue.tahun_periode === this.opsi_tahun[i]['value']) {
@@ -1878,6 +1928,26 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           }
         }
       )
+    } else if (type === 'TPS') {
+      this.inputLayoutTPS.splice(2, 1,
+        {
+          formWidth: 'col-5',
+          label: 'Bulan',
+          id: 'bulan-periode',
+          type: 'combobox',
+          options: this.opsi_bulan.filter(x => x.tahun_periode === parseInt(v)),
+          valueOf: 'numb_bulan_periode',
+          required: false,
+          readOnly: false,
+          disabled: false,
+          onSelectFunc: (v) => {
+            this.forminputTPS.getData().numb_bulan_periode = parseInt(v)
+            this.formValueTPS.numb_bulan_periode = parseInt(v)
+            this.forminputTPS.getData().bulan_periode = this.gbl.getNamaBulan(v)
+            this.formValueTPS.bulan_periode = this.gbl.getNamaBulan(v)
+          }
+        }
+      )
     } else if (type === 'PJ') {
       this.inputLayout.splice(2, 1,
         {
@@ -1923,7 +1993,6 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
       boleh_batal: '',
     }
     this.enableCancel = false;
-    // this.disableSubmit = false
     this.onSub = false;
     this.formInputCheckChanges()
   }

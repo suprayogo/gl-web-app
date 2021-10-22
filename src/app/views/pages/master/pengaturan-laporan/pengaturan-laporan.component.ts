@@ -105,8 +105,12 @@ export class PengaturanLaporanComponent implements OnInit {
       value: '0'
     },
     {
-      label: 'Rincian Laba Rugi',
+      label: 'Rincian Laba Rugi Prepertual',
       value: '1'
+    },
+    {
+      label: 'Rincian Laba Rugi Periodik',
+      value: '2'
     }
   ]
 
@@ -121,15 +125,7 @@ export class PengaturanLaporanComponent implements OnInit {
       btnCondition: () => {
         return true
       }
-    },
-    // {
-    //   btnLabel: 'Ulang',
-    //   btnClass: 'btn btn-secondary',
-    //   btnClick: () => null,
-    //   btnCondition: () => {
-    //     return true
-    //   }
-    // }
+    }
   ]
   buttonNRLayout = [
     {
@@ -141,15 +137,7 @@ export class PengaturanLaporanComponent implements OnInit {
       btnCondition: () => {
         return true
       }
-    },
-    // {
-    //   btnLabel: 'Ulang',
-    //   btnClass: 'btn btn-secondary',
-    //   btnClick: () => null,
-    //   btnCondition: () => {
-    //     return true
-    //   }
-    // }
+    }
   ]
   buttonAKLayout = [
     {
@@ -161,15 +149,7 @@ export class PengaturanLaporanComponent implements OnInit {
       btnCondition: () => {
         return true
       }
-    },
-    // {
-    //   btnLabel: 'Ulang',
-    //   btnClass: 'btn btn-secondary',
-    //   btnClick: () => null,
-    //   btnCondition: () => {
-    //     return true
-    //   }
-    // }
+    }
   ]
   inputAkunDisplayColumns = [
     {
@@ -586,13 +566,27 @@ export class PengaturanLaporanComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        let x = {
+          id_akun: result.id_akun,
+          kode_akun: result.kode_akun,
+          nama_akun: result.nama_akun,
+          tipe_akun: result.tipe_akun,
+          level_akun: result.level_akun,
+          id_induk_akun: result.id_induk_akun,
+          kode_induk_akun: result.kode_induk_akun,
+          nama_induk_akun: result.nama_induk_akun,
+          tipe_induk: result.tipe_induk,
+          id_kategori_akun: result.id_kategori_akun,
+          kode_kategori_akun: result.kode_kategori_akun,
+          nama_kategori_akun: result.nama_kategori_akun
+        }
         if (type === "kode_akun") {
           if (st === "lbrg") {
             this.loadingLB = true
             this.ref.markForCheck()
 
-            this.LBSetting['daftarPengakuanNilai'][ft].push(result)
-            this.selectedLBAkun.push(result['id_akun'])
+            this.LBSetting['daftarPengakuanNilai'][ft].push(x)
+            this.selectedLBAkun.push(x.id_akun)
 
             setTimeout(() => {
               this.loadingLB = false
@@ -602,8 +596,8 @@ export class PengaturanLaporanComponent implements OnInit {
             this.loadingNR = true
             this.ref.markForCheck()
 
-            this.NRSetting['daftarPengakuanNilai'][ft].push(result)
-            this.selectedNRAkun.push(result['id_akun'])
+            this.NRSetting['daftarPengakuanNilai'][ft].push(x)
+            this.selectedNRAkun.push(x.id_akun)
 
             setTimeout(() => {
               this.loadingNR = false
@@ -613,8 +607,8 @@ export class PengaturanLaporanComponent implements OnInit {
             this.loadingAK = true
             this.ref.markForCheck()
 
-            this.AKSetting['daftarPengakuanNilai'][ft].push(result)
-            this.selectedAKAkun.push(result['id_akun'])
+            this.AKSetting['daftarPengakuanNilai'][ft].push(x)
+            this.selectedAKAkun.push(x.id_akun)
 
             setTimeout(() => {
               this.loadingAK = false
@@ -680,11 +674,17 @@ export class PengaturanLaporanComponent implements OnInit {
                 this.formLBValue.nama_laporan = this.laporanData['RPLBRG-RE']['nama_laporan']
                 this.LBSetting = JSON.parse(this.laporanData['RPLBRG-RE']['setting'])
               }
+            } else if (this.formLBValue.jenis_laporan === "1") {
+              if (this.laporanData['RPLBRG-DT-PT'] !== undefined) {
+                this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT-PT']['kode_laporan']
+                this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT-PT']['nama_laporan']
+                this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT-PT']['setting'])
+              }
             } else {
-              if (this.laporanData['RPLBRG-DT'] !== undefined) {
-                this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT']['kode_laporan']
-                this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT']['nama_laporan']
-                this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT']['setting'])
+              if (this.laporanData['RPLBRG-DT-PR'] !== undefined) {
+                this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT-PR']['kode_laporan']
+                this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT-PR']['nama_laporan']
+                this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT-PR']['setting'])
               }
             }
 
@@ -767,14 +767,23 @@ export class PengaturanLaporanComponent implements OnInit {
         this.forminputLB.getData()['kode_laporan'] = this.laporanData['RPLBRG-RE']['kode_laporan']
         this.forminputLB.getData()['nama_laporan'] = this.laporanData['RPLBRG-RE']['nama_laporan']
       }
-    } else {
-      if (this.laporanData['RPLBRG-DT'] !== undefined) {
-        this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT']['kode_laporan']
-        this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT']['nama_laporan']
-        this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT']['setting'])
+    } else if (type === "1") {
+      if (this.laporanData['RPLBRG-DT-PT'] !== undefined) {
+        this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT-PT']['kode_laporan']
+        this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT-PT']['nama_laporan']
+        this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT-PT']['setting'])
 
-        this.forminputLB.getData()['kode_laporan'] = this.laporanData['RPLBRG-DT']['kode_laporan']
-        this.forminputLB.getData()['nama_laporan'] = this.laporanData['RPLBRG-DT']['nama_laporan']
+        this.forminputLB.getData()['kode_laporan'] = this.laporanData['RPLBRG-DT-PT']['kode_laporan']
+        this.forminputLB.getData()['nama_laporan'] = this.laporanData['RPLBRG-DT-PT']['nama_laporan']
+      }
+    } else {
+      if (this.laporanData['RPLBRG-DT-PR'] !== undefined) {
+        this.formLBValue.kode_laporan = this.laporanData['RPLBRG-DT-PR']['kode_laporan']
+        this.formLBValue.nama_laporan = this.laporanData['RPLBRG-DT-PR']['nama_laporan']
+        this.LBSetting = JSON.parse(this.laporanData['RPLBRG-DT-PR']['setting'])
+
+        this.forminputLB.getData()['kode_laporan'] = this.laporanData['RPLBRG-DT-PR']['kode_laporan']
+        this.forminputLB.getData()['nama_laporan'] = this.laporanData['RPLBRG-DT-PR']['nama_laporan']
       }
     }
   }
