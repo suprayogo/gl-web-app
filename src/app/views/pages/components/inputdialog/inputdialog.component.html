@@ -285,13 +285,10 @@
           <!-- ////////// -->
         </div>
 
-        <!-- BERSAMBUNG -->
         <!-- Button -->
         <div class="m-form__actions">
-          <button type="button" style="margin: 5px 0 5px 5px;" class="btn btn-primary" (click)="closeDialog()">Cetak
-            Transaksi</button>
-          <button type="button" *ngFor="let x of buttonLayou" [className]="x.btnClass"
-            (click)="x.getSelectedOnpress ? x.btnClick(getSelected()) : x.btnClick()">{{ x.btnLabel }}</button>
+          <button type="button" *ngFor="let x of btnOption" [className]="x.btnClass" [ngStyle]="x.btnStyle"
+            (click)="x.btnCond ? x.btnClick(closeDialog()) : x.btnClick()">{{ x.btnLabel }}</button>
         </div>
 
         <div *ngIf="lowLoading">

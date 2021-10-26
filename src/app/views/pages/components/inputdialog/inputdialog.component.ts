@@ -24,6 +24,7 @@ export class InputdialogComponent implements OnInit {
   rightInputLayout: Object[] = [];
   rightLayout: boolean;
   buttonLayout: Object[] = [];
+  btnOption: Object[] = [];
   formValue: Object = {};
   inputPipe: any;
   onBlur: any;
@@ -105,6 +106,7 @@ export class InputdialogComponent implements OnInit {
     this.rightLayout = this.parameter.rightLayout
     this.rightInputLayout = this.parameter.rightInputLayout
     this.buttonLayout = this.parameter.buttonLayout
+    this.btnOption = this.parameter.btnOption
     this.inputPipe = this.parameter.inputPipe
     this.onBlur = this.parameter.onBlur
     this.openDialog = this.parameter.openDialog
@@ -167,7 +169,7 @@ export class InputdialogComponent implements OnInit {
 
   focusFunction(x, type) {
     x.target.style.background = 'yellow'
-    if(type === 'datepicker' || type === 'datepicker-range'){
+    if (type === 'datepicker' || type === 'datepicker-range') {
       this.tmpFocus = x
     }
   }

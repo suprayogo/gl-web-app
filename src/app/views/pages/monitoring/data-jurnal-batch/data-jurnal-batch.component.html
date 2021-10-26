@@ -8,17 +8,23 @@
                     <kt-loading [loadingText]="'Please wait...'"></kt-loading>
                 </div>
                 <div *ngIf="!menuload">
-                    <kt-forminput [inputLayout]="inputLayout" [rightInputLayout]="rightInputLayout" [formValue]="formValue" [namaTombol]="'Cari'"
-                        (onSubmit)="onSubmit($event)" [noCancel]="true" [rightLayout]="true"></kt-forminput>
+                    <kt-forminput [inputLayout]="inputLayout" [rightInputLayout]="rightInputLayout"
+                        [formValue]="formValue" [namaTombol]="'Cari'" (onSubmit)="onSubmit($event)" [noCancel]="true"
+                        [rightLayout]="true"></kt-forminput>
                 </div>
                 <div class="kt-section" *ngIf="tableLoad && !menuload">
                     <kt-loading [loadingText]="'Please wait...'"></kt-loading>
                 </div>
                 <div *ngIf="!tableLoad && !menuload" style="margin-top: 7px;">
-                    <kt-datatable-ag-grid [tableColumn]="displayColumns" [tableRules]="browseDataRules" [tableData]="browseData"
-                        (selectRowEvent)="selectRow($event)" [containerHeight]=480>
+                    <kt-datatable-ag-grid [tableColumn]="displayColumns" [tableRules]="browseDataRules"
+                        [tableData]="browseData" (selectRowEvent)="selectRow($event)" [containerHeight]=480>
                     </kt-datatable-ag-grid>
                 </div>
+                <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report" method="post"
+                    target="_blank">
+                    <input hidden name="requestParam" value="{{ keyRptExcel }}">
+                    <button type="submit" (click)="form.submit()" id="fsubmit" hidden value="Submit">Submit</button>
+                </form>
             </kt-portlet-body>
         </kt-portlet>
         <!-- End of a Content -->

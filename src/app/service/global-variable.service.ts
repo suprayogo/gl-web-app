@@ -327,14 +327,14 @@ export class GlobalVariableService {
   }
 
   // Alert Dialog
-  openSnackBar(message, type?: any, onCloseFunc?: any) {
+  openSnackBar(message, type?: any, onCloseFunc?: any, setting?: any) {
     const dialogRef = this.dialog.open(AlertdialogComponent, {
       width: 'auto',
       height: 'auto',
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '120px' },
+      position: { top: setting !== undefined ? setting['position'] !== undefined ? setting['position'] : '120px' : '120px' },
       data: {
         type: type === undefined || type == null ? '' : type,
         message: message === undefined || message == null ? '' : message.charAt(0).toUpperCase() + message.substr(1).toLowerCase(),
@@ -344,7 +344,10 @@ export class GlobalVariableService {
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      this.dialog.closeAll()
+      setting !== undefined ?
+        setting['closeAlert'] !== undefined ?
+          setting['closeAlert'] === 'spesific' ? null : this.dialog.closeAll()
+          : this.dialog.closeAll() : this.dialog.closeAll()
     })
   }
 

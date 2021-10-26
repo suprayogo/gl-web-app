@@ -32,10 +32,18 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
   // Contain Data Variable
   lastYears: any // Contain Data Tahun Tertinggi
   lastMonths: any // Contain Data Bulan Tertinggi
+  dataCompany: any // Contain Data Company
+  chkKeyReqRpt = {} // Contain Data Check Key Request Report 
+  keyRptExcel: any; // Contain Data Key Report Excel 
   inputCabangData = []
   inputPeriodeData = []
   browseData = [] // Contain Data Result (Jurnal)
   detailData = []
+  infoCompany = {
+    alamat: '',
+    kota: '',
+    telepon: ''
+  }
   formValue = { // Input Value
     jenis_jurnal: '01',
     kode_cabang: '',
@@ -60,6 +68,9 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     tipe_transaksi: '0',
     tipe_laporan: '',
     batal_status: ''
+  }
+  formPrint = { // Input Value
+    tipe_format: 'pdf'
   }
 
   // Display Select Box Variable
@@ -93,6 +104,20 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     {
       label: 'Jurnal Otomatis',
       value: '03'
+    }
+  ]
+  tipeFormatPrint = [
+    {
+      label: 'PDF - Portable Document Format',
+      value: 'pdf'
+    },
+    {
+      label: 'XLSX - Microsoft Excel 2007/2010',
+      value: 'xlsx'
+    },
+    {
+      label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+      value: 'xls'
     }
   ]
   listTahun = []
@@ -367,6 +392,20 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
 
   detailInputLayout = JSON.parse(JSON.stringify(this.detailDefaultLayout))
 
+  printInputLayout = [
+    {
+      formWidth: 'col-5',
+      label: 'Format Cetak',
+      id: 'tipe-format',
+      type: 'combobox',
+      options: this.tipeFormatPrint,
+      valueOf: 'tipe_format',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    }
+  ]
+
   // Columns Table Rules Variable
   browseDataRules = [
     {
@@ -434,6 +473,16 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     if (this.kodePerusahaan != undefined &&
       this.kodePerusahaan != null &&
       this.kodePerusahaan !== '') {
+      this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kodePerusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] === 'Y') {
+            this.dataCompany = data['RESULT']
+            this.ref.markForCheck()
+          } else {
+            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'fail')
+          }
+        }
+      )
       this.request.apiData('periode', 'g-periode', { kode_perusahaan: this.kodePerusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -642,7 +691,8 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
   }
 
   selectRow(data) {
-    let x = JSON.parse(JSON.stringify(data)), cancStat
+    let x = JSON.parse(JSON.stringify(data)), dateValue, cancStat
+    dateValue = new Date(x['tgl_tran'])
     this.formDetail.id_tran = x['id_tran']
     this.formDetail.no_tran = x['no_tran']
     this.formDetail.tgl_tran = this.gbl.splitDate(x['tgl_tran'], 'D-M-Y')
@@ -681,6 +731,10 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
       this.formDetail.batal_status = 'Batal'
     }
 
+    // Others
+    this.formDetail['milisec_date'] = JSON.stringify(dateValue.getTime()) // Date Value in milisecond
+    this.formDetail['saldo_transaksi'] = x['saldo_transaksi']
+
     this.getDetail()
   }
 
@@ -714,7 +768,7 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
             this.detailData = detail
           }
           this.formInputCheckChangesJurnal()
-          this.inputDialog(this.formDetail.jenis_jurnal)
+          this.inputDialog('view-data')
         }
       }
     )
@@ -750,24 +804,25 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
 
   inputDialog(type?: any) {
     this.gbl.screenPosition()
+    let dataSetting = this.dataSetting(type)
     const dialogRef = this.dialog.open(InputdialogComponent, {
       width: 'auto',
-      height: '50vh',
+      height: dataSetting['height'],
       maxWidth: '95vw',
       maxHeight: '95vh',
       backdropClass: 'bg-dialog',
-      position: { top: '320px' },
+      position: { top: dataSetting['position'] },
       data: {
-        width: '85vw',
-        title: 'Informasi Data Jurnal',
-        buttonLayout: [],
+        width: dataSetting['widthContent'],
+        title: dataSetting['titleName'],
+        btnOption: dataSetting['btnOption'],
         noButtonSave: true,
-        detailJurnal: true,
+        detailJurnal: dataSetting['showDtJurnal'],
         noEditJurnal: true,
-        formValue: this.formDetail,
+        formValue: dataSetting['formDetail'],
         jurnalData: this.detailData,
         jurnalDataAkun: [],
-        inputLayout: this.detailInputLayout,
+        inputLayout: dataSetting['detailInputLayout'],
         inputPipe: (t, d) => null,
         onBlur: (t, v) => null,
         openDialog: (t) => null,
@@ -786,6 +841,282 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
       },
       error => null,
     );
+  }
+
+  printData(printType, header, detail) {
+    let rk = header['jenis_jurnal'] + header['id_tran'] + printType
+    if (this.chkKeyReqRpt[rk] !== undefined) {
+      if (printType === 'pdf') {
+        window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.chkKeyReqRpt[rk], "_blank")
+      } else {
+        if (printType === 'xlsx') {
+          this.keyRptExcel = this.chkKeyReqRpt[rk] + '.xlsx'
+        } else {
+          this.keyRptExcel = this.chkKeyReqRpt[rk] + '.xls'
+        }
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      }
+      this.ref.markForCheck()
+    } else {
+      for (var i = 0; i < this.dataCompany.length; i++) {
+        if (this.dataCompany[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.dataCompany[i]['kode_cabang'] === this.formValue.kode_cabang) {
+          this.infoCompany.alamat = this.dataCompany[i]['nilai1']
+        }
+        if (this.dataCompany[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.dataCompany[i]['kode_cabang'] === this.formValue.kode_cabang) {
+          this.infoCompany.kota = this.dataCompany[i]['nilai1']
+        }
+        if (this.dataCompany[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.dataCompany[i]['kode_cabang'] === this.formValue.kode_cabang) {
+          this.infoCompany.telepon = this.dataCompany[i]['nilai1']
+        }
+      }
+      let data = [], rptData = {}
+      for (var i = 0; i < detail.length; i++) {
+        let tmp = []
+        tmp.push(header['no_tran'])
+        tmp.push(new Date(parseInt(header['milisec_date'])).getTime())
+        tmp.push(header['keterangan'])
+        tmp.push(this.formValue.nama_cabang)
+        tmp.push(detail[i]['kode_akun'])
+        tmp.push(detail[i]['nama_akun'])
+        tmp.push(detail[i]['kode_divisi'])
+        tmp.push(detail[i]['nama_divisi'])
+        tmp.push(detail[i]['kode_departemen'])
+        tmp.push(detail[i]['nama_departemen'])
+        tmp.push(detail[i]['keterangan_1'])
+        tmp.push(detail[i]['keterangan_2'])
+        tmp.push(detail[i]['saldo_debit'])
+        tmp.push(detail[i]['saldo_kredit'])
+        if (header['jenis_jurnal'] === '2') {
+          tmp.push(detail[i]['keterangan_akun'])
+          tmp.push(header['saldo_transaksi'])
+        }
+
+        data.push(tmp)
+      }
+
+      let rptSetting = this.rptSetting(header)
+
+      rptData['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
+      rptData['REPORT_CODE'] = rptSetting['rptCode']
+      rptData['REPORT_NAME'] = rptSetting['rptName']
+      rptData['REPORT_FORMAT_CODE'] = printType
+      rptData['JASPER_FILE'] = rptSetting['jasperFile']
+      rptData['REPORT_PARAMETERS'] = {
+        USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+        REPORT_COMPANY_ADDRESS: this.infoCompany.alamat,
+        REPORT_COMPANY_CITY: this.infoCompany.kota,
+        REPORT_COMPANY_TLPN: this.infoCompany.telepon,
+        REPORT_PERIODE: rptSetting['periode']
+      }
+      rptData['FIELD_TITLE'] = rptSetting['fieldTitle']
+      rptData['FIELD_NAME'] = rptSetting['fieldName']
+      rptData['FIELD_TYPE'] = rptSetting['fieldType']
+      rptData['FIELD_DATA'] = data
+      this.reqRpt(rptData, printType)
+    }
+  }
+
+  reqRpt(data, type) {
+    let endRes = Object.assign({ kode_perusahaan: this.kodePerusahaan, kode_cabang: this.formValue.kode_cabang, jenis_jurnal: this.formDetail['jenis_jurnal'] === '2' ? '1' : '0' }, data)
+    this.request.apiData('report', 'g-report', endRes).subscribe(
+      data => {
+        if (data['STATUS'] === 'Y') {
+          if (type === 'pdf') {
+            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
+          } else {
+            if (type === 'xlsx') {
+              this.keyRptExcel = data['RESULT'] + '.xlsx'
+            } else {
+              this.keyRptExcel = data['RESULT'] + '.xls'
+            }
+            setTimeout(() => {
+              let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+              sbmBtn.click();
+            }, 100)
+          }
+          let rk = this.formDetail['jenis_jurnal'] + this.formDetail['id_tran'] + type
+          this.chkKeyReqRpt[rk] = data['RESULT']
+          this.ref.markForCheck()
+        } else {
+          let alertSetting = {}
+          alertSetting['position'] = '370px'
+          alertSetting['closeAlert'] = 'spesific'
+          this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail', null, alertSetting)
+        }
+      }
+    )
+  }
+
+  dataSetting(type) {
+    let tmpData = {}
+    if (type === 'view-data') {
+      tmpData['position'] = '320px'
+      tmpData['height'] = '50vh'
+      tmpData['widthContent'] = '85vw'
+      tmpData['titleName'] = 'Informasi Data Jurnal'
+      tmpData['btnOption'] = this.formDetail.batal_status === 'Batal' ? [] :
+        [
+          {
+            btnLabel: 'Cetak Transaksi',
+            btnClass: 'btn btn-primary',
+            btnStyle: {
+              'margin': '5px 0 5px 5px'
+            },
+            btnClick: () => this.inputDialog('print-data')
+          }
+        ]
+      tmpData['showDtJurnal'] = true
+      tmpData['formDetail'] = this.formDetail
+      tmpData['detailInputLayout'] = this.detailInputLayout
+    } else if (type === 'print-data') {
+      tmpData['position'] = '400px'
+      tmpData['height'] = 'auto'
+      tmpData['titleName'] = 'Cetak Transaksi'
+      tmpData['btnOption'] = [
+        {
+          btnLabel: 'Cetak',
+          btnClass: 'btn btn-primary',
+          btnStyle: {},
+          btnCond: true,
+          btnClick: () => this.printData(tmpData['formDetail']['tipe_format'], this.formDetail, this.detailData)
+        }
+      ]
+      tmpData['showDtJurnal'] = false
+      tmpData['formDetail'] = this.formPrint
+      tmpData['detailInputLayout'] = this.printInputLayout
+    }
+    return tmpData
+  }
+
+  rptSetting(data) {
+    let tmpData = {},
+      x = this.gbl.splitDate(parseInt(data['milisec_date']), 'M-Y'), // Change format date to M-Y
+      y = x.split('-'), // Split date chacracter
+      z = this.gbl.getNamaBulan(y[0]), // Get Month Name
+      periode = z + ' ' + y[1]
+    tmpData['periode'] = "Periode: " + periode
+    if (data['jenis_jurnal'] === '2') {
+      let rptName = (data['tipe_transaksi'] === '0' ? 'PEMASUKKAN' : 'PENGELUARAN') + " " +
+        (
+          data['tipe_laporan'] === 'k' ? 'KAS' :
+            data['tipe_laporan'] === 'b' ? 'BANK' :
+              data['tipe_laporan'] === 'g' ? 'GIRO' : 'KAS KECIL'
+        )
+      tmpData['rptCode'] = 'DOK-JURNAL-TRANSAKSI'
+      tmpData['rptName'] = rptName
+      tmpData['jasperFile'] = 'dokTransaksiJurnalTransaksi.jasper'
+      tmpData['fieldTitle'] = [
+        "No. Transaksi",
+        "Tgl. Transaksi",
+        "Keterangan",
+        "Nama Cabang",
+        "Kode Akun",
+        "Nama Akun",
+        "Kode Divisi",
+        "Nama Divisi",
+        "Kode Departemen",
+        "Nama Departemen",
+        "Keterangan 1",
+        "Keterangan 2",
+        "Saldo Debit",
+        "Saldo Kredit",
+        "Keterangan Akun",
+        "Saldo Transaksi"
+      ]
+      tmpData['fieldName'] = [
+        "noTran",
+        "tglTran",
+        "keterangan",
+        "namaCabang",
+        "kodeAkun",
+        "namaAkun",
+        "kodeDivisi",
+        "namaDivisi",
+        "kodeDepartemen",
+        "namaDepartemen",
+        "keterangan_1",
+        "keterangan_2",
+        "nilaiDebit",
+        "nilaiKredit",
+        "keteranganAkun",
+        "saldoTransaksi"
+      ]
+      tmpData['fieldType'] = [
+        "string",
+        "date",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "bigdecimal",
+        "bigdecimal",
+        "string",
+        "bigdecimal"
+      ]
+    } else {
+      tmpData['rptCode'] = 'DOK-TRAN-JURNAL'
+      tmpData['rptName'] = 'Dokumen Transaksi Jurnal Umum'
+      tmpData['jasperFile'] = 'dokTransaksiJurnal.jasper'
+      tmpData['fieldTitle'] = [
+        "No. Transaksi",
+        "Tgl. Transaksi",
+        "Keterangan",
+        "Nama Cabang",
+        "Kode Akun",
+        "Nama Akun",
+        "Kode Divisi",
+        "Nama Divisi",
+        "Kode Departemen",
+        "Nama Departemen",
+        "Keterangan 1",
+        "Keterangan 2",
+        "Saldo Debit",
+        "Saldo Kredit",
+      ]
+      tmpData['fieldName'] = [
+        "noTran",
+        "tglTran",
+        "keterangan",
+        "namaCabang",
+        "kodeAkun",
+        "namaAkun",
+        "kodeDivisi",
+        "namaDivisi",
+        "kodeDepartemen",
+        "namaDepartemen",
+        "keterangan_1",
+        "keterangan_2",
+        "nilaiDebit",
+        "nilaiKredit"
+      ]
+      tmpData['fieldType'] = [
+        "string",
+        "date",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "bigdecimal",
+        "bigdecimal"
+      ]
+    }
+
+    return tmpData
   }
 
   formInputCheckChanges() {

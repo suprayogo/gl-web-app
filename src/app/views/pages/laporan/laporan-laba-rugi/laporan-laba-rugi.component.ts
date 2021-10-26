@@ -58,12 +58,12 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       value: '0'
     },
     {
-      label: 'Perincian Prepertual',
+      label: 'Perincian Perpertual',
       value: '1'
     },
     {
       label: 'Perincian Periodik',
-      value: '1'
+      value: '2'
     }
   ]
 
@@ -206,6 +206,26 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       required: true,
       readOnly: false,
       disabled: false,
+      onSelectFunc: (data) => {
+        if (data === '2') {
+          this.format_laporan.splice(2, 1)
+        } else {
+          this.format_laporan.splice(0, 3,
+            {
+              label: 'XLSX - Microsoft Excel 2007/2010',
+              value: 'xlsx'
+            },
+            {
+              label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+              value: 'xls'
+            },
+            {
+              label: 'PDF - Portable Document Format',
+              value: 'pdf'
+            }
+          )
+        }
+      }
     },
     {
       formWidth: 'col-5',
@@ -330,31 +350,32 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
-          p['format_laporan'] = this.formValueLR['format_laporan']
-          p['jenis_laporan'] = this.formValueLR['jenis_laporan']
-          p['kode_perusahaan'] = this.kode_perusahaan
-          p['nama_perusahaan'] = this.nama_perusahaan
-          p['periode_from'] = +this.formValueLR.bulan.length > 1 ? this.formValueLR.bulan : "0" + this.formValueLR.bulan
-          p['periode_to'] = +this.formValueLR.periode_berjarak.length > 1 ? this.formValueLR.periode_berjarak : "0" + this.formValueLR.periode_berjarak
-          p['tahun_periode'] = this.formValueLR['tahun'].toString()
-          p['kode_cabang'] = this.formValueLR['kode_cabang'] === "" ? undefined : this.formValueLR['kode_cabang']
-          p['nama_cabang'] = this.formValueLR['nama_cabang'] === "" ? undefined : this.formValueLR['nama_cabang']
-          p['company_adress'] = this.info_company.alamat
-          p['company_city'] = this.info_company.kota
-          p['company_contact'] = this.info_company.telepon
-          p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
-          // BERSAMBUNG
-          this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
-            data => {
-              if (data['STATUS'] === 'Y') {
-                this.sendGetReport(data['RESULT'], this.formValueLR['format_laporan'])
-              } else {
-                this.gbl.openSnackBar('Gagal mendapatkan data laba rugi.', 'fail')
-                this.distinctPeriode()
-                this.ref.markForCheck()
-              }
+        p['format_laporan'] = this.formValueLR['format_laporan']
+        p['jenis_laporan'] = this.formValueLR['jenis_laporan']
+        p['kode_perusahaan'] = this.kode_perusahaan
+        p['nama_perusahaan'] = this.nama_perusahaan
+        p['periode_from'] = this.formValueLR.bulan.toString().padStart(2, "0")
+        p['periode_to'] = this.formValueLR.periode_berjarak.toString().padStart(2, "0")
+        p['tahun_periode'] = this.formValueLR['tahun'].toString()
+        p['kode_cabang'] = this.formValueLR['kode_cabang'] === "" ? undefined : this.formValueLR['kode_cabang']
+        p['nama_cabang'] = this.formValueLR['nama_cabang'] === "" ? undefined : this.formValueLR['nama_cabang']
+        p['company_adress'] = this.info_company.alamat
+        p['company_city'] = this.info_company.kota
+        p['company_contact'] = this.info_company.telepon
+        p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
+        console.log(p['periode_from'])
+        console.log(p['periode_to'])
+        this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
+          data => {
+            if (data['STATUS'] === 'Y') {
+              this.sendGetReport(data['RESULT'], this.formValueLR['format_laporan'])
+            } else {
+              this.gbl.openSnackBar('Gagal mendapatkan data laba rugi.', 'fail')
+              this.distinctPeriode()
+              this.ref.markForCheck()
             }
-          )
+          }
+        )
       }
 
     }
@@ -520,27 +541,27 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     // this.request.apiData('report', 'g-report', p).subscribe(
     //   data => {
     //     if (data['STATUS'] === 'Y') {
-          if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
-          } else {
-            if (type === 'xlsx') {
-              this.keyReportFormatExcel = p + '.xlsx'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            } else {
-              this.keyReportFormatExcel = p + '.xls'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            }
-          }
-          let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan']
-          this.checkKeyReport[rk] = p
-          this.distinctPeriode()
-          this.ref.markForCheck()
+    if (type === 'pdf') {
+      window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
+    } else {
+      if (type === 'xlsx') {
+        this.keyReportFormatExcel = p + '.xlsx'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      } else {
+        this.keyReportFormatExcel = p + '.xls'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      }
+    }
+    let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan']
+    this.checkKeyReport[rk] = p
+    this.distinctPeriode()
+    this.ref.markForCheck()
     //     } else {
     //       this.gbl.topPage()
     //       this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
@@ -610,7 +631,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     }
     // Tahun Data
     this.tahun = outputTahun
-    
+
     this.formValueLR = {
       format_laporan: this.formValueLR.format_laporan,
       jenis_laporan: this.formValueLR.jenis_laporan,
@@ -646,6 +667,26 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         required: true,
         readOnly: false,
         disabled: false,
+        onSelectFunc: (data) => {
+          if (data === '2') {
+            this.format_laporan.splice(2, 1)
+          } else {
+            this.format_laporan.splice(0, 3,
+              {
+                label: 'XLSX - Microsoft Excel 2007/2010',
+                value: 'xlsx'
+              },
+              {
+                label: 'XLS - Microsoft Excel 97/2000/XP/2003',
+                value: 'xls'
+              },
+              {
+                label: 'PDF - Portable Document Format',
+                value: 'pdf'
+              }
+            )
+          }
+        }
       },
       {
         formWidth: 'col-5',

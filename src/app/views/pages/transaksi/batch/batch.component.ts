@@ -2696,7 +2696,6 @@ export class BatchComponent implements OnInit, AfterViewInit {
       data: {
         formValue: this.formDetail,
         inputLayout: this.detailInputLayout,
-
         buttonLayout: [],
         buttonName: 'Cetak',
         inputPipe: (t, d) => null,

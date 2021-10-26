@@ -105,7 +105,7 @@ export class PengaturanLaporanComponent implements OnInit {
       value: '0'
     },
     {
-      label: 'Rincian Laba Rugi Prepertual',
+      label: 'Rincian Laba Rugi Perpertual',
       value: '1'
     },
     {
