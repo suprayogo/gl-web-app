@@ -134,6 +134,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   }
 
   // INFO PERUSAHAAN
+  lookupComp: any
   info_company = {
     alamat: '',
     kota: '',
@@ -209,6 +210,9 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       onSelectFunc: (data) => {
         if (data === '2') {
           this.format_laporan.splice(2, 1)
+          if (this.forminput != undefined) {
+            this.forminput.updateFormValue('format_laporan', 'xlsx')
+          }
         } else {
           this.format_laporan.splice(0, 3,
             {
@@ -350,6 +354,17 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
+        for (var i = 0; i < this.lookupComp.length; i++) {
+          if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueLR['kode_cabang']) {
+            this.info_company.alamat = this.formValueLR['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueLR['kode_cabang']) {
+            this.info_company.kota = this.formValueLR['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueLR['kode_cabang']) {
+            this.info_company.telepon = this.formValueLR['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+        }
         p['format_laporan'] = this.formValueLR['format_laporan']
         p['jenis_laporan'] = this.formValueLR['jenis_laporan']
         p['kode_perusahaan'] = this.kode_perusahaan
@@ -363,8 +378,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         p['company_city'] = this.info_company.kota
         p['company_contact'] = this.info_company.telepon
         p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
-        console.log(p['periode_from'])
-        console.log(p['periode_to'])
         this.request.apiData('report', 'g-data-laba-rugi', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
@@ -377,7 +390,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
           }
         )
       }
-
     }
   }
 
@@ -476,17 +488,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            for (var i = 0; i < data['RESULT'].length; i++) {
-              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-                this.info_company.alamat = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-                this.info_company.kota = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-                this.info_company.telepon = data['RESULT'][i]['nilai1']
-              }
-            }
+            this.lookupComp = data['RESULT']
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }
@@ -538,9 +540,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
   }
 
   sendGetReport(p, type) {
-    // this.request.apiData('report', 'g-report', p).subscribe(
-    //   data => {
-    //     if (data['STATUS'] === 'Y') {
     if (type === 'pdf') {
       window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
     } else {
@@ -562,14 +561,6 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()
-    //     } else {
-    //       this.gbl.topPage()
-    //       this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
-    //       this.distinctPeriode()
-    //       this.ref.markForCheck()
-    //     }
-    //   }
-    // )
   }
 
   formInputCheckChanges() {
@@ -670,6 +661,9 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         onSelectFunc: (data) => {
           if (data === '2') {
             this.format_laporan.splice(2, 1)
+            if (this.forminput != undefined) {
+              this.forminput.updateFormValue('format_laporan', 'xlsx')
+            }
           } else {
             this.format_laporan.splice(0, 3,
               {

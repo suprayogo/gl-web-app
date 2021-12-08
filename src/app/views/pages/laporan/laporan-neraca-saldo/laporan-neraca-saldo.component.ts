@@ -355,15 +355,6 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
-        // for (var i = 0; i < this.submitPeriodeData.length; i++) {
-        //   if (
-        //     (typeof this.formValueNS.bulan === "number" ? JSON.stringify(this.formValueNS.bulan) : this.formValueNS.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
-        //     (typeof this.formValueNS.tahun === "number" ? JSON.stringify(this.formValueNS.tahun) : this.formValueNS.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
-        //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
-        //     break
-        //   }
-        // }
-
         for (var i = 0; i < this.lookupComp.length; i++) {
           if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueNS['kode_cabang']) {
             this.info_company.alamat = this.formValueNS['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
@@ -375,105 +366,30 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
             this.info_company.telepon = this.formValueNS['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
           }
         }
-
-        // if (p['id_periode'] !== undefined) {
-          p['format_laporan'] = this.formValueNS['format_laporan']
-          p['kode_perusahaan'] = this.kode_perusahaan
-          p['nama_perusahaan'] = this.nama_perusahaan
-          p['periode_from'] = +this.formValueNS.bulan.length > 1 ? this.formValueNS.bulan : "0" + this.formValueNS.bulan
-          p['periode_to'] = +this.formValueNS.periode_berjarak.length > 1 ? this.formValueNS.periode_berjarak : "0" + this.formValueNS.periode_berjarak
-          p['tahun_periode'] = this.formValueNS['tahun'].toString()
-          p['kode_cabang'] = this.formValueNS['kode_cabang'] === "" ? undefined : this.formValueNS['kode_cabang']
-          p['nama_cabang'] = this.formValueNS['nama_cabang'] === "" ? undefined : this.formValueNS['nama_cabang']
-          p['company_adress'] = this.info_company.alamat
-          p['company_city'] = this.info_company.kota
-          p['company_contact'] = this.info_company.telepon
-          p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
-          this.request.apiData('report', 'g-data-neraca-saldo', p).subscribe(
-            data => {
-              if (data['STATUS'] === 'Y') {
-                // let d = data['RESULT'], res = []
-                // for (var i = 0; i < d.length; i++) {
-                //   let t = []
-
-                //   t.push(d[i]['kode_akun'])
-                //   t.push(d[i]['nama_akun'])
-                //   t.push(parseFloat(d[i]['debet']))
-                //   t.push(parseFloat(d[i]['kredit']))
-                //   t.push(parseFloat(d[i]['total_debit']))
-                //   t.push(parseFloat(d[i]['total_kredit']))
-                //   t.push(d[i]['kode_induk_akun'])
-
-                //   res.push(t)
-                // }
-
-                // // Check range or not
-                // let repPeriod;
-
-                // if(p['bulan_periode'] === p['periode_berjarak']){
-                //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-                // }else{
-                //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode'] 
-                // }
-
-                // // Set Report
-                // let rp = JSON.parse(JSON.stringify(this.reportObj))
-                // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-                // rp['REPORT_CODE'] = 'RPT-NERACA-SALDO'
-                // rp['REPORT_NAME'] = 'Laporan Neraca Saldo'
-                // rp['REPORT_FORMAT_CODE'] = this.formValueNS['format_laporan']
-                // rp['JASPER_FILE'] = 'rptNeracaSaldo.jasper'
-                // rp['REPORT_PARAMETERS'] = {
-                //   USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-                //   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-                //   REPORT_COMPANY_CITY: this.info_company.kota,
-                //   REPORT_COMPANY_TLPN: this.info_company.telepon,
-                //   REPORT_PERIODE: repPeriod
-                // }
-                // rp['FIELD_TITLE'] = [
-                //   "Kode Akun",
-                //   "Nama Akun",
-                //   "Nilai Debit",
-                //   "Nilai Kredit",
-                //   "Total Debit",
-                //   "Total Kredit",
-                //   "Kode Induk Akun"
-                // ]
-                // rp['FIELD_NAME'] = [
-                //   "kodeAkun",
-                //   "namaAkun",
-                //   "nilaiDebit",
-                //   "nilaiKredit",
-                //   "totalDebit",
-                //   "totalKredit",
-                //   "kodeIndukAkun"
-                // ]
-                // rp['FIELD_TYPE'] = [
-                //   "string",
-                //   "string",
-                //   "bigdecimal",
-                //   "bigdecimal",
-                //   "bigdecimal",
-                //   "bigdecimal",
-                //   "string"
-                // ]
-                // rp['FIELD_DATA'] = res
-                // p['bulan_periode'] = +p['bulan_periode']
-                // p['periode_berjarak'] = +p['periode_berjarak']
-
-                this.sendGetReport(data['RESULT'], this.formValueNS['format_laporan'])
-              } else {
-                // p['bulan_periode'] = +p['bulan_periode']
-                // p['periode_berjarak'] = +p['periode_berjarak']
-                this.gbl.openSnackBar('Gagal mendapatkan data neraca saldo.', 'fail')
-                this.distinctPeriode()
-                this.ref.markForCheck()
-              }
+        p['format_laporan'] = this.formValueNS['format_laporan']
+        p['kode_perusahaan'] = this.kode_perusahaan
+        p['nama_perusahaan'] = this.nama_perusahaan
+        p['periode_from'] = this.formValueNS.bulan.toString().padStart(2, "0")
+        p['periode_to'] = this.formValueNS.periode_berjarak.toString().padStart(2, "0")
+        p['tahun_periode'] = this.formValueNS['tahun'].toString()
+        p['kode_cabang'] = this.formValueNS['kode_cabang'] === "" ? undefined : this.formValueNS['kode_cabang']
+        p['nama_cabang'] = this.formValueNS['nama_cabang'] === "" ? undefined : this.formValueNS['nama_cabang']
+        p['company_adress'] = this.info_company.alamat
+        p['company_city'] = this.info_company.kota
+        p['company_contact'] = this.info_company.telepon
+        p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
+        this.request.apiData('report', 'g-data-neraca-saldo', p).subscribe(
+          data => {
+            if (data['STATUS'] === 'Y') {
+              this.sendGetReport(data['RESULT'], this.formValueNS['format_laporan'])
+            } else {
+              this.gbl.openSnackBar('Gagal mendapatkan data neraca saldo.', 'fail')
+              this.distinctPeriode()
+              this.ref.markForCheck()
             }
-          )
-        // }
+          }
+        )
       }
-
     }
   }
 
@@ -585,17 +501,6 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.lookupComp = data['RESULT']
-            // for (var i = 0; i < data['RESULT'].length; i++) {
-            //   if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-            //     this.info_company.alamat = data['RESULT'][i]['nilai1']
-            //   }
-            //   if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-            //     this.info_company.kota = data['RESULT'][i]['nilai1']
-            //   }
-            //   if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-            //     this.info_company.telepon = data['RESULT'][i]['nilai1']
-            //   }
-            // }
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }
@@ -642,7 +547,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       //     if (data['STATUS'] === 'Y') {
       //       this.inputAkunData = data['RESULT']
       //       this.ref.markForCheck()
-           
+
       //     } else {
       //       this.gbl.openSnackBar('Gagal mendapatkan daftar akun. Mohon coba lagi nanti.', 'fail')
       //       this.ref.markForCheck()
@@ -660,38 +565,27 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
   }
 
   sendGetReport(p, type) {
-    // this.request.apiData('report', 'g-report', p).subscribe(
-    //   data => {
-    //     if (data['STATUS'] === 'Y') {
-          if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
-          } else {
-            if (type === 'xlsx') {
-              this.keyReportFormatExcel = p + '.xlsx'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            } else {
-              this.keyReportFormatExcel = p + '.xls'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            }
-          }
-          let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan']
-          this.checkKeyReport[rk] = p
-          this.distinctPeriode()
-          this.ref.markForCheck()
-    //     } else {
-    //       this.gbl.topPage()
-    //       this.ref.markForCheck()
-    //       this.gbl.topPage()
-    //       this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
-    //     }
-    //   }
-    // )
+    if (type === 'pdf') {
+      window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
+    } else {
+      if (type === 'xlsx') {
+        this.keyReportFormatExcel = p + '.xlsx'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      } else {
+        this.keyReportFormatExcel = p + '.xls'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      }
+    }
+    let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan']
+    this.checkKeyReport[rk] = p
+    this.distinctPeriode()
+    this.ref.markForCheck()
   }
 
   formInputCheckChanges() {
@@ -879,7 +773,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       this.gbl.updateInputdata(this.inputCabangData, 'kode_cabang', this.inputLayoutNS)
       // this.gbl.updateInputdata(this.inputAkunData, 'kode_akun', this.inputLayoutNS)
-      
+
       this.loading = false
     }
   }

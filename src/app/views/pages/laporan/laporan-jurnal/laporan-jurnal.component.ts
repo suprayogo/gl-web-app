@@ -353,15 +353,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
-        // for (var i = 0; i < this.submitPeriodeData.length; i++) {
-        //   if (
-        //     (typeof this.formValueJL.bulan === "number" ? JSON.stringify(this.formValueJL.bulan) : this.formValueJL.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) &&
-        //     (typeof this.formValueJL.tahun === "number" ? JSON.stringify(this.formValueJL.tahun) : this.formValueJL.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])) {
-        //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
-        //     break
-        //   }
-        // }
-
         for (var i = 0; i < this.lookupComp.length; i++) {
           if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueJL['kode_cabang']) {
             this.info_company.alamat = this.formValueJL['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
@@ -373,13 +364,11 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
             this.info_company.telepon = this.formValueJL['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
           }
         }
-
-        // if (p['id_periode'] !== undefined) {
         p['format_laporan'] = this.formValueJL['format_laporan']
         p['kode_perusahaan'] = this.kode_perusahaan
         p['nama_perusahaan'] = this.nama_perusahaan
-        p['periode_from'] = +this.formValueJL.bulan.length > 1 ? this.formValueJL.bulan : "0" + this.formValueJL.bulan
-        p['periode_to'] = +this.formValueJL.periode_berjarak.length > 1 ? this.formValueJL.periode_berjarak : "0" + this.formValueJL.periode_berjarak
+        p['periode_from'] = this.formValueJL.bulan.toString().padStart(2, "0")
+        p['periode_to'] = this.formValueJL.periode_berjarak.toString().padStart(2, "0")
         p['tahun_periode'] = this.formValueJL['tahun'].toString()
         p['kode_cabang'] = this.formValueJL['kode_cabang'] === "" ? undefined : this.formValueJL['kode_cabang']
         p['nama_cabang'] = this.formValueJL['nama_cabang'] === "" ? undefined : this.formValueJL['nama_cabang']
@@ -391,103 +380,15 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         this.request.apiData('report', 'g-data-jurnal-2', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
-              // let d = data['RESULT'], res = []
-              // for (var i = 0; i < d.length; i++) {
-              //   let t = [], no_tran = "", tgl_tran = d[i]['tgl_tran'].split("-")
-
-              //   // if (d[i]['kode_tran'] !== "SALDO-AWAL") {
-              //   t.push(d[i]['no_tran'])
-              //   t.push(new Date(d[i]['tgl_tran']).getTime())
-              //   t.push(d[i]['kode_akun'])
-              //   t.push(d[i]['nama_akun'])
-              //   t.push(d[i]['nama_divisi'])
-              //   t.push(d[i]['nama_departemen'])
-              //   t.push(d[i]['keterangan_1'])
-              //   t.push(d[i]['keterangan_2'])
-              //   t.push(parseFloat(d[i]['nilai_debit']))
-              //   t.push(parseFloat(d[i]['nilai_kredit']))
-
-              //   res.push(t)
-              //   // }
-              // }
-
-              // // Check range or not
-              // let repPeriod;
-
-              // if (p['bulan_periode'] === p['periode_berjarak']) {
-              //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-              // } else {
-              //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode']
-              // }
-
-              // // Set Report
-              // let rp = JSON.parse(JSON.stringify(this.reportObj))
-              // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              // rp['REPORT_CODE'] = 'RPT-JURNAL'
-              // rp['REPORT_NAME'] = 'Laporan Transaksi Jurnal'
-              // rp['REPORT_FORMAT_CODE'] = this.formValueJL['format_laporan']
-              // rp['JASPER_FILE'] = 'rptJurnal.jasper'
-              // rp['REPORT_PARAMETERS'] = {
-              //   USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-              //   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-              //   REPORT_COMPANY_CITY: this.info_company.kota,
-              //   REPORT_COMPANY_TLPN: this.info_company.telepon,
-              //   REPORT_PERIODE: repPeriod
-              // }
-              // rp['FIELD_TITLE'] = [
-              //   "No. Transaksi",
-              //   "Tgl. Transaksi",
-              //   "Kode Akun",
-              //   "Nama Akun",
-              //   "Nama Divisi",
-              //   "Nama Departemen",
-              //   "Keterangan 1",
-              //   "Keterangan 2",
-              //   "Nilai Debit",
-              //   "Nilai Kredit"
-              // ]
-              // rp['FIELD_NAME'] = [
-              //   "noTran",
-              //   "tglTran",
-              //   "kodeAkun",
-              //   "namaAkun",
-              //   "nama_divisi",
-              //   "nama_departemen",
-              //   "keterangan_1",
-              //   "keterangan_2",
-              //   "nilaiDebit",
-              //   "nilaiKredit"
-              // ]
-              // rp['FIELD_TYPE'] = [
-              //   "string",
-              //   "date",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "bigdecimal",
-              //   "bigdecimal"
-              // ]
-              // rp['FIELD_DATA'] = res
-              // p['bulan_periode'] = +p['bulan_periode']
-              // p['periode_berjarak'] = +p['periode_berjarak']
-
               this.sendGetReport(data['RESULT'], this.formValueJL['format_laporan'])
             } else {
-              // p['periode_from'] = +p['periode_from']
-              // p['periode_to'] = +p['periode_to']
               this.gbl.openSnackBar('Gagal mendapatkan data transaksi jurnal.', 'fail')
               this.distinctPeriode()
               this.ref.markForCheck()
             }
           }
         )
-        // }
       }
-
-
     }
   }
 
@@ -601,17 +502,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
         data => {
           if (data['STATUS'] === 'Y') {
             this.lookupComp = data['RESULT']
-            // for (var i = 0; i < data['RESULT'].length; i++) {
-            //   if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-            //     this.info_company.alamat = data['RESULT'][i]['nilai1']
-            //   }
-            //   if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-            //     this.info_company.kota = data['RESULT'][i]['nilai1']
-            //   }
-            //   if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-            //     this.info_company.telepon = data['RESULT'][i]['nilai1']
-            //   }
-            // }
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'fail')
           }
@@ -674,9 +564,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
   }
 
   sendGetReport(p, type) {
-    // this.request.apiData('report', 'g-report', p).subscribe(
-    //   data => {
-    // if (data['STATUS'] === 'Y') {
     if (type === 'pdf') {
       window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
     } else {
@@ -698,14 +585,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()
-    // } else {
-    //   this.gbl.topPage()
-    //   this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
-    //   this.distinctPeriode()
-    //   this.ref.markForCheck()
-    // }
-    //   }
-    // )
   }
 
   formInputCheckChanges() {

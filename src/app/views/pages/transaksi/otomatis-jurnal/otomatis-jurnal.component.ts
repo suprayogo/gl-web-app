@@ -822,7 +822,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
       }
       if (this.formValue.rekap_harian === '1') {
         this.tipe_setting.push('1')
-        this.tgl_jurnal = this.formValue.tgl_tran === '' ? '' : this.gbl.splitDate(parseInt(this.formValue.tgl_tran))
+        this.tgl_jurnal = this.formValue.tgl_tran === '' ? '' : this.gbl.splitDateLocal(parseInt(this.formValue.tgl_tran))
       } else {
         this.tgl_jurnal = ''
       }

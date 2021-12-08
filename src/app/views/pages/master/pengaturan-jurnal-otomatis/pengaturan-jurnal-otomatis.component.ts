@@ -974,7 +974,7 @@ export class PengaturanJurnalOtomatisComponent implements OnInit {
 
   refreshBrowse(message) {
     this.tableLoad = true
-    this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('jurnal-otomatis', 'g-setting-jurnal-otomatis-header', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (message !== '') {

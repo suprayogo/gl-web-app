@@ -19,6 +19,10 @@ export class JurnalOtomatisRequestService {
       httpBody.respondCode = 'GET-DATA-SETTING-JURNAL-OTOMATIS'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } if (data === 'g-setting-jurnal-otomatis-header') {
+      httpBody.respondCode = 'GET-DATA-SETTING-JURNAL-OTOMATIS-HEADER'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-setting-jurnal-otomatis-detail') {
       httpBody.respondCode = 'GET-DATA-SETTING-JURNAL-OTOMATIS-DETAIL'
       httpBody.requestParam = JSON.stringify(formData)

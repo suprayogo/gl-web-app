@@ -130,6 +130,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
   }
 
   // INFO PERUSAHAAN
+  lookupComp: any
   info_company = {
     alamat: '',
     kota: '',
@@ -326,23 +327,23 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       } else {
         let p = {}
-        // for (var i = 0; i < this.submitPeriodeData.length; i++) {
-        //   if (
-        //     (typeof this.formValueNR.bulan === "number" ? JSON.stringify(this.formValueNR.bulan) : this.formValueNR.bulan) === JSON.stringify(this.submitPeriodeData[i]['bulan_periode']) && 
-        //     (typeof this.formValueNR.tahun === "number" ? JSON.stringify(this.formValueNR.tahun) : this.formValueNR.tahun) === JSON.stringify(this.submitPeriodeData[i]['tahun_periode'])
-        //   ) {
-        //     p = JSON.parse(JSON.stringify(this.submitPeriodeData[i]))
-        //     break
-        //   }
-        // }
-
-        // if (p['id_periode'] !== undefined) {
+        for (var i = 0; i < this.lookupComp.length; i++) {
+          if (this.lookupComp[i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueNR['kode_cabang']) {
+            this.info_company.alamat = this.formValueNR['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'KOTA-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueNR['kode_cabang']) {
+            this.info_company.kota = this.formValueNR['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+          if (this.lookupComp[i]['kode_lookup'] === 'TELEPON-PERUSAHAAN' && this.lookupComp[i]['kode_cabang'] === this.formValueNR['kode_cabang']) {
+            this.info_company.telepon = this.formValueNR['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
+          }
+        }
         p['format_laporan'] = this.formValueNR['format_laporan']
         p['jenis_laporan'] = this.formValueNR['jenis_laporan']
         p['kode_perusahaan'] = this.kode_perusahaan
         p['nama_perusahaan'] = this.nama_perusahaan
-        p['periode_from'] = +this.formValueNR.bulan.length > 1 ? this.formValueNR.bulan : "0" + this.formValueNR.bulan
-        p['periode_to'] = +this.formValueNR.periode_berjarak.length > 1 ? this.formValueNR.periode_berjarak : "0" + this.formValueNR.periode_berjarak
+        p['periode_from'] = this.formValueNR.bulan.toString().padStart(2, "0")
+        p['periode_to'] = this.formValueNR.periode_berjarak.toString().padStart(2, "0")
         p['tahun_periode'] = this.formValueNR['tahun'].toString()
         p['kode_cabang'] = this.formValueNR['kode_cabang'] === "" ? undefined : this.formValueNR['kode_cabang']
         p['nama_cabang'] = this.formValueNR['nama_cabang'] === "" ? undefined : this.formValueNR['nama_cabang']
@@ -354,224 +355,16 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         this.request.apiData('report', 'g-data-neraca', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
-              let idata = data['RESULT'], d = [], res = [], totalTipe = {}, totalKategori = {}
-              // let nd = JSON.parse(idata['NR']), ld = JSON.parse(idata['LBRG']), saldo_lr = 0
-              // for (var i = 0; i < ld.length; i++) {
-              //   if (ld[i]['tipe_laporan'] === 'p') {
-              //     saldo_lr = saldo_lr + parseFloat(ld[i]['saldo'])
-              //   }
-
-              //   if (ld[i]['tipe_laporan'] === 'b') {
-              //     saldo_lr = saldo_lr - parseFloat(ld[i]['saldo'])
-              //   }
-              // }
-              // d = d.concat(nd)
-              // d.push({
-              //   tahun: nd.length > 0 ? nd[0]['tahun'] : "",
-              //   bulan: nd.length > 0 ? nd[0]['bulan'] : "",
-              //   group_besar: "ke",
-              //   nama_group_besar: "Kewajiban & Ekuitas",
-              //   group: "EKUITAS",
-              //   nama_group: "Ekuitas",
-              //   id_akun: "",
-              //   kode_akun: "LBRG",
-              //   nama_akun: "Laba Rugi",
-              //   tipe_akun: "0",
-              //   id_kategori_akun: "lbrg",
-              //   nama_kategori_akun: "Laba Rugi",
-              //   saldo_akhir: JSON.stringify(saldo_lr)
-              // })
-              // for (var i = 0; i < d.length; i++) {
-              //   if (totalTipe[d[i]['group']]) {
-              //     totalTipe[d[i]['group']] = totalTipe[d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
-              //   } else {
-              //     totalTipe[d[i]['group']] = parseFloat(d[i]['saldo_akhir'])
-              //   }
-
-              //   if (totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']]) {
-              //     totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] = totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] + parseFloat(d[i]['saldo_akhir'])
-              //   } else {
-              //     totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']] = parseFloat(d[i]['saldo_akhir'])
-              //   }
-
-              //   if (d[i]['group'] === "AKTIVA-LANCAR" || d[i]['group'] === "AKTIVA-TETAP") {
-              //     if (d[i]['group'] === "AKTIVA-LANCAR") {
-              //       d[i]['nama_group'] = "Aktiva Lancar"
-              //     } else if (d[i]['group'] === "AKTIVA-TETAP") {
-              //       d[i]['nama_group'] = "Aktiva Tetap"
-              //     }
-              //     d[i]['group_besar'] = "ak"
-              //     d[i]['nama_group_besar'] = "Aktiva"
-              //   }
-
-              //   if (d[i]['group'] === "KEWAJIBAN" || d[i]['group'] === "EKUITAS") {
-              //     if (d[i]['group'] === "KEWAJIBAN") {
-              //       d[i]['nama_group'] = "Kewajiban"
-              //     } else if (d[i]['group'] === "EKUITAS") {
-              //       d[i]['nama_group'] = "Ekuitas"
-              //     }
-              //     d[i]['group_besar'] = "ke"
-              //     d[i]['nama_group_besar'] = "Kewajiban & Ekuitas"
-              //   }
-
-              //   if (d[i]['group'] === "AKTIVA-LANCAR") {
-              //     d[i]['urutan'] = 1
-              //   }
-
-              //   if (d[i]['group'] === "AKTIVA-TETAP") {
-              //     d[i]['urutan'] = 2
-              //   }
-
-              //   if (d[i]['group'] === "KEWAJIBAN") {
-              //     d[i]['urutan'] = 3
-              //   }
-
-              //   if (d[i]['group'] === "EKUITAS") {
-              //     d[i]['urutan'] = 4
-              //   }
-              // }
-
-              // for (var i = 1; i < d.length; i++) {
-              //   if (d[i - 1]['group'] === 'KEWAJIBAN' && d[i]['group'] === 'EKUITAS') {
-              //     d.splice(i, 0, {
-              //       tahun: nd.length > 0 ? nd[0]['tahun'] : "",
-              //       bulan: nd.length > 0 ? nd[0]['bulan'] : "",
-              //       group_besar: "ke",
-              //       nama_group_besar: "Kewajiban & Ekuitas",
-              //       group: "EKUITAS",
-              //       nama_group: "Ekuitas",
-              //       id_akun: "",
-              //       kode_akun: "LBRG",
-              //       nama_akun: "Laba Rugi",
-              //       tipe_akun: "0",
-              //       id_kategori_akun: "lbrg",
-              //       nama_kategori_akun: "Laba Rugi",
-              //       saldo_akhir: JSON.stringify(saldo_lr),
-              //       urutan: 4
-              //     })
-              //     totalKategori["lbrg-EKUITAS"] = parseFloat(JSON.stringify(saldo_lr))
-              //   }
-              // }
-              // let totalAktiva = totalTipe['AKTIVA-LANCAR'] + totalTipe['AKTIVA-TETAP'],
-              //   totalKE = totalTipe['KEWAJIBAN'] + totalTipe['EKUITAS'] + saldo_lr
-
-              // d.sort(function(a, b) {
-              //   return a['urutan'] - b['urutan']
-              // })
-
-              // for (var i = 0; i < d.length; i++) {
-              //   let t = []
-
-              //   t.push(d[i]['group_besar'])
-              //   t.push(d[i]['nama_group_besar'])
-              //   t.push(d[i]['group'])
-              //   t.push(d[i]['nama_group'])
-              //   t.push(d[i]['id_kategori_akun'])
-              //   t.push(d[i]['nama_kategori_akun'])
-              //   t.push(d[i]['kode_akun'])
-              //   t.push(d[i]['nama_akun'])
-              //   t.push(parseFloat(d[i]['saldo_akhir']))
-              //   t.push(totalKategori[d[i]['id_kategori_akun'] + "-" + d[i]['group']])
-              //   t.push(totalTipe[d[i]['group']])
-              //   t.push(d[i]['group_besar'] === "ak" ? (totalAktiva == null || totalAktiva === undefined || isNaN(totalAktiva) ? 0 : totalAktiva) : (totalKE == null || totalKE === undefined || isNaN(totalKE) ? 0 : totalKE))
-
-              //   res.push(t)
-              // }
-
-              // res.sort(function (a, b) {
-              //   if (a[0] < b[0] || a[2] < b[2]) {
-              //     return -1;
-              //   }
-
-              //   if (a[0] > b[0] || a[2] > b[2]) {
-              //     return 1;
-              //   }
-
-              //   return 0;
-              // })
-
-              // Check range or not
-              // let repPeriod;
-
-              // if(p['bulan_periode'] === p['periode_berjarak']){
-              //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode']
-              // }else{
-              //   repPeriod = "Periode: " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['bulan_periode']))) + " " + p['tahun_periode'] + " - " + this.gbl.getNamaBulan(JSON.stringify(parseInt(p['periode_berjarak']))) + " " + p['tahun_periode'] 
-              // }
-
-              // // Set Report
-              // let rp = JSON.parse(JSON.stringify(this.reportObj))
-              // rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
-              // rp['REPORT_CODE'] = 'RPT-NERACA'
-              // rp['REPORT_NAME'] = 'Laporan Neraca'
-              // rp['REPORT_FORMAT_CODE'] = this.formValueNR['format_laporan']
-              // rp['JASPER_FILE'] = 'rptNeraca.jasper'
-              // rp['REPORT_PARAMETERS'] = {
-              //   USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
-              //   REPORT_COMPANY_ADDRESS: this.info_company.alamat,
-              //   REPORT_COMPANY_CITY: this.info_company.kota,
-              //   REPORT_COMPANY_TLPN: this.info_company.telepon,
-              //   REPORT_PERIODE: repPeriod
-              // }
-              // rp['FIELD_TITLE'] = [
-              //   "Tipe Besar",
-              //   "Nama Tipe Besar",
-              //   "Tipe",
-              //   "Nama Tipe",
-              //   "Kategori Akun",
-              //   "Nama Kategori Akun",
-              //   "Kode Akun",
-              //   "Nama Akun",
-              //   "Saldo",
-              //   "Total Kategori",
-              //   "Total Tipe",
-              //   "Total Tipe Besar"
-              // ]
-              // rp['FIELD_NAME'] = [
-              //   "tipeBesar",
-              //   "namaTipeBesar",
-              //   "tipe",
-              //   "namaTipe",
-              //   "kategoriAkun",
-              //   "namaKategoriAkun",
-              //   "kodeAkun",
-              //   "namaAkun",
-              //   "saldo",
-              //   "totalKategori",
-              //   "totalTipe",
-              //   "totalTipeBesar"
-              // ]
-              // rp['FIELD_TYPE'] = [
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "string",
-              //   "bigdecimal",
-              //   "bigdecimal",
-              //   "bigdecimal",
-              //   "bigdecimal"
-              // ]
-              // rp['FIELD_DATA'] = res
-              // p['bulan_periode'] = +p['bulan_periode']
-              // p['periode_berjarak'] = +p['periode_berjarak']
-
+              let idata = data['RESULT']
               this.sendGetReport(idata, this.formValueNR['format_laporan'])
             } else {
-              // p['bulan_periode'] = +p['bulan_periode']
-              // p['periode_berjarak'] = +p['periode_berjarak']
               this.gbl.openSnackBar('Gagal mendapatkan data neraca.', 'fail')
               this.distinctPeriode()
               this.ref.markForCheck()
             }
           }
         )
-        // }
       }
-
     }
   }
 
@@ -670,17 +463,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            for (var i = 0; i < data['RESULT'].length; i++) {
-              if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-                this.info_company.alamat = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-                this.info_company.kota = data['RESULT'][i]['nilai1']
-              }
-              if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-                this.info_company.telepon = data['RESULT'][i]['nilai1']
-              }
-            }
+            this.lookupComp = data['RESULT']
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
           }
@@ -732,38 +515,27 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
   }
 
   sendGetReport(p, type) {
-    // this.request.apiData('report', 'g-report', p).subscribe(
-    //   data => {
-    //     if (data['STATUS'] === 'Y') {
-          if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
-          } else {
-            if (type === 'xlsx') {
-              this.keyReportFormatExcel = p + '.xlsx'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            } else {
-              this.keyReportFormatExcel = p + '.xls'
-              setTimeout(() => {
-                let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
-                sbmBtn.click();
-              }, 100)
-            }
-          }
-          let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan']
-          this.checkKeyReport[rk] = p
-          this.distinctPeriode()
-          this.ref.markForCheck()
-    //     } else {
-    //       this.gbl.topPage()
-    //       this.gbl.openSnackBar('Gagal mendapatkan laporan. Mohon dicoba lagi nanti.', 'fail')
-    //       this.distinctPeriode()
-    //       this.ref.markForCheck()
-    //     }
-    //   }
-    // )
+    if (type === 'pdf') {
+      window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + p, "_blank");
+    } else {
+      if (type === 'xlsx') {
+        this.keyReportFormatExcel = p + '.xlsx'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      } else {
+        this.keyReportFormatExcel = p + '.xls'
+        setTimeout(() => {
+          let sbmBtn: HTMLElement = document.getElementById('fsubmit') as HTMLElement;
+          sbmBtn.click();
+        }, 100)
+      }
+    }
+    let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan']
+    this.checkKeyReport[rk] = p
+    this.distinctPeriode()
+    this.ref.markForCheck()
   }
 
   formInputCheckChanges() {

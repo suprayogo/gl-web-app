@@ -310,6 +310,27 @@ export class GlobalVariableService {
       formatYMD = `${years}-${months}-${days}`,
       formatMY = `${months}-${years}`,
       formatDMY = `${days}-${months}-${years}`
+      
+    if (specType != undefined) {
+      if (specType === 'M-Y') {
+        return formatMY
+      } else if (specType === 'D-M-Y') {
+        return formatDMY
+      }
+    } else {
+      return formatYMD
+    }
+  }
+
+  // SPLIT DATE LOCAL FROM MILISECOND TO FORMAT Y-M-D
+  splitDateLocal(date, specType?) {
+    let getDate = new Date(date),
+      years = getDate.getFullYear(),
+      months = ((getDate.getMonth() + 1) < 10) ? "0" + (getDate.getMonth() + 1) : getDate.getMonth() + 1,
+      days = (getDate.getDate() < 10) ? "0" + getDate.getDate() : getDate.getDate(),
+      formatYMD = `${years}-${months}-${days}`,
+      formatMY = `${months}-${years}`,
+      formatDMY = `${days}-${months}-${years}`
 
     if (specType != undefined) {
       if (specType === 'M-Y') {
