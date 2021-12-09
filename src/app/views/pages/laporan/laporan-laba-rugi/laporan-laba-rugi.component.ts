@@ -52,6 +52,21 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     },
   ]
 
+  opt_bentuk_laporan = [
+    {
+      label: 'Per Cabang',
+      value: '0'
+    },
+    {
+      label: 'ALL - Total Per Cabang',
+      value: '1'
+    },
+    {
+      label: 'ALL - Total Semua Cabang',
+      value: '2'
+    }
+  ]
+
   jenis_laporan = [
     {
       label: 'Rekap',
@@ -162,7 +177,8 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     nama_cabang: '',
     tahun: '',
     bulan: '',
-    periode_berjarak: ''
+    periode_berjarak: '',
+    bentuk_laporan: '0'
   }
 
   inputCabangDisplayColumns = [
@@ -233,6 +249,30 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
+      label: 'Bentuk Laporan',
+      id: 'bentuk_laporan',
+      type: 'combobox',
+      options: this.opt_bentuk_laporan,
+      valueOf: 'bentuk_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+      onSelectFunc: (data) => {
+        if (data !== '0') {
+          this.formValueLR.kode_cabang = ''
+          this.formValueLR.nama_cabang = ''
+          this.forminput.updateFormValue('kode_cabang', '')
+          this.forminput.updateFormValue('nama_cabang', '')
+        } else {
+          this.formValueLR.kode_cabang = this.cabang_utama.kode_cabang
+          this.formValueLR.nama_cabang = this.cabang_utama.nama_cabang
+          this.forminput.updateFormValue('kode_cabang', this.cabang_utama.kode_cabang)
+          this.forminput.updateFormValue('nama_cabang', this.cabang_utama.nama_cabang)
+        }
+      }
+    },
+    {
+      formWidth: 'col-5',
       label: 'Cabang',
       id: 'kode-cabang',
       type: 'inputgroup',
@@ -242,7 +282,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       browseType: 'kode_cabang',
       valueOf: 'kode_cabang',
       required: true,
-      readOnly: false,
+      readOnly: true,
       inputInfo: {
         id: 'nama-cabang',
         disabled: false,
@@ -258,6 +298,10 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       },
       update: {
         disabled: true
+      },
+      hiddenOn: {
+        valueOf: 'bentuk_laporan',
+        matchValue: ["1", "2", ""]
       }
     },
     {
@@ -402,11 +446,12 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       nama_cabang: this.cabang_utama.nama_cabang,
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'],
-      periode_berjarak: this.activePeriod['bulan_to']
+      periode_berjarak: this.activePeriod['bulan_to'],
+      bentuk_laporan: '0'
     }
 
     this.bulanLR = this.initBulan[this.formValueLR['tahun']]
-    this.inputLayoutLR.splice(4, 2,
+    this.inputLayoutLR.splice(5, 2,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -630,11 +675,12 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       nama_cabang: this.cabang_utama.nama_cabang,
       tahun: this.formValueLR.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueLR.tahun,
       bulan: this.formValueLR.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueLR.bulan,
-      periode_berjarak: this.formValueLR.periode_berjarak === "" ? this.activePeriod['bulan_to'] : this.formValueLR.periode_berjarak
+      periode_berjarak: this.formValueLR.periode_berjarak === "" ? this.activePeriod['bulan_to'] : this.formValueLR.periode_berjarak,
+      bentuk_laporan: this.formValueLR.bentuk_laporan
     }
     this.initBulan = tmp
     this.bulanLR = tmp[this.formValueLR.tahun]
-    this.inputLayoutLR.splice(0, 5,
+    this.inputLayoutLR.splice(0, 6,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -684,6 +730,30 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       },
       {
         formWidth: 'col-5',
+        label: 'Bentuk Laporan',
+        id: 'bentuk_laporan',
+        type: 'combobox',
+        options: this.opt_bentuk_laporan,
+        valueOf: 'bentuk_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+        onSelectFunc: (data) => {
+          if (data !== '0') {
+            this.formValueLR.kode_cabang = ''
+            this.formValueLR.nama_cabang = ''
+            this.forminput.updateFormValue('kode_cabang', '')
+            this.forminput.updateFormValue('nama_cabang', '')
+          } else {
+            this.formValueLR.kode_cabang = this.cabang_utama.kode_cabang
+            this.formValueLR.nama_cabang = this.cabang_utama.nama_cabang
+            this.forminput.updateFormValue('kode_cabang', this.cabang_utama.kode_cabang)
+            this.forminput.updateFormValue('nama_cabang', this.cabang_utama.nama_cabang)
+          }
+        }
+      },
+      {
+        formWidth: 'col-5',
         label: 'Cabang',
         id: 'kode-cabang',
         type: 'inputgroup',
@@ -693,7 +763,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         browseType: 'kode_cabang',
         valueOf: 'kode_cabang',
         required: true,
-        readOnly: false,
+        readOnly: true,
         inputInfo: {
           id: 'nama-cabang',
           disabled: false,
@@ -709,6 +779,10 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         },
         update: {
           disabled: true
+        },
+        hiddenOn: {
+          valueOf: 'bentuk_laporan',
+          matchValue: ["1", "2", ""]
         }
       },
       {
@@ -764,10 +838,11 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       nama_cabang: this.formValueLR['nama_cabang'],
       tahun: filterBulan,
       bulan: "",
-      periode_berjarak: ""
+      periode_berjarak: "",
+      bentuk_laporan: this.formValueLR['bentuk_laporan']
     }
     this.bulanLR = loopBulan[filterBulan]
-    this.inputLayoutLR.splice(4, 2,
+    this.inputLayoutLR.splice(5, 2,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -802,7 +877,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.formValueLR.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutLR.splice(4, 2,
+      this.inputLayoutLR.splice(5, 2,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',
@@ -836,7 +911,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.formValueLR.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutLR.splice(4, 2,
+      this.inputLayoutLR.splice(5, 2,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',

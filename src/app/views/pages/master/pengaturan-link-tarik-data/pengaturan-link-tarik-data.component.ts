@@ -304,7 +304,7 @@ export class PengaturanLinkTarikDataComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
-      label: 'Tipe User',
+      label: 'Tipe Proses',
       id: 'tipe-setting',
       type: 'combobox',
       options: this.tipe_setting,

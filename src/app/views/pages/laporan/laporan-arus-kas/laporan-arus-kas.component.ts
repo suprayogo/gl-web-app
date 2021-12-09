@@ -52,6 +52,21 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     },
   ]
 
+  opt_bentuk_laporan = [
+    {
+      label: 'Per Cabang',
+      value: '0'
+    },
+    {
+      label: 'ALL - Total Per Cabang',
+      value: '1'
+    },
+    {
+      label: 'ALL - Total Semua Cabang',
+      value: '2'
+    }
+  ]
+
   jenis_laporan = [
     {
       label: 'Rekap',
@@ -170,7 +185,8 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     tipe: 't',
     tahun: '',
     bulan: '',
-    periode_berjarak: ''
+    periode_berjarak: '',
+    bentuk_laporan: '0'
   }
 
   inputCabangDisplayColumns = [
@@ -229,6 +245,30 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
     },
     {
       formWidth: 'col-5',
+      label: 'Bentuk Laporan',
+      id: 'bentuk_laporan',
+      type: 'combobox',
+      options: this.opt_bentuk_laporan,
+      valueOf: 'bentuk_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+      onSelectFunc: (data) => {
+        if (data !== '0') {
+          this.formValueAK.kode_cabang = ''
+          this.formValueAK.nama_cabang = ''
+          this.forminput.updateFormValue('kode_cabang', '')
+          this.forminput.updateFormValue('nama_cabang', '')
+        } else {
+          this.formValueAK.kode_cabang = this.cabang_utama.kode_cabang
+          this.formValueAK.nama_cabang = this.cabang_utama.nama_cabang
+          this.forminput.updateFormValue('kode_cabang', this.cabang_utama.kode_cabang)
+          this.forminput.updateFormValue('nama_cabang', this.cabang_utama.nama_cabang)
+        }
+      }
+    },
+    {
+      formWidth: 'col-5',
       label: 'Cabang',
       id: 'kode-cabang',
       type: 'inputgroup',
@@ -238,7 +278,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       browseType: 'kode_cabang',
       valueOf: 'kode_cabang',
       required: true,
-      readOnly: false,
+      readOnly: true,
       inputInfo: {
         id: 'nama-cabang',
         disabled: false,
@@ -254,6 +294,10 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       },
       update: {
         disabled: true
+      },
+      hiddenOn: {
+        valueOf: 'bentuk_laporan',
+        matchValue: ["1", "2", ""]
       }
     },
     {
@@ -471,11 +515,12 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       tipe: 't',
       tahun: this.activePeriod['tahun_periode'],
       bulan: this.activePeriod['bulan_periode'],
-      periode_berjarak: this.activePeriod['bulan_to']
+      periode_berjarak: this.activePeriod['bulan_to'],
+      bentuk_laporan: '0'
     }
 
     this.bulanAK = this.initBulan[this.formValueAK['tahun']]
-    this.inputLayoutAK.splice(6, 5,
+    this.inputLayoutAK.splice(7, 6,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -708,11 +753,12 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       tipe: this.formValueAK.tipe,
       tahun: this.formValueAK.tahun === "" ? this.activePeriod['tahun_periode'] : this.formValueAK.tahun,
       bulan: this.formValueAK.bulan === "" ? this.activePeriod['bulan_periode'] : this.formValueAK.bulan,
-      periode_berjarak: this.formValueAK.periode_berjarak === "" ? this.activePeriod['bulan_to'] : this.formValueAK.periode_berjarak
+      periode_berjarak: this.formValueAK.periode_berjarak === "" ? this.activePeriod['bulan_to'] : this.formValueAK.periode_berjarak,
+      bentuk_laporan: this.formValueAK.bentuk_laporan
     }
     this.initBulan = tmp
     this.bulanAK = tmp[this.formValueAK.tahun]
-    this.inputLayoutAK.splice(5, 6,
+    this.inputLayoutAK.splice(6, 7,
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -772,10 +818,11 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       tipe: this.formValueAK['tipe'],
       tahun: filterBulan,
       bulan: "",
-      periode_berjarak: ""
+      periode_berjarak: "",
+      bentuk_laporan: this.formValueAK['bentuk_laporan']
     }
     this.bulanAK = loopBulan[filterBulan]
-    this.inputLayoutAK.splice(6, 5,
+    this.inputLayoutAK.splice(7, 6,
       {
         formWidth: 'col-5',
         label: 'Bulan Periode',
@@ -814,7 +861,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.formValueAK.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutAK.splice(6, 5,
+      this.inputLayoutAK.splice(7, 6,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',
@@ -852,7 +899,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.formValueAK.periode_berjarak = this.forminput.getData()['bulan']
       this.forminput.getData()['periode_berjarak'] = this.forminput.getData()['bulan']
 
-      this.inputLayoutAK.splice(6, 5,
+      this.inputLayoutAK.splice(7, 6,
         {
           formWidth: 'col-5',
           label: 'Bulan Periode',
