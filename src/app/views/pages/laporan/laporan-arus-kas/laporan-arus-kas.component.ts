@@ -405,7 +405,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
   getRpt() {
     this.loading = true
     this.ref.markForCheck()
-    let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
+    let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tipe'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan'] + this.formValueAK['bentuk_laporan']
     if (this.checkKeyReport[rk] !== undefined) {
       if (this.formValueAK['format_laporan'] === 'pdf') {
         window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -441,6 +441,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       }
       p['format_laporan'] = this.formValueAK['format_laporan']
       p['jenis_laporan'] = this.formValueAK['jenis_laporan']
+      p['bentuk_laporan'] = this.formValueAK.bentuk_laporan
       p['kode_perusahaan'] = this.kode_perusahaan
       if (this.formValueAK['tipe'] === "t") {
         if (this.getTahunTerendah() == parseInt(p['tahun_periode'])) {
@@ -479,6 +480,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       // p['report_format_code'] = this.formValueAK.format_laporan
       p['tipe_periode'] = this.formValueAK.tipe
       p['jenis_laporan'] = this.formValueAK.jenis_laporan
+      p['bentuk_laporan'] = this.formValueAK.bentuk_laporan
       p['periode_from'] = this.formValueAK.tipe === 'b' ? this.formValueAK.bulan.toString().padStart(2, "0") : ''
       p['periode_to'] = this.formValueAK.tipe === 'b' ? this.formValueAK.periode_berjarak.toString().padStart(2, "0") : ''
       p['tahun_periode'] = this.formValueAK['tahun'].toString()
@@ -677,7 +679,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
         }, 100)
       }
     }
-    let rk = this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan']
+    let rk = this.formValueAK['metode_laporan'] + this.formValueAK['tipe'] + this.formValueAK['tahun'] + this.formValueAK['bulan'] + this.formValueAK['periode_berjarak'] + this.formValueAK['kode_cabang'] + this.formValueAK['format_laporan'] + this.formValueAK['jenis_laporan'] + this.formValueAK['bentuk_laporan']
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()

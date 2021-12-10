@@ -348,7 +348,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
       this.formValueNR = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan']
+      let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan'] + this.formValueNR['bentuk_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueNR['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -384,6 +384,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         }
         p['format_laporan'] = this.formValueNR['format_laporan']
         p['jenis_laporan'] = this.formValueNR['jenis_laporan']
+        p['bentuk_laporan'] = this.formValueNR['bentuk_laporan']
         p['kode_perusahaan'] = this.kode_perusahaan
         p['nama_perusahaan'] = this.nama_perusahaan
         p['periode_from'] = this.formValueNR.bulan.toString().padStart(2, "0")
@@ -577,7 +578,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
         }, 100)
       }
     }
-    let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan']
+    let rk = this.formValueNR['tahun'] + this.formValueNR['bulan'] + this.formValueNR['periode_berjarak'] + this.formValueNR['kode_cabang'] + this.formValueNR['format_laporan'] + this.formValueNR['jenis_laporan'] + this.formValueNR['bentuk_laporan']
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()

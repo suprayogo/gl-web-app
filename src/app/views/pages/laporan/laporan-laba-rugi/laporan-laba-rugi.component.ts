@@ -375,7 +375,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       this.formValueLR = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan']
+      let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan'] + this.formValueLR['bentuk_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueLR['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -411,6 +411,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         }
         p['format_laporan'] = this.formValueLR['format_laporan']
         p['jenis_laporan'] = this.formValueLR['jenis_laporan']
+        p['bentuk_laporan'] = this.formValueLR['bentuk_laporan']
         p['kode_perusahaan'] = this.kode_perusahaan
         p['nama_perusahaan'] = this.nama_perusahaan
         p['periode_from'] = this.formValueLR.bulan.toString().padStart(2, "0")
@@ -602,7 +603,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         }, 100)
       }
     }
-    let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan']
+    let rk = this.formValueLR['tahun'] + this.formValueLR['bulan'] + this.formValueLR['periode_berjarak'] + this.formValueLR['kode_cabang'] + this.formValueLR['format_laporan'] + this.formValueLR['jenis_laporan'] + this.formValueLR['bentuk_laporan']
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()
