@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-xl-12">
+        <kt-portlet>
+            <kt-portlet-header [title]="'Worklist'"></kt-portlet-header>
+            <kt-portlet-body>
+                <div class="kt-section" *ngIf="loading">
+                    <kt-loading></kt-loading>
+                </div>
+                <div *ngIf="!loading">
+                    <kt-datatable-ag-grid [tableColumn]="tableColumn" [tableData]="tableContain"
+                        [tableRules]="tableRule" (selectRowEvent)="selectRowData($event)" [containerHeight]=405>
+                    </kt-datatable-ag-grid>
+                </div>
+                <div *ngIf="!loading" style="margin-bottom: 5px;">
+                    <kt-forminput [namaTombol]="'Refresh'" (onSubmit)="onSubmit($event)" [noCancel]="true"></kt-forminput>
+                </div>
+            </kt-portlet-body>
+        </kt-portlet>
+    </div>
+</div>

@@ -47,7 +47,7 @@
       <div class="button-container">
         <div *ngFor="let x of btnLayout">
           <div *ngIf="x.btnCondition()">
-            <button type="button" [className]="x.btnClass" (click)="x.btnClick(formValue)">{{ x.btnLabel }}</button>
+            <button type="button" [className]="x.btnClass" (click)="x.clickCondition != undefined || x.clickCondition != null ? closeDialog(true) : x.btnClick(formValue)">{{ x.btnLabel }}</button>
           </div>
         </div>
       </div>

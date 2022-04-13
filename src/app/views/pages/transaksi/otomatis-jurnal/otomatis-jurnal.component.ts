@@ -562,7 +562,7 @@ export class OtomatisJurnalComponent implements OnInit, AfterViewInit {
 
   // GET DATA CABANG
   getCabang() {
-    this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+    this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputCabangData = data['RESULT']

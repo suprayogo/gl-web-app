@@ -23,10 +23,13 @@ export class RequestDataService {
     headers: this.httpHeader.httpHeader
   }
 
-  baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // DEVELOP
-  // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gltax' // DEVELOP TAX
-  // baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // LIVE SSI
-  // baseURL = 'https://sz1nahtisg.execute-api.ap-southeast-1.amazonaws.com/pro/gltax' // LIVE MPS
+  // PT. SSI
+  baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // SSI - DEVELOP
+  // baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // SSI - PRODUCTION
+
+  // PT. MPS, PT. CMU
+  // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // (MPS, CMU) - DEVELOP
+  // baseURL = 'https://sz1nahtisg.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // (MPS, CMU) - PRODUCTION
 
   constructor(
     //Variables

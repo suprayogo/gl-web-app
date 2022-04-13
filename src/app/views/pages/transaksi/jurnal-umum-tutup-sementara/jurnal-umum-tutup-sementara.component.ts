@@ -1113,7 +1113,7 @@ export class JurnalUmumTutupSementaraComponent implements OnInit {
         }
       )
 
-      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']

@@ -323,6 +323,8 @@
             *ngIf="!noButtonSave && btnWL">{{ btnReject }}</button>
           <button type="button" class="btn btn-brand margin-left-10" (click)="revision()"
             *ngIf="!noButtonSave && btnWL">{{ btnRevision }}</button>
+          <button type="button" *ngFor="let y of btnOptionBottom" [className]="y.btnClass" [ngStyle]="y.btnStyle"
+            (click)="y.btnCond ? y.btnClick(closeDialog()) : y.btnClick()">{{ y.btnLabel }}</button>
           <button type="button" class="btn btn-secondary margin-left-10" (click)="closeDialog()"
             *ngIf="!noButtonSave">Batal</button>
           <button type="button" *ngFor="let x of buttonLayout" [className]="x.btnClass"

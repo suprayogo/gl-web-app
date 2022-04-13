@@ -511,12 +511,12 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
           if (data['STATUS'] === 'Y') {
             this.lookupComp = data['RESULT']
           } else {
-            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
+            this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'fail')
           }
         }
       )
 
-      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']

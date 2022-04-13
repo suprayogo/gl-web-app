@@ -485,7 +485,7 @@ export class RekapKasComponent implements OnInit, AfterViewInit {
         }
       )
 
-      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']

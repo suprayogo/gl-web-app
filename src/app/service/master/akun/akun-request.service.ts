@@ -15,19 +15,37 @@ export class AkunRequestService {
       httpBody.respondCode = 'GET-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-akun-level') {
+      httpBody.respondCode = 'GET-DATA-AKUN-BY-LEVEL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-akun-dc') {
-      this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // DEVELOP
-      // this.url = 'https://a2zynpc7te.execute-api.ap-southeast-1.amazonaws.com/dev/dctax' // DEVELOP TAX
-      // this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // LIVE SSI
-      // this.url = ' https://emvbm624xe.execute-api.ap-southeast-1.amazonaws.com/pro/dctax' // LIVE MPS
+      // PT. SSI
+      this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
+      // this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
+
+      // PT. MPS
+      // this.url = 'https://a2zynpc7te.execute-api.ap-southeast-1.amazonaws.com/dev/dctax' // MPS - DEVELOPMENT
+      // this.url = 'https://kv9zhs3sn6.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // MPS - PRODUCTION
+
+      // PT. CMU
+      // this.url = 'https://sdscakc9e5.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // CMU - DEVELOPMENT
+      // this.url = 'https://m46ps086ih.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // CMU - PRODUCTION
       httpBody.respondCode = 'GET-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     } else if (data === 'g-kat-akun-dc') {
-      this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // DEVELOP
-      // this.url = 'https://a2zynpc7te.execute-api.ap-southeast-1.amazonaws.com/dev/dctax' // DEVELOP TAX
-      // this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // LIVE SSI
-      // this.url = ' https://emvbm624xe.execute-api.ap-southeast-1.amazonaws.com/pro/dctax' // LIVE MPS
+      // PT. SSI
+      this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
+      // this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
+
+      // PT. MPS
+      // this.url = 'https://a2zynpc7te.execute-api.ap-southeast-1.amazonaws.com/dev/dctax' // MPS - DEVELOPMENT
+      // this.url = 'https://kv9zhs3sn6.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // MPS - PRODUCTION
+
+      // PT. CMU
+      // this.url = 'https://sdscakc9e5.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // CMU - DEVELOPMENT
+      // this.url = 'https://m46ps086ih.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // CMU - PRODUCTION
       httpBody.respondCode = 'GET-DATA-KATEGORI-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)

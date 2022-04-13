@@ -55,6 +55,7 @@ import { RekapPettyCashComponent } from './rekap-petty-cash/rekap-petty-cash.com
 import { LaporanListComponent } from './laporan-list/laporan-list.component';
 import { RekapTranComponent } from './rekap-tran/rekap-tran.component';
 import { LaporanCoaComponent } from './laporan-coa/laporan-coa.component';
+import { LaporanAnalisaComponent } from './laporan-analisa/laporan-analisa.component';
 
 const routes: Routes = [
   {
@@ -108,6 +109,10 @@ const routes: Routes = [
   {
     path: 'coa',
     component: LaporanCoaComponent
+  },
+  {
+    path: 'analisa',
+    component: LaporanAnalisaComponent
   }
 ]
 
@@ -173,7 +178,8 @@ const routes: Routes = [
     RekapBankComponent,
     RekapPettyCashComponent,
     RekapTranComponent,
-    LaporanCoaComponent
+    LaporanCoaComponent,
+    LaporanAnalisaComponent
   ]
 })
 export class LaporanModule { }

@@ -17,6 +17,7 @@ export class CabangRequestService {
       return this.get(httpBody, options)
     } else if (data === 'g-cabang-akses') {
       httpBody.respondCode = 'GET-DATA-CABANG-AKSES'
+      httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }
   }

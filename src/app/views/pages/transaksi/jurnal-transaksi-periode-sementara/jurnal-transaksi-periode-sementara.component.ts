@@ -1345,7 +1345,7 @@ export class JurnalTransaksiPeriodeSementaraComponent implements OnInit, AfterVi
   madeRequest() {
     if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && !this.requestMade) {
       this.requestMade = true
-      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']

@@ -73,6 +73,10 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
       value: '0'
     },
     {
+      label: 'Rekap Analisa',
+      value: '3'
+    },
+    {
       label: 'Perincian Perpertual',
       value: '1'
     },
@@ -541,7 +545,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         }
       )
 
-      this.request.apiData('cabang', 'g-cabang-akses').subscribe(
+      this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputCabangData = data['RESULT']

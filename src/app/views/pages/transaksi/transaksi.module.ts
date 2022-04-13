@@ -50,6 +50,7 @@ import { JurnalUmumTutupSementaraComponent } from './jurnal-umum-tutup-sementara
 import { JurnalTransaksiPeriodeSementaraComponent } from './jurnal-transaksi-periode-sementara/jurnal-transaksi-periode-sementara.component';
 import { JurnalTemplateTransaksiComponent } from './jurnal-template-transaksi/jurnal-template-transaksi.component';
 import { BatchComponent } from './batch/batch.component';
+import { DaftarKerjaComponent } from './daftar-kerja/daftar-kerja.component';
 
 const routes: Routes = [
   {
@@ -92,6 +93,10 @@ const routes: Routes = [
   {
     path: 'jurnal-batch',
     component: BatchComponent
+  },
+  {
+    path: 'daftar-kerja',
+    component: DaftarKerjaComponent
   }
 ]
 
@@ -161,7 +166,8 @@ const routes: Routes = [
     JurnalUmumTutupSementaraComponent,
     JurnalTransaksiPeriodeSementaraComponent,
     JurnalTemplateTransaksiComponent,
-    BatchComponent
+    BatchComponent,
+    DaftarKerjaComponent
   ]
 })
 export class TransaksiModule { }

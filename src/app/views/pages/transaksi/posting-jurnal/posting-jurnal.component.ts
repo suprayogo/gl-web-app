@@ -1108,7 +1108,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           this.forminputTPS.getData().bulan_periode = ''
           this.formValueTPS.bulan_periode = ''
 
-          this.filterMonth(v, 'TP')
+          this.filterMonth(v, 'TPS')
         }
       },
       {

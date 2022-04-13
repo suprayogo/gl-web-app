@@ -19,7 +19,15 @@ export class WorklistRequestService {
       httpBody.respondCode = 'APR-DATA-WORKLIST'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } 
+    } else if (data === 'g-wl-tran-pbpk') {
+      httpBody.respondCode = 'GET-DATA-PENGAJUAN-BUKA-PERIODE-KASIR-ALL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-wl-tran-pbj') {
+      httpBody.respondCode = 'GET-DATA-JURNAL-BATCH'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    }
   }
 
   get(httpBody, options) {

@@ -35,10 +35,6 @@ export class JurnalRequestService {
       httpBody.respondCode = 'UPT-DATA-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'c-jurnal') {
-      httpBody.respondCode = 'CNL-DATA-JURNAL'
-      httpBody.requestParam = JSON.stringify(formData)
-      return this.get(httpBody, options)
     } else if (data === 'i-jurnal-transaksi') {
       httpBody.respondCode = 'SET-DATA-JURNAL-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
@@ -47,12 +43,23 @@ export class JurnalRequestService {
       httpBody.respondCode = 'UPT-DATA-JURNAL-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'c-jurnal-transaksi') {
+    } else if (data === 'g-riwayat-ubah-jurnal') {
+      httpBody.respondCode = 'GET-DATA-RIWAYAT-PERUBAHAN-JURNAL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'u-batal-tran-jurnal') {
+      httpBody.respondCode = 'SET-DATA-BATAL-JURNAL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    }
+
+    // NOT USE
+    else if (data === 'c-jurnal-transaksi') {
       httpBody.respondCode = 'CNL-DATA-JURNAL-TRANSAKSI'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
-    } else if (data === 'g-riwayat-ubah-jurnal') {
-      httpBody.respondCode = 'GET-DATA-RIWAYAT-PERUBAHAN-JURNAL'
+    } else if (data === 'c-jurnal') {
+      httpBody.respondCode = 'CNL-DATA-JURNAL'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
     }

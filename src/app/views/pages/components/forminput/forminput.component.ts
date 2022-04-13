@@ -65,6 +65,7 @@ export class ForminputComponent implements OnInit {
   @Input() namaTombolPrintDoc: any;
   @Input() namaTombolPrintDoc2: any;
   @Input() namaStatus: any;
+  @Input() styleStatus: any;
 
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
@@ -84,6 +85,9 @@ export class ForminputComponent implements OnInit {
   status_name = 'Batal Tran'
   errorType: any;
   tmpFocus: any;
+  style: any = {
+    'background': '#FD3648'
+  }
 
   //Range Datepicker
   hoveredDate: NgbDate | null = null;
@@ -108,6 +112,7 @@ export class ForminputComponent implements OnInit {
     this.button_name_print_doc = this.namaTombolPrintDoc === undefined ? this.button_name_print_doc : this.namaTombolPrintDoc
     this.button_name_print_doc2 = this.namaTombolPrintDoc2 === undefined ? this.button_name_print_doc2 : this.namaTombolPrintDoc2
     this.status_name = this.namaStatus === undefined ? this.status_name : this.namaStatus
+    this.style = this.styleStatus === undefined ? this.style : this.styleStatus
   }
 
   getData() {
@@ -202,6 +207,12 @@ export class ForminputComponent implements OnInit {
   checkChanges() {
     this.cFormValue = JSON.parse(JSON.stringify(this.formValue))
   }
+
+  checkChangesStatus() {
+    this.status_name = this.namaStatus
+    this.style = this.styleStatus
+  }
+
 
   updateFormValue(valueOf, data) {
     this.cFormValue[valueOf] = data

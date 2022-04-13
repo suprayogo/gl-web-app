@@ -64,6 +64,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
   checkPeriod: any;
   periodeTS: any;  // <-- TS = TUTUP SEMENTARA
   periode_akses: any;
+  // ---------------
+  namaStatus: any = '';
+  styleStatus: any = {};
 
   // CONFIRMATION DIALOG VARIABLE
   c_buttonLayout = [
@@ -742,11 +745,11 @@ export class BatchComponent implements OnInit, AfterViewInit {
   displayedColumnsTable = [];
   displayedColumnsTableUmum = [
     {
-      label: 'No. Jurnal',
+      label: 'No. Transaksi',
       value: 'no_tran'
     },
     {
-      label: 'Tgl. Jurnal',
+      label: 'Tgl. Transaksi',
       value: 'tgl_tran',
       date: true
     },
@@ -757,6 +760,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
     {
       label: 'Keterangan',
       value: 'keterangan'
+    },
+    {
+      label: 'Status Pengajuan Batal',
+      value: 'pengajuan_batal_status_name'
     },
     {
       label: 'Status Batal',
@@ -813,6 +820,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
       value: 'keterangan'
     },
     {
+      label: 'Status Pengajuan Batal',
+      value: 'pengajuan_batal_status_name'
+    },
+    {
       label: 'Status Batal',
       value: 'batal_status_name'
     },
@@ -838,6 +849,16 @@ export class BatchComponent implements OnInit, AfterViewInit {
   browseInterface = {}
   browseData = []
   browseDataRules = [
+    {
+      target: 'batal_pengajuan_approval_status',
+      replacement: {
+        'AP': 'Approved',
+        'IP': 'In progress',
+        'RJ': 'Reject',
+        '': ''
+      },
+      redefined: 'pengajuan_batal_status_name'
+    },
     {
       target: 'batal_status',
       replacement: {
@@ -1022,7 +1043,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // GET DATA AKUN
   reqDataAkun(type) {
-    this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('akun', 'g-akun-level', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputAkunData = data['RESULT']
@@ -1348,9 +1369,23 @@ export class BatchComponent implements OnInit, AfterViewInit {
     }
     this.insertAt(this.inputLayout, 6, 1, this.setFormLayout('ket'))
     this.onUpdate = true;
-    this.enableStatus = x['batal_status'] == false ? false : true
     this.enableCancel = this.enableEdit == true ? true : false
     this.disableSubmit = this.enableEdit == true ? false : true
+    if (x['batal_status']) {
+      this.enableStatus = true
+      this.namaStatus = 'Status Transaksi: BATAL'
+      this.styleStatus = {
+        'background': '#FD3648'
+      }
+    } else {
+      if (x['batal_pengajuan_approval_status'] === 'IP') {
+        this.enableStatus = true
+        this.namaStatus = 'Pengajuan Batal: IN PROGRESS'
+        this.styleStatus = {
+          'background': '#5785C1'
+        }
+      }
+    }
     this.getBackToInput();
   }
 
@@ -1411,6 +1446,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     this.selectedTab = 0;
     this.getDetail()
     this.formInputCheckChanges()
+    this.formInputCheckChangesStatus()
   }
 
   // FORM SUBMIT
@@ -1633,11 +1669,11 @@ export class BatchComponent implements OnInit, AfterViewInit {
       id_tran: '',
       no_tran: '',
       no_jurnal: '',
-      tgl_tran: this.statSubmit == true ? 
-            spec != undefined && spec === 'batal' ? 
-            JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")) : 
-            this.formValue.tgl_tran : 
-            JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")),
+      tgl_tran: this.statSubmit == true ?
+        spec != undefined && spec === 'batal' ?
+          JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")) :
+          this.formValue.tgl_tran :
+        JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")),
       id_akses_periode: this.formValue.id_akses_periode,
       kode_cabang: this.formValue.kode_cabang,
       nama_cabang: this.formValue.nama_cabang,
@@ -1729,17 +1765,23 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       let endRes = {
         kode_perusahaan: this.kode_perusahaan,
+        kode_cabang: this.formValue.kode_cabang,
         id_tran: this.formValue.id_tran,
         batal_alasan: this.batal_alasan
       }
       this.dialog.closeAll()
-      this.request.apiData('jurnal', 'c-jurnal', endRes).subscribe(
+      this.request.apiData('jurnal', 'u-batal-tran-jurnal', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel('batal')
             this.ref.markForCheck()
             this.browseNeedUpdate = true
-            this.refreshBrowse('BERHASIL DIBATALKAN')
+            if (data['RESULT'] === 'APPROVED') {
+              this.refreshBrowse('Sukses! transaksi dibatalkan.')
+            } else {
+              this.refreshBrowse('Sukses! batal transaksi perlu approval.')
+            }
+
           } else {
             this.loading = false;
             this.ref.markForCheck()
@@ -2812,6 +2854,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck()
       this.forminput === undefined ? null : this.forminput.checkChanges()
       // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
+    }, 1)
+  }
+
+  formInputCheckChangesStatus() {
+    setTimeout(() => {
+      this.ref.markForCheck()
+      this.forminput.checkChangesStatus()
     }, 1)
   }
 

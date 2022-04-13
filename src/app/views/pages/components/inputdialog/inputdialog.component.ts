@@ -25,6 +25,7 @@ export class InputdialogComponent implements OnInit {
   rightLayout: boolean;
   buttonLayout: Object[] = [];
   btnOption: Object[] = [];
+  btnOptionBottom: Object[] = [];
   formValue: Object = {};
   inputPipe: any;
   onBlur: any;
@@ -107,6 +108,7 @@ export class InputdialogComponent implements OnInit {
     this.rightInputLayout = this.parameter.rightInputLayout
     this.buttonLayout = this.parameter.buttonLayout
     this.btnOption = this.parameter.btnOption
+    this.btnOptionBottom = this.parameter.btnOptionBottom
     this.inputPipe = this.parameter.inputPipe
     this.onBlur = this.parameter.onBlur
     this.openDialog = this.parameter.openDialog

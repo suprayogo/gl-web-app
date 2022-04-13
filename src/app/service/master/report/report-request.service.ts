@@ -71,6 +71,10 @@ export class ReportRequestService {
       httpBody.respondCode = 'GET-DATA-REPORT-COA'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-rpt-analisa') {
+      httpBody.respondCode = 'GET-DATA-REPORT-ANALISA'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     } else if (data === 'g-report') {
       httpBody.respondCode = 'GET-REPORT'
       httpBody.requestParam = JSON.stringify(formData)
