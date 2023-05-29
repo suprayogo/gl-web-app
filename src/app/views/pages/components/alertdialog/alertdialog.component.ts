@@ -26,13 +26,13 @@ export class AlertdialogComponent implements OnInit {
     this.title = this.parameter.title === undefined || this.parameter.title == null ? '' : this.parameter.title
   }
 
-  closeDialog(force?: boolean){
+  closeDialog(force?: boolean) {
     this.dialogRef.close()
-    if(this.parameter.onCloseFunc !== undefined && this.parameter.onCloseFunc != null){
+    if (this.parameter.onCloseFunc !== undefined && this.parameter.onCloseFunc != null) {
       this.parameter.onCloseFunc()
     }
-    if(force != true){
-      if(this.parameter.closeDialogFunc !== undefined && this.parameter.closeDialogFunc != null){
+    if (force != true) {
+      if (this.parameter.closeDialogFunc !== undefined && this.parameter.closeDialogFunc != null) {
         this.parameter.closeDialogFunc()
       }
     }

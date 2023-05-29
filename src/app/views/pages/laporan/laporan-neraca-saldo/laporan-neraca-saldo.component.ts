@@ -52,6 +52,17 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
     },
   ]
 
+  jenis_laporan = [
+    {
+      label: 'Semua Akun',
+      value: '01'
+    },
+    {
+      label: 'Hanya yang bernilai',
+      value: '02'
+    }
+  ]
+
   // VARIABLES
   keyReportFormatExcel: any;
   nama_tombol: any;
@@ -141,6 +152,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
   // Input Name
   formValueNS = {
+    jenis_laporan: '01',
     format_laporan: 'xlsx',
     kode_cabang: '',
     nama_cabang: '',
@@ -191,6 +203,18 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
   // Layout Form
   inputLayoutNS = [
+    {
+      // labelWidth: 'col-4',
+      formWidth: 'col-5',
+      label: 'Jenis Laporan',
+      id: 'jenis-laporan',
+      type: 'combobox',
+      options: this.jenis_laporan,
+      valueOf: 'jenis_laporan',
+      required: true,
+      readOnly: false,
+      disabled: false,
+    },
     {
       // labelWidth: 'col-4',
       formWidth: 'col-5',
@@ -332,7 +356,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
       this.formValueNS = this.forminput.getData()
       this.loading = true
       this.ref.markForCheck()
-      let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan']
+      let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan'] + this.formValueNS['jenis_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueNS['format_laporan'] === 'pdf') {
           window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
@@ -366,6 +390,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
             this.info_company.telepon = this.formValueNS['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
           }
         }
+        p['jenis_laporan'] = this.formValueNS['jenis_laporan']
         p['format_laporan'] = this.formValueNS['format_laporan']
         p['kode_perusahaan'] = this.kode_perusahaan
         p['nama_perusahaan'] = this.nama_perusahaan
@@ -396,6 +421,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
   //Reset Value
   resetFormNS() {
     this.formValueNS = {
+      jenis_laporan: '01',
       format_laporan: 'xlsx',
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
@@ -582,7 +608,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
         }, 100)
       }
     }
-    let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan']
+    let rk = this.formValueNS['tahun'] + this.formValueNS['bulan'] + this.formValueNS['periode_berjarak'] + this.formValueNS['kode_cabang'] + this.formValueNS['kode_akun'] + this.formValueNS['format_laporan'] + this.formValueNS['jenis_laporan']
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()
@@ -650,6 +676,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
     this.tahun = outputTahun
 
     this.formValueNS = {
+      jenis_laporan: this.formValueNS.jenis_laporan,
       format_laporan: this.formValueNS.format_laporan,
       kode_cabang: this.cabang_utama.kode_cabang,
       nama_cabang: this.cabang_utama.nama_cabang,
@@ -663,6 +690,18 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
     this.initBulan = tmp
     this.bulanNS = tmp[this.formValueNS.tahun]
     this.inputLayoutNS.splice(0, 5,
+      {
+        // labelWidth: 'col-4',
+        formWidth: 'col-5',
+        label: 'Jenis Laporan',
+        id: 'jenis-laporan',
+        type: 'combobox',
+        options: this.jenis_laporan,
+        valueOf: 'jenis_laporan',
+        required: true,
+        readOnly: false,
+        disabled: false,
+      },
       {
         // labelWidth: 'col-4',
         formWidth: 'col-5',
@@ -780,6 +819,7 @@ export class LaporanNeracaSaldoComponent implements OnInit, AfterViewInit {
 
   getBulan(filterBulan, loopBulan) {
     this.formValueNS = {
+      jenis_laporan: this.formValueNS['jenis_laporan'],
       format_laporan: this.formValueNS['format_laporan'],
       kode_cabang: this.formValueNS['kode_cabang'],
       nama_cabang: this.formValueNS['nama_cabang'],

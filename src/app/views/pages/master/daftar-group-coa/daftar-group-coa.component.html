@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-xl-12">
+        <!-- Start of a Content -->
+        <kt-portlet>
+            <kt-portlet-header [title]="'Daftar Group COA'"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Input</b></p>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section" *ngIf="!loading">
+                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue" [namaTombol]="'Simpan'"
+                                (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" [onUpdate]="onUpdate"
+                                [enableDelete]="enableDelete" (deleteData)="openCDialog()"></kt-forminput>
+                        </div>
+                    </kt-portlet-body>
+                </mat-tab>
+
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Browse</b></p>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section" *ngIf="tableLoad">
+                            <kt-loading></kt-loading>
+                        </div>
+
+                        <div *ngIf="!tableLoad">
+                            <kt-datatable-ag-grid [tableColumn]="tableColumn" [tableData]="tableData"
+                                [tableRules]="tableRules" (selectRowEvent)="selectRow($event)" [containerHeight]=400>
+                            </kt-datatable-ag-grid>
+                        </div>
+                    </kt-portlet-body>
+                </mat-tab>
+            </mat-tab-group>
+        </kt-portlet>
+        <!-- End of a Content -->
+    </div>
+</div>

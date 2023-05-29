@@ -51,14 +51,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
   // -----------------
   requestMade: boolean = false;
   statSubmit: boolean = false;
-  batal_alasan: any = "";
+  batal_alasan: any = '';
   // -----------------
-  id_kasir: any = "";
+  id_kasir: any = '';
   dayLimit: any = 0;
   // ----------------
   cabang_utama: any;
   // ----------------
-  id_periode = "";
+  id_periode = '';
   daftar_periode_kasir: any = [];
   // ----------------
   checkPeriod: any;
@@ -143,46 +143,46 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // FORMAT CETAKAN DOKUMEN
   reportObj = {
-    REPORT_COMPANY: "",
-    REPORT_CODE: "DOK-DELIVERY-ORDER",
-    REPORT_NAME: "Delivery Order",
-    REPORT_FORMAT_CODE: "pdf",
-    JASPER_FILE: "rptDokDeliveryOrder.jasper",
+    REPORT_COMPANY: '',
+    REPORT_CODE: 'DOK-DELIVERY-ORDER',
+    REPORT_NAME: 'Delivery Order',
+    REPORT_FORMAT_CODE: 'pdf',
+    JASPER_FILE: 'rptDokDeliveryOrder.jasper',
     REPORT_PARAMETERS: {
     },
     FIELD_NAME: [
-      "noTran",
-      "tglTran",
-      "kodePengirim",
-      "namaPengirim",
-      "alamatPengirim",
-      "kotaPengirim",
-      "teleponPengirim",
-      "kodePenerima",
-      "namaPenerima",
-      "alamatPenerima",
-      "kotaPenerima",
-      "teleponPenerima",
-      "noResi",
-      "namaBarang",
-      "jumlahBarang"
+      'noTran',
+      'tglTran',
+      'kodePengirim',
+      'namaPengirim',
+      'alamatPengirim',
+      'kotaPengirim',
+      'teleponPengirim',
+      'kodePenerima',
+      'namaPenerima',
+      'alamatPenerima',
+      'kotaPenerima',
+      'teleponPenerima',
+      'noResi',
+      'namaBarang',
+      'jumlahBarang'
     ],
     FIELD_TYPE: [
-      "string",
-      "date",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "bigdecimal"
+      'string',
+      'date',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'bigdecimal'
     ],
     FIELD_DATA: []
   }
@@ -401,15 +401,15 @@ export class BatchComponent implements OnInit, AfterViewInit {
         disabled: true
       },
       onSelectFunc: (value) => {
-        this.forminput.getData()['periode'] = "0"
+        this.forminput.getData()['periode'] = '0'
         this.setValPeriodType(value)
-        if (value === "2") {
+        if (value === '2') {
           this.resetForm()
           this.displayedColumnsTable = this.displayedColumnsTableKasir
           this.onSubPrintDoc = false
           this.onSubPrintDoc2 = true
-          this.forminput.getData()['tgl_tran'] = ""
-          this.formValue.tgl_tran = ""
+          this.forminput.getData()['tgl_tran'] = ''
+          this.formValue.tgl_tran = ''
           this.tanggalJurnalKasir('')
           this.browseNeedUpdate = true
         } else {
@@ -434,13 +434,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
           this.onSubPrintDoc = true
           this.onSubPrintDoc2 = false
           this.displayedColumnsTable = this.displayedColumnsTableUmum
-          this.forminput.getData()['tgl_tran'] = ""
-          this.formValue.tgl_tran = ""
-          // this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01"))
-          this.forminput.getData()['id_jenis_transaksi'] = ""
-          this.formValue.id_jenis_transaksi = ""
-          this.forminput.getData()['tipe_laporan'] = ""
-          this.formValue.tipe_laporan = ""
+          this.forminput.getData()['tgl_tran'] = ''
+          this.formValue.tgl_tran = ''
+          // this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + '-' + this.periode_aktif['bulan_periode'] + '-01'))
+          this.forminput.getData()['id_jenis_transaksi'] = ''
+          this.formValue.id_jenis_transaksi = ''
+          this.forminput.getData()['tipe_laporan'] = ''
+          this.formValue.tipe_laporan = ''
           this.insertAt(this.inputLayout, 5, 1, this.setFormLayout('umum'))
           this.browseNeedUpdate = true
         }
@@ -464,22 +464,22 @@ export class BatchComponent implements OnInit, AfterViewInit {
         disabled: true
       },
       onSelectFunc: (value) => {
-        this.forminput.getData()['tgl_tran'] = ""
-        this.formValue.tgl_tran = ""
-        if (value === "0") {
-          if (this.forminput.getData()['jenis_jurnal'] === "2") {
+        this.forminput.getData()['tgl_tran'] = ''
+        this.formValue.tgl_tran = ''
+        if (value === '0') {
+          if (this.forminput.getData()['jenis_jurnal'] === '2') {
             this.tanggalJurnalKasir('')
             this.browseNeedUpdate = true
           } else {
-            // this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01"))
+            // this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + '-' + this.periode_aktif['bulan_periode'] + '-01'))
             let val = this.setFormLayout('umum')
             this.insertAt(this.inputLayout, 5, 1, val)
             this.browseNeedUpdate = true
           }
-        } else if (value === "1") {
+        } else if (value === '1') {
           this.reqPeriodTutupSementara()
           this.browseNeedUpdate = true
-        } else if (value === "2") {
+        } else if (value === '2') {
           this.tanggalBukaKembali()
           this.browseNeedUpdate = true
         }
@@ -512,8 +512,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
       //   onFound: () => {
       //     this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
       //     this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
-      //     if (this.forminput.getData()['jenis_jurnal'] === "2") {
-      //       if (this.forminput.getData()['periode'] === "0") {
+      //     if (this.forminput.getData()['jenis_jurnal'] === '2') {
+      //       if (this.forminput.getData()['periode'] === '0') {
       //         this.tanggalJurnalKasir('')
       //       } else {
       //         this.tanggalBukaKembali()
@@ -544,7 +544,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       },
       hiddenOn: {
         valueOf: 'periode',
-        matchValue: ["0", "2", ""]
+        matchValue: ['0', '2', '']
       }
     },
     // {
@@ -576,7 +576,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       },
       // hiddenOn: {
       //   valueOf: 'jenis_jurnal',
-      //   matchValue: ["0", "1", ""]
+      //   matchValue: ['0', '1', '']
       // }
     },
     {
@@ -635,7 +635,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     //   },
     //   hiddenOn: {
     //     valueOf: 'jenis_jurnal',
-    //     matchValue: ["0", "1", ""]
+    //     matchValue: ['0', '1', '']
     //   }
     // },
     {
@@ -657,7 +657,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       },
       hiddenOn: {
         valueOf: 'jenis_jurnal',
-        matchValue: ["0", "1", ""]
+        matchValue: ['0', '1', '']
       }
     },
     {
@@ -673,7 +673,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       disabled: false,
       hiddenOn: {
         valueOf: 'tipe_laporan',
-        matchValue: ["k", "p", ""]
+        matchValue: ['k', 'p', '']
       },
       update: {
         disabled: true
@@ -690,7 +690,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     //   readOnly: false,
     //   hiddenOn: {
     //     valueOf: 'tipe_laporan',
-    //     matchValue: ["k", "p", "b", ""]
+    //     matchValue: ['k', 'p', 'b', '']
     //   },
     //   numberOnly: true,
     //   update: {
@@ -713,7 +713,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       },
       hiddenOn: {
         valueOf: 'jenis_jurnal',
-        matchValue: ["0", "1", ""]
+        matchValue: ['0', '1', '']
       },
       onSelectFunc: (v) => {
         // this.resetForm()
@@ -745,6 +745,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
   displayedColumnsTable = [];
   displayedColumnsTableUmum = [
     {
+      label: 'Cetak',
+      value: 'cetak_jurnal_check'
+    },
+    {
       label: 'No. Transaksi',
       value: 'no_tran'
     },
@@ -761,14 +765,24 @@ export class BatchComponent implements OnInit, AfterViewInit {
       label: 'Keterangan',
       value: 'keterangan'
     },
-    {
-      label: 'Status Pengajuan Batal',
-      value: 'pengajuan_batal_status_name'
-    },
+    // {
+    //   label: 'Status Pengajuan Batal',
+    //   value: 'pengajuan_batal_status_name'
+    // },
+    // {
+    //   label: 'Tgl. Pengajuan Batal',
+    //   value: 'batal_pengajuan_tgl',
+    //   date: true
+    // },
+    // {
+    //   label: 'Alasan Pengajuan Batal',
+    //   value: 'batal_pengajuan_alasan'
+    // },
     {
       label: 'Status Batal',
       value: 'batal_status_name'
     },
+
     {
       label: 'Diinput oleh',
       value: 'nama_input_by',
@@ -789,6 +803,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
     }
   ];
   displayedColumnsTableKasir = [
+    {
+      label: 'Cetak',
+      value: 'cetak_jurnal_check'
+    },
     {
       label: 'No. Transaksi',
       value: 'no_tran'
@@ -819,10 +837,19 @@ export class BatchComponent implements OnInit, AfterViewInit {
       label: 'Keterangan',
       value: 'keterangan'
     },
-    {
-      label: 'Status Pengajuan Batal',
-      value: 'pengajuan_batal_status_name'
-    },
+    // {
+    //   label: 'Status Pengajuan Batal',
+    //   value: 'pengajuan_batal_status_name'
+    // },
+    // {
+    //   label: 'Tgl. Pengajuan Batal',
+    //   value: 'batal_pengajuan_tgl',
+    //   date: true
+    // },
+    // {
+    //   label: 'Alasan Pengajuan Batal',
+    //   value: 'batal_pengajuan_alasan'
+    // },
     {
       label: 'Status Batal',
       value: 'batal_status_name'
@@ -849,24 +876,33 @@ export class BatchComponent implements OnInit, AfterViewInit {
   browseInterface = {}
   browseData = []
   browseDataRules = [
-    {
-      target: 'batal_pengajuan_approval_status',
-      replacement: {
-        'AP': 'Approved',
-        'IP': 'In progress',
-        'RJ': 'Reject',
-        '': ''
-      },
-      redefined: 'pengajuan_batal_status_name'
-    },
+    // {
+    //   target: 'batal_pengajuan_approval_status',
+    //   replacement: {
+    //     'AP': 'Approved',
+    //     'IP': 'In progress',
+    //     'RJ': 'Reject',
+    //     '': ''
+    //   },
+    //   redefined: 'pengajuan_batal_status_name'
+    // },
     {
       target: 'batal_status',
       replacement: {
-        true: 'Y',
+        true: '\u2713',
         false: '',
         '': ''
       },
       redefined: 'batal_status_name'
+    },
+    {
+      target: 'cetak_jurnal',
+      replacement: {
+        true: '\u2713',
+        false: '',
+        '': ''
+      },
+      redefined: 'cetak_jurnal_check'
     }
   ]
 
@@ -879,14 +915,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.gbl.need(true, true)
-    if (this.formValue.jenis_jurnal === "2") {
+    if (this.formValue.jenis_jurnal === '2') {
       this.displayedColumnsTable = this.displayedColumnsTableKasir
     } else {
       this.displayedColumnsTable = this.displayedColumnsTableUmum
     }
     this.content = content // TITLE NAME
-    this.namaTombolPrintDoc = "Cetak Jurnal Umum" // CETAKAN DOKUMEN BUTTON NAME
-    this.namaTombolPrintDoc2 = "Cetak Jurnal Kasir" // CETAKAN DOKUMEN BUTTON NAME
+    this.namaTombolPrintDoc = 'Cetak Jurnal Umum' // CETAKAN DOKUMEN BUTTON NAME
+    this.namaTombolPrintDoc2 = 'Cetak Jurnal Kasir' // CETAKAN DOKUMEN BUTTON NAME
     this.reqActivePeriod()
     this.setValPeriodType(this.formValue.jenis_jurnal)
   }
@@ -894,7 +930,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.kode_perusahaan = this.gbl.getKodePerusahaan()
 
-    if (this.kode_perusahaan !== "") {
+    if (this.kode_perusahaan !== '') {
 
       this.reqActivePeriod()
     }
@@ -906,14 +942,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // GET DATA PERIODE AKTIF
   reqActivePeriod() {
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') {
       this.request.apiData('periode', 'g-periode-aktif', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.periode_aktif = data['RESULT'].filter(x => x.aktif === '1')[0] || {}
             this.periodeCabang = JSON.parse(JSON.stringify(data['RESULT']))
             this.checkPeriod = data['RESULT']
-            // this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01"))
+            // this.formValue.tgl_tran = JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + '-' + this.periode_aktif['bulan_periode'] + '-01'))
             // let val = this.setFormLayout('umum')
             // this.insertAt(this.inputLayout, 5, 1, val)
             this.madeRequest()
@@ -929,23 +965,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // GET OTHERS DATA
   madeRequest() {
-    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") && (this.periode_aktif !== undefined && this.periode_aktif.id_periode !== "") && !this.requestMade) {
+    if ((this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') && (this.periode_aktif !== undefined && this.periode_aktif.id_periode !== '') && !this.requestMade) {
       this.requestMade = true
       this.request.apiData('lookup', 'g-info-company', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.lookupComp = data['RESULT']
-            // for (var i = 0; i < data['RESULT'].length; i++) {
-            //   if (data['RESULT'][i]['kode_lookup'] === 'ALAMAT-PERUSAHAAN') {
-            //     this.info_company.alamat = data['RESULT'][i]['nilai1']
-            //   }
-            //   if (data['RESULT'][i]['kode_lookup'] === 'KOTA-PERUSAHAAN') {
-            //     this.info_company.kota = data['RESULT'][i]['nilai1']
-            //   }
-            //   if (data['RESULT'][i]['kode_lookup'] === 'TELEPON-PERUSAHAAN') {
-            //     this.info_company.telepon = data['RESULT'][i]['nilai1']
-            //   }
-            // }
             this.ref.markForCheck()
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan informasi perusahaan.', 'success')
@@ -985,9 +1010,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
               'value': {
                 kode_cabang: this.formValue.kode_cabang
               }
-            }, "*")
+            }, '*')
             this.periode_aktif = this.periodeCabang.filter(x => x.aktif === '1' && x.kode_cabang === this.formValue.kode_cabang)[0] || {}
-            if (this.periode_aktif.aktif !== "1") {
+            if (this.periode_aktif.aktif !== '1') {
               this.disableSubmit = true
             } else {
               this.disableSubmit = false
@@ -1015,7 +1040,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // GET DATA USER KASIR
   reqDataKasir() {
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') {
       this.request.apiData('kasir', 'g-status-user-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -1043,20 +1068,21 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // GET DATA AKUN
   reqDataAkun(type) {
-    this.request.apiData('akun', 'g-akun-level', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    // this.request.apiData('akun', 'g-akun-level', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputAkunData = data['RESULT']
-          if (type === "umum") {
+          if (type === 'umum') {
             this.loading = false
-          } else if (type === "kasir") {
+          } else if (type === 'kasir') {
             this.formValue.jenis_jurnal = '2'
             this.detailData.splice(1, 1)
             this.setValPeriodType(this.formValue.jenis_jurnal)
             this.displayedColumnsTable = this.displayedColumnsTableKasir
             this.onSubPrintDoc = false
             this.onSubPrintDoc2 = true
-            this.formValue.tgl_tran = ""
+            this.formValue.tgl_tran = ''
             this.tanggalJurnalKasir('')
             this.browseNeedUpdate = true
             this.reqDataJenisTransaksi()
@@ -1072,7 +1098,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // GET DATA PERIODE KASIR (JURNAL TRANSAKSI ONLY)
   reqPeriodeKasir() {
-    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== "") {
+    if (this.kode_perusahaan !== undefined && this.kode_perusahaan !== '') {
       this.request.apiData('periode', 'g-periode-kasir', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -1096,7 +1122,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           let res = []
           for (var i = 0; i < data['RESULT'].length; i++) {
             let t = {
-              label: data['RESULT'][i]['kode_jenis_transaksi'] + " - " + data['RESULT'][i]['nama_jenis_transaksi'],
+              label: data['RESULT'][i]['kode_jenis_transaksi'] + ' - ' + data['RESULT'][i]['nama_jenis_transaksi'],
               value: data['RESULT'][i]['id_jenis_transaksi']
             }
             res.push(t)
@@ -1119,8 +1145,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
               }
               this.formValue.tipe_laporan = d[0]['tipe_laporan']
               if (this.forminput.getData().periode === '0') {
-                this.forminput.getData()['tgl_tran'] = ""
-                this.formValue.tgl_tran = ""
+                this.forminput.getData()['tgl_tran'] = ''
+                this.formValue.tgl_tran = ''
                 if (this.formValue.tipe_laporan === 'b') {
                   let val = this.setFormLayout('kasir-khusus-bank')
                   this.insertAt(this.inputLayout, 5, 1, val)
@@ -1140,7 +1166,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
             },
             hiddenOn: {
               valueOf: 'jenis_jurnal',
-              matchValue: ["0", "1", ""]
+              matchValue: ['0', '1', '']
             }
           })
           this.reqDataRekeningPerusahaan()
@@ -1161,7 +1187,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           let res = []
           for (var i = 0; i < data['RESULT'].length; i++) {
             let t = {
-              label: data['RESULT'][i]['no_rekening'] + " - " + data['RESULT'][i]['nama_bank'] + " (" + data['RESULT'][i]['atas_nama'] + ")",
+              label: data['RESULT'][i]['no_rekening'] + ' - ' + data['RESULT'][i]['nama_bank'] + ' (' + data['RESULT'][i]['atas_nama'] + ')',
               value: data['RESULT'][i]['no_rekening'],
               kode_cabang: data['RESULT'][i]['kode_cabang']
             }
@@ -1183,7 +1209,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
             disabled: false,
             hiddenOn: {
               valueOf: 'tipe_laporan',
-              matchValue: ["k", "p", "g", ""]
+              matchValue: ['k', 'p', 'g', '']
             },
             update: {
               disabled: true
@@ -1214,16 +1240,16 @@ export class BatchComponent implements OnInit, AfterViewInit {
   refreshBrowse(message, select?) {
     this.formValue = this.forminput === undefined ? this.formValue : this.forminput.getData()
     this.browseData = []
-    if (this.formValue.jenis_jurnal === "2") {
+    if (this.formValue.jenis_jurnal === '2') {
       this.tableLoad = true
-      let ba = this.periode_aktif.bulan_periode < 10 ? "0" + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode
+      let ba = this.periode_aktif.bulan_periode < 10 ? '0' + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode
       if (this.periode_kasir['tgl_periode'] !== '') {
         let tgl_awal = this.periode_kasir['tgl_periode'],
           x = new Date(this.periode_kasir['tgl_periode']),
           y = x.setDate(x.getDate() + this.dayLimit),
           tgl_akhir = this.splitDate(y),
           endRes = {}
-        if (this.formValue.periode === "0") {
+        if (this.formValue.periode === '0') {
           endRes = {
             kode_perusahaan: this.kode_perusahaan,
             kode_cabang: this.formValue.kode_cabang,
@@ -1292,16 +1318,16 @@ export class BatchComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.tableLoad = true
-      let ba = this.periode_aktif.bulan_periode < 10 ? "0" + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode, bs
+      let ba = this.periode_aktif.bulan_periode < 10 ? '0' + this.periode_aktif.bulan_periode : this.periode_aktif.bulan_periode, bs
       if (this.periodeTS != undefined) {
-        bs = this.periodeTS.bulan_periode < 10 ? "0" + this.periodeTS.bulan_periode : this.periodeTS.bulan_periode
+        bs = this.periodeTS.bulan_periode < 10 ? '0' + this.periodeTS.bulan_periode : this.periodeTS.bulan_periode
       }
 
       this.request.apiData('jurnal', 'g-jurnal', {
         kode_perusahaan: this.kode_perusahaan,
         kode_cabang: this.formValue.kode_cabang,
         jenis_jurnal: this.formValue.jenis_jurnal === '0' ? '04' : '02',
-        periode: this.formValue.periode === "0" ? this.periode_aktif.tahun_periode + "-" + ba : this.periodeTS.tahun_periode + "-" + bs
+        periode: this.formValue.periode === '0' ? this.periode_aktif.tahun_periode + '-' + ba : this.periodeTS.tahun_periode + '-' + bs
       }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
@@ -1316,8 +1342,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
               this.browseData = data['RESULT']
               if (select !== undefined) {
                 let search = JSON.parse(JSON.stringify(this.browseData)),
-                  x
+                  x, y
                 x = search.filter(x => x['id_tran'] === select)[0] || {}
+                y = search.filter(x => x['id_tran'] === 'M001-23.01-BKPANIN-0083')[0] || {}
                 this.formValue.no_tran = x.no_tran
                 this.formValue.no_jurnal = x.no_tran
                 this.printDoc(this.formDetail)
@@ -1346,7 +1373,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       t_tran = new Date(x['tgl_tran'])
     this.enableCancel = false
     this.enableEdit = x['boleh_edit'] === 'Y' ? true : false
-    if (this.forminput.getData()['jenis_jurnal'] === "2") {
+    if (this.forminput.getData()['jenis_jurnal'] === '2') {
       this.formValue = this.setFormV(x, t_tran, 'kasir')
       this.id_periode = ''
       if (this.formValue.periode === '0') {
@@ -1361,9 +1388,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.formValue = this.setFormV(x, t_tran, 'umum')
-      if (this.forminput.getData()['periode'] === "0") {
+      if (this.forminput.getData()['periode'] === '0') {
         this.insertAt(this.inputLayout, 5, 1, this.setFormLayout('umum'))
-      }/* else if(this.forminput.getData()['periode'] === "1"){
+      }/* else if(this.forminput.getData()['periode'] === '1'){
         // WAITING
       } */
     }
@@ -1371,13 +1398,22 @@ export class BatchComponent implements OnInit, AfterViewInit {
     this.onUpdate = true;
     this.enableCancel = this.enableEdit == true ? true : false
     this.disableSubmit = this.enableEdit == true ? false : true
+    // this.disablePrintButton2 = x['batal_pengajuan_approval_status'] == 'AP' || x['batal_status'] == true ? true : false
+    // this.disablePrintButton = x['batal_pengajuan_approval_status'] == 'AP' || x['batal_status'] == true ? true : false
     if (x['batal_status']) {
       this.enableStatus = true
       this.namaStatus = 'Status Transaksi: BATAL'
       this.styleStatus = {
         'background': '#FD3648'
       }
+
+      this.disablePrintButton2 = true
+      this.disablePrintButton = true
     } else {
+      this.enableStatus = false
+    }
+
+    /* else {
       if (x['batal_pengajuan_approval_status'] === 'IP') {
         this.enableStatus = true
         this.namaStatus = 'Pengajuan Batal: IN PROGRESS'
@@ -1385,7 +1421,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           'background': '#5785C1'
         }
       }
-    }
+    } */
     this.getBackToInput();
   }
 
@@ -1416,8 +1452,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
             }
             res.push(t)
           }
-          if (this.formValue.jenis_jurnal === "2") {
-            if (this.formValue.tipe_transaksi === "0") {
+          if (this.formValue.jenis_jurnal === '2') {
+            if (this.formValue.tipe_transaksi === '0') {
               this.detailData = res.filter(x => x['saldo_kredit'] != 0)
             } else {
               this.detailData = res.filter(x => x['saldo_debit'] != 0)
@@ -1454,10 +1490,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
     this.gbl.topPage()
     if (this.forminput !== undefined) {
       if (inputForm.valid && this.validateSubmit()) {
-        if (type === "umum") {
-          this.inputDialog("umum")
-        } else if (type === "kasir") {
-          this.inputDialog("kasir")
+        if (type === 'umum') {
+          // this.inputDialog('umum')
+          this.funcCetakTranJurnal('umum')
+        } else if (type === 'kasir') {
+          // this.inputDialog('kasir')
+          this.funcCetakTranJurnal('kasir')
         } else {
           this.saveData('', '')
         }
@@ -1468,10 +1506,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
           this.gbl.openSnackBar('Tanggal transaksi belum diisi.', 'info')
         } else {
           if (this.onUpdate && !this.enableEdit) {
-            if (type === "umum") {
-              this.inputDialog("umum")
-            } else if (type === "kasir") {
-              this.inputDialog("kasir")
+            if (type === 'umum') {
+              // this.inputDialog('umum')
+              this.funcCetakTranJurnal('umum')
+            } else if (type === 'kasir') {
+              // this.inputDialog('kasir')
+              this.funcCetakTranJurnal('kasir')
             } else {
               this.gbl.openSnackBar('Transaksi tidak dapat diubah lagi.', 'info')
             }
@@ -1482,6 +1522,25 @@ export class BatchComponent implements OnInit, AfterViewInit {
       }
     }
   }
+
+  // Cetak Transaksi Jurnal
+  funcCetakTranJurnal(type) {
+    this.loading = true
+    if (type === 'umum') {
+      this.onUpdate == true ?
+        this.enableEdit == true ?
+          this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true ? this.printDoc(this.formDetail) : this.saveData('umum', this.formDetail) :
+          this.printDoc(this.formDetail)
+        : this.saveData('umum', this.formDetail)
+    } else if (type === 'kasir') {
+      this.onUpdate == true ?
+        this.enableEdit == true ?
+          this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true ? this.printDoc2(this.formDetail) : this.saveData('kasir', this.formDetail) :
+          this.printDoc2(this.formDetail)
+        : this.saveData('kasir', this.formDetail)
+    }
+  }
+
 
   // CHECK VALIDATION DATA
   validateSubmit() {
@@ -1545,12 +1604,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.detailData = result
     }
     this.formValue['detail'] = this.detailData
-    if (this.formValue.jenis_jurnal === "0" || this.formValue.jenis_jurnal === "1") {
+    if (this.formValue.jenis_jurnal === '0' || this.formValue.jenis_jurnal === '1') {
       let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.formValue.periode === '0' ? this.periode_aktif['id_periode'] : this.formValue.id_akses_periode }, this.formValue)
       this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            if (type === "umum") {
+            if (type === 'umum') {
               this.browseNeedUpdate = true
               this.ref.markForCheck()
               if (this.onUpdate == false) {
@@ -1563,7 +1622,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
               this.resetForm()
               this.browseNeedUpdate = true
               this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+              this.refreshBrowse(this.onUpdate ? 'BERHASIL DIUPDATE' : 'BERHASIL DITAMBAH')
             }
           } else {
             this.loading = false;
@@ -1577,10 +1636,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
           this.gbl.openSnackBar('GAGAL MELAKUKAN PROSES.', 'fail')
         }
       )
-    } else if (this.formValue.jenis_jurnal === "2") {
+    } else if (this.formValue.jenis_jurnal === '2') {
       let nilai_saldo = 0
       for (var i = 0; i < this.formValue['detail'].length; i++) {
-        if (this.formValue.tipe_transaksi === "0") {
+        if (this.formValue.tipe_transaksi === '0') {
           nilai_saldo = nilai_saldo + parseFloat(this.formValue['detail'][i]['saldo_kredit'])
         } else {
           nilai_saldo = nilai_saldo + parseFloat(this.formValue['detail'][i]['saldo_debit'])
@@ -1593,19 +1652,23 @@ export class BatchComponent implements OnInit, AfterViewInit {
         letters: false,
         special: false
       }))}` : this.formValue.id_tran_jt
-      let tgl = new Date(this.formValue.periode === '2' ? new Date((this.formValue['tgl_tran'])) : parseInt(this.formValue['tgl_tran'])), idp = ""
-      if (this.id_periode !== '' && parseInt(this.id_periode) !== tgl.getTime()) {
+      let tgl = new Date(this.formValue.periode === '2' ? new Date((this.formValue['tgl_tran'])) : parseInt(this.formValue['tgl_tran'])),
+        numIdPeriode = parseInt(this.id_periode) || 0,
+        idp = ''
+
+      if (this.id_periode != '' && numIdPeriode != tgl.getTime()) {
         for (var i = 0; i < this.daftar_periode_kasir.length; i++) {
           let dpk = new Date(this.daftar_periode_kasir[i]['tgl_periode'])
-          if (tgl.getTime() == (dpk.getTime() - 25200000) && this.formValue['kode_cabang'] === this.daftar_periode_kasir[i]['kode_cabang']) {
+          if (tgl.getTime() == (dpk.getTime() - 25200000) && this.formValue['kode_cabang'] == this.daftar_periode_kasir[i]['kode_cabang']) {
             idp = this.daftar_periode_kasir[i]['id_periode']
             break
           }
+
         }
       } else {
         for (var i = 0; i < this.daftar_periode_kasir.length; i++) {
           let dpk = new Date(this.daftar_periode_kasir[i]['tgl_periode'])
-          if (tgl.getTime() == (dpk.getTime()) && this.formValue['kode_cabang'] === this.daftar_periode_kasir[i]['kode_cabang']) {
+          if (tgl.getTime() == (dpk.getTime()) && this.formValue['kode_cabang'] == this.daftar_periode_kasir[i]['kode_cabang']) {
             idp = this.daftar_periode_kasir[i]['id_periode']
             break
           }
@@ -1621,7 +1684,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
       this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal-transaksi' : 'i-jurnal-transaksi', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            if (type === "kasir") {
+            if (type === 'kasir') {
               this.browseNeedUpdate = true
               this.id_periode = tgl.getTime().toString()
               this.ref.markForCheck()
@@ -1635,7 +1698,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
               this.resetForm()
               this.browseNeedUpdate = true
               this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+              this.refreshBrowse(this.onUpdate ? 'BERHASIL DIUPDATE' : 'BERHASIL DITAMBAH')
             }
           } else {
             this.loading = false;
@@ -1671,9 +1734,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
       no_jurnal: '',
       tgl_tran: this.statSubmit == true ?
         spec != undefined && spec === 'batal' ?
-          JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")) :
+          JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + '-' + this.periode_aktif['bulan_periode'] + '-01')) :
           this.formValue.tgl_tran :
-        JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + "-" + this.periode_aktif['bulan_periode'] + "-01")),
+        JSON.stringify(new Date(this.periode_aktif['tahun_periode'] + '-' + this.periode_aktif['bulan_periode'] + '-01')),
       id_akses_periode: this.formValue.id_akses_periode,
       kode_cabang: this.formValue.kode_cabang,
       nama_cabang: this.formValue.nama_cabang,
@@ -1698,16 +1761,18 @@ export class BatchComponent implements OnInit, AfterViewInit {
     this.enableStatus = false
     this.enableCancel = false
     this.enableEdit = true
-    this.disableSubmit = this.disableSubmit = this.enableEdit == true ? false : true
+    this.disableSubmit = this.enableEdit == true ? false : true
+    this.disablePrintButton2 = false
+    this.disablePrintButton = false
 
-    if (this.formValue.jenis_jurnal === "2") {
-      if (this.formValue.periode === "2") {
+    if (this.formValue.jenis_jurnal === '2') {
+      if (this.formValue.periode === '2') {
         this.tanggalBukaKembali()
       } else {
         this.tanggalJurnalKasir('reset')
       }
     } else {
-      if (this.formValue.periode === "1") {
+      if (this.formValue.periode === '1') {
         let val = this.setFormLayout('umum-tutup-sementara')
         this.insertAt(this.inputLayout, 5, 1, val)
       } else {
@@ -1750,7 +1815,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         lembar_giro: 1
       }
     ]
-    this.id_periode = ""
+    this.id_periode = ''
     this.formInputCheckChanges()
     this.formInputCheckChangesJurnal()
     this.ref.markForCheck()
@@ -1770,18 +1835,19 @@ export class BatchComponent implements OnInit, AfterViewInit {
         batal_alasan: this.batal_alasan
       }
       this.dialog.closeAll()
-      this.request.apiData('jurnal', 'u-batal-tran-jurnal', endRes).subscribe(
+      this.request.apiData('jurnal', 'c-jurnal', endRes).subscribe(
+        // this.request.apiData('jurnal', 'u-batal-tran-jurnal', endRes).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.onCancel('batal')
             this.ref.markForCheck()
             this.browseNeedUpdate = true
-            if (data['RESULT'] === 'APPROVED') {
-              this.refreshBrowse('Sukses! transaksi dibatalkan.')
-            } else {
-              this.refreshBrowse('Sukses! batal transaksi perlu approval.')
-            }
-
+            this.refreshBrowse('Sukses! transaksi dibatalkan.')
+            // if (data['RESULT'] === 'APPROVED') {
+            //   this.refreshBrowse('Sukses! transaksi dibatalkan.')
+            // } else {
+            //   this.refreshBrowse('Sukses! batal transaksi perlu approval.')
+            // }
           } else {
             this.loading = false;
             this.ref.markForCheck()
@@ -1801,17 +1867,18 @@ export class BatchComponent implements OnInit, AfterViewInit {
     if (this.forminput !== undefined || this.formValue !== undefined) {
       this.ref.markForCheck()
       let ru
-      if (this.formValue.jenis_jurnal === "2") {
-        ru = this.formValue['id_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
-      } else {
-        ru = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
-      }
+      // if (this.formValue.jenis_jurnal === '2') {
+      //   ru = this.formValue['id_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
+      // } else {
+      //   ru = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
+      // }
+      ru = this.kode_perusahaan + this.formValue['kode_cabang'] + this.formValue['no_tran'] + '0'
       if (this.enableEdit == false || (this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true)) {
         this.dialog.closeAll()
       }
       if (this.checkKeyReport[ru] !== undefined && this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[ru], "_blank")
+          window.open(this.checkKeyReport[ru], '_blank')
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[ru] + '.xlsx'
@@ -1843,7 +1910,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         let data = []
         for (var i = 0; i < this.reportDetail.length; i++) {
           let t = []
-          if (this.formReport['jenis_jurnal'] === "2") {
+          if (this.formReport['jenis_jurnal'] === '2') {
             t.push(this.formReport['no_jurnal'])
           } else {
             t.push(this.formReport['no_tran'])
@@ -1872,60 +1939,60 @@ export class BatchComponent implements OnInit, AfterViewInit {
         rp['REPORT_FORMAT_CODE'] = v['format_cetak']
         rp['JASPER_FILE'] = 'dokTransaksiJurnal.jasper'
         rp['REPORT_PARAMETERS'] = {
-          USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+          USER_NAME: localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name'),
           REPORT_COMPANY_ADDRESS: this.info_company.alamat,
           REPORT_COMPANY_CITY: this.info_company.kota,
           REPORT_COMPANY_TLPN: this.info_company.telepon,
-          REPORT_PERIODE: "Periode: " + c + ' ' + b[1]
+          REPORT_PERIODE: 'Periode: ' + c + ' ' + b[1]
         }
 
         rp['FIELD_TITLE'] = [
-          "No. Transaksi",
-          "Tgl. Transaksi",
-          "Keterangan",
-          "Nama Cabang",
-          "Kode Akun",
-          "Nama Akun",
-          "Kode Divisi",
-          "Nama Divisi",
-          "Kode Departemen",
-          "Nama Departemen",
-          "Keterangan 1",
-          "Keterangan 2",
-          "Saldo Debit",
-          "Saldo Kredit",
+          'No. Transaksi',
+          'Tgl. Transaksi',
+          'Keterangan',
+          'Nama Cabang',
+          'Kode Akun',
+          'Nama Akun',
+          'Kode Divisi',
+          'Nama Divisi',
+          'Kode Departemen',
+          'Nama Departemen',
+          'Keterangan 1',
+          'Keterangan 2',
+          'Saldo Debit',
+          'Saldo Kredit',
         ]
         rp['FIELD_NAME'] = [
-          "noTran",
-          "tglTran",
-          "keterangan",
-          "namaCabang",
-          "kodeAkun",
-          "namaAkun",
-          "kodeDivisi",
-          "namaDivisi",
-          "kodeDepartemen",
-          "namaDepartemen",
-          "keterangan_1",
-          "keterangan_2",
-          "nilaiDebit",
-          "nilaiKredit"
+          'noTran',
+          'tglTran',
+          'keterangan',
+          'namaCabang',
+          'kodeAkun',
+          'namaAkun',
+          'kodeDivisi',
+          'namaDivisi',
+          'kodeDepartemen',
+          'namaDepartemen',
+          'keterangan_1',
+          'keterangan_2',
+          'nilaiDebit',
+          'nilaiKredit'
         ]
         rp['FIELD_TYPE'] = [
-          "string",
-          "date",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "bigdecimal",
-          "bigdecimal"
+          'string',
+          'date',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'bigdecimal',
+          'bigdecimal'
         ]
         rp['FIELD_DATA'] = data
 
@@ -1941,13 +2008,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
   printDoc2(v) {
     if (this.forminput !== undefined || this.formValue !== undefined) {
       this.ref.markForCheck()
-      let rk = this.formValue['id_tran'] + this.formValue['id_tran_jt'] + this.formValue['no_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
+      let rk = this.kode_perusahaan + this.formValue['kode_cabang'] + this.formValue['no_tran'] + '1'
       if (this.enableEdit == false || (this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true)) {
         this.dialog.closeAll()
       }
       if (this.checkKeyReport[rk] !== undefined && this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true) {
         if (this.formDetail['format_cetak'] === 'pdf') {
-          window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.checkKeyReport[rk], "_blank")
+          window.open(this.checkKeyReport[rk], '_blank')
         } else {
           if (this.formDetail['format_cetak'] === 'xlsx') {
             this.keyReportFormatExcel = this.checkKeyReport[rk] + '.xlsx'
@@ -1999,74 +2066,74 @@ export class BatchComponent implements OnInit, AfterViewInit {
         }
 
         let rp = JSON.parse(JSON.stringify(this.reportObj))
-        let rt = (this.formValue.tipe_transaksi === '0' ? 'PEMASUKKAN' : 'PENGELUARAN') + " " + (this.formValue.tipe_laporan === 'k' ? 'KAS' : this.formValue.tipe_laporan === 'b' ? 'BANK' : this.formValue.tipe_laporan === 'g' ? 'GIRO' : 'KAS KECIL')
+        let rt = (this.formValue.tipe_transaksi === '0' ? 'PEMASUKKAN' : 'PENGELUARAN') + ' ' + (this.formValue.tipe_laporan === 'k' ? 'KAS' : this.formValue.tipe_laporan === 'b' ? 'BANK' : this.formValue.tipe_laporan === 'g' ? 'GIRO' : 'KAS KECIL')
         rp['REPORT_COMPANY'] = this.gbl.getNamaPerusahaan()
         rp['REPORT_CODE'] = 'DOK-JURNAL-TRANSAKSI'
         rp['REPORT_NAME'] = rt
         rp['REPORT_FORMAT_CODE'] = v['format_cetak']
         rp['JASPER_FILE'] = 'dokTransaksiJurnalTransaksi.jasper'
         rp['REPORT_PARAMETERS'] = {
-          USER_NAME: localStorage.getItem('user_name') === undefined ? "" : localStorage.getItem('user_name'),
+          USER_NAME: localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name'),
           REPORT_COMPANY_ADDRESS: this.info_company.alamat,
           REPORT_COMPANY_CITY: this.info_company.kota,
           REPORT_COMPANY_TLPN: this.info_company.telepon,
-          REPORT_PERIODE: "Periode: " +
-            this.gbl.getNamaBulan(this.periode_aktif['bulan_periode']) + " " +
+          REPORT_PERIODE: 'Periode: ' +
+            this.gbl.getNamaBulan(this.periode_aktif['bulan_periode']) + ' ' +
             this.periode_aktif['tahun_periode']
         }
         rp['FIELD_TITLE'] = [
-          "No. Transaksi",
-          "Tgl. Transaksi",
-          "Keterangan",
-          "Nama Cabang",
-          "Kode Akun",
-          "Nama Akun",
-          "Kode Divisi",
-          "Nama Divisi",
-          "Kode Departemen",
-          "Nama Departemen",
-          "Keterangan 1",
-          "Keterangan 2",
-          "Saldo Debit",
-          "Saldo Kredit",
-          "Keterangan Akun",
-          "Saldo Transaksi"
+          'No. Transaksi',
+          'Tgl. Transaksi',
+          'Keterangan',
+          'Nama Cabang',
+          'Kode Akun',
+          'Nama Akun',
+          'Kode Divisi',
+          'Nama Divisi',
+          'Kode Departemen',
+          'Nama Departemen',
+          'Keterangan 1',
+          'Keterangan 2',
+          'Saldo Debit',
+          'Saldo Kredit',
+          'Keterangan Akun',
+          'Saldo Transaksi'
         ]
         rp['FIELD_NAME'] = [
-          "noTran",
-          "tglTran",
-          "keterangan",
-          "namaCabang",
-          "kodeAkun",
-          "namaAkun",
-          "kodeDivisi",
-          "namaDivisi",
-          "kodeDepartemen",
-          "namaDepartemen",
-          "keterangan_1",
-          "keterangan_2",
-          "nilaiDebit",
-          "nilaiKredit",
-          "keteranganAkun",
-          "saldoTransaksi"
+          'noTran',
+          'tglTran',
+          'keterangan',
+          'namaCabang',
+          'kodeAkun',
+          'namaAkun',
+          'kodeDivisi',
+          'namaDivisi',
+          'kodeDepartemen',
+          'namaDepartemen',
+          'keterangan_1',
+          'keterangan_2',
+          'nilaiDebit',
+          'nilaiKredit',
+          'keteranganAkun',
+          'saldoTransaksi'
         ]
         rp['FIELD_TYPE'] = [
-          "string",
-          "date",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "string",
-          "bigdecimal",
-          "bigdecimal",
-          "string",
-          "bigdecimal"
+          'string',
+          'date',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'string',
+          'bigdecimal',
+          'bigdecimal',
+          'string',
+          'bigdecimal'
         ]
         rp['FIELD_DATA'] = data
         this.sendGetPrintDoc(rp, v['format_cetak'], 'kasir')
@@ -2078,13 +2145,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendGetPrintDoc(p, type, jurnal) {
-    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, kode_cabang: this.formValue.kode_cabang, jenis_jurnal: jurnal === 'umum' ? '0' : '1' }, p)
-    this.request.apiData('report', 'g-report', endRes).subscribe(
+  sendGetPrintDoc(p, type = 'pdf', jurnal) {
+    let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, kode_cabang: this.formValue.kode_cabang, no_jurnal: this.formValue.no_tran, jenis_jurnal: jurnal === 'umum' ? '0' : '1' }, p)
+    this.request.apiData('report', 'g-cetak-tran-jurnal', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open(data['RESULT']['rep_url'] + '?repId=' + data['RESULT']['rep_id'], '_blank');
           } else {
             if (type === 'xlsx') {
               this.keyReportFormatExcel = data['RESULT'] + '.xlsx'
@@ -2098,12 +2165,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
           }
           //
           let ru, rk
-          if (jurnal === "umum") {
-            ru = this.formValue['id_tran'] + this.formValue['no_tran'] + this.formDetail['format_cetak']
-            this.checkKeyReport[ru] = data['RESULT']
-          } else if (jurnal === "kasir") {
-            rk = this.formValue['id_tran'] + this.formValue['id_tran_jt'] + this.formValue['no_tran'] + this.formValue['no_jurnal'] + this.formDetail['format_cetak']
-            this.checkKeyReport[rk] = data['RESULT']
+          if (jurnal === 'umum') {
+            ru = this.kode_perusahaan + this.formValue['kode_cabang'] + this.formValue['no_tran'] + '0'
+            this.checkKeyReport[ru] = data['RESULT']['rep_url'] + '?repId=' + data['RESULT']['rep_id']
+          } else if (jurnal === 'kasir') {
+            rk = this.kode_perusahaan + this.formValue['kode_cabang'] + this.formValue['no_tran'] + '1'
+            this.checkKeyReport[rk] = data['RESULT']['rep_url'] + '?repId=' + data['RESULT']['rep_id']
           }
           //
           this.onUpdate = true
@@ -2131,12 +2198,12 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
   // SET VALUE TIPE PERIODE
   setValPeriodType(type) {
-    if (type === "2") {
+    if (type === '2') {
       this.tipe_periode.splice(1, 1, {
         label: 'Buka Kembali',
         value: '2'
       })
-      // this.forminput.getData()['periode'] = "0"
+      // this.forminput.getData()['periode'] = '0'
       // this.formValue.periode = this.forminput.getData()['periode']
       this.formValue.periode = '0'
     } else {
@@ -2144,7 +2211,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
         label: 'Tutup Sementara',
         value: '1'
       })
-      this.formValue.periode = "0"
+      this.formValue.periode = '0'
     }
     this.ref.markForCheck()
   }
@@ -2175,7 +2242,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
     for (var i = 0; i < periode.length; i++) {
       let t = {
-        label: this.gbl.getNamaBulan(periode[i]['bulan_periode']) + " " + periode[i]['tahun_periode'],
+        label: this.gbl.getNamaBulan(periode[i]['bulan_periode']) + ' ' + periode[i]['tahun_periode'],
         value: periode[i]['id_periode']
       }
       dp.push(t)
@@ -2184,7 +2251,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     this.daftar_periode = dp
     this.forminput.getData()['id_akses_periode'] = this.periodeTS['id_periode'] === undefined ? '' : this.periodeTS['id_periode']
     this.formValue.id_akses_periode = this.periodeTS['id_periode'] === undefined ? '' : this.periodeTS['id_periode']
-    let val = ""
+    let val = ''
     if (this.daftar_periode.length < 2) {
       val = this.setFormLayout('tutup-sementara-null')
       this.insertAt(this.inputLayout, 3, 1, val)
@@ -2240,8 +2307,8 @@ export class BatchComponent implements OnInit, AfterViewInit {
   // SET TANGGAL (JURNAL TRANSAKSI : BUKA KEMBALI)
   tanggalBukaKembali() {
     if (this.onUpdate == false) {
-      this.forminput.getData()['tgl_tran'] = ""
-      this.formValue.tgl_tran = ""
+      this.forminput.getData()['tgl_tran'] = ''
+      this.formValue.tgl_tran = ''
     }
     this.ref.markForCheck()
     // this.inputTanggalData = this.daftar_periode_kasir.filter(x => x['kode_cabang'] === this.formValue.kode_cabang && x['buka_kembali'] === '1')
@@ -2358,10 +2425,11 @@ export class BatchComponent implements OnInit, AfterViewInit {
                 (dt.getMonth() + 1) == 12
               ) ? 31 : 30,
             exceedDt = (dt.getDate() + this.dayLimit) > maxDt ? true : false,
+            yr = exceedDt == true ? dt.getFullYear() + 1 : dt.getFullYear(),
             mt = exceedDt == true ? dt.getMonth() + 2 : dt.getMonth() + 1,
             aDt = exceedDt == true ? ((dt.getDate() + this.dayLimit) - maxDt) : dt.getDate() + this.dayLimit
           return {
-            year: dt.getFullYear(),
+            year: yr,
             month: mt,
             day: aDt
           }
@@ -2385,8 +2453,10 @@ export class BatchComponent implements OnInit, AfterViewInit {
         enableMax: true,
         minDate: () => {
           let dt = new Date(this.periode_aktif['tahun_periode'] + '-' + this.periode_aktif['bulan_periode'] + '-' + '01'),
-            dtKasir = new Date(this.periode_kasir['tgl_periode'])
-          if ((dtKasir.getMonth() + 1) < this.periode_aktif['bulan_periode']) {
+            dtKasir = new Date(this.periode_kasir['tgl_periode']),
+            bindDt1 = dtKasir.getFullYear() + (dtKasir.getMonth() + 1),
+            bindDt2 = dt.getFullYear() + this.periode_aktif['bulan_periode']
+          if (bindDt1 < bindDt2) {
             return {
               year: dtKasir.getFullYear(),
               month: dtKasir.getMonth() + 1,
@@ -2413,16 +2483,17 @@ export class BatchComponent implements OnInit, AfterViewInit {
                 (dt.getMonth() + 1) == 12
               ) ? 31 : 30,
             exceedDt = (dt.getDate() + this.dayLimit) > maxDt ? true : false,
+            yr = exceedDt == true ? dt.getFullYear() + 1 : dt.getFullYear(),
             mt = exceedDt == true ? dt.getMonth() + 2 : dt.getMonth() + 1,
             aDt = exceedDt == true ? ((dt.getDate() + this.dayLimit) - maxDt) : dt.getDate() + this.dayLimit
           return {
-            year: dt.getFullYear(),
+            year: yr,
             month: mt,
             day: aDt
           }
         }
       }
-    } else if (type === "kasir-periode-buka-kembali") {
+    } else if (type === 'kasir-periode-buka-kembali') {
       x = {
         labelWidth: 'col-3',
         formWidth: 'col-9',
@@ -2440,7 +2511,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           disabled: false
         }
       }
-    } else if (type === "kasir-periode-tidak-sama") {
+    } else if (type === 'kasir-periode-tidak-sama') {
       x = {
         labelWidth: 'col-3',
         formWidth: 'col-9',
@@ -2474,7 +2545,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
           }
         }
       }
-    } else if (type === "tutup-sementara-null") {
+    } else if (type === 'tutup-sementara-null') {
       x = {
         labelWidth: 'col-3',
         formWidth: 'col-9',
@@ -2488,13 +2559,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
         disabled: true,
         hiddenOn: {
           valueOf: 'periode',
-          matchValue: ["0", "2", ""]
+          matchValue: ['0', '2', '']
         },
         onSelectFunc: (v) => {
           this.setPeriode(v)
         }
       }
-    } else if (type === "tutup-sementara-available") {
+    } else if (type === 'tutup-sementara-available') {
       x = {
         labelWidth: 'col-3',
         formWidth: 'col-9',
@@ -2508,13 +2579,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
         disabled: false,
         hiddenOn: {
           valueOf: 'periode',
-          matchValue: ["0", "2", ""]
+          matchValue: ['0', '2', '']
         },
         onSelectFunc: (v) => {
           this.setPeriode(v)
         }
       }
-    } else if (type === "ket") {
+    } else if (type === 'ket') {
       x = {
         labelWidth: 'col-3',
         formWidth: 'col-9',
@@ -2535,7 +2606,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
   // SET FORM VALUE
   setFormV(value, date_value, type) {
     let x
-    if (type === "umum") {
+    if (type === 'umum') {
       x = {
         // General
         id_tran: value['id_tran'],
@@ -2553,14 +2624,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
         periode: this.formValue.periode,
 
         // Validate Input Box Jurnal Transaksi
-        tipe_laporan: ""
+        tipe_laporan: ''
       }
-    } else if (type === "kasir") {
+    } else if (type === 'kasir') {
       x = {
         // General
         id_tran: value['id_tran'],
         no_tran: value['no_tran'],
-        tgl_tran: this.forminput.getData()['periode'] === "0" ? JSON.stringify(date_value.getTime()) : this.gbl.splitDate(date_value.getTime()),
+        tgl_tran: this.forminput.getData()['periode'] === '0' ? JSON.stringify(date_value.getTime()) : this.gbl.splitDate(date_value.getTime()),
         kode_cabang: value['kode_cabang'],
         nama_cabang: value['nama_cabang'],
         keterangan: value['keterangan'],
@@ -2597,7 +2668,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
     z = JSON.parse(JSON.stringify(this.formValue))
     z = this.forminput === undefined ? z : this.forminput.getData()
 
-    if (this.formValue.jenis_jurnal === "2") {
+    if (this.formValue.jenis_jurnal === '2') {
       this.formValue.tipe_transaksi = z['tipe_transaksi']
       this.formValue.lembar_giro = z['lembar_giro']
     }
@@ -2636,20 +2707,20 @@ export class BatchComponent implements OnInit, AfterViewInit {
       data: {
         type: type,
         tableInterface:
-          type === "kode_cabang" ? this.inputCabangInterface :
-            type === "tgl_tran" ? this.inputTanggalInterface :
+          type === 'kode_cabang' ? this.inputCabangInterface :
+            type === 'tgl_tran' ? this.inputTanggalInterface :
               {},
         displayedColumns:
-          type === "kode_cabang" ? this.inputCabangDisplayColumns :
-            type === "tgl_tran" ? this.inputTanggalDisplayColumns :
+          type === 'kode_cabang' ? this.inputCabangDisplayColumns :
+            type === 'tgl_tran' ? this.inputTanggalDisplayColumns :
               [],
         tableData:
-          type === "kode_cabang" ? this.inputCabangData :
-            type === "tgl_tran" ? this.inputTanggalData :
+          type === 'kode_cabang' ? this.inputCabangData :
+            type === 'tgl_tran' ? this.inputTanggalData :
               [],
         tableRules:
-          type === "kode_cabang" ? this.inputCabangDataRules :
-            type === "tgl_tran" ? this.inputTanggalDataRules :
+          type === 'kode_cabang' ? this.inputCabangDataRules :
+            type === 'tgl_tran' ? this.inputTanggalDataRules :
               [],
         formValue: this.formValue,
         sizeCont: 380,
@@ -2658,7 +2729,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (type === "kode_cabang") {
+        if (type === 'kode_cabang') {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('kode_cabang', result.kode_cabang)
             this.forminput.updateFormValue('nama_cabang', result.nama_cabang)
@@ -2670,9 +2741,9 @@ export class BatchComponent implements OnInit, AfterViewInit {
               'value': {
                 kode_cabang: this.formValue.kode_cabang
               }
-            }, "*")
+            }, '*')
             this.periode_aktif = this.periodeCabang.filter(x => x.aktif === '1' && x.kode_cabang === this.formValue.kode_cabang)[0] || {}
-            if (this.periode_aktif.aktif !== "1") {
+            if (this.periode_aktif.aktif !== '1') {
               this.disableSubmit = true
             } else {
               this.disableSubmit = false
@@ -2690,14 +2761,14 @@ export class BatchComponent implements OnInit, AfterViewInit {
               disabled: false,
               hiddenOn: {
                 valueOf: 'tipe_laporan',
-                matchValue: ["k", "p", "g", ""]
+                matchValue: ['k', 'p', 'g', '']
               },
               update: {
                 disabled: true
               }
             })
-            if (this.forminput.getData()['jenis_jurnal'] === "2") {
-              if (this.forminput.getData()['periode'] === "0") {
+            if (this.forminput.getData()['jenis_jurnal'] === '2') {
+              if (this.forminput.getData()['periode'] === '0') {
                 this.tanggalJurnalKasir('')
                 if (this.forminput.getData()['tipe_laporan'] === 'b') {
                   this.insertAt(this.inputLayout, 5, 1, this.setFormLayout('kasir-khusus-bank'))
@@ -2709,13 +2780,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
               }
               this.browseNeedUpdate = true
             } else {
-              if (this.forminput.getData()['periode'] === "1") {
+              if (this.forminput.getData()['periode'] === '1') {
                 this.reqPeriodTutupSementara()
               }
               this.browseNeedUpdate = true
             }
           }
-        } else if (type === "tgl_tran") {
+        } else if (type === 'tgl_tran') {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('tgl_tran', result.tgl_periode)
             this.browseNeedUpdate = true
@@ -2744,13 +2815,13 @@ export class BatchComponent implements OnInit, AfterViewInit {
         onBlur: (t, v) => null,
         openDialog: (t) => null,
         resetForm: () => this.resetDetailForm(),
-        onSubmit: (x: NgForm) => type === "umum" ?
+        onSubmit: (x: NgForm) => type === 'umum' ?
           this.onUpdate == true ?
             this.enableEdit == true ?
               this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true ? this.printDoc(this.formDetail) : this.saveData('umum', this.formDetail) :
               this.printDoc(this.formDetail)
             : this.saveData('umum', this.formDetail) :
-          type === "kasir" ?
+          type === 'kasir' ?
             this.onUpdate == true ?
               this.enableEdit == true ?
                 this.setStatusChange()['header'] == true && this.setStatusChange()['detail'] == true ? this.printDoc2(this.formDetail) : this.saveData('kasir', this.formDetail) :
@@ -2809,7 +2880,7 @@ export class BatchComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(
       result => {
-        this.batal_alasan = ""
+        this.batal_alasan = ''
       },
       error => null
     )
@@ -2830,15 +2901,15 @@ export class BatchComponent implements OnInit, AfterViewInit {
   splitDate(date) {
     let getDate = new Date(date),
       years = getDate.getUTCFullYear(),
-      months = ((getDate.getUTCMonth() + 1) < 10) ? "0" + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
-      days = (getDate.getUTCDate() < 10) ? "0" + getDate.getUTCDate() : getDate.getUTCDate(),
+      months = ((getDate.getUTCMonth() + 1) < 10) ? '0' + (getDate.getUTCMonth() + 1) : getDate.getUTCMonth() + 1,
+      days = (getDate.getUTCDate() < 10) ? '0' + getDate.getUTCDate() : getDate.getUTCDate(),
       formatYMD = `${years}-${months}-${days}`
 
     return formatYMD
   }
 
   getDateNow() {
-    let d = this.gbl.getTahunPeriode() + "-" + this.gbl.getBulanPeriode() + "-01"
+    let d = this.gbl.getTahunPeriode() + '-' + this.gbl.getBulanPeriode() + '-01'
     let p = new Date(d).getTime()
     return p
   }

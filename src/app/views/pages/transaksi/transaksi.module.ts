@@ -51,6 +51,7 @@ import { JurnalTransaksiPeriodeSementaraComponent } from './jurnal-transaksi-per
 import { JurnalTemplateTransaksiComponent } from './jurnal-template-transaksi/jurnal-template-transaksi.component';
 import { BatchComponent } from './batch/batch.component';
 import { DaftarKerjaComponent } from './daftar-kerja/daftar-kerja.component';
+import { JurnalBatchRevComponent } from './jurnal-batch-rev/jurnal-batch-rev.component';
 
 const routes: Routes = [
   {
@@ -92,7 +93,8 @@ const routes: Routes = [
   },
   {
     path: 'jurnal-batch',
-    component: BatchComponent
+    component: JurnalBatchRevComponent
+    // component: BatchComponent
   },
   {
     path: 'daftar-kerja',
@@ -167,7 +169,8 @@ const routes: Routes = [
     JurnalTransaksiPeriodeSementaraComponent,
     JurnalTemplateTransaksiComponent,
     BatchComponent,
-    DaftarKerjaComponent
+    DaftarKerjaComponent,
+    JurnalBatchRevComponent
   ]
 })
 export class TransaksiModule { }

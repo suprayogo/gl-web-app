@@ -400,6 +400,7 @@ export class LaporanLabaRugiComponent implements OnInit, AfterViewInit {
         }
         this.loading = false
         this.ref.markForCheck()
+        
       } else {
         let p = {}
         for (var i = 0; i < this.lookupComp.length; i++) {

@@ -10,6 +10,9 @@ import { GlobalVariableService } from '../../../../service/global-variable.servi
 import { ForminputComponent } from '../../components/forminput/forminput.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 
+import * as MD5 from 'crypto-js/md5';
+import * as randomString from 'random-string';
+
 const content = {
   beforeCodeTitle: 'Rekapitulasi Transaksi'
 }
@@ -88,6 +91,9 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
   nama_tombol: any;
   dialogRef: any;
   dialogType: string = null
+  listAkunTransaksi: any = []
+  listSelectAkun: any = []
+
 
   // CABANG DIALOG
   inputCabangDisplayColumns = [
@@ -151,6 +157,9 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
     kode_bank: '',
     nama_bank: '',
     no_rekening: '',
+    id_akun: '',
+    kode_akun: '',
+    nama_akun: '',
     periode: [
       {
         year: new Date(Date.now()).getFullYear(),
@@ -335,6 +344,19 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
     }
   ]
 
+  // L.o.V (List of Values) Variable
+  displayColAkunLov = [ // Tampil kolom di L.o.V Akun
+    {
+      label: 'Kode Akun',
+      value: 'kode_akun',
+      selectable: true
+    },
+    {
+      label: 'Nama Akun',
+      value: 'nama_akun'
+    }
+  ]
+
   constructor(
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
@@ -407,6 +429,18 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
           }
         }
       )
+
+      // this.request.apiData('akun', 'g-jenis-tran-by-tipe', { kode_perusahaan: this.kode_perusahaan, tipe_laporan: 'p' }).subscribe(
+      //   data => {
+      //     if (data['STATUS'] === 'Y') {
+      //       this.listAkunTransaksi = data['RESULT']
+      //       this.ref.markForCheck()
+      //     } else {
+      //       this.gbl.openSnackBar('Gagal mendapatkan daftar akun. Mohon coba lagi nanti.', 'fail')
+      //       this.ref.markForCheck()
+      //     }
+      //   }
+      // )
 
       this.request.apiData('cabang', 'g-cabang-akses', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
@@ -513,6 +547,7 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
   onSubmit(inputForm: NgForm) {
     if (this.forminput !== undefined) {
       this.formValue = this.forminput.getData()
+
       let
         // TANGGAL PERIODE AWAL
         tgl_periode_awal =
@@ -567,6 +602,9 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
           this.info_company.telepon = this.formValue['kode_cabang'] !== "" ? this.lookupComp[i]['nilai1'] : ""
         }
       }
+
+      
+      
       let endRes = Object.assign(
         {
           kode_perusahaan: this.kode_perusahaan,
@@ -686,5 +724,95 @@ export class RekapTranComponent implements OnInit, AfterViewInit {
         this.ref.markForCheck()
       }
     })
+  }
+
+  inputGroup(type?: any) {
+    let input,
+      data = [
+        {
+          type: type,
+          title: type === 'kode_akun' ? 'Data Akun'
+            : '',
+          columns: type === 'kode_akun' ? this.displayColAkunLov
+            : '',
+          contain: type === 'kode_akun' ? this.listAkunTransaksi
+            : '',
+          rules: [],
+          interface: {},
+          statusSelectable: true,
+          listSelectBox: type === 'kode_akun' ? this.listSelectAkun :
+            [],
+          selectIndicator: type === 'kode_akun' ? 'kode_akun'
+            : ''
+        },
+      ], setting = {
+        width: '50vw',
+        posTop: '30px'
+      }
+    input = this.gbl.openDialog(type, data, this.forminput, setting)
+
+    input.afterClosed().subscribe(
+      result => {
+        if (result) {
+          this.ref.markForCheck()
+          if (type === 'kode_akun') {
+            this.restructureDetailData('akun', result, 'change')
+          }
+        }
+      }
+    )
+  }
+
+  restructureDetailData(type, data, dataConf) {
+    this.ref.markForCheck()
+    let endRes = [],
+      bindData = []
+
+    if (dataConf === 'default') {
+      for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < bindData.length; j++) {
+          if (data[i]['id_akun'] === bindData[j]['id_akun']) {
+            let x = {
+              id: `${MD5(Date().toLocaleString() + Date.now() + randomString({
+                length: 8,
+                numeric: true,
+                letters: false,
+                special: false
+              }))}`,
+              id_akun: data[i]['id_akun'],
+              kode_akun: bindData[j]['kode_akun'],
+              nama_akun: bindData[j]['nama_akun'],
+            }
+            endRes.push(x)
+            break;
+          }
+        }
+      }
+      this.listSelectAkun = endRes
+    } else {
+      bindData = this.listSelectAkun
+
+      for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < bindData.length; j++) {
+          if (data[i]['id_akun'] === bindData[j]['id_akun']) {
+            data[i] = bindData[j]
+          }
+        }
+      }
+      bindData.splice(0, bindData.length)
+      for (var i = 0; i < data.length; i++) {
+        if (data[i]['id'] === '' || data[i]['id'] == null || data[i]['id'] === undefined) {
+          data[i]['id'] = `${MD5(Date().toLocaleString() + Date.now() + randomString({
+            length: 8,
+            numeric: true,
+            letters: false,
+            special: false
+          }))}`
+        }
+        bindData.push(data[i])
+      }
+      this.listSelectAkun = bindData
+    }
+
   }
 }

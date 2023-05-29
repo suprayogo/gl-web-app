@@ -843,11 +843,11 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     );
   }
 
-  printData(printType, header, detail) {
-    let rk = header['jenis_jurnal'] + header['id_tran'] + printType
+  printData(printType = 'pdf', header, detail) {
+    let rk = this.kodePerusahaan + this.formValue.kode_cabang + header['no_tran']
     if (this.chkKeyReqRpt[rk] !== undefined) {
       if (printType === 'pdf') {
-        window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + this.chkKeyReqRpt[rk], "_blank")
+        window.open(this.chkKeyReqRpt[rk], "_blank")
       } else {
         if (printType === 'xlsx') {
           this.keyRptExcel = this.chkKeyReqRpt[rk] + '.xlsx'
@@ -919,13 +919,13 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  reqRpt(data, type) {
-    let endRes = Object.assign({ kode_perusahaan: this.kodePerusahaan, kode_cabang: this.formValue.kode_cabang, jenis_jurnal: this.formDetail['jenis_jurnal'] === '2' ? '1' : '0' }, data)
-    this.request.apiData('report', 'g-report', endRes).subscribe(
+  reqRpt(data, type = 'pdf') {
+    let endRes = Object.assign({ kode_perusahaan: this.kodePerusahaan, kode_cabang: this.formValue.kode_cabang, no_jurnal: this.formDetail.no_tran,  jenis_jurnal: this.formDetail['jenis_jurnal'] === '2' ? '1' : '0' }, data)
+    this.request.apiData('report', 'g-cetak-tran-jurnal', endRes).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           if (type === 'pdf') {
-            window.open("http://deva.darkotech.id:8704/report/viewer.html?repId=" + data['RESULT'], "_blank");
+            window.open(data['RESULT']['rep_url'] + "?repId=" + data['RESULT']['rep_id'], "_blank");
           } else {
             if (type === 'xlsx') {
               this.keyRptExcel = data['RESULT'] + '.xlsx'
@@ -937,8 +937,8 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
               sbmBtn.click();
             }, 100)
           }
-          let rk = this.formDetail['jenis_jurnal'] + this.formDetail['id_tran'] + type
-          this.chkKeyReqRpt[rk] = data['RESULT']
+          let rk = this.kodePerusahaan + this.formValue.kode_cabang + this.formDetail.no_tran
+          this.chkKeyReqRpt[rk] = data['RESULT']['rep_url'] + "?repId=" + data['RESULT']['rep_id']
           this.ref.markForCheck()
         } else {
           let alertSetting = {}
@@ -965,7 +965,7 @@ export class DataJurnalBatchComponent implements OnInit, AfterViewInit {
             btnStyle: {
               'margin': '5px 0 5px 5px'
             },
-            btnClick: () => this.inputDialog('print-data')
+            btnClick: () => /* this.inputDialog('print-data') */ this.printData(tmpData['formDetail']['tipe_format'], this.formDetail, this.detailData)
           }
         ]
       tmpData['showDtJurnal'] = true

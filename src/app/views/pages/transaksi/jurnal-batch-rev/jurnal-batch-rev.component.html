@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col-xl-12">
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <mat-tab-group [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelect($event)" *ngIf="!loading">
+
+                <mat-tab label="">
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Input</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section">
+                            <kt-forminput [inputLayout]="inputLayout" [formValue]="formValue"
+                                [buttonLayout]="buttonLayout" [onUpdate]="onUpdate" [enableDelete]="enableDelete"
+                                [enableCancel]="enableCancel" [enableStatus]="enableStatus"
+                                [disableSubmit]="disableSubmit" [disablePrintButton]="disablePrintButton"
+                                [disablePrintButton2]="disablePrintButton2" [detailJurnal]="enableDetail"
+                                [detailLoad]="detailLoad" [jurnalDataAkun]="inputAkunData"
+                                [jurnalDataDivisi]="inputDivisiData" [jurnalData]="detailData"
+                                (onSubmit)="onSubmit($event)" (onCancel)="onCancel()" (cnlData)="openCDialog()"
+                                (editAction)="editDetailData($event)" (deleteAction)="deleteDetailData($event)"
+                                [namaTombolPrintDoc]="namaTombolPrintDoc" (prntDoc)="onSubmit($event, 'umum')"
+                                [onSubPrintDoc]="onSubPrintDoc" [namaTombolPrintDoc2]="namaTombolPrintDoc2"
+                                [namaStatus]="namaStatus" [styleStatus]="styleStatus"
+                                (prntDoc2)="onSubmit($event, 'kasir')" [onSubPrintDoc2]="onSubPrintDoc2"
+                                [rightLayout]="true" [rightInputLayout]="rightInputLayout" [tipeJurnal]="formValue"
+                                [noEditJurnal]="!enableEdit">
+                            </kt-forminput>
+                            <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report"
+                                method="post" target="_blank">
+                                <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                                <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                    value="Submit">Submit</button>
+                            </form>
+                        </div>
+                    </kt-portlet-body>
+                </mat-tab>
+
+                <mat-tab label="">
+                    <ng-template mat-tab-label>
+                        <p style="margin-bottom: 0"><b>Browse</b></p><br>
+                    </ng-template>
+
+                    <kt-portlet-body>
+                        <div class="kt-section" *ngIf="tableLoad">
+                            <kt-loading></kt-loading>
+                        </div>
+
+                        <div *ngIf="!tableLoad">
+                            <kt-datatable-ag-grid [tableColumn]="displayedColumnsTable" [tableData]="browseData"
+                                [tableRules]="browseDataRules" (selectRowEvent)="browseSelectRow($event)"
+                                [containerHeight]=400>
+                            </kt-datatable-ag-grid>
+                        </div>
+                    </kt-portlet-body>
+                </mat-tab>
+
+            </mat-tab-group>
+        </kt-portlet>
+    </div>
+</div>

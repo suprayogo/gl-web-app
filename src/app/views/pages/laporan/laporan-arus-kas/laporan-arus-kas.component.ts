@@ -494,8 +494,7 @@ export class LaporanArusKasComponent implements OnInit, AfterViewInit {
       this.request.apiData('report', this.formValueAK.metode_laporan === '1' ? 'g-data-arus-kas-langsung' : 'g-data-arus-kas', p).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
-            let z = data['RESULT']
-            this.sendGetReport(z, this.formValueAK['format_laporan'])
+            this.sendGetReport(data['RESULT'], this.formValueAK['format_laporan'])
           } else {
             this.gbl.openSnackBar('Gagal mendapatkan data arus kas.', 'fail')
             this.distinctPeriode()

@@ -168,9 +168,9 @@
             <div class="input-group-append">
               <button *ngIf="!x.noButton" tabindex="-1" type="button" class="btn btn-primary btn-input-group"
                 (click)="x.click(x.browseType)"
-                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm"><i
-                  *ngIf="x.btnIcon" style="color: white" class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel
-                }}</button>
+                [disabled]="(onUpdate && (x.update === undefined ? false : x.update.disabled)) || (x.disabled === undefined ? false : x.disabled) || disabledOn(x.disabledOn) || disableForm">
+                <i *ngIf="x.btnIcon" style="color: white" class="flaticon" [ngClass]="x.btnIcon"></i>{{ x.btnLabel }}
+              </button>
             </div>
           </div>
         </div>

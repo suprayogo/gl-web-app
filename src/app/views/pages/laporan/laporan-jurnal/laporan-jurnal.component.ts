@@ -329,7 +329,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     if (this.forminput !== undefined) {
       this.formValueJL = this.forminput.getData()
       this.loading = true
-      this.ref.markForCheck()
       let rk = this.formValueJL['tahun'] + this.formValueJL['bulan'] + this.formValueJL['periode_berjarak'] + this.formValueJL['kode_cabang'] + this.formValueJL['kode_akun'] + this.formValueJL['format_laporan']
       if (this.checkKeyReport[rk] !== undefined) {
         if (this.formValueJL['format_laporan'] === 'pdf') {
@@ -585,14 +584,6 @@ export class LaporanJurnalComponent implements OnInit, AfterViewInit {
     this.checkKeyReport[rk] = p
     this.distinctPeriode()
     this.ref.markForCheck()
-  }
-
-  formInputCheckChanges() {
-    setTimeout(() => {
-      this.ref.markForCheck()
-      this.forminput === undefined ? null : this.forminput.checkChanges()
-      // this.forminput === undefined ? null : this.forminput.checkChangesDetailInput()
-    }, 1)
   }
 
   //Date Functions

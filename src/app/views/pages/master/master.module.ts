@@ -10,7 +10,7 @@ import { PartialsModule } from '../../partials/partials.module';
 //Shared
 import { SharedModule } from '../shared.module';
 // Services
-import { TypesUtilsService, LayoutUtilsService} from '../../../core/_base/crud';
+import { TypesUtilsService, LayoutUtilsService } from '../../../core/_base/crud';
 // Shared
 import { ActionNotificationComponent } from '../../partials/content/crud';
 
@@ -55,6 +55,7 @@ import { KasirComponent } from './kasir/kasir.component';
 import { TemplateTransaksiComponent } from './template-transaksi/template-transaksi.component';
 import { PengajuanBukaPeriodeKasirComponent } from './pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir.component';
 import { WorklistComponent } from './worklist/worklist.component';
+import { DaftarGroupCoaComponent } from './daftar-group-coa/daftar-group-coa.component';
 
 
 const routes: Routes = [
@@ -62,7 +63,7 @@ const routes: Routes = [
 		path: 'bank',
 		component: BankComponent,
 	},
-	{	
+	{
 		path: 'rekening-perusahaan',
 		component: RekeningPerusahaanComponent,
 	},
@@ -73,6 +74,10 @@ const routes: Routes = [
 	{
 		path: 'chart-of-account',
 		component: ChartOfAccountComponent,
+	},
+	{
+		path: 'daftar-group-coa',
+		component: DaftarGroupCoaComponent,
 	},
 	{
 		path: 'jenis-transaksi',
@@ -129,7 +134,7 @@ const routes: Routes = [
 		MatButtonModule,
 		MatMenuModule,
 		MatSelectModule,
-        MatInputModule,
+		MatInputModule,
 		MatTableModule,
 		MatAutocompleteModule,
 		MatRadioModule,
@@ -169,6 +174,7 @@ const routes: Routes = [
 		RekeningPerusahaanComponent,
 		PegaturanAkunComponent,
 		ChartOfAccountComponent,
+		DaftarGroupCoaComponent,
 		JenisTransaksiComponent,
 		PengaturanSaldoAwalComponent,
 		PengaturanLaporanComponent,
@@ -181,4 +187,4 @@ const routes: Routes = [
 		WorklistComponent,
 	]
 })
-export class MasterModule {}
+export class MasterModule { }

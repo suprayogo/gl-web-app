@@ -56,35 +56,67 @@ import { LaporanListComponent } from './laporan-list/laporan-list.component';
 import { RekapTranComponent } from './rekap-tran/rekap-tran.component';
 import { LaporanCoaComponent } from './laporan-coa/laporan-coa.component';
 import { LaporanAnalisaComponent } from './laporan-analisa/laporan-analisa.component';
+import { LaporanBukuBesarRevComponent } from './laporan-buku-besar-rev/laporan-buku-besar-rev.component';
+import { LaporanLabaRugiRevComponent } from './laporan-laba-rugi-rev/laporan-laba-rugi-rev.component';
+import { LaporanJurnalRevComponent } from './laporan-jurnal-rev/laporan-jurnal-rev.component';
+import { LaporanNeracaSaldoRevComponent } from './laporan-neraca-saldo-rev/laporan-neraca-saldo-rev.component';
+import { LaporanNeracaRevComponent } from './laporan-neraca-rev/laporan-neraca-rev.component';
+import { LaporanArusKasRevComponent } from './laporan-arus-kas-rev/laporan-arus-kas-rev.component';
+import { LaporanAnalisaRevComponent } from './laporan-analisa-rev/laporan-analisa-rev.component';
+import { LaporanRekapTransaksiRevComponent } from './laporan-rekap-transaksi-rev/laporan-rekap-transaksi-rev.component';
+import { LaporanCoaRevComponent } from './laporan-coa-rev/laporan-coa-rev.component';
 
 const routes: Routes = [
-  {
-    path: 'all-reports',
-    component: AllComponent
-  },
+  // Terpakai
   {
     path: 'jurnal',
-    component: LaporanJurnalComponent
+    component: LaporanJurnalRevComponent
+    // component: LaporanJurnalComponent
   },
   {
     path: 'buku-besar',
-    component: LaporanBukuBesarComponent
+    component: LaporanBukuBesarRevComponent
+    // component: LaporanBukuBesarComponent
   },
   {
     path: 'neraca-saldo',
-    component: LaporanNeracaSaldoComponent
+    component: LaporanNeracaSaldoRevComponent
+    // component: LaporanNeracaSaldoComponent
   },
   {
     path: 'laba-rugi',
-    component: LaporanLabaRugiComponent
+    component: LaporanLabaRugiRevComponent
+    // component: LaporanLabaRugiComponent
   },
   {
     path: 'neraca',
-    component: LaporanNeracaComponent
+    component: LaporanNeracaRevComponent
+    // component: LaporanNeracaComponent
   },
   {
     path: 'arus-kas',
-    component: LaporanArusKasComponent
+    component: LaporanArusKasRevComponent
+    // component: LaporanArusKasComponent
+  },
+  {
+    path: 'coa',
+    component: LaporanCoaRevComponent
+    // component: LaporanCoaComponent
+  },
+  {
+    path: 'analisa',
+    component: LaporanAnalisaRevComponent
+    // component: LaporanAnalisaComponent
+  },
+  {
+    path: 'rekap-tran',
+    component: LaporanRekapTransaksiRevComponent
+    // component: RekapTranComponent
+  },
+  // Tidak Terpakai
+  {
+    path: 'all-reports',
+    component: AllComponent
   },
   {
     path: 'rekap-kas',
@@ -102,18 +134,6 @@ const routes: Routes = [
     path: 'rekap-petty-cash',
     component: RekapPettyCashComponent
   },
-  {
-    path: 'rekap-tran',
-    component: RekapTranComponent
-  },
-  {
-    path: 'coa',
-    component: LaporanCoaComponent
-  },
-  {
-    path: 'analisa',
-    component: LaporanAnalisaComponent
-  }
 ]
 
 @NgModule({
@@ -179,7 +199,16 @@ const routes: Routes = [
     RekapPettyCashComponent,
     RekapTranComponent,
     LaporanCoaComponent,
-    LaporanAnalisaComponent
+    LaporanAnalisaComponent,
+    LaporanBukuBesarRevComponent,
+    LaporanLabaRugiRevComponent,
+    LaporanJurnalRevComponent,
+    LaporanNeracaSaldoRevComponent,
+    LaporanNeracaRevComponent,
+    LaporanArusKasRevComponent,
+    LaporanAnalisaRevComponent,
+    LaporanRekapTransaksiRevComponent,
+    LaporanCoaRevComponent
   ]
 })
 export class LaporanModule { }

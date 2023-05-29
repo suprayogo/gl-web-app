@@ -27,6 +27,10 @@ export class WorklistRequestService {
       httpBody.respondCode = 'GET-DATA-JURNAL-BATCH'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-wl-tran-pej') {
+      httpBody.respondCode = 'GET-DATA-JURNAL-EDIT-BY-NO'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

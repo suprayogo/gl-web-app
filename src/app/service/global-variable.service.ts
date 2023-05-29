@@ -310,7 +310,7 @@ export class GlobalVariableService {
       formatYMD = `${years}-${months}-${days}`,
       formatMY = `${months}-${years}`,
       formatDMY = `${days}-${months}-${years}`
-      
+
     if (specType != undefined) {
       if (specType === 'M-Y') {
         return formatMY
@@ -396,7 +396,10 @@ export class GlobalVariableService {
         tableInterface:
           type === this.loopType(data)['type'] ? this.loopType(data)['interface'] :
             {},
-        formValue: inputValue
+        formValue: inputValue,
+        selectable: type === this.loopType(data)['type'] ? this.loopType(data)['statusSelectable'] : false,
+        selected: type === this.loopType(data)['type'] ? this.loopType(data)['listSelectBox'] : [],
+        selectIndicator: type === this.loopType(data)['type'] ? this.loopType(data)['selectIndicator'] : ''
       }
     })
 
@@ -410,7 +413,10 @@ export class GlobalVariableService {
         columns = data[i]['columns'],
         contain = data[i]['contain'],
         rules = data[i]['rules'],
-        intrface = data[i]['interface']
+        intrface = data[i]['interface'],
+        statusSelectable = data[i]['statusSelectable'],
+        listSelectBox = data[i]['listSelectBox'],
+        selectIndicator = data[i]['selectIndicator']
 
       return {
         type: type,
@@ -418,7 +424,10 @@ export class GlobalVariableService {
         columns: columns,
         contain: contain,
         rules: rules,
-        interface: intrface
+        interface: intrface,
+        statusSelectable: statusSelectable,
+        listSelectBox: listSelectBox,
+        selectIndicator: selectIndicator
       }
     }
   }
@@ -427,8 +436,13 @@ export class GlobalVariableService {
     return Math.max.apply(Math, data.map(function (o) { return parseInt(o['tahun_periode']) }))
   }
 
+  getBulanTerendah(data, filterYears) {
+    let array = data.filter(x => x['tahun_periode'] === parseInt(filterYears))
+    return Math.min.apply(Math, array.map(function (o) { return parseInt(o['bulan_periode']) }))
+  }
+
   getBulanTertinggi(data, filterYears) {
-    let array = data.filter(x => x['tahun_periode'] === filterYears)
+    let array = data.filter(x => x['tahun_periode'] === parseInt(filterYears))
     return Math.max.apply(Math, array.map(function (o) { return parseInt(o['bulan_periode']) }))
   }
 

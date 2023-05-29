@@ -1,0 +1,36 @@
+<div class="row">
+    <div class="col-xl-12">
+
+        <!-- Start of a Content -->
+
+        <kt-portlet>
+            <kt-portlet-header [title]="content.beforeCodeTitle"></kt-portlet-header>
+            <div class="kt-section" *ngIf="loading">
+                <kt-loading></kt-loading>
+            </div>
+
+            <kt-portlet-body>
+                <div class="kt-section" *ngIf="!loading">
+                    <div *ngIf="!loadingNR">
+                        <kt-forminput [inputLayout]="inputLayoutNR" [formValue]="formValueNR" [namaTombol]="nama_tombol"
+                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                            (onSubmit)="onSubmitNR($event)" (onCancel)="onCancel()" [onSub]="onSub">
+                        </kt-forminput>
+                        <form #form action="{{ urlReportExcel }}" method="post" target="_blank">
+                            <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
+                            <button type="submit" (click)="form.submit()" id="fsubmit" hidden
+                                value="Submit">Submit</button>
+                        </form>
+                    </div>
+                    <div *ngIf="loadingNR">
+                        <kt-loading></kt-loading>
+                    </div>
+                </div>
+            </kt-portlet-body>
+
+        </kt-portlet>
+
+        <!-- End of a Content -->
+
+    </div>
+</div>

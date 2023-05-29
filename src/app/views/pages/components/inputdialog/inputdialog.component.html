@@ -18,8 +18,13 @@
           <!-- LEFT SIDE -->
           <div [ngStyle]="{'width': rightLayout ? '45%' : '100%'}">
             <div class="form-group m-form__group" *ngFor="let x of inputLayout; let i = index"
-              [ngClass]="{'row': x.type !== 'listinput'}"
-              [hidden]="x.hiddenOn ? x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true : false : false">
+              [ngClass]="{'row': x.type !== 'listinput'}" [hidden]="x.hiddenOn ?       
+              (
+                x.hiddenOn.matchValue === undefined ? '' : x.hiddenOn.matchValue ? 
+                (x.hiddenOn.matchValue.includes(formValue[x.hiddenOn.valueOf]) ? true : false) : 
+                x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true : false
+              )
+        : false">
               <label *ngIf="x.label !== ''" [ngStyle]="{'padding-left.px': x.type === 'listinput' ? 0 : 15}" [ngClass]="{'font-weight-bold': x.type === 'listinput', 
                 'col-sm-8': x.type === 'listinput'}" class="col-sm-4 col-form-label">
                 {{ x.label}}
@@ -152,8 +157,13 @@
           <div *ngIf="rightLayout" style="width: 2%;"></div>
           <div *ngIf="rightLayout" style="width: 51%;">
             <div class="form-group m-form__group" *ngFor="let x of rightInputLayout; let i = index"
-              [ngClass]="{'row': x.type !== 'listinput'}"
-              [hidden]="x.hiddenOn ? x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true : false : false">
+              [ngClass]="{'row': x.type !== 'listinput'}" [hidden]="x.hiddenOn ?       
+              (
+                x.hiddenOn.matchValue === undefined ? '' : x.hiddenOn.matchValue ? 
+                (x.hiddenOn.matchValue.includes(formValue[x.hiddenOn.valueOf]) ? true : false) : 
+                x.hiddenOn.matchValue === formValue[x.hiddenOn.valueOf] ? true : false
+              )
+        : false">
               <label class="col-sm-4 col-form-label"
                 [ngClass]="{'font-weight-bold': x.type === 'listinput', 'col-sm-8': x.type === 'listinput'}"
                 *ngIf="x.label !== ''" [ngStyle]="{'padding-left.px': x.type === 'listinput' ? 0 : 15}">{{ x.label

@@ -401,7 +401,7 @@ export class LaporanNeracaComponent implements OnInit, AfterViewInit {
           data => {
             if (data['STATUS'] === 'Y') {
               let idata = data['RESULT']
-              this.sendGetReport(idata, this.formValueNR['format_laporan'])
+              this.sendGetReport(data['RESULT'], this.formValueNR['format_laporan'])
             } else {
               this.gbl.openSnackBar('Gagal mendapatkan data neraca.', 'fail')
               this.distinctPeriode()

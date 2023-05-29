@@ -79,6 +79,10 @@ export class ReportRequestService {
       httpBody.respondCode = 'GET-REPORT'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-cetak-tran-jurnal') {
+      httpBody.respondCode = 'GET-JURNAL-DOK-BY-NO'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

@@ -103,12 +103,23 @@ export class KasirComponent implements OnInit, AfterViewInit {
       value: 'user_id'
     }
   ]
-  inputUserInterface = {
-    user_id: 'string',
-    user_name: 'string'
-  }
+  inputUserInterface = {}
   inputUserData = []
   inputUserDataRules = []
+
+  inputGroupAkunDisplayColumns = [
+    {
+      label: 'Kode Group Akun',
+      value: 'kode_group_akun'
+    },
+    {
+      label: 'Nama Group Akun',
+      value: 'nama_group_akun'
+    }
+  ]
+  inputGroupAkunInterface = {}
+  inputGroupAkunData = []
+  inputGroupAkunrDataRules = []
 
   // TAB MENU BROWSE 
   displayedColumnsTable = [
@@ -151,18 +162,7 @@ export class KasirComponent implements OnInit, AfterViewInit {
       date: true
     }
   ];
-  browseInterface = {
-    nama_kasir: 'string',
-    user_kasir: 'string',
-    id_kepala_kasir: 'string',
-    aktif: 'string',
-    keterangan: 'string',
-    //STATIC
-    input_by: 'string',
-    input_dt: 'string',
-    update_by: 'string',
-    update_dt: 'string'
-  }
+  browseInterface = {}
   browseData = []
   browseDataRules = [
     {
@@ -183,6 +183,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
     nama_user_kasir: '',
     id_kepala_kasir: '',
     nama_kepala_kasir: '',
+    kode_group_akun: '',
+    nama_group_akun: '',
     aktif: 'Y',
     keterangan: '',
   }
@@ -272,7 +274,31 @@ export class KasirComponent implements OnInit, AfterViewInit {
       update: {
         disabled: false
       }
-    }
+    },
+    {
+      formWidth: 'col-5',
+      label: 'Group Akun',
+      id: 'kode-group-akun',
+      type: 'inputgroup',
+      click: (type) => this.openDialog(type),
+      btnLabel: '',
+      btnIcon: 'flaticon-search',
+      browseType: 'kode_group_akun',
+      valueOf: 'kode_group_akun',
+      required: true,
+      readOnly: true,
+      hiddenOn: false,
+      inputInfo: {
+        id: 'nama-group-akun',
+        disabled: false,
+        readOnly: true,
+        required: false,
+        valueOf: 'nama_group_akun'
+      },
+      update: {
+        disabled: false
+      }
+    },
   ]
 
   constructor(
@@ -338,6 +364,15 @@ export class KasirComponent implements OnInit, AfterViewInit {
           }
         }
       )
+
+      this.request.apiData('akun', 'g-group-akun-header', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+        data => {
+          if (data['STATUS'] == 'Y') {
+            this.ref.markForCheck()
+            this.inputGroupAkunData = data['RESULT']
+          }
+        }
+      )
     }
   }
 
@@ -357,19 +392,23 @@ export class KasirComponent implements OnInit, AfterViewInit {
         tableInterface:
           type === "user_kasir" ? this.inputUserInterface :
             type === "id_kepala_kasir" ? this.inputUserInterface :
-              {},
+              type === "kode_group_akun" ? this.inputGroupAkunInterface :
+                {},
         displayedColumns:
           type === "user_kasir" ? this.inputUserDisplayColumns :
             type === "id_kepala_kasir" ? this.inputUserDisplayColumns :
-              [],
+              type === "kode_group_akun" ? this.inputGroupAkunDisplayColumns :
+                [],
         tableData:
           type === "user_kasir" ? this.inputUserData :
             type === "id_kepala_kasir" ? this.inputUserData :
-              [],
+              type === "kode_group_akun" ? this.inputGroupAkunData :
+                [],
         tableRules:
           type === "user_kasir" ? this.inputUserDataRules :
             type === "id_kepala_kasir" ? this.inputUserDataRules :
-              [],
+              type === "kode_group_akun" ? this.inputGroupAkunrDataRules :
+                [],
         formValue: this.formValue
       }
     });
@@ -385,6 +424,11 @@ export class KasirComponent implements OnInit, AfterViewInit {
           if (this.forminput !== undefined) {
             this.forminput.updateFormValue('id_kepala_kasir', result.user_id)
             this.forminput.updateFormValue('nama_kepala_kasir', result.user_name)
+          }
+        } else if (type === "kode_group_akun") {
+          if (this.forminput !== undefined) {
+            this.forminput.updateFormValue('kode_group_akun', result.kode_group_akun)
+            this.forminput.updateFormValue('nama_group_akun', result.nama_group_akun)
           }
         }
         this.ref.markForCheck();
@@ -492,6 +536,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
       nama_user_kasir: x['nama_user_kasir'],
       id_kepala_kasir: x['id_kepala_kasir'],
       nama_kepala_kasir: x['nama_kepala_kasir'],
+      kode_group_akun: x['kode_group_akun'],
+      nama_group_akun: x['nama_group_akun'],
       aktif: x['aktif'],
       keterangan: x['keterangan']
     }
@@ -565,6 +611,8 @@ export class KasirComponent implements OnInit, AfterViewInit {
       nama_user_kasir: '',
       id_kepala_kasir: '',
       nama_kepala_kasir: '',
+      kode_group_akun: '',
+      nama_group_akun: '',
       aktif: 'Y',
       keterangan: '',
     }

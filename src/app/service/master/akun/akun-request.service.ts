@@ -85,6 +85,34 @@ export class AkunRequestService {
       httpBody.respondCode = 'DEL-DATA-AKUN'
       httpBody.requestParam = JSON.stringify(formData)
       return this.get(httpBody, options)
+    } else if (data === 'g-group-akun-user') {
+      httpBody.respondCode = 'GET-DATA-GROUP-AKUN-BY-USER'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-group-akun-header') {
+      httpBody.respondCode = 'GET-DATA-GROUP-AKUN-HEADER'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-group-akun-detail') {
+      httpBody.respondCode = 'GET-DATA-GROUP-AKUN-DETAIL'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'i-group-akun') {
+      httpBody.respondCode = 'SET-DATA-GROUP-AKUN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'u-group-akun') {
+      httpBody.respondCode = 'UPT-DATA-GROUP-AKUN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'd-group-akun') {
+      httpBody.respondCode = 'DEL-DATA-GROUP-AKUN'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
+    } else if (data === 'g-jenis-tran-by-tipe') {
+      httpBody.respondCode = 'GET-DATA-JENIS-TRANSAKSI-BY-TIPE'
+      httpBody.requestParam = JSON.stringify(formData)
+      return this.get(httpBody, options)
     }
   }
 

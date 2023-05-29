@@ -10,15 +10,13 @@
             </div>
 
             <kt-portlet-body>
-                <div class="kt-section"*ngIf="!loading">
+                <div class="kt-section" *ngIf="!loading">
                     <div *ngIf="!loadingAK">
-                        <kt-forminput [inputLayout]="inputLayoutAK" [formValue]="formValueAK"
-                            [namaTombol]="nama_tombol" [tableColumn]="detailDisplayColumns" [tableData]="detailData"
-                            [tableRules]="detailRules" (onSubmit)="onSubmitAK($event)" (onCancel)="onCancel()"
-                            [onSub]="onSub">
+                        <kt-forminput [inputLayout]="inputLayoutAK" [formValue]="formValueAK" [namaTombol]="nama_tombol"
+                            [tableColumn]="detailDisplayColumns" [tableData]="detailData" [tableRules]="detailRules"
+                            (onSubmit)="onSubmitAK($event)" (onCancel)="onCancel()" [onSub]="onSub">
                         </kt-forminput>
-                        <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report"
-                            method="post" target="_blank">
+                        <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report" method="post" target="_blank">
                             <input hidden name="requestParam" value="{{ keyReportFormatExcel }}">
                             <button type="submit" (click)="form.submit()" id="fsubmit" hidden
                                 value="Submit">Submit</button>

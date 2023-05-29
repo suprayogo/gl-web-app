@@ -11,8 +11,7 @@
                         <kt-forminput [inputLayout]="formInputLyt" [formValue]="formInputVal"
                             [namaTombol]="'Lihat Laporan'" (onSubmit)="onSubmit($event)" (onCancel)="onCancel()">
                         </kt-forminput>
-                        <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report"
-                            method="post" target="_blank">
+                        <form #form action="http://deva.darkotech.id:8704/erp-ws-main/ws/postdownload/report" method="post" target="_blank">
                             <input hidden name="requestParam" value="{{ excelReportTypeId }}">
                             <button type="submit" (click)="form.submit()" id="fsubmit" hidden
                                 value="Submit">Submit</button>

@@ -775,13 +775,13 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
     this.opsi_bulan = list_bulan
     // ========= || ============
 
-    if (this.forminput != undefined) {
-      this.forminput.updateFormValue('tahun_periode', this.gbl.getTahunTertinggi(this.periode_tutup))
-      this.forminput.updateFormValue('numb_bulan_periode', this.gbl.getBulanTertinggi(this.periode_tutup, parseInt(this.forminput.getData()['tahun_periode'])).toString())
-      this.formValue.tahun_periode = parseInt(this.forminput.getData()['tahun_periode'])
-      this.formValue.bulan_periode = this.gbl.getNamaBulan(this.forminput.getData()['numb_bulan_periode'])
-      this.formValue.numb_bulan_periode = parseInt(this.forminput.getData()['numb_bulan_periode'])
-    }
+    // if (this.forminput != undefined) {
+    //   this.forminput.updateFormValue('tahun_periode', this.gbl.getTahunTertinggi(this.periode_tutup))
+    //   this.forminput.updateFormValue('numb_bulan_periode', this.gbl.getBulanTertinggi(this.periode_tutup, parseInt(this.forminput.getData()['tahun_periode'])).toString())
+    //   this.formValue.tahun_periode = parseInt(this.forminput.getData()['tahun_periode'])
+    //   this.formValue.bulan_periode = this.gbl.getNamaBulan(this.forminput.getData()['numb_bulan_periode'])
+    //   this.formValue.numb_bulan_periode = parseInt(this.forminput.getData()['numb_bulan_periode'])
+    // }
 
     this.inputLayout.splice(0, 3,
       {
@@ -826,10 +826,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           this.formValue.tahun_periode = parseInt(v)
 
           // RESET
-          this.forminput.getData().numb_bulan_periode = 0
-          this.formValue.numb_bulan_periode = 0
-          this.forminput.getData().bulan_periode = ''
+          this.forminput.updateFormValue('bulan_periode', '')
+          this.forminput.updateFormValue('numb_bulan_periode', 0)
           this.formValue.bulan_periode = ''
+          this.formValue.numb_bulan_periode = 0
 
           this.filterMonth(v, 'PJ')
         }
@@ -848,10 +848,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           disabled: true
         },
         onSelectFunc: (v) => {
-          this.forminput.getData().numb_bulan_periode = parseInt(v)
-          this.formValue.numb_bulan_periode = parseInt(v)
-          this.forminput.getData().bulan_periode = this.gbl.getNamaBulan(v)
+          this.forminput.updateFormValue('bulan_periode', this.gbl.getNamaBulan(v))
+          this.forminput.updateFormValue('numb_bulan_periode', parseInt(v))
           this.formValue.bulan_periode = this.gbl.getNamaBulan(v)
+          this.formValue.numb_bulan_periode = parseInt(v)
           let x = this.periode_tutup.filter(x => x.tahun_periode === this.formValue.tahun_periode && x.bulan_periode === this.formValue.numb_bulan_periode)
           this.sendRequestRiwayat(x[0].id_periode)
           this.sendRequesBelumPosting(x[0].id_periode)
@@ -988,10 +988,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           this.formValueTP.tahun_periode = parseInt(v)
 
           // RESET
-          this.forminputTP.getData().numb_bulan_periode = 0
-          this.formValueTP.numb_bulan_periode = 0
-          this.forminputTP.getData().bulan_periode = ''
+          this.forminputTP.updateFormValue('bulan_periode', '')
+          this.forminputTP.updateFormValue('numb_bulan_periode', 0)
           this.formValueTP.bulan_periode = ''
+          this.formValueTP.numb_bulan_periode = 0
 
           this.filterMonth(v, 'TP')
         }
@@ -1007,10 +1007,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         readOnly: false,
         disabled: false,
         onSelectFunc: (v) => {
-          this.forminputTP.getData().numb_bulan_periode = parseInt(v)
-          this.formValueTP.numb_bulan_periode = parseInt(v)
-          this.forminputTP.getData().bulan_periode = this.gbl.getNamaBulan(v)
+          this.forminputTP.updateFormValue('bulan_periode', this.gbl.getNamaBulan(v))
+          this.forminputTP.updateFormValue('numb_bulan_periode', parseInt(v))
           this.formValueTP.bulan_periode = this.gbl.getNamaBulan(v)
+          this.formValueTP.numb_bulan_periode = parseInt(v)
         }
       }
     )
@@ -1103,10 +1103,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           this.formValueTPS.tahun_periode = parseInt(v)
 
           // RESET
-          this.forminputTPS.getData().numb_bulan_periode = 0
-          this.formValueTPS.numb_bulan_periode = 0
-          this.forminputTPS.getData().bulan_periode = ''
+          this.forminputTPS.updateFormValue('bulan_periode', '')
+          this.forminputTPS.updateFormValue('numb_bulan_periode', 0)
           this.formValueTPS.bulan_periode = ''
+          this.formValueTPS.numb_bulan_periode = 0
 
           this.filterMonth(v, 'TPS')
         }
@@ -1122,10 +1122,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         readOnly: false,
         disabled: false,
         onSelectFunc: (v) => {
-          this.forminputTPS.getData().numb_bulan_periode = parseInt(v)
-          this.formValueTPS.numb_bulan_periode = parseInt(v)
-          this.forminputTPS.getData().bulan_periode = this.gbl.getNamaBulan(v)
+          this.forminputTPS.updateFormValue('bulan_periode', this.gbl.getNamaBulan(v))
+          this.forminputTPS.updateFormValue('numb_bulan_periode', parseInt(v))
           this.formValueTPS.bulan_periode = this.gbl.getNamaBulan(v)
+          this.formValueTPS.numb_bulan_periode = parseInt(v)
         }
       }
     )
@@ -1471,7 +1471,15 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.formValue.kode_cabang = this.forminput.getData()['kode_cabang']
             this.formValue.nama_cabang = this.forminput.getData()['nama_cabang']
 
+            // PERIODE
             this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValue.kode_cabang)
+            this.forminput.updateFormValue('tahun_periode', this.periode_tutup[0]['tahun_periode'])
+            this.forminput.updateFormValue('numb_bulan_periode', parseInt(this.periode_tutup[0]['bulan_periode']))
+            this.forminput.updateFormValue('bulan_periode', this.gbl.getNamaBulan(this.periode_tutup[0]['bulan_periode']))
+            this.formValue.tahun_periode = this.periode_tutup[0]['tahun_periode']
+            this.formValue.numb_bulan_periode = parseInt(this.periode_tutup[0]['bulan_periode'])
+            this.formValue.bulan_periode = this.gbl.getNamaBulan(this.periode_tutup[0]['bulan_periode'])
+
             if (this.periode_tutup.length > 0) {
               this.disableSubmit = false
             } else {
@@ -1486,9 +1494,15 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.forminputTPS.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValueTPS.kode_cabang = this.forminputTPS.getData()['kode_cabang']
             this.formValueTPS.nama_cabang = this.forminputTPS.getData()['nama_cabang']
-            this.forminputTPS.updateFormValue('bulan_periode', '')
 
+            // PERIODE
             this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValueTPS.kode_cabang)
+            this.forminputTPS.updateFormValue('tahun_periode', this.periode_tutup[0]['tahun_periode'])
+            this.forminputTPS.updateFormValue('bulan_periode', this.gbl.getNamaBulan(this.periode_tutup[0]['bulan_periode']))
+            this.forminputTPS.updateFormValue('numb_bulan_periode', parseInt(this.periode_tutup[0]['bulan_periode']))
+            this.formValueTPS.bulan_periode = this.gbl.getNamaBulan(this.periode_tutup[0]['bulan_periode'])
+            this.formValueTPS.numb_bulan_periode = parseInt(this.periode_tutup[0]['bulan_periode'])
+
             if (this.periode_tutup.length > 0) {
               this.disableSubmitTPS = false
             } else {
@@ -1504,9 +1518,16 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             this.forminputTP.updateFormValue('nama_cabang', result.nama_cabang)
             this.formValueTP.kode_cabang = this.forminputTP.getData()['kode_cabang']
             this.formValueTP.nama_cabang = this.forminputTP.getData()['nama_cabang']
-            this.forminputTP.updateFormValue('bulan_periode', '')
 
+            // PERIODE
             this.periode_tutup = this.periode_cabang_tutup.filter(x => (x.aktif === '1' || x.tutup_sementara === '1') && x.kode_cabang === this.formValueTP.kode_cabang)
+            this.forminputTP.updateFormValue('tahun_periode', this.periode_tutup[0]['tahun_periode'])
+            this.forminputTP.updateFormValue('bulan_periode', this.gbl.getNamaBulan(this.periode_tutup[0]['bulan_periode']))
+            this.forminputTP.updateFormValue('numb_bulan_periode', parseInt(this.periode_tutup[0]['bulan_periode']))
+            this.formValueTP.bulan_periode = this.gbl.getNamaBulan(this.periode_tutup[0]['bulan_periode'])
+            this.formValueTP.numb_bulan_periode = parseInt(this.periode_tutup[0]['bulan_periode'])
+
+
             if (this.periode_tutup.length > 0) {
               this.disableSubmitTP = false
             } else {
@@ -1921,10 +1942,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           readOnly: false,
           disabled: false,
           onSelectFunc: (v) => {
-            this.forminputTP.getData().numb_bulan_periode = parseInt(v)
-            this.formValueTP.numb_bulan_periode = parseInt(v)
-            this.forminputTP.getData().bulan_periode = this.gbl.getNamaBulan(v)
+            this.forminputTP.updateFormValue('bulan_periode', this.gbl.getNamaBulan(v))
+            this.forminputTP.updateFormValue('numb_bulan_periode', parseInt(v))
             this.formValueTP.bulan_periode = this.gbl.getNamaBulan(v)
+            this.formValueTP.numb_bulan_periode = parseInt(v)
           }
         }
       )
@@ -1941,10 +1962,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
           readOnly: false,
           disabled: false,
           onSelectFunc: (v) => {
-            this.forminputTPS.getData().numb_bulan_periode = parseInt(v)
-            this.formValueTPS.numb_bulan_periode = parseInt(v)
-            this.forminputTPS.getData().bulan_periode = this.gbl.getNamaBulan(v)
+            this.forminputTPS.updateFormValue('bulan_periode', this.gbl.getNamaBulan(v))
+            this.forminputTPS.updateFormValue('numb_bulan_periode', parseInt(v))
             this.formValueTPS.bulan_periode = this.gbl.getNamaBulan(v)
+            this.formValueTPS.numb_bulan_periode = parseInt(v)
           }
         }
       )
@@ -1964,10 +1985,10 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
             disabled: true
           },
           onSelectFunc: (v) => {
-            this.forminput.getData().numb_bulan_periode = parseInt(v)
-            this.formValue.numb_bulan_periode = parseInt(v)
-            this.forminput.getData().bulan_periode = this.gbl.getNamaBulan(v)
+            this.forminput.updateFormValue('bulan_periode', this.gbl.getNamaBulan(v))
+            this.forminput.updateFormValue('numb_bulan_periode', parseInt(v))
             this.formValue.bulan_periode = this.gbl.getNamaBulan(v)
+            this.formValue.numb_bulan_periode = parseInt(v)
 
             let x = this.periode_tutup.filter(x => x.tahun_periode === this.formValue.tahun_periode && x.bulan_periode === this.formValue.numb_bulan_periode)
             this.sendRequestRiwayat(x[0].id_periode)
@@ -1976,6 +1997,7 @@ export class PostingJurnalComponent implements OnInit, AfterViewInit {
         }
       )
     }
+    this.formInputCheckChanges()
   }
 
   //Reset Value

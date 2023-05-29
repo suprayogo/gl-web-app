@@ -29,8 +29,12 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
   stsReqPBPK: boolean = false // [Status Request Data] Pengajuan Buka Periode Kasir
   listPBJ: any = [] // [Request Data] Pengajuan Batal Jurnal
   stsReqPBJ: boolean = false // [Status Request Data] Pengajuan Batal Jurnal
+  listPEJ: any = [] // [Request Data] Pengajuan Edit Jurnal
+  stsReqPEJ: boolean = false // [Status Request Data] Pengajuan Edit Jurnal
   kodeTranPBPK = 'TRAN-PBPK'
   kodeTranPBJ = 'TRAN-PBJ'
+  kodeTranPEJ = 'TRAN-PEJ'
+  bindPEJ = ''
 
   // Form Input Value Variable
   formInputVal = {
@@ -49,6 +53,7 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
 
   // Form Input Layout Variable
   formInputLyt: any = []
+  rFormInputLyt: any = [] // Right Side
 
   // Data Table Variable
   tableColumn = [
@@ -147,8 +152,6 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
               if (this.stsReqPBPK) {
                 this.setContent(type, mandatoryData)
               }
-            } else {
-              this.gbl.openSnackBar('Data pengajuan buka kasir tidak ditemukan.', 'fail')
             }
           }
         )
@@ -170,8 +173,25 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
               if (this.stsReqPBJ) {
                 this.setContent(type, mandatoryData)
               }
-            } else {
-              this.gbl.openSnackBar('Data pengajuan buka kasir tidak ditemukan.', 'fail')
+            }
+          }
+        )
+      } else {
+        this.setContent(type, mandatoryData)
+      }
+    } else if (type == this.kodeTranPEJ) {
+      if (this.bindPEJ != mandatoryData.no_tran) {
+        reqData = Object.assign({
+          kode_perusahaan: this.kodePerusahaan,
+          no_tran: mandatoryData.no_tran
+        })
+        this.request.apiData('worklist', 'g-wl-tran-pej', reqData).subscribe(
+          data => {
+            if (data['STATUS'] == 'Y') {
+              this.ref.markForCheck()
+              this.bindPEJ = mandatoryData.no_tran
+              this.listPEJ = data['RESULT']
+              this.setContent(type, mandatoryData)
             }
           }
         )
@@ -188,6 +208,8 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
       this.setOptionalRequest(this.kodeTranPBPK, get) // Pengajuan Buka Periode Kasir
     } else if (get.kode_wl == 'APP-PENGAJUAN-BTL-JURNAL') {
       this.setOptionalRequest(this.kodeTranPBJ, get) // Pengajuan Batal Jurnal
+    } else if (get.kode_wl == 'APP-PENGAJUAN-EDIT-JURNAL') {
+      this.setOptionalRequest(this.kodeTranPEJ, get) // Pengajuan Edit Jurnal
     }
   }
 
@@ -215,7 +237,7 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
           this.formViewVal['kode_cabang'] = duplDataWL[i]['kode_cabang']
           this.formViewVal['nama_cabang'] = duplDataWL[i]['nama_cabang']
           this.formViewVal['info_cabang'] = duplDataWL[i]['kode_cabang'] + ' - ' + duplDataWL[i]['nama_cabang']
-          this.formViewVal['keterangan'] = this.formInputVal.keterangan
+          this.formViewVal['keterangan'] = duplDataWL[i]['keterangan']
           this.formViewVal['catatan'] = ''
           let x = {
             id_periode: duplDataWL[i]['id_periode'],
@@ -237,7 +259,7 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
           this.formViewVal['kode_cabang'] = duplDataWL[i]['kode_cabang']
           this.formViewVal['nama_cabang'] = duplDataWL[i]['nama_cabang']
           this.formViewVal['info_cabang'] = duplDataWL[i]['kode_cabang'] + ' - ' + duplDataWL[i]['nama_cabang']
-          this.formViewVal['keterangan'] = this.formInputVal.keterangan
+          this.formViewVal['keterangan'] = duplDataWL[i]['keterangan']
           this.formViewVal['catatan'] = ''
           // Secondary Variable
           // Kasir
@@ -282,13 +304,46 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
       }
       this.ref.markForCheck()
       this.setLayout(type)
-      if (this.formViewVal.jenis_jurnal !== '2') {
-        this.formInputLyt.splice(3, 3)
-      } else {
-        if (this.formViewVal.tipe_laporan !== 'b') {
-          this.formInputLyt.splice(4, 1)
-        }
+    } else if (type == this.kodeTranPEJ) {
+      duplDataWL = JSON.parse(JSON.stringify(this.listPEJ))
+      this.formViewVal['id_tran'] = duplDataWL['id_tran']
+      this.formViewVal['no_tran'] = duplDataWL['no_tran']
+      this.formViewVal['tgl_tran'] = this.gbl.splitDate(duplDataWL['tgl_tran'], 'D-M-Y')
+      this.formViewVal['kode_cabang'] = duplDataWL['kode_cabang']
+      this.formViewVal['nama_cabang'] = duplDataWL['nama_cabang']
+      this.formViewVal['info_cabang'] = duplDataWL['kode_cabang'] + ' - ' + duplDataWL['nama_cabang']
+      this.formViewVal['keterangan'] = duplDataWL['keterangan']
+      this.formViewVal['catatan'] = ''
+      // Secondary Variable
+      // Kasir
+      this.formViewVal['nama_jenis_transaksi'] = duplDataWL['nama_jenis_transaksi']
+      this.formViewVal['nama_tipe_transaksi'] = duplDataWL['nama_tipe_transaksi']
+      // Status
+      this.formViewVal['jenis_jurnal'] = duplDataWL['jurnal_kasir'] === '1' ? '2' : '0'
+      this.formViewVal['tipe_transaksi'] = duplDataWL['tipe_transaksi']
+      this.formViewVal['tipe_laporan'] = duplDataWL['tipe_laporan']
+      this.formViewVal['rekening'] = duplDataWL['no_rekening'] + ' (' + duplDataWL['nama_bank'] + ')'
+      // Others
+      this.formViewVal['saldo_transaksi'] = duplDataWL['saldo_transaksi']
+
+      let detail = [], temp = JSON.parse(JSON.stringify(duplDataWL['data_detail']))
+      detail = temp.map(detail => {
+        const container = detail
+        // Add Important Object
+        container['saldo_debit'] = parseFloat(detail.nilai_debit)
+        container['saldo_kredit'] = parseFloat(detail.nilai_kredit)
+        container['lembar_giro'] = parseFloat(detail.lbr_giro)
+        // Delete Useless Object
+        delete container.nilai_debit
+        delete container.nilai_kredit
+        delete container.lbr_giro
+        return container
       }
+      )
+      this.formViewVal['detail'] = detail
+      this.detailTableContain = this.formViewVal['detail']
+      this.ref.markForCheck()
+      this.setLayout(type)
     }
   }
 
@@ -342,7 +397,7 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
           disabled: false
         }
       ]
-    } else if (type == this.kodeTranPBJ) {
+    } else if (type == this.kodeTranPBJ || type == this.kodeTranPEJ) {
       this.formInputLyt = [
         {
           label: 'No. Transaksi',
@@ -372,33 +427,6 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
           disabled: true
         },
         {
-          label: 'Jenis Transaksi',
-          id: 'nama-jenis-transaksi',
-          type: 'input',
-          valueOf: 'nama_jenis_transaksi',
-          required: false,
-          readOnly: true,
-          disabled: true
-        },
-        {
-          label: 'Rekening Bank',
-          id: 'rekening',
-          type: 'input',
-          valueOf: 'rekening',
-          required: false,
-          readOnly: true,
-          disabled: true
-        },
-        {
-          label: 'Tipe Transaksi',
-          id: 'nama-tipe-transaksi',
-          type: 'input',
-          valueOf: 'nama_tipe_transaksi',
-          required: false,
-          readOnly: true,
-          disabled: true
-        },
-        {
           label: 'Keterangan',
           id: 'keterangan',
           type: 'input',
@@ -418,6 +446,39 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
           disabled: false
         }
       ]
+      this.rFormInputLyt = [
+        {
+          label: 'Jenis Transaksi',
+          id: 'jenis-transaksi',
+          type: 'input',
+          valueOf: 'nama_jenis_transaksi',
+          required: true,
+          readOnly: true,
+          disabled: true
+        },
+        {
+          label: 'Rekening Bank',
+          id: 'rekening',
+          type: 'input',
+          valueOf: 'rekening',
+          required: false,
+          readOnly: true,
+          disabled: true,
+          hiddenOn: {
+            valueOf: 'tipe_laporan',
+            matchValue: ['k', 'p', 'g', '']
+          }
+        },
+        {
+          label: 'Tipe Transaksi',
+          id: 'tipe-transaksi',
+          type: 'input',
+          valueOf: 'nama_tipe_transaksi',
+          required: true,
+          readOnly: true,
+          disabled: true
+        }
+      ]
     }
     this.inputDialog(type)
   }
@@ -426,6 +487,7 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
     this.loading = true
     this.stsReqPBPK = false // Reset request Pengajuan Buka Periode Kasir
     this.stsReqPBJ = false // Reset request Pengajuan Batal Jurnal
+    this.stsReqPEJ = false // Reset request Pengajuan Edit Jurnal
     this.setPreparation()
   }
 
@@ -478,8 +540,10 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
       data: {
         width: dataSetting['widthContent'],
         title: dataSetting['titleName'],
+        rightLayout: dataSetting['rightLayoutStatus'],
         formValue: dataSetting['formDetail'],
         inputLayout: dataSetting['detailInputLayout'],
+        rightInputLayout: dataSetting['rightDetInputLayout'],
         selectableDatatable: dataSetting['showDtTable'],
         sizeCont: dataSetting['heightTable'],
         noButton: true,
@@ -518,6 +582,7 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
       tmpData['position'] = '45px'
       tmpData['height'] = '70vh'
       tmpData['widthContent'] = '65vw'
+      tmpData['rightLayoutStatus'] = false
       tmpData['showDtTable'] = true
       tmpData['heightTable'] = 330
       tmpData['selectableDisplayColumns'] = this.detailTableColumn
@@ -545,26 +610,52 @@ export class DaftarKerjaComponent implements OnInit, AfterViewInit {
           btnClick: () => this.actionData('REVISION')
         }
       ]
-    } else if (type === this.kodeTranPBJ) {
+    } else if (type === this.kodeTranPBJ || type === this.kodeTranPEJ) {
       tmpData['position'] = '45px'
       tmpData['height'] = '75vh'
       tmpData['widthContent'] = '85vw'
+      tmpData['rightLayoutStatus'] = this.formViewVal['jenis_jurnal'] == '2' ? true : false
+      tmpData['rightDetInputLayout'] = this.formViewVal['jenis_jurnal'] == '2' ? this.rFormInputLyt : []
       tmpData['showDtTable'] = false
       tmpData['selectableDisplayColumns'] = []
       tmpData['selectableData'] = []
       tmpData['showDtJurnal'] = true
       tmpData['jurnalData'] = this.detailTableContain
-      tmpData['btnOptionBottom'] = [
-        {
-          btnLabel: 'Tolak',
-          btnClass: 'btn btn-danger',
-          btnStyle: {
-            'margin-left': '10px'
-          },
-          btnCond: false,
-          btnClick: () => this.actionData('REJECT')
-        }
-      ]
+      tmpData['btnOptionBottom'] =
+        type === this.kodeTranPBJ ? [
+          {
+            btnLabel: 'Tolak',
+            btnClass: 'btn btn-danger',
+            btnStyle: {
+              'margin-left': '10px'
+            },
+            btnCond: false,
+            btnClick: () => this.actionData('REJECT')
+          }
+        ]
+          : type === this.kodeTranPEJ ? [
+            {
+              btnLabel: 'Tolak',
+              btnClass: 'btn btn-danger',
+              btnStyle: {
+                'margin-left': '10px'
+              },
+              btnCond: false,
+              btnClick: () => this.actionData('REJECT')
+            },
+            {
+              btnLabel: 'Revisi',
+              btnClass: 'btn',
+              btnStyle: {
+                'margin-left': '10px',
+                'background-color': '#309dc2',
+                'color': '#ffffff'
+              },
+              btnCond: false,
+              btnClick: () => this.actionData('REVISION')
+            }
+          ]
+            : []
     }
     tmpData['titleName'] = this.formInputVal.nama_approval
     tmpData['formDetail'] = this.formViewVal
