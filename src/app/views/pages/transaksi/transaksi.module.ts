@@ -93,8 +93,8 @@ const routes: Routes = [
   },
   {
     path: 'jurnal-batch',
-    component: JurnalBatchRevComponent
-    // component: BatchComponent
+    // component: JurnalBatchRevComponent
+    component: BatchComponent
   },
   {
     path: 'daftar-kerja',

@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class AuthRequestService {
 
   // PT. SSI
-  baseURL = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
+  // baseURL = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
   // baseURL = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
 
   // PT. MPS
@@ -19,6 +19,14 @@ export class AuthRequestService {
   // PT. CMU
   // baseURL = 'https://sdscakc9e5.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // CMU - DEVELOPMENT
   // baseURL = 'https://m46ps086ih.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // CMU - PRODUCTION
+
+  // PT. LPM
+  // baseURL = '' // LPM - DEVELOPMENT
+  baseURL = 'https://slcz3vdne7.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // LPM - PRODUCTION
+
+  // PT. TWM
+  // baseURL = '' // TWM - DEVELOPMENT
+  // baseURL = 'https://9cmf80rbtk.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // TWM - PRODUCTION
 
   httpBody = {
     respondCode: '',
