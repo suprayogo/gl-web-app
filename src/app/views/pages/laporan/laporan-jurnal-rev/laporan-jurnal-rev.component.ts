@@ -378,7 +378,7 @@ export class LaporanJurnalRevComponent implements OnInit, AfterViewInit {
         p['company_city'] = this.info_company.kota
         p['company_contact'] = this.info_company.telepon
         p['user_name'] = localStorage.getItem('user_name') === undefined ? '' : localStorage.getItem('user_name')
-        this.request.apiData('report', 'g-data-jurnal-2', p).subscribe(
+        this.request.apiData('report', 'g-data-jurnal', p).subscribe(
           data => {
             if (data['STATUS'] === 'Y') {
               this.sendGetReport(data['RESULT']['rep_url'], data['RESULT']['rep_id'], this.formValueJL['format_laporan'])
@@ -542,7 +542,7 @@ export class LaporanJurnalRevComponent implements OnInit, AfterViewInit {
         }
       )
 
-      this.request.apiData('akun', 'g-akun', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+      this.request.apiData('akun', 'g-group-akun-user', { kode_perusahaan: this.kode_perusahaan }).subscribe(
         data => {
           if (data['STATUS'] === 'Y') {
             this.inputAkunData = data['RESULT']

@@ -173,6 +173,42 @@ export class DetailJurnalComponent implements OnInit {
       lembar_giro: 1
     }
   ]
+
+  res_data_check = [
+    {
+      seq: '',
+      id_akun: '',
+      kode_akun: '',
+      nama_akun: '',
+      keterangan_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
+      keterangan_1: '',
+      keterangan_2: '',
+      saldo_debit: 0,
+      saldo_kredit: 0,
+      lembar_giro: 1
+    },
+    {
+      seq: '',
+      id_akun: '',
+      kode_akun: '',
+      nama_akun: '',
+      keterangan_akun: '',
+      kode_divisi: '',
+      nama_divisi: '',
+      kode_departemen: '',
+      nama_departemen: '',
+      keterangan_1: '',
+      keterangan_2: '',
+      saldo_debit: 0,
+      saldo_kredit: 0,
+      lembar_giro: 1
+    }
+  ]
+
   res_data = []
   total_debit = 0
   total_kredit = 0
@@ -298,6 +334,7 @@ export class DetailJurnalComponent implements OnInit {
     // GET DATA DETAIL JURNAL BATCH
     if (this.data !== undefined || this.data != null) {
       this.res_data = this.data
+
       let x = this.res_data.length - 1
       // DEFAULT NEXT ROW DATA
       this.setValueNewRows['kode_divisi'] = this.res_data[x]['kode_divisi']
@@ -314,13 +351,29 @@ export class DetailJurnalComponent implements OnInit {
 
       if (this.jurnalOtomatis == undefined) {
         if (this.headerJurnal['jenis'] === '2') {
-          if (parseFloat(this.res_data[0]['saldo_debit']) == 0 && parseFloat(this.res_data[0]['saldo_kredit']) == 0) {
+          // if (this.res_data.length < 1) {
+          //   this.res_data.splice(1, 1)
+          // }
+
+          if (JSON.stringify(this.res_data) === JSON.stringify(this.res_data_check)) {
+            console.log('a')
             this.res_data.splice(1, 1)
           }
+          // if (parseFloat(this.res_data[0]['saldo_debit']) == 0 && parseFloat(this.res_data[0]['saldo_kredit']) == 0) {
+          //   this.res_data.splice(1, 1)
+          // }
         } else {
-          if (parseFloat(this.res_data[0]['saldo_debit']) == 0 && parseFloat(this.res_data[0]['saldo_kredit']) == 0) {
+          // if (this.res_data.length < 1) {
+          //   this.res_data = this.res_data_origin
+          // }
+
+          if (JSON.stringify(this.res_data) === JSON.stringify(this.res_data_check)) {
             this.res_data = this.res_data_origin
           }
+
+          // if (parseFloat(this.res_data[0]['saldo_debit']) == 0 && parseFloat(this.res_data[0]['saldo_kredit']) == 0) {
+          //   this.res_data = this.res_data_origin
+          // }
         }
       }
 

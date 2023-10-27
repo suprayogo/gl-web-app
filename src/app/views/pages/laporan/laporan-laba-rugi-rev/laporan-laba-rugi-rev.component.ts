@@ -348,8 +348,8 @@ export class LaporanLabaRugiRevComponent implements OnInit, AfterViewInit {
       jenis_laporan: this.formInputVal.jenis_laporan,
       bentuk_laporan: this.formInputVal.bentuk_laporan,
       tahun_periode: this.formInputVal.tahun_periode.toString(),
-      periode_from: this.formInputVal.dari_bulan.toString(),
-      periode_to: this.formInputVal.sd_bulan.toString()
+      periode_from: this.formInputVal.dari_bulan.toString().padStart(2, "0"),
+      periode_to: this.formInputVal.sd_bulan.toString().padStart(2, "0")
     }
 
     let xCabang = []
@@ -650,8 +650,8 @@ export class LaporanLabaRugiRevComponent implements OnInit, AfterViewInit {
       )
     } else if (type === 'change-from-month') {
       if (parseInt(data) > parseInt(this.formInputVC.getData().sd_bulan)) {
-        this.formInputVC.updateFormValue('dari_bulan', this.formInputVC.getData().sd_bulan)
-        this.gbl.openSnackBar('Maks.Batas bawah periode s/d batas atas periode!', 'info')
+        this.formInputVC.updateFormValue('sd_bulan', this.formInputVC.getData().dari_bulan)
+        this.gbl.openSnackBar('Periode Awal <= Periode Akhir', 'info')
 
         this.formInputLyt.splice(5, 1,
           {
@@ -686,7 +686,7 @@ export class LaporanLabaRugiRevComponent implements OnInit, AfterViewInit {
     } else if (type === 'change-to-month') {
       if (parseInt(data) < parseInt(this.formInputVC.getData().dari_bulan)) {
         this.formInputVC.updateFormValue('sd_bulan', this.formInputVC.getData().dari_bulan)
-        this.gbl.openSnackBar('Min.Batas atas periode s/d batas bawah periode!', 'info')
+        this.gbl.openSnackBar('Periode Akhir >= Periode Awal', 'info')
 
         this.formInputLyt.splice(5, 1,
           {

@@ -567,9 +567,6 @@ export class PengajuanBukaPeriodeKasirComponent implements OnInit, AfterViewInit
         this.getPeriode(x['tgl_periode']) === this.bulanTahun &&
         new Date(x['tgl_periode']).getTime() < tgl_aktif
     )
-    console.log(this.bulanTahun)
-    console.log(kode_cabang)
-    console.log(this.inputPeriodeKasirDataFilter)
     this.loadingPeriodeKasir = false
     this.ref.markForCheck()
   }

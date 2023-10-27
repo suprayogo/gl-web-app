@@ -976,7 +976,7 @@ export class JurnalBatchRevComponent implements OnInit, AfterViewInit {
 
   // GET DATA AKUN
   reqDataAkun(type) {
-    this.request.apiData('akun', 'g-akun-level', { kode_perusahaan: this.kode_perusahaan }).subscribe(
+    this.request.apiData('akun', 'g-group-akun-user', { kode_perusahaan: this.kode_perusahaan }).subscribe(
       data => {
         if (data['STATUS'] === 'Y') {
           this.inputAkunData = data['RESULT']
@@ -1508,7 +1508,7 @@ export class JurnalBatchRevComponent implements OnInit, AfterViewInit {
       let endRes = Object.assign({ kode_perusahaan: this.kode_perusahaan, id_periode: this.formValue.periode === '0' ? this.periode_aktif['id_periode'] : this.formValue.id_akses_periode }, this.formValue)
       this.request.apiData('jurnal', this.onUpdate ? 'u-jurnal' : 'i-jurnal', endRes).subscribe(
         data => {
-          if (data['STATUS'] === 'Y') {
+          if (data['STATUS'] === 'Y' || data['STATUS'] === 'A') {
             if (type === "umum") {
               this.browseNeedUpdate = true
               this.ref.markForCheck()
@@ -1522,7 +1522,7 @@ export class JurnalBatchRevComponent implements OnInit, AfterViewInit {
               this.resetForm()
               this.browseNeedUpdate = true
               this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? data['RESULT'] === 'APPROVED' ? "UPDATE JURNAL PERLU APPROVAL" : "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+              this.refreshBrowse(this.onUpdate ? data['STATUS'] === 'A' ? "Perubahan perlu dilakukan approval terlebih dahulu" : "Data berhasil diubah" : "Data berhasil ditambahkan")
             }
           } else {
             this.loading = false;
@@ -1594,7 +1594,7 @@ export class JurnalBatchRevComponent implements OnInit, AfterViewInit {
               this.resetForm()
               this.browseNeedUpdate = true
               this.ref.markForCheck()
-              this.refreshBrowse(this.onUpdate ? "BERHASIL DIUPDATE" : "BERHASIL DITAMBAH")
+              this.refreshBrowse(this.onUpdate ? "Data berhasil diubah" : "Data berhasil ditambahkan")
             }
           } else {
             this.loading = false;

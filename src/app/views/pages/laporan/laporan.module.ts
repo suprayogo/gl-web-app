@@ -70,48 +70,48 @@ const routes: Routes = [
   // Terpakai
   {
     path: 'jurnal',
-    // component: LaporanJurnalRevComponent
-    component: LaporanJurnalComponent
+    component: LaporanJurnalRevComponent
+    // component: LaporanJurnalComponent
   },
   {
     path: 'buku-besar',
-    // component: LaporanBukuBesarRevComponent
-    component: LaporanBukuBesarComponent
+    component: LaporanBukuBesarRevComponent
+    // component: LaporanBukuBesarComponent
   },
   {
     path: 'neraca-saldo',
-    // component: LaporanNeracaSaldoRevComponent
-    component: LaporanNeracaSaldoComponent
+    component: LaporanNeracaSaldoRevComponent
+    // component: LaporanNeracaSaldoComponent
   },
   {
     path: 'laba-rugi',
-    // component: LaporanLabaRugiRevComponent
-    component: LaporanLabaRugiComponent
+    component: LaporanLabaRugiRevComponent
+    // component: LaporanLabaRugiComponent
   },
   {
     path: 'neraca',
-    // component: LaporanNeracaRevComponent
-    component: LaporanNeracaComponent
+    component: LaporanNeracaRevComponent
+    // component: LaporanNeracaComponent
   },
   {
     path: 'arus-kas',
-    // component: LaporanArusKasRevComponent
-    component: LaporanArusKasComponent
+    component: LaporanArusKasRevComponent
+    // component: LaporanArusKasComponent
   },
   {
     path: 'coa',
-    // component: LaporanCoaRevComponent
-    component: LaporanCoaComponent
+    component: LaporanCoaRevComponent
+    // component: LaporanCoaComponent
   },
   {
     path: 'analisa',
-    // component: LaporanAnalisaRevComponent
-    component: LaporanAnalisaComponent
+    component: LaporanAnalisaRevComponent
+    // component: LaporanAnalisaComponent
   },
   {
     path: 'rekap-tran',
-    // component: LaporanRekapTransaksiRevComponent
-    component: RekapTranComponent
+    component: LaporanRekapTransaksiRevComponent
+    // component: RekapTranComponent
   },
   // Tidak Terpakai
   {

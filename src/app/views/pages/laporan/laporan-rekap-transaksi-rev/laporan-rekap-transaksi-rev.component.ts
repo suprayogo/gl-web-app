@@ -573,8 +573,10 @@ export class LaporanRekapTransaksiRevComponent implements OnInit, AfterViewInit 
       this.formValue = this.forminput.getData()
 
       let xAkun = []
-      for (var i = 0; i < this.listSelectAkun.length; i++) {
-        xAkun.push(this.listSelectAkun[i]['id_akun'])
+      if (this.formValue.tipe_laporan === 'pc') {
+        for (var i = 0; i < this.listSelectAkun.length; i++) {
+          xAkun.push(this.listSelectAkun[i]['id_akun'])
+        }
       }
       this.formValue['list_akun'] = xAkun
 
@@ -633,8 +635,8 @@ export class LaporanRekapTransaksiRevComponent implements OnInit, AfterViewInit 
         }
       }
 
-      
-      
+
+
       let endRes = Object.assign(
         {
           kode_perusahaan: this.kode_perusahaan,

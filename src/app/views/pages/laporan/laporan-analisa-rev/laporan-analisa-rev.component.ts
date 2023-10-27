@@ -462,13 +462,13 @@ export class LaporanAnalisaRevComponent implements OnInit, AfterViewInit {
 
   checkRangePeriod(type, data) {
     if (type == 'from' && parseInt(data) > parseInt(this.formInputVC.getData().sd_tahun)) {
-      this.formInputVC.updateFormValue('dari_tahun', this.formInputVC.getData().sd_tahun)
-      this.gbl.openSnackBar('Maks.Batas bawah periode s/d batas atas periode!', 'info')
+      this.formInputVC.updateFormValue('sd_tahun', this.formInputVC.getData().dari_tahun)
+      this.gbl.openSnackBar('Periode Awal <= Periode Akhir', 'info')
     }
 
     if (type == 'to' && parseInt(data) < parseInt(this.formInputVC.getData().dari_tahun)) {
       this.formInputVC.updateFormValue('sd_tahun', this.formInputVC.getData().dari_tahun)
-      this.gbl.openSnackBar('Min.Batas atas periode s/d batas bawah periode!', 'info')
+      this.gbl.openSnackBar('Periode Akhir >= Periode Awal', 'info')
     }
 
     this.formInputLyt.splice(3, 1,
