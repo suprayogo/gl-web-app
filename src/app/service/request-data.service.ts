@@ -24,8 +24,8 @@ export class RequestDataService {
   }
 
   // PT. SSI
-  // baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // SSI - DEVELOP
-  baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // SSI - PRODUCTION
+  baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // SSI - DEVELOP
+  // baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // SSI - PRODUCTION
 
   // PT. MPS, PT. CMU, PT. LPM, PT. TWM
   // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // (MPS, CMU, LPM, TWM) - DEVELOP

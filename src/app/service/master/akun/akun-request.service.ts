@@ -21,8 +21,8 @@ export class AkunRequestService {
       return this.get(httpBody, options)
     } else if (data === 'g-akun-dc') {
       // PT. SSI
-      // this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
-      this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
+      this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
+      // this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
 
       // PT. MPS
       // this.url = 'https://a2zynpc7te.execute-api.ap-southeast-1.amazonaws.com/dev/dctax' // MPS - DEVELOPMENT
@@ -44,8 +44,8 @@ export class AkunRequestService {
       return this.get(httpBody, options)
     } else if (data === 'g-kat-akun-dc') {
       // PT. SSI
-      // this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
-      this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
+      this.url = 'https://0556hoi3ob.execute-api.ap-southeast-1.amazonaws.com/dev/dc' // SSI - DEVELOP
+      // this.url = 'https://9idk4s2sjd.execute-api.ap-southeast-1.amazonaws.com/pro/dc' // SSI - PRODUCTION
 
       // PT. MPS
       // this.url = 'https://a2zynpc7te.execute-api.ap-southeast-1.amazonaws.com/dev/dctax' // MPS - DEVELOPMENT
