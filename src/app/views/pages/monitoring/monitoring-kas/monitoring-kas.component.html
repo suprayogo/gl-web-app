@@ -18,7 +18,7 @@
                 <div *ngIf="!tableLoad && !menuload" style="margin-top: 7px;">
                     <kt-datatable-ag-grid [tableColumn]="displayColumns" [tableRules]="browseDataRules"
                         [tableData]="browseData" (selectRowEvent)="selectRow($event)" [containerHeight]=300
-                        [pagination]="false" [filter]="false">
+                        [pagination]="false" [filter]="false" [pinnedBottomRowData]="pinnedBottom">
                     </kt-datatable-ag-grid>
                 </div>
             </kt-portlet-body>

@@ -21,6 +21,7 @@ export class DatatableAgGridComponent implements OnInit {
 	@Input() pagination: any;
 	@Input() paginationPageSize: any;
 	@Input() onDialog: boolean;
+	@Input() pinnedBottomRowData: any[];
 	@Output() selectRowEvent = new EventEmitter();
 	@Output() onDialogClose = new EventEmitter();
 
@@ -38,6 +39,7 @@ export class DatatableAgGridComponent implements OnInit {
 
 	rowData = [{ tableName: "" }];
 
+	pinnedBottom: any[];
 	filterStatus = true;
 	pageStatus = true;
 	pageSize = 25;
@@ -56,10 +58,12 @@ export class DatatableAgGridComponent implements OnInit {
 	//Local variable
 	btnLayout: Object[] = [];
 
-	constructor(private dialog: MatDialog) // private ref: ChangeDetectorRef,
-	{}
+	constructor(
+		private dialog: MatDialog // private ref: ChangeDetectorRef,
+	) {}
 
 	ngOnInit() {
+		this.pinnedBottom = this.pinnedBottomRowData == undefined || this.pinnedBottomRowData == null || this.pinnedBottomRowData.length < 1 ? this.pinnedBottom : this.pinnedBottomRowData;
 		this.filterStatus = this.filter == undefined || this.filter == null ? this.filterStatus : this.filter;
 		this.pageStatus = this.pagination == undefined || this.pagination == null ? this.pageStatus : this.pagination;
 		this.pageSize = this.paginationPageSize === undefined || this.paginationPageSize == null ? this.pageSize : this.paginationPageSize;
@@ -92,7 +96,9 @@ export class DatatableAgGridComponent implements OnInit {
 				headerCheckboxSelectionFilteredOnly: this.tableColumn[i]["selectable"] ? true : undefined,
 				checkboxSelection: this.tableColumn[i]["selectable"] ? true : undefined,
 				cellClass: colClass,
-				valueFormatter: colIsDate ? (params) => this.dateFormatter(params, this.getDateFormat(params.colDef.field)) : colIsNumber ? (params) => this.numberFormatter(params.value) : undefined,
+				valueFormatter: 
+					colIsDate ? (params) => this.dateFormatter(params, this.getDateFormat(params.colDef.field)) : 
+					colIsNumber ? (params) => this.numberFormatter(params.value, this.getNumberFormat(params.colDef.field)) : undefined,
 			};
 			colDef.push(temp);
 		}
@@ -214,11 +220,19 @@ export class DatatableAgGridComponent implements OnInit {
 		}
 	}
 
+	getNumberFormat(val) {
+		for (var i = 0; i < this.tableColumn.length; i++) {
+			if (this.tableColumn[i]["value"] === val) {
+				return this.tableColumn[i]["float"] === undefined || this.tableColumn[i]["float"] == null ? null : this.tableColumn[i]["float"];
+			}
+		}
+	}
+
 	dateFormatter(params, format) {
 		return params.value === undefined || params.value == null ? "" : formatDate(params.value, format == null ? undefined : format);
 	}
 
-	numberFormatter(amount, decimalCount = 0, decimal = ",", thousands = ".") {
+	numberFormatter(amount, decimalCount, decimal = ",", thousands = ".") {
 		try {
 			decimalCount = Math.abs(decimalCount);
 			decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
@@ -241,4 +255,10 @@ export class DatatableAgGridComponent implements OnInit {
 			);
 		} catch (e) {}
 	}
+
+	rowStyle = function(params) {
+      if (params.node.rowPinned === 'bottom') {
+        return { "font-weight": "bold" };
+      }
+	};
 }

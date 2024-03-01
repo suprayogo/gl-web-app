@@ -23,6 +23,7 @@ export class MonitoringKasComponent implements OnInit, AfterViewInit {
 	// Global Service Variable
 	subsCompany: any; // Subscription for Akses Perusahaan
 	kodePerusahaan: any; // Contain Data Perusahaan Aktif
+	pinnedBottom: any[] = [];
 
 	// Load Variable
 	menuload: boolean = true;
@@ -62,11 +63,13 @@ export class MonitoringKasComponent implements OnInit, AfterViewInit {
 			label: "Kas",
 			value: "saldo_kas",
 			number: true,
+			float: 2
 		},
 		{
 			label: "Bank",
 			value: "saldo_bank",
 			number: true,
+			float: 2
 		},
 	];
 
@@ -141,14 +144,14 @@ export class MonitoringKasComponent implements OnInit, AfterViewInit {
 	reqData() {
 		if (this.kodePerusahaan != undefined && this.kodePerusahaan != null && this.kodePerusahaan !== "") {
 			this.request.apiData("cabang", "g-cabang-akses", { kode_perusahaan: this.kodePerusahaan }).subscribe((data) => {
-        if (data["STATUS"] === "Y") {
-          this.ref.markForCheck();
-          this.inputCabangData = data["RESULT"];
-          this.reqDataKas();
-        } else {
-          this.gbl.openSnackBar("Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.", "fail");
-        }
-      });
+				if (data["STATUS"] === "Y") {
+					this.ref.markForCheck();
+					this.inputCabangData = data["RESULT"];
+					this.reqDataKas();
+				} else {
+					this.gbl.openSnackBar("Gagal mendapatkan daftar cabang. Mohon coba lagi nanti.", "fail");
+				}
+			});
 		}
 	}
 
@@ -161,6 +164,7 @@ export class MonitoringKasComponent implements OnInit, AfterViewInit {
 			if (data["STATUS"] === "Y") {
 				this.ref.markForCheck();
 				this.browseData = data["RESULT"];
+				this.pinnedBottom = this.createDataFooter(this.browseData);
 				this.menuload = false;
 				this.tableLoad = false;
 			} else {
@@ -222,5 +226,21 @@ export class MonitoringKasComponent implements OnInit, AfterViewInit {
 			this.ref.markForCheck();
 			this.forminput === undefined ? null : this.forminput.checkChanges();
 		}, 1);
+	}
+
+	createDataFooter(data?: any[]) {
+		let sumKas = 0, sumBank = 0
+		for (let i = 0; i < data.length; i++) {
+			sumKas = sumKas + parseFloat(JSON.stringify(data[i]['saldo_kas']))
+			sumBank = sumBank + parseFloat(JSON.stringify(data[i]['saldo_bank']))
+		}
+		var result: any[] = [];
+		result.push({
+			kode_cabang: "",
+			nama_akun: " GRAND TOTAL ",
+			saldo_kas: sumKas,
+			saldo_bank: sumBank
+		});
+		return result;
 	}
 }
