@@ -65,6 +65,7 @@ import { LaporanArusKasRevComponent } from './laporan-arus-kas-rev/laporan-arus-
 import { LaporanAnalisaRevComponent } from './laporan-analisa-rev/laporan-analisa-rev.component';
 import { LaporanRekapTransaksiRevComponent } from './laporan-rekap-transaksi-rev/laporan-rekap-transaksi-rev.component';
 import { LaporanCoaRevComponent } from './laporan-coa-rev/laporan-coa-rev.component';
+import { LaporanLabaRugiV2Component } from './laporan-laba-rugi-v2/laporan-laba-rugi-v2.component';
 
 const routes: Routes = [
   // Terpakai
@@ -133,6 +134,11 @@ const routes: Routes = [
   {
     path: 'rekap-petty-cash',
     component: RekapPettyCashComponent
+  },
+  {
+    path: 'laba-rugi-v2',
+    component: LaporanLabaRugiV2Component
+
   },
 ]
 
@@ -208,7 +214,9 @@ const routes: Routes = [
     LaporanArusKasRevComponent,
     LaporanAnalisaRevComponent,
     LaporanRekapTransaksiRevComponent,
-    LaporanCoaRevComponent
+    LaporanCoaRevComponent,
+    LaporanLabaRugiV2Component,
+
   ]
 })
 export class LaporanModule { }

@@ -56,6 +56,7 @@ import { TemplateTransaksiComponent } from './template-transaksi/template-transa
 import { PengajuanBukaPeriodeKasirComponent } from './pengajuan-buka-periode-kasir/pengajuan-buka-periode-kasir.component';
 import { WorklistComponent } from './worklist/worklist.component';
 import { DaftarGroupCoaComponent } from './daftar-group-coa/daftar-group-coa.component';
+import { PengaturanLaporanV3Component } from './pengaturan-laporan-v3/pengaturan-laporan-v3.component';
 
 
 const routes: Routes = [
@@ -90,6 +91,10 @@ const routes: Routes = [
 	{
 		path: 'pengaturan-laporan',
 		component: PengaturanLaporanComponent,
+	},
+	{
+		path: 'pengaturan-laporan-v3',
+		component: PengaturanLaporanV3Component,
 	},
 	{
 		path: 'pengaturan-jurnal-otomatis',
@@ -185,6 +190,7 @@ const routes: Routes = [
 		TemplateTransaksiComponent,
 		PengajuanBukaPeriodeKasirComponent,
 		WorklistComponent,
+		PengaturanLaporanV3Component,
 	]
 })
 export class MasterModule { }

@@ -35,6 +35,9 @@ export class UserRequestService {
   }
 
   get(httpBody, options) {
+    	console.log('HTTP POST request to:', this.url);
+		console.log('HTTP Body PART1:', httpBody);
+		console.log('HTTP Options:', options);
     return this.http.post(this.url, httpBody, options);
-  }
+  }a
 }

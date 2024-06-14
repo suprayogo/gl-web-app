@@ -1,0 +1,35 @@
+
+               <kt-forminput #lb [inputLayout]="inputLBLayout" [formValue]="formLBValue" [noButton]="formNoButton"
+                 (onSubmit)="onSubmit($event)" (onCancel)="onCancel()"></kt-forminput>
+ 
+               <div *ngFor="let item of LBSetting['keyPengakuanNilai']; let i = index" style="width: 100%;">
+                 <div *ngIf="(i + 1) % 2 != 0"
+                   style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+                   <div style="width: 47.5%;">
+                     <h5>Kelompok {{ LBSetting['keyPengakuanNilai'][i]['label'] }}</h5>
+                     <kt-detailinput-ag-grid [buttonLayout]="buttonLBLayout"
+                       [buttonFuncParam]="LBSetting['keyPengakuanNilai'][i]['value']"
+                       [tableColumn]="inputAkunDisplayColumns"
+                       [tableData]="LBSetting['daftarPengakuanNilai'][LBSetting['keyPengakuanNilai'][i]['value']]"
+                       [tableRules]="inputAkunTableRules" [editable]="editable" (editAction)="editDetailData($event)"
+                       (deleteAction)="delDetailData($event, 'lbrg', LBSetting['keyPengakuanNilai'][i]['value'])">
+                     </kt-detailinput-ag-grid>
+                   </div>
+ 
+                   <div style="width: 47.5%;" *ngIf="LBSetting['keyPengakuanNilai'].length > (i + 1)">
+                     <h5>Kelompok {{ LBSetting['keyPengakuanNilai'][i + 1]['label'] }}</h5>
+                     <kt-detailinput-ag-grid [buttonLayout]="buttonLBLayout"
+                       [buttonFuncParam]="LBSetting['keyPengakuanNilai'][i + 1]['value']"
+                       [tableColumn]="inputAkunDisplayColumns"
+                       [tableData]="LBSetting['daftarPengakuanNilai'][LBSetting['keyPengakuanNilai'][i + 1]['value']]"
+                       [tableRules]="inputAkunTableRules" [editable]="editable" (editAction)="editDetailData($event)"
+                       (deleteAction)="delDetailData($event, 'lbrg', LBSetting['keyPengakuanNilai'][i + 1]['value'])">
+                     </kt-detailinput-ag-grid>
+                   </div>
+                 </div>
+ 
+               </div>
+ 
+               <div class="kt-form__actions">
+                 <button type="submit" class="btn btn-brand" (click)="onSubmit('lbrg')">Simpan</button>
+               </div>

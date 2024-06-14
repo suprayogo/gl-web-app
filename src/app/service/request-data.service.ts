@@ -24,8 +24,13 @@ export class RequestDataService {
   }
 
   // PT. SSI
-  baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // SSI - DEVELOP
+  // baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // SSI - DEVELOP
+
+  baseURL = 'https://500e-180-241-44-181.ngrok-free.app/gl/api' // SSI - DEVELOP
   // baseURL = 'https://9xgrbckunf.execute-api.ap-southeast-1.amazonaws.com/pro/gl' // SSI - PRODUCTION
+  // baseURL = 'https://gb01rywky8.execute-api.ap-southeast-1.amazonaws.com/dev/gl/api' // SSI - DEVELOP-TESTING
+//  baseURL = 'https://5432-103-154-148-151.ngrok-free.app/dev/gl' // SSI - TESTING UNTUK SPRINGBOOT
+
 
   // PT. MPS, PT. CMU, PT. LPM, PT. TWM
   // baseURL = 'https://1n0pooc7rf.execute-api.ap-southeast-1.amazonaws.com/dev/gl' // (MPS, CMU, LPM, TWM) - DEVELOP

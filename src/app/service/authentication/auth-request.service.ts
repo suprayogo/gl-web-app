@@ -42,7 +42,7 @@ export class AuthRequestService {
     private httpHeader: HeaderSetterService,
     private authParam: AuthSetterService,
     private http: HttpClient
-  ) { }
+  ) {   }
 
   login(formData) {
     this.httpBody.respondCode = "LOGIN-ADMIN"
